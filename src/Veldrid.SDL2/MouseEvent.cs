@@ -56,7 +56,7 @@
         Button7 = 9,
         //
         // Summary:
-        //     The eigth extra mouse button.
+        //     The eighth extra mouse button.
         Button8 = 10,
         //
         // Summary:

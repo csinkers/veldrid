@@ -348,6 +348,7 @@ namespace Veldrid
         /// <returns>Whether or not RenderDoc was successfully loaded.</returns>
         public static bool Load(out RenderDoc renderDoc) => Load(GetLibNames(), out renderDoc);
 
+        /// <summary>
         /// Attempts to load RenderDoc from the given path.
         /// </summary>
         /// <param name="renderDocLibPath">The path to the RenderDoc shared library.</param>

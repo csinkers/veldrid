@@ -103,14 +103,14 @@ namespace Veldrid
         /// <summary>
         /// Creates a new compute <see cref="Pipeline"/> object.
         /// </summary>
-        /// <param name="description">The desirede properties of the created object.</param>
+        /// <param name="description">The desired properties of the created object.</param>
         /// <returns>A new <see cref="Pipeline"/> which, when bound to a CommandList, is used to dispatch compute commands.</returns>
         public Pipeline CreateComputePipeline(ComputePipelineDescription description) => CreateComputePipeline(ref description);
 
         /// <summary>
         /// Creates a new compute <see cref="Pipeline"/> object.
         /// </summary>
-        /// <param name="description">The desirede properties of the created object.</param>
+        /// <param name="description">The desired properties of the created object.</param>
         /// <returns>A new <see cref="Pipeline"/> which, when bound to a CommandList, is used to dispatch compute commands.</returns>
         public abstract Pipeline CreateComputePipeline(ref ComputePipelineDescription description);
 

@@ -612,6 +612,7 @@ namespace Veldrid
                 }
                 vtx_offset += cmd_list.VtxBuffer.Size;
             }
+            cl.SetFullScissorRect(0);
         }
 
         /// <summary>

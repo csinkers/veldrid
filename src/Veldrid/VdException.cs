@@ -15,7 +15,7 @@ namespace Veldrid
         }
 
         /// <summary>
-        /// Constructs a new Veldridexception with the given message.
+        /// Constructs a new VeldridException with the given message.
         /// </summary>
         /// <param name="message">The exception message.</param>
         public VeldridException(string message) : base(message)
@@ -23,7 +23,7 @@ namespace Veldrid
         }
 
         /// <summary>
-        /// Constructs a new Veldridexception with the given message and inner exception.
+        /// Constructs a new VeldridException with the given message and inner exception.
         /// </summary>
         /// <param name="message">The exception message.</param>
         /// <param name="innerException">The inner exception.</param>

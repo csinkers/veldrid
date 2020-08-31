@@ -26,7 +26,7 @@
         /// </summary>
         Byte2_Norm,
         /// <summary>
-        /// Two 8-bit unisgned integers.
+        /// Two 8-bit unsigned integers.
         /// </summary>
         Byte2,
         /// <summary>

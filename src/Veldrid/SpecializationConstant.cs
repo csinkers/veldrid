@@ -19,7 +19,7 @@ namespace Veldrid
         public ShaderConstantType Type;
         /// <summary>
         /// An 8-byte block storing the contents of the specialization value. This is treated as an untyped buffer and is
-        /// interepreted according to <see cref="Type"/>.
+        /// interpreted according to <see cref="Type"/>.
         /// </summary>
         public ulong Data;
 
@@ -29,7 +29,7 @@ namespace Veldrid
         /// <param name="id">The constant variable ID, as defined in the <see cref="Shader"/>.</param>
         /// <param name="type">The type of data stored in this instance. Must be a scalar numeric type.</param>
         /// <param name="data">An 8-byte block storing the contents of the specialization value. This is treated as an untyped
-        /// buffer and is interepreted according to <see cref="Type"/>.</param>
+        /// buffer and is interpreted according to <see cref="Type"/>.</param>
         public SpecializationConstant(uint id, ShaderConstantType type, ulong data)
         {
             ID = id;
@@ -103,7 +103,7 @@ namespace Veldrid
         /// Element-wise equality.
         /// </summary>
         /// <param name="other">The instance to compare to.</param>
-        /// <returns>True if all elements are equal; false otherswise.</returns>
+        /// <returns>True if all elements are equal; false otherwise.</returns>
         public bool Equals(SpecializationConstant other)
         {
             return ID.Equals(other.ID) && Type == other.Type && Data.Equals(other.Data);

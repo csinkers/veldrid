@@ -13,7 +13,7 @@ namespace Veldrid
         /// </summary>
         public Shader ComputeShader;
         /// <summary>
-        /// An array of <see cref="ResourceLayout"/>, which controls the layout of shader resoruces in the <see cref="Pipeline"/>.
+        /// An array of <see cref="ResourceLayout"/>, which controls the layout of shader resources in the <see cref="Pipeline"/>.
         /// </summary>
         public ResourceLayout[] ResourceLayouts;
         /// <summary>
@@ -115,7 +115,7 @@ namespace Veldrid
         /// Element-wise equality.
         /// </summary>
         /// <param name="other">The instance to compare to.</param>
-        /// <returns>True if all elements and all array elements are equal; false otherswise.</returns>
+        /// <returns>True if all elements and all array elements are equal; false otherwise.</returns>
         public bool Equals(ComputePipelineDescription other)
         {
             return ComputeShader.Equals(other.ComputeShader)

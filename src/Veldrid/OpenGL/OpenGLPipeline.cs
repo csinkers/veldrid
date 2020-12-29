@@ -32,6 +32,9 @@ namespace Veldrid.OpenGL
         private uint _program;
         private bool _disposeRequested;
         private bool _disposed;
+#if DEBUG && GL_VALIDATE_VERTEX_INPUT_ELEMENTS
+        private bool _validatedAttributes;
+#endif
 
         private SetBindingsInfo[] _setInfos;
 
@@ -143,28 +146,10 @@ namespace Veldrid.OpenGL
             CheckLastError();
 
 #if DEBUG && GL_VALIDATE_VERTEX_INPUT_ELEMENTS
-            slot = 0;
-            foreach (VertexLayoutDescription layoutDesc in VertexLayouts)
+            if (!_validatedAttributes)
             {
-                for (int i = 0; i < layoutDesc.Elements.Length; i++)
-                {
-                    string elementName = layoutDesc.Elements[i].Name;
-                    int byteCount = Encoding.UTF8.GetByteCount(elementName) + 1;
-                    byte* elementNamePtr = stackalloc byte[byteCount];
-                    fixed (char* charPtr = elementName)
-                    {
-                        int bytesWritten = Encoding.UTF8.GetBytes(charPtr, elementName.Length, elementNamePtr, byteCount);
-                        Debug.Assert(bytesWritten == byteCount - 1);
-                    }
-                    elementNamePtr[byteCount - 1] = 0; // Add null terminator.
-
-                    int location = glGetAttribLocation(_program, elementNamePtr);
-                    if (location == -1)
-                    {
-                        throw new VeldridException("There was no attribute variable with the name " + layoutDesc.Elements[i].Name);
-                    }
-                    slot += 1;
-                }
+                PipelineValidation.ValidateAttributes(Name, _program, VertexLayouts);
+                _validatedAttributes = true;
             }
 #endif
 
@@ -229,27 +214,7 @@ namespace Veldrid.OpenGL
                             uniformBindings[i] = new OpenGLUniformBinding(_program, blockIndex, (uint)blockSize);
                         }
 #if DEBUG && GL_VALIDATE_SHADER_RESOURCE_NAMES
-                        else
-                        {
-                            uint uniformBufferIndex = 0;
-                            uint bufferNameByteCount = 64;
-                            byte* bufferNamePtr = stackalloc byte[(int)bufferNameByteCount];
-                            var names = new List<string>();
-                            while (true)
-                            {
-                                uint actualLength;
-                                glGetActiveUniformBlockName(_program, uniformBufferIndex, bufferNameByteCount, &actualLength, bufferNamePtr);
-
-                                if (glGetError() != 0)
-                                    break;
-
-                                string name = Encoding.UTF8.GetString(bufferNamePtr, (int)actualLength);
-                                names.Add(name);
-                                uniformBufferIndex++;
-                            }
-
-                            throw new VeldridException($"Unable to bind uniform buffer \"{resourceName}\" by name. Valid names for this pipeline are: {string.Join(", ", names)}");
-                        }
+                        else PipelineValidation.ReportInvalidBufferName(Name, _program, resourceName);
 #endif
                     }
                     else if (resource.Kind == ResourceKind.TextureReadOnly)
@@ -267,7 +232,7 @@ namespace Veldrid.OpenGL
                         CheckLastError();
 #if DEBUG && GL_VALIDATE_SHADER_RESOURCE_NAMES
                         if(location == -1)
-                            ReportInvalidResourceName(resourceName);
+                            PipelineValidation.ReportInvalidResourceName(Name, _program, resourceName);
 #endif
                         relativeTextureIndex += 1;
                         textureBindings[i] = new OpenGLTextureBindingSlotInfo() { RelativeIndex = relativeTextureIndex, UniformLocation = location };
@@ -289,7 +254,7 @@ namespace Veldrid.OpenGL
                         CheckLastError();
 #if DEBUG && GL_VALIDATE_SHADER_RESOURCE_NAMES
                         if(location == -1)
-                            ReportInvalidResourceName(resourceName);
+                            PipelineValidation.ReportInvalidResourceName(Name, _program, resourceName);
 #endif
                         relativeImageIndex += 1;
                         textureBindings[i] = new OpenGLTextureBindingSlotInfo() { RelativeIndex = relativeImageIndex, UniformLocation = location };
@@ -338,35 +303,8 @@ namespace Veldrid.OpenGL
 
                 _setInfos[setSlot] = new SetBindingsInfo(uniformBindings, textureBindings, samplerBindings, storageBufferBindings);
             }
+
         }
-
-#if DEBUG && GL_VALIDATE_SHADER_RESOURCE_NAMES
-        void ReportInvalidResourceName(string resourceName)
-        {
-            uint uniformIndex = 0;
-            uint resourceNameByteCount = 64;
-            byte* resourceNamePtr = stackalloc byte[(int)resourceNameByteCount];
-
-            var names = new List<string>();
-            while (true)
-            {
-                uint actualLength;
-                int size;
-                uint type;
-                glGetActiveUniform(_program, uniformIndex, resourceNameByteCount,
-                    &actualLength, &size, &type, resourceNamePtr);
-
-                if (glGetError() != 0)
-                    break;
-
-                string name = Encoding.UTF8.GetString(resourceNamePtr, (int)actualLength);
-                names.Add(name);
-                uniformIndex++;
-            }
-
-            throw new VeldridException($"Unable to bind uniform \"{resourceName}\" by name. Valid names for this pipeline are: {string.Join(", ", names)}");
-        }
-#endif
 
         private void CreateComputeGLResources()
         {

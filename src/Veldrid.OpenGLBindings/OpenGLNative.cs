@@ -1467,6 +1467,26 @@ namespace Veldrid.OpenGLBinding
         public static void glClearStencil(int s) => p_glClearStencil(s);
 
         [UnmanagedFunctionPointer(CallConv)]
+        delegate void glGetActiveAttrib_t(
+            uint program,
+            uint index,
+            uint bufSize,
+            uint *length,
+            int *size,
+            uint *type,
+            byte *name);
+
+        static glGetActiveAttrib_t p_glGetActiveAttrib;
+        public static void glGetActiveAttrib(
+            uint program,
+            uint index,
+            uint bufSize,
+            uint* length,
+            int* size,
+            uint* type,
+            byte* name) => p_glGetActiveAttrib(program, index, bufSize, length, size, type, name);
+
+        [UnmanagedFunctionPointer(CallConv)]
         private delegate void glGetActiveUniformBlockiv_t(
             uint program,
             uint uniformBlockIndex,
@@ -1707,6 +1727,7 @@ namespace Veldrid.OpenGLBinding
             LoadFunction("glStencilOpSeparate", out p_glStencilOpSeparate);
             LoadFunction("glStencilMask", out p_glStencilMask);
             LoadFunction("glClearStencil", out p_glClearStencil);
+            LoadFunction("glGetActiveAttrib", out p_glGetActiveAttrib);
             LoadFunction("glGetActiveUniformBlockiv", out p_glGetActiveUniformBlockiv);
             LoadFunction("glGetActiveUniformBlockName", out p_glGetActiveUniformBlockName);
             LoadFunction("glGetActiveUniform", out p_glGetActiveUniform);

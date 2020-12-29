@@ -29,6 +29,7 @@ namespace Veldrid.OpenGL
         public override bool IsComputePipeline { get; }
         public Shader ComputeShader { get; }
 
+        private string _name;
         private uint _program;
         private bool _disposeRequested;
         private bool _disposed;
@@ -39,14 +40,20 @@ namespace Veldrid.OpenGL
         private SetBindingsInfo[] _setInfos;
 
         public int[] VertexStrides { get; }
-
         public uint Program => _program;
-
         public uint GetUniformBufferCount(uint setSlot) => _setInfos[setSlot].UniformBufferCount;
         public uint GetShaderStorageBufferCount(uint setSlot) => _setInfos[setSlot].ShaderStorageBufferCount;
 
-        public override string Name { get; set; }
-
+        public override string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                if (_program != 0)
+                    SetProgramName(_name);
+            }
+        }
         public override bool IsDisposed => _disposeRequested;
 
         public OpenGLPipeline(OpenGLGraphicsDevice gd, ref GraphicsPipelineDescription description)
@@ -112,6 +119,10 @@ namespace Veldrid.OpenGL
         {
             _program = glCreateProgram();
             CheckLastError();
+
+            if (!string.IsNullOrEmpty(_name))
+                SetProgramName(_name);
+
             foreach (Shader stage in GraphicsShaders)
             {
                 OpenGLShader glShader = Util.AssertSubtype<Shader, OpenGLShader>(stage);
@@ -310,6 +321,10 @@ namespace Veldrid.OpenGL
         {
             _program = glCreateProgram();
             CheckLastError();
+
+            if (!string.IsNullOrEmpty(_name))
+                SetProgramName(_name);
+
             OpenGLShader glShader = Util.AssertSubtype<Shader, OpenGLShader>(ComputeShader);
             glShader.EnsureResourcesCreated();
             glAttachShader(_program, glShader.Shader);
@@ -332,6 +347,20 @@ namespace Veldrid.OpenGL
             }
 
             ProcessResourceSetLayouts(ResourceLayouts);
+        }
+
+        void SetProgramName(string name)
+        {
+            int byteCount = Encoding.UTF8.GetByteCount(name) + 1;
+            byte* namePtr = stackalloc byte[byteCount];
+            fixed (char* charPtr = name)
+            {
+                int bytesWritten = Encoding.UTF8.GetBytes(charPtr, name.Length, namePtr, byteCount);
+                Debug.Assert(bytesWritten == byteCount - 1);
+            }
+            namePtr[byteCount - 1] = 0; // Add null terminator.
+            glObjectLabel(ObjectLabelIdentifier.Program, _program, (uint)byteCount, namePtr);
+            CheckLastError();
         }
 
         public bool GetUniformBindingForSlot(uint set, uint slot, out OpenGLUniformBinding binding)

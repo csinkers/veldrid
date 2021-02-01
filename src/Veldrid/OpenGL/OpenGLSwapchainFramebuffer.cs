@@ -8,6 +8,7 @@ namespace Veldrid.OpenGL
         private readonly PixelFormat? _depthFormat;
         private bool _disposed;
 
+        public override string ToString() => $"GLSwapchainFrameBuffer:{Name}";
         public override uint Width => _colorTexture.Width;
         public override uint Height => _colorTexture.Height;
 

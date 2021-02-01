@@ -17,6 +17,8 @@ namespace Veldrid.OpenGL
         public ResourceLayout[] ResourceLayouts { get; }
 #endif
 
+        public override string ToString() => $"GLPipeline:{Name}";
+
         // Graphics Pipeline
         public Shader[] GraphicsShaders { get; }
         public VertexLayoutDescription[] VertexLayouts { get; }

@@ -13,7 +13,7 @@ namespace Veldrid.OpenGL
         [DebuggerNonUserCode]
         internal static void CheckLastError()
         {
-            uint error = glGetError();
+            ErrorCode error = (ErrorCode)glGetError();
             if (error != 0)
             {
                 if (Debugger.IsAttached)
@@ -21,7 +21,7 @@ namespace Veldrid.OpenGL
                     Debugger.Break();
                 }
 
-                throw new VeldridException("glGetError indicated an error: " + (ErrorCode)error);
+                // throw new VeldridException("glGetError indicated an error: " + (ErrorCode)error);
             }
         }
 

@@ -7,6 +7,7 @@ namespace Veldrid
     /// </summary>
     public struct Viewport : IEquatable<Viewport>
     {
+        public override string ToString() => $"ViewPort({X}, {Y}, {Width}, {Height}, {MinDepth}, {MaxDepth})";
         /// <summary>
         /// The minimum X value.
         /// </summary>

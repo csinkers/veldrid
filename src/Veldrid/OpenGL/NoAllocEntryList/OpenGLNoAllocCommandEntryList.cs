@@ -597,6 +597,175 @@ namespace Veldrid.OpenGL.NoAllocEntryList
             return new Tracked<T>(_resourceList, item);
         }
 
+        public unsafe string[] Describe()
+        {
+            var results = new List<string>();
+            int currentBlockIndex = 0;
+            EntryStorageBlock block = _blocks[currentBlockIndex];
+            uint currentOffset = 0;
+            for (uint i = 0; i < _totalEntries; i++)
+            {
+                if (currentOffset == block.TotalSize)
+                {
+                    currentBlockIndex += 1;
+                    block = _blocks[currentBlockIndex];
+                    currentOffset = 0;
+                }
+
+                uint id = Unsafe.Read<byte>(block.BasePtr + currentOffset);
+                if (id == 0)
+                {
+                    currentBlockIndex += 1;
+                    block = _blocks[currentBlockIndex];
+                    currentOffset = 0;
+                    id = Unsafe.Read<byte>(block.BasePtr + currentOffset);
+                }
+
+                Debug.Assert(id != 0);
+                currentOffset += 1;
+                byte* entryBasePtr = block.BasePtr + currentOffset;
+                switch (id)
+                {
+                    case BeginEntryID:
+                        results.Add($"{i} Begin()");
+                        currentOffset += BeginEntrySize;
+                        break;
+                    case ClearColorTargetID:
+                        NoAllocClearColorTargetEntry ccte = Unsafe.ReadUnaligned<NoAllocClearColorTargetEntry>(entryBasePtr);
+                        results.Add($"{i} ClearColorTarget({ccte.Index}, {ccte.ClearColor})");
+                        currentOffset += ClearColorTargetEntrySize;
+                        break;
+                    case ClearDepthTargetID:
+                        NoAllocClearDepthTargetEntry cdte = Unsafe.ReadUnaligned<NoAllocClearDepthTargetEntry>(entryBasePtr);
+                        results.Add($"{i} ClearDepthStencil({cdte.Depth}, {cdte.Stencil})");
+                        currentOffset += ClearDepthTargetEntrySize;
+                        break;
+                    case DrawEntryID:
+                        NoAllocDrawEntry de = Unsafe.ReadUnaligned<NoAllocDrawEntry>(entryBasePtr);
+                        results.Add($"{i} Draw({de.VertexCount}, {de.InstanceCount}, {de.VertexStart}, {de.InstanceStart})");
+                        currentOffset += DrawEntrySize;
+                        break;
+                    case DrawIndexedEntryID:
+                        NoAllocDrawIndexedEntry die = Unsafe.ReadUnaligned<NoAllocDrawIndexedEntry>(entryBasePtr);
+                        results.Add($"{i} DrawIndexed({die.IndexCount}, {die.InstanceCount}, {die.IndexStart}, {die.VertexOffset}, {die.InstanceStart})");
+                        currentOffset += DrawIndexedEntrySize;
+                        break;
+                    case DrawIndirectEntryID:
+                        NoAllocDrawIndirectEntry drawIndirectEntry = Unsafe.ReadUnaligned<NoAllocDrawIndirectEntry>(entryBasePtr);
+                        results.Add($"{i} DrawIndirect({drawIndirectEntry.IndirectBuffer.Get(_resourceList)}, {drawIndirectEntry.Offset}, {drawIndirectEntry.DrawCount}, { drawIndirectEntry.Stride })");
+                        currentOffset += DrawIndirectEntrySize;
+                        break;
+                    case DrawIndexedIndirectEntryID:
+                        NoAllocDrawIndexedIndirectEntry diie = Unsafe.ReadUnaligned<NoAllocDrawIndexedIndirectEntry>(entryBasePtr);
+                        results.Add($"{i} DrawIndexedIndirect({diie.IndirectBuffer.Get(_resourceList)}, {diie.Offset}, {diie.DrawCount}, {diie.Stride})");
+                        currentOffset += DrawIndexedIndirectEntrySize;
+                        break;
+                    case DispatchEntryID:
+                        NoAllocDispatchEntry dispatchEntry = Unsafe.ReadUnaligned<NoAllocDispatchEntry>(entryBasePtr);
+                        results.Add($"{i} Dispatch({dispatchEntry.GroupCountX}, {dispatchEntry.GroupCountY}, {dispatchEntry.GroupCountZ})");
+                        currentOffset += DispatchEntrySize;
+                        break;
+                    case DispatchIndirectEntryID:
+                        NoAllocDispatchIndirectEntry dispatchIndir = Unsafe.ReadUnaligned<NoAllocDispatchIndirectEntry>(entryBasePtr);
+                        results.Add($"{i} DispatchIndirect({dispatchIndir.IndirectBuffer.Get(_resourceList)}, {dispatchIndir.Offset})");
+                        currentOffset += DispatchIndirectEntrySize;
+                        break;
+                    case EndEntryID:
+                        results.Add($"{i} End()");
+                        currentOffset += EndEntrySize;
+                        break;
+                    case SetFramebufferEntryID:
+                        NoAllocSetFramebufferEntry sfbe = Unsafe.ReadUnaligned<NoAllocSetFramebufferEntry>(entryBasePtr);
+                        results.Add($"{i} SetFramebuffer({sfbe.Framebuffer.Get(_resourceList)})");
+                        currentOffset += SetFramebufferEntrySize;
+                        break;
+                    case SetIndexBufferEntryID:
+                        NoAllocSetIndexBufferEntry sibe = Unsafe.ReadUnaligned<NoAllocSetIndexBufferEntry>(entryBasePtr);
+                        results.Add($"{i} SetIndexBuffer({sibe.Buffer.Get(_resourceList)}, {sibe.Format}, {sibe.Offset})");
+                        currentOffset += SetIndexBufferEntrySize;
+                        break;
+                    case SetPipelineEntryID:
+                        NoAllocSetPipelineEntry spe = Unsafe.ReadUnaligned<NoAllocSetPipelineEntry>(entryBasePtr);
+                        results.Add($"{i} SetPipeline({spe.Pipeline.Get(_resourceList)})");
+                        currentOffset += SetPipelineEntrySize;
+                        break;
+                    case SetResourceSetEntryID:
+                        NoAllocSetResourceSetEntry srse = Unsafe.ReadUnaligned<NoAllocSetResourceSetEntry>(entryBasePtr);
+                        ResourceSet rs = srse.ResourceSet.Get(_resourceList);
+                        uint* dynamicOffsetsPtr = srse.DynamicOffsetCount > NoAllocSetResourceSetEntry.MaxInlineDynamicOffsets
+                            ? (uint*)srse.DynamicOffsets_Block.Data
+                            : srse.DynamicOffsets_Inline;
+                        results.Add(srse.IsGraphics
+                            ? $"{i} SetGraphicsResourceSet({srse.Slot}, {rs}, {srse.DynamicOffsetCount}, {(IntPtr) dynamicOffsetsPtr})"
+                            : $"{i} SetComputeResourceSet({srse.Slot}, {rs}, {srse.DynamicOffsetCount}, {(IntPtr) dynamicOffsetsPtr})");
+                        currentOffset += SetResourceSetEntrySize;
+                        break;
+                    case SetScissorRectEntryID:
+                        NoAllocSetScissorRectEntry ssre = Unsafe.ReadUnaligned<NoAllocSetScissorRectEntry>(entryBasePtr);
+                        results.Add($"{i} SetScissorRect({ssre.Index}, {ssre.X}, {ssre.Y}, {ssre.Width}, {ssre.Height})");
+                        currentOffset += SetScissorRectEntrySize;
+                        break;
+                    case SetVertexBufferEntryID:
+                        NoAllocSetVertexBufferEntry svbe = Unsafe.ReadUnaligned<NoAllocSetVertexBufferEntry>(entryBasePtr);
+                        results.Add($"{i} SetVertexBuffer({svbe.Index}, {svbe.Buffer.Get(_resourceList)}, {svbe.Offset})");
+                        currentOffset += SetVertexBufferEntrySize;
+                        break;
+                    case SetViewportEntryID:
+                        NoAllocSetViewportEntry svpe = Unsafe.ReadUnaligned<NoAllocSetViewportEntry>(entryBasePtr);
+                        results.Add($"{i} SetViewport({svpe.Index}, {svpe.Viewport})");
+                        currentOffset += SetViewportEntrySize;
+                        break;
+                    case UpdateBufferEntryID:
+                        NoAllocUpdateBufferEntry ube = Unsafe.ReadUnaligned<NoAllocUpdateBufferEntry>(entryBasePtr);
+                        byte* dataPtr = (byte*)ube.StagingBlock.Data;
+                        results.Add($"{i} UpdateBuffer({ube.Buffer.Get(_resourceList)}, {ube.BufferOffsetInBytes}, {(IntPtr)dataPtr}, {ube.StagingBlockSize})");
+                        currentOffset += UpdateBufferEntrySize;
+                        break;
+                    case CopyBufferEntryID:
+                        NoAllocCopyBufferEntry cbe = Unsafe.ReadUnaligned<NoAllocCopyBufferEntry>(entryBasePtr);
+                        results.Add($"{i} CopyBuffer({cbe.Source.Get(_resourceList)}, {cbe.SourceOffset}, {cbe.Destination.Get(_resourceList)}, {cbe.DestinationOffset}, {cbe.SizeInBytes})");
+                        currentOffset += CopyBufferEntrySize;
+                        break;
+                    case CopyTextureEntryID:
+                        NoAllocCopyTextureEntry cte = Unsafe.ReadUnaligned<NoAllocCopyTextureEntry>(entryBasePtr);
+                        results.Add($"{i} CopyTexture({cte.Source.Get(_resourceList)}, " +
+                                    $"{cte.SrcX}, {cte.SrcY}, {cte.SrcZ}, {cte.SrcMipLevel}, {cte.SrcBaseArrayLayer}, " +
+                                    $"{cte.Destination.Get(_resourceList)}, {cte.DstX}, {cte.DstY}, {cte.DstZ}, " +
+                                    $"{cte.DstMipLevel}, {cte.DstBaseArrayLayer}, {cte.Width}, {cte.Height}, {cte.Depth}, {cte.LayerCount})");
+                        currentOffset += CopyTextureEntrySize;
+                        break;
+                    case ResolveTextureEntryID:
+                        NoAllocResolveTextureEntry rte = Unsafe.ReadUnaligned<NoAllocResolveTextureEntry>(entryBasePtr);
+                        results.Add($"{i} ResolveTexture({rte.Source.Get(_resourceList)}, {rte.Destination.Get(_resourceList)})");
+                        currentOffset += ResolveTextureEntrySize;
+                        break;
+                    case GenerateMipmapsEntryID:
+                        NoAllocGenerateMipmapsEntry gme = Unsafe.ReadUnaligned<NoAllocGenerateMipmapsEntry>(entryBasePtr);
+                        results.Add($"{i} GenerateMipmaps({gme.Texture.Get(_resourceList)})");
+                        currentOffset += GenerateMipmapsEntrySize;
+                        break;
+                    case PushDebugGroupEntryID:
+                        NoAllocPushDebugGroupEntry pdge = Unsafe.ReadUnaligned<NoAllocPushDebugGroupEntry>(entryBasePtr);
+                        results.Add($"{i} PushDebugGroup({pdge.Name.Get(_resourceList)})");
+                        currentOffset += PushDebugGroupEntrySize;
+                        break;
+                    case PopDebugGroupEntryID:
+                        results.Add($"{i} PopDebugGroup()");
+                        currentOffset += PopDebugGroupEntrySize;
+                        break;
+                    case InsertDebugMarkerEntryID:
+                        NoAllocInsertDebugMarkerEntry idme = Unsafe.ReadUnaligned<NoAllocInsertDebugMarkerEntry>(entryBasePtr);
+                        results.Add($"{i} InsertDebugMarker({idme.Name.Get(_resourceList)})");
+                        currentOffset += InsertDebugMarkerEntrySize;
+                        break;
+                    default:
+                        throw new InvalidOperationException("Invalid entry ID: " + id);
+                }
+            }
+
+            return results.ToArray();
+        }
+
         private struct EntryStorageBlock : IEquatable<EntryStorageBlock>
         {
             private const int DefaultStorageBlockSize = 40000;

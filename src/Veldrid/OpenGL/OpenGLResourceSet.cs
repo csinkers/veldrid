@@ -4,6 +4,7 @@
     {
         private bool _disposed;
 
+        public override string ToString() => $"GLResourceSet:{Name}";
         public new OpenGLResourceLayout Layout { get; }
         public new BindableResource[] Resources { get; }
         public override string Name { get; set; }

@@ -957,7 +957,10 @@ namespace Veldrid.OpenGLBinding
             GLboolean layered​,
             int layer​,
             TextureAccess access​,
-            SizedInternalFormat format​) => p_glBindImageTexture(unit, texture, level, layered, layer, access, format);
+            SizedInternalFormat format​)
+        {
+            p_glBindImageTexture(unit, texture, level, layered, layer, access, format);
+        }
 
         [UnmanagedFunctionPointer(CallConv)]
         private delegate void glMemoryBarrier_t(MemoryBarrierFlags barriers);

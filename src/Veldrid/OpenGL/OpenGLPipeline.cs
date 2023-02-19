@@ -330,6 +330,15 @@ namespace Veldrid.OpenGL
                         Debug.Assert(resource.Kind == ResourceKind.Sampler);
 
                         int[] relativeIndices = samplerTrackedRelativeTextureIndices.ToArray();
+#if VALIDATE_USAGE
+                        if (relativeIndices.Length == 0)
+                        {
+                            /*throw new VeldridException(
+                                "Resource set contained a sampler that would not be applied to any textures " +
+                                "(in the GL backend, samplers apply to any textures defined before them in the set)"); */
+                        }
+#endif
+
                         samplerTrackedRelativeTextureIndices.Clear();
                         samplerBindings[i] = new OpenGLSamplerBindingSlotInfo()
                         {

@@ -492,6 +492,10 @@ namespace Veldrid.Sdl2
         /// SDL_KEYDOWN or SDL_KEYUP
         /// </summary>
         public SDL_EventType type;
+
+        /// <summary>
+        /// In milliseconds, populated using SDL_GetTicks()
+        /// </summary>
         public uint timestamp;
         /// <summary>
         /// The Sdl2Window with keyboard focus, if any

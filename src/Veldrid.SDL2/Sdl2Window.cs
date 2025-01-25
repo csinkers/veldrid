@@ -666,7 +666,7 @@ namespace Veldrid.Sdl2
                 (ModifierKeys)keyboardEvent.keysym.mod);
 
             _privateSnapshot.KeyEvents.Add(keyEvent);
-            if (keyboardEvent.state == 1)
+            if (keyEvent.Down)
             {
                 KeyDown?.Invoke(keyEvent);
             }

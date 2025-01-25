@@ -1480,6 +1480,7 @@ namespace Veldrid
 
         /// <inheritdoc cref="InsertDebugMarkerCore"/>
         /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+        /// <param name="name">The text to use for the debug marker.</param>
         public void InsertDebugMarker(
             IFormatProvider? provider,
             [InterpolatedStringHandlerArgument("", "provider")] ref DebugMarkerInterpolatedStringHandler name)

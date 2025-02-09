@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Numerics;
 using System.Text;
+using TerraFX.Interop.Vulkan;
 using Valve.VR;
-using Veldrid.Vk;
+using Veldrid.Vulkan;
 using OVR = Valve.VR.OpenVR;
 
 namespace Veldrid.VirtualReality.OpenVR
@@ -35,18 +36,15 @@ namespace Veldrid.VirtualReality.OpenVR
         {
             _options = options;
             EVRInitError initError = EVRInitError.None;
-            _vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene);
-            if (initError != EVRInitError.None)
+            CVRSystem? vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene);
+            if (initError != EVRInitError.None || vrSystem == null)
             {
                 throw new VeldridException($"Failed to initialize OpenVR: {OVR.GetStringForHmdError(initError)}");
             }
+            _vrSystem = vrSystem;
 
-            _compositor = OVR.Compositor;
-            if (_compositor == null)
-            {
-                throw new VeldridException("Failed to access the OpenVR Compositor.");
-            }
-
+            _compositor = OVR.Compositor ?? throw new VeldridException("Failed to access the OpenVR Compositor.");
+            
             _mirrorTexture = new OpenVRMirrorTexture(this);
         }
 
@@ -66,7 +64,7 @@ namespace Veldrid.VirtualReality.OpenVR
         {
             _gd = gd;
 
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = new(512);
             ETrackedPropertyError error = ETrackedPropertyError.TrackedProp_Success;
             uint ret = _vrSystem.GetStringTrackedDeviceProperty(
                 OVR.k_unTrackedDeviceIndex_Hmd,
@@ -102,7 +100,7 @@ namespace Veldrid.VirtualReality.OpenVR
 
         public override (string[] instance, string[] device) GetRequiredVulkanExtensions()
         {
-            StringBuilder sb = new StringBuilder(1024);
+            StringBuilder sb = new(1024);
             uint ret = _compositor.GetVulkanInstanceExtensionsRequired(sb, 1024);
             string[] instance = sb.ToString().Split(' ');
             sb.Clear();
@@ -136,7 +134,7 @@ namespace Veldrid.VirtualReality.OpenVR
 
         public override void SubmitFrame()
         {
-            if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
+            if (_gd.GetOpenGLInfo(out BackendInfoOpenGL? glInfo))
             {
                 glInfo.FlushAndFinish();
             }
@@ -154,21 +152,21 @@ namespace Veldrid.VirtualReality.OpenVR
         {
             Texture_t texT;
 
-            if (_gd.GetD3D11Info(out BackendInfoD3D11 d3dInfo))
+            if (_gd.GetD3D11Info(out BackendInfoD3D11? d3dInfo))
             {
                 texT.eColorSpace = EColorSpace.Gamma;
                 texT.eType = ETextureType.DirectX;
                 texT.handle = d3dInfo.GetTexturePointer(colorTex);
             }
-            else if (_gd.GetOpenGLInfo(out BackendInfoOpenGL openglInfo))
+            else if (_gd.GetOpenGLInfo(out BackendInfoOpenGL? openglInfo))
             {
                 texT.eColorSpace = EColorSpace.Gamma;
                 texT.eType = ETextureType.OpenGL;
                 texT.handle = (IntPtr)openglInfo.GetTextureName(colorTex);
             }
-            else if (_gd.GetVulkanInfo(out BackendInfoVulkan vkInfo))
+            else if (_gd.GetVulkanInfo(out BackendInfoVulkan? vkInfo))
             {
-                vkInfo.TransitionImageLayout(colorTex, (uint)Vulkan.VkImageLayout.TransferSrcOptimal);
+                vkInfo.TransitionImageLayout(colorTex, (uint)VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
 
                 VRVulkanTextureData_t vkTexData;
                 vkTexData.m_nImage = vkInfo.GetVkImage(colorTex);
@@ -179,9 +177,7 @@ namespace Veldrid.VirtualReality.OpenVR
                 vkTexData.m_nQueueFamilyIndex = vkInfo.GraphicsQueueFamilyIndex;
                 vkTexData.m_nWidth = colorTex.Width;
                 vkTexData.m_nHeight = colorTex.Height;
-                vkTexData.m_nFormat = (uint)VkFormats.VdToVkPixelFormat(
-                    colorTex.Format,
-                    (colorTex.Usage & TextureUsage.DepthStencil) != 0);
+                vkTexData.m_nFormat = (uint)vkInfo.GetVkFormat(colorTex);
                 vkTexData.m_nSampleCount = GetSampleCount(colorTex.SampleCount);
 
                 texT.eColorSpace = EColorSpace.Gamma;
@@ -203,7 +199,7 @@ namespace Veldrid.VirtualReality.OpenVR
             boundsT.vMax = 1;
 
             EVRCompositorError compositorError = EVRCompositorError.None;
-            if (_gd.GetOpenGLInfo(out BackendInfoOpenGL glInfo))
+            if (_gd.GetOpenGLInfo(out BackendInfoOpenGL? glInfo))
             {
                 glInfo.ExecuteOnGLThread(() =>
                 {
@@ -274,17 +270,17 @@ namespace Veldrid.VirtualReality.OpenVR
 
         private static uint GetSampleCount(TextureSampleCount sampleCount)
         {
-            switch (sampleCount)
+            return sampleCount switch
             {
-                case TextureSampleCount.Count1: return 1;
-                case TextureSampleCount.Count2: return 2;
-                case TextureSampleCount.Count4: return 4;
-                case TextureSampleCount.Count8: return 8;
-                case TextureSampleCount.Count16: return 16;
-                case TextureSampleCount.Count32: return 32;
-                default:
-                    throw new InvalidOperationException();
-            }
+                TextureSampleCount.Count1 => 1,
+                TextureSampleCount.Count2 => 2,
+                TextureSampleCount.Count4 => 4,
+                TextureSampleCount.Count8 => 8,
+                TextureSampleCount.Count16 => 16,
+                TextureSampleCount.Count32 => 32,
+                TextureSampleCount.Count64 => 64,
+                _ => throw new InvalidOperationException(),
+            };
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace Veldrid
 {
     /// <summary>
     /// A platform-specific object representing a renderable surface.
-    /// A SwapchainSource can be created with one of several static factory methods.
-    /// A SwapchainSource is used to describe a Swapchain (see <see cref="SwapchainDescription"/>).
+    /// A <see cref="SwapchainSource"/> can be created with one of several static factory methods.
+    /// A <see cref="SwapchainSource"/> is used to describe a <see cref="Swapchain"/> (see <see cref="SwapchainDescription"/>).
     /// </summary>
     public abstract class SwapchainSource
     {
@@ -30,8 +31,13 @@ namespace Veldrid
         /// <param name="logicalDpi">The logical DPI of the swapchain panel.</param>
         /// <returns>A new SwapchainSource which can be used to create a <see cref="Swapchain"/> for the given UWP panel.
         /// </returns>
-        public static SwapchainSource CreateUwp(object swapChainPanel, float logicalDpi)
+        public static SwapchainSource CreateUwp(IntPtr swapChainPanel, float logicalDpi)
             => new UwpSwapchainSource(swapChainPanel, logicalDpi);
+
+        /// <inheritdoc cref="CreateUwp(IntPtr, float)"/>
+        [SupportedOSPlatform("windows")]
+        public static SwapchainSource CreateUwp(object swapChainPanel, float logicalDpi)
+            => new UwpSwapchainSource(Marshal.GetIUnknownForObject(swapChainPanel), logicalDpi);
 
         /// <summary>
         /// Creates a new SwapchainSource from the given Xlib information.
@@ -80,6 +86,15 @@ namespace Veldrid
             => new AndroidSurfaceSwapchainSource(surfaceHandle, jniEnv);
 
         /// <summary>
+        /// Creates a new SwapchainSource for the given Native Window.
+        /// </summary>
+        /// <param name="aNativeWindow">The handle of the Native Window.</param>
+        /// <returns>A new SwapchainSource which can be used to create a Vulkan <see cref="Swapchain"/> or an OpenGLES
+        /// <see cref="GraphicsDevice"/> for the given Native Window.</returns>
+        public static SwapchainSource CreateAndroidWindow(IntPtr aNativeWindow)
+            => new AndroidWindowSwapchainSource(aNativeWindow);
+
+        /// <summary>
         /// Creates a new SwapchainSource for the given NSView.
         /// </summary>
         /// <param name="nsView">A pointer to an NSView.</param>
@@ -89,7 +104,7 @@ namespace Veldrid
             => new NSViewSwapchainSource(nsView);
     }
 
-    internal class Win32SwapchainSource : SwapchainSource
+    internal sealed class Win32SwapchainSource : SwapchainSource
     {
         public IntPtr Hwnd { get; }
         public IntPtr Hinstance { get; }
@@ -101,19 +116,19 @@ namespace Veldrid
         }
     }
 
-    internal class UwpSwapchainSource : SwapchainSource
+    internal sealed class UwpSwapchainSource : SwapchainSource
     {
-        public object SwapChainPanelNative { get; }
+        public IntPtr SwapChainPanelNative { get; }
         public float LogicalDpi { get; }
 
-        public UwpSwapchainSource(object swapChainPanelNative, float logicalDpi)
+        public UwpSwapchainSource(IntPtr swapChainPanelNative, float logicalDpi)
         {
             SwapChainPanelNative = swapChainPanelNative;
             LogicalDpi = logicalDpi;
         }
     }
 
-    internal class XlibSwapchainSource : SwapchainSource
+    internal sealed class XlibSwapchainSource : SwapchainSource
     {
         public IntPtr Display { get; }
         public IntPtr Window { get; }
@@ -125,7 +140,7 @@ namespace Veldrid
         }
     }
 
-    internal class WaylandSwapchainSource : SwapchainSource
+    internal sealed class WaylandSwapchainSource : SwapchainSource
     {
         public IntPtr Display { get; }
         public IntPtr Surface { get; }
@@ -137,7 +152,7 @@ namespace Veldrid
         }
     }
 
-    internal class NSWindowSwapchainSource : SwapchainSource
+    internal sealed class NSWindowSwapchainSource : SwapchainSource
     {
         public IntPtr NSWindow { get; }
 
@@ -147,7 +162,7 @@ namespace Veldrid
         }
     }
 
-    internal class UIViewSwapchainSource : SwapchainSource
+    internal sealed class UIViewSwapchainSource : SwapchainSource
     {
         public IntPtr UIView { get; }
 
@@ -157,7 +172,7 @@ namespace Veldrid
         }
     }
 
-    internal class AndroidSurfaceSwapchainSource : SwapchainSource
+    internal sealed class AndroidSurfaceSwapchainSource : SwapchainSource
     {
         public IntPtr Surface { get; }
         public IntPtr JniEnv { get; }
@@ -169,7 +184,17 @@ namespace Veldrid
         }
     }
 
-    internal class NSViewSwapchainSource : SwapchainSource
+    internal sealed class AndroidWindowSwapchainSource : SwapchainSource
+    {
+        public IntPtr ANativeWindow { get; }
+
+        public AndroidWindowSwapchainSource(IntPtr aNativeWindow)
+        {
+            ANativeWindow = aNativeWindow;
+        }
+    }
+
+    internal sealed class NSViewSwapchainSource : SwapchainSource
     {
         public IntPtr NSView { get; }
 

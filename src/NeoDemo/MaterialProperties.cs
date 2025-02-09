@@ -1,15 +1,14 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Veldrid.NeoDemo
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct MaterialProperties
     {
         public Vector3 SpecularIntensity;
         public float SpecularPower;
-#pragma warning disable 0169
         private Vector3 _padding0;
-#pragma warning restore 0169
         public float Reflectivity;
     }
 }

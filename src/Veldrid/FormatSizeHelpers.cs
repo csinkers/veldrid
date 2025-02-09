@@ -1,17 +1,15 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Veldrid
 {
     public static class FormatSizeHelpers
     {
         /// <summary>
-        /// Given a pixel format, returns the number of bytes required to store
-        /// a single pixel.
-        /// Compressed formats may not be used with this method as the number of
-        /// bytes per pixel is variable.
+        /// Given a pixel format, returns the number of bytes required to store a single pixel.
         /// </summary>
-        /// <param name="format">An uncompressed pixel format</param>
-        /// <returns>The number of bytes required to store a single pixel in the given format</returns>
+        /// <param name="format">An uncompressed pixel format.</param>
+        /// <returns>The number of bytes required to store a single pixel in the given format.</returns>
         public static uint GetSizeInBytes(PixelFormat format)
         {
             switch (format)
@@ -31,7 +29,11 @@ namespace Veldrid
                 case PixelFormat.R8_G8_SNorm:
                 case PixelFormat.R8_G8_UInt:
                 case PixelFormat.R8_G8_SInt:
+                case PixelFormat.D16_UNorm:
                     return 2;
+
+                case PixelFormat.D16_UNorm_S8_UInt:
+                    return 3;
 
                 case PixelFormat.R32_UInt:
                 case PixelFormat.R32_SInt:
@@ -52,6 +54,7 @@ namespace Veldrid
                 case PixelFormat.R10_G10_B10_A2_UInt:
                 case PixelFormat.R11_G11_B10_Float:
                 case PixelFormat.D24_UNorm_S8_UInt:
+                case PixelFormat.D32_Float:
                     return 4;
 
                 case PixelFormat.D32_Float_S8_UInt:
@@ -90,8 +93,10 @@ namespace Veldrid
                 case PixelFormat.ETC2_R8_G8_B8_A1_UNorm:
                 case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
                     Debug.Fail("GetSizeInBytes should not be used on a compressed format.");
-                    throw Illegal.Value<PixelFormat>();
-                default: throw Illegal.Value<PixelFormat>();
+                    return Illegal.Value<PixelFormat, uint>();
+
+                default:
+                    return Illegal.Value<PixelFormat, uint>();
             }
         }
 
@@ -99,8 +104,9 @@ namespace Veldrid
         /// Given a vertex element format, returns the number of bytes required
         /// to store an element in that format.
         /// </summary>
-        /// <param name="format">A vertex element format</param>
-        /// <returns>The number of bytes required to store an element in the given format</returns>
+        /// <param name="format">A vertex element format.</param>
+        /// <returns>The number of bytes required to store an element in the given format.</returns>
+        [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
         public static uint GetSizeInBytes(VertexElementFormat format)
         {
             switch (format)
@@ -142,7 +148,7 @@ namespace Veldrid
                 case VertexElementFormat.Int4:
                     return 16;
                 default:
-                    throw Illegal.Value<VertexElementFormat>();
+                    return Illegal.Value<VertexElementFormat, uint>();
             }
         }
     }

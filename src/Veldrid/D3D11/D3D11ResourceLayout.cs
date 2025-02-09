@@ -1,9 +1,9 @@
 ﻿namespace Veldrid.D3D11
 {
-    internal class D3D11ResourceLayout : ResourceLayout
+    internal sealed class D3D11ResourceLayout : ResourceLayout
     {
         private readonly ResourceBindingInfo[] _bindingInfosByVdIndex;
-        private string _name;
+        private string? _name;
         private bool _disposed;
 
         public int UniformBufferCount { get; }
@@ -11,8 +11,8 @@
         public int TextureCount { get; }
         public int SamplerCount { get; }
 
-        public D3D11ResourceLayout(ref ResourceLayoutDescription description)
-            : base(ref description)
+        public D3D11ResourceLayout(in ResourceLayoutDescription description)
+            : base(description)
         {
             ResourceLayoutElementDescription[] elements = description.Elements;
             _bindingInfosByVdIndex = new ResourceBindingInfo[elements.Length];
@@ -24,29 +24,16 @@
 
             for (int i = 0; i < _bindingInfosByVdIndex.Length; i++)
             {
-                int slot;
-                switch (elements[i].Kind)
+                int slot = elements[i].Kind switch
                 {
-                    case ResourceKind.UniformBuffer:
-                        slot = cbIndex++;
-                        break;
-                    case ResourceKind.StructuredBufferReadOnly:
-                        slot = texIndex++;
-                        break;
-                    case ResourceKind.StructuredBufferReadWrite:
-                        slot = unorderedAccessIndex++;
-                        break;
-                    case ResourceKind.TextureReadOnly:
-                        slot = texIndex++;
-                        break;
-                    case ResourceKind.TextureReadWrite:
-                        slot = unorderedAccessIndex++;
-                        break;
-                    case ResourceKind.Sampler:
-                        slot = samplerIndex++;
-                        break;
-                    default: throw Illegal.Value<ResourceKind>();
-                }
+                    ResourceKind.UniformBuffer => cbIndex++,
+                    ResourceKind.StructuredBufferReadOnly => texIndex++,
+                    ResourceKind.StructuredBufferReadWrite => unorderedAccessIndex++,
+                    ResourceKind.TextureReadOnly => texIndex++,
+                    ResourceKind.TextureReadWrite => unorderedAccessIndex++,
+                    ResourceKind.Sampler => samplerIndex++,
+                    _ => Illegal.Value<ResourceKind, int>(),
+                };
 
                 _bindingInfosByVdIndex[i] = new ResourceBindingInfo(
                     slot,
@@ -65,15 +52,17 @@
         {
             if (resourceLayoutIndex >= _bindingInfosByVdIndex.Length)
             {
-                throw new VeldridException($"Invalid resource index: {resourceLayoutIndex}. Maximum is: {_bindingInfosByVdIndex.Length - 1}.");
+                void Throw()
+                {
+                    throw new VeldridException($"Invalid resource index: {resourceLayoutIndex}. Maximum is: {_bindingInfosByVdIndex.Length - 1}.");
+                }
+                Throw();
             }
 
             return _bindingInfosByVdIndex[resourceLayoutIndex];
         }
 
-        public bool IsDynamicBuffer(int index) => _bindingInfosByVdIndex[index].DynamicBuffer;
-
-        public override string Name
+        public override string? Name
         {
             get => _name;
             set => _name = value;
@@ -86,12 +75,12 @@
             _disposed = true;
         }
 
-        internal struct ResourceBindingInfo
+        internal readonly struct ResourceBindingInfo
         {
-            public int Slot;
-            public ShaderStages Stages;
-            public ResourceKind Kind;
-            public bool DynamicBuffer;
+            public readonly int Slot;
+            public readonly ShaderStages Stages;
+            public readonly ResourceKind Kind;
+            public readonly bool DynamicBuffer;
 
             public ResourceBindingInfo(int slot, ShaderStages stages, ResourceKind kind, bool dynamicBuffer)
             {

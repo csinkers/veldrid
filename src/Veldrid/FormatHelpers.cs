@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Veldrid
 {
     internal static class FormatHelpers
     {
+        [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
         public static int GetElementCount(VertexElementFormat format)
         {
             switch (format)
@@ -45,42 +47,75 @@ namespace Veldrid
                 case VertexElementFormat.Half4:
                     return 4;
                 default:
-                    throw Illegal.Value<VertexElementFormat>();
+                    return Illegal.Value<VertexElementFormat, int>();
             }
         }
 
         internal static uint GetSampleCountUInt32(TextureSampleCount sampleCount)
         {
-            switch (sampleCount)
+            return sampleCount switch
             {
-                case TextureSampleCount.Count1:
-                    return 1;
-                case TextureSampleCount.Count2:
-                    return 2;
-                case TextureSampleCount.Count4:
-                    return 4;
-                case TextureSampleCount.Count8:
-                    return 8;
-                case TextureSampleCount.Count16:
-                    return 16;
-                case TextureSampleCount.Count32:
-                    return 32;
-                default:
-                    throw Illegal.Value<TextureSampleCount>();
-            }
+                TextureSampleCount.Count1 => 1,
+                TextureSampleCount.Count2 => 2,
+                TextureSampleCount.Count4 => 4,
+                TextureSampleCount.Count8 => 8,
+                TextureSampleCount.Count16 => 16,
+                TextureSampleCount.Count32 => 32,
+                TextureSampleCount.Count64 => 64,
+                _ => Illegal.Value<TextureSampleCount, uint>(),
+            };
+        }
+
+        internal static bool IsExactStencilFormat(PixelFormat format)
+        {
+            return format == PixelFormat.D16_UNorm_S8_UInt
+                || format == PixelFormat.D24_UNorm_S8_UInt
+                || format == PixelFormat.D32_Float_S8_UInt;
         }
 
         internal static bool IsStencilFormat(PixelFormat format)
         {
-            return format == PixelFormat.D24_UNorm_S8_UInt || format == PixelFormat.D32_Float_S8_UInt;
+            return IsExactStencilFormat(format);
+        }
+
+        internal static bool IsExactDepthFormat(PixelFormat format)
+        {
+            return format == PixelFormat.D16_UNorm
+                || format == PixelFormat.D32_Float;
+        }
+
+        internal static bool IsDepthFormat(PixelFormat format)
+        {
+            return format == PixelFormat.R16_UNorm
+                || format == PixelFormat.R32_Float
+                || IsExactDepthFormat(format);
+        }
+
+        internal static bool IsExactDepthStencilFormat(PixelFormat format)
+        {
+            return IsExactDepthFormat(format) || IsExactStencilFormat(format);
         }
 
         internal static bool IsDepthStencilFormat(PixelFormat format)
         {
-            return format == PixelFormat.D32_Float_S8_UInt
-                || format == PixelFormat.D24_UNorm_S8_UInt
-                || format == PixelFormat.R16_UNorm
-                || format == PixelFormat.R32_Float;
+            return IsDepthFormat(format) || IsStencilFormat(format);
+        }
+
+        internal static bool IsDepthFormatPreferred(PixelFormat format, TextureUsage usage)
+        {
+            if ((usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil)
+            {
+                return true;
+            }
+
+            // TODO: could this still be useful?
+            //       maybe instead of forcing a depth format, it could be used for asserts?
+            // if ((usage & TextureUsage.Staging) == TextureUsage.Staging && IsDepthStencilFormat(format))
+            // {
+            //     return true;
+            // }
+
+            return false;
         }
 
         internal static bool IsCompressedFormat(PixelFormat format)
@@ -125,8 +160,8 @@ namespace Veldrid
                 case PixelFormat.ETC2_R8_G8_B8_UNorm:
                 case PixelFormat.ETC2_R8_G8_B8_A1_UNorm:
                 case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
-                    var blocksPerRow = (width + 3) / 4;
-                    var blockSizeInBytes = GetBlockSizeInBytes(format);
+                    uint blocksPerRow = (width + 3) / 4;
+                    uint blockSizeInBytes = GetBlockSizeInBytes(format);
                     return blocksPerRow * blockSizeInBytes;
 
                 default:
@@ -134,6 +169,7 @@ namespace Veldrid
             }
         }
 
+        [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
         public static uint GetBlockSizeInBytes(PixelFormat format)
         {
             switch (format)
@@ -158,7 +194,7 @@ namespace Veldrid
                 case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
                     return 16;
                 default:
-                    throw Illegal.Value<PixelFormat>();
+                    return Illegal.Value<PixelFormat, uint>();
             }
         }
 
@@ -179,6 +215,7 @@ namespace Veldrid
             throw new NotImplementedException();
         }
 
+        [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
         internal static uint GetNumRows(uint height, PixelFormat format)
         {
             switch (format)
@@ -232,18 +269,25 @@ namespace Veldrid
 
         internal static TextureSampleCount GetSampleCount(uint samples)
         {
-            switch (samples)
+            return samples switch
             {
-                case 1: return TextureSampleCount.Count1;
-                case 2: return TextureSampleCount.Count2;
-                case 4: return TextureSampleCount.Count4;
-                case 8: return TextureSampleCount.Count8;
-                case 16: return TextureSampleCount.Count16;
-                case 32: return TextureSampleCount.Count32;
-                default: throw new VeldridException("Unsupported multisample count: " + samples);
+                1 => TextureSampleCount.Count1,
+                2 => TextureSampleCount.Count2,
+                4 => TextureSampleCount.Count4,
+                8 => TextureSampleCount.Count8,
+                16 => TextureSampleCount.Count16,
+                32 => TextureSampleCount.Count32,
+                64 => TextureSampleCount.Count64,
+                _ => Throw(),
+            };
+
+            TextureSampleCount Throw()
+            {
+                throw new VeldridException("Unsupported multisample count: " + samples);
             }
         }
 
+        [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
         internal static PixelFormat GetViewFamilyFormat(PixelFormat format)
         {
             switch (format)

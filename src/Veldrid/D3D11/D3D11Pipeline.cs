@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Vortice.Direct3D11;
 
 namespace Veldrid.D3D11;

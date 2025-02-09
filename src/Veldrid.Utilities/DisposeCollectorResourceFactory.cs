@@ -1,5 +1,3 @@
-using System;
-
 namespace Veldrid.Utilities;
 
 public class DisposeCollectorResourceFactory(

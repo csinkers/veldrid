@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Numerics;
-using Veldrid.Sdl2;
 
 namespace Veldrid.NeoDemo;
 

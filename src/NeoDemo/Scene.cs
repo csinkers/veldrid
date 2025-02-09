@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using ImGuiNET;
 using Veldrid.NeoDemo.Objects;
 using Veldrid.Sdl2;
 using Veldrid.Utilities;

@@ -3,7 +3,6 @@ using System.Numerics;
 using System.Text;
 using TerraFX.Interop.Vulkan;
 using Valve.VR;
-using Veldrid.Vulkan;
 using OVR = Valve.VR.OpenVR;
 
 namespace Veldrid.VirtualReality.OpenVR;

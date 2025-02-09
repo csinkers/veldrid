@@ -3,15 +3,11 @@ using Veldrid.MetalBindings;
 
 namespace Veldrid.MTL;
 
-internal sealed class MTLFramebuffer : MTLFramebufferBase
+internal sealed class MTLFramebuffer(MTLGraphicsDevice gd, in FramebufferDescription description)
+    : MTLFramebufferBase(gd, description)
 {
     public override bool IsRenderable => true;
     bool _disposed;
-
-    public MTLFramebuffer(MTLGraphicsDevice gd, in FramebufferDescription description)
-        : base(gd, description)
-    {
-    }
 
     public override MTLRenderPassDescriptor CreateRenderPassDescriptor()
     {

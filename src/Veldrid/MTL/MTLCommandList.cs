@@ -4,9 +4,9 @@ using Veldrid.MetalBindings;
 
 namespace Veldrid.MTL;
 
-internal sealed unsafe class MTLCommandList : CommandList
+internal sealed unsafe class MTLCommandList(in CommandListDescription description, MTLGraphicsDevice gd)
+    : CommandList(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
 {
-    readonly MTLGraphicsDevice _gd;
     MTLCommandBuffer _cb;
     MTLFramebufferBase? _mtlFramebuffer;
     uint _viewportCount;
@@ -42,12 +42,6 @@ internal sealed unsafe class MTLCommandList : CommandList
 
     public MTLCommandBuffer CommandBuffer => _cb;
 
-    public MTLCommandList(in CommandListDescription description, MTLGraphicsDevice gd)
-        : base(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
-    {
-        _gd = gd;
-    }
-
     public override string? Name { get; set; }
 
     public override bool IsDisposed => _disposed;
@@ -69,7 +63,7 @@ internal sealed unsafe class MTLCommandList : CommandList
 
         using (NSAutoreleasePool.Begin())
         {
-            _cb = _gd.CommandQueue.commandBuffer();
+            _cb = gd.CommandQueue.commandBuffer();
             ObjectiveCRuntime.retain(_cb.NativePtr);
         }
 
@@ -217,7 +211,7 @@ internal sealed unsafe class MTLCommandList : CommandList
 
     void FlushViewports()
     {
-        if (_gd.MetalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3))
+        if (gd.MetalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3))
         {
             fixed (MTLViewport* viewportsPtr = &_viewports[0])
             {
@@ -232,7 +226,7 @@ internal sealed unsafe class MTLCommandList : CommandList
 
     void FlushScissorRects()
     {
-        if (_gd.MetalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3))
+        if (gd.MetalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3))
         {
             fixed (MTLScissorRect* scissorRectsPtr = &_scissorRects[0])
             {
@@ -336,9 +330,9 @@ internal sealed unsafe class MTLCommandList : CommandList
 
         // TODO: Cache these, and rely on the command buffer's completion callback to add them back to a shared pool.
         using MTLBuffer copySrc = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(
-            _gd.ResourceFactory.CreateBuffer(new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)));
+            gd.ResourceFactory.CreateBuffer(new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)));
 
-        _gd.UpdateBuffer(copySrc, 0, source, sizeInBytes);
+        gd.UpdateBuffer(copySrc, 0, source, sizeInBytes);
 
         if (useComputeCopy)
         {
@@ -403,7 +397,7 @@ internal sealed unsafe class MTLCommandList : CommandList
     {
         // Unaligned copy -- use special compute shader.
         EnsureComputeEncoder();
-        _cce.setComputePipelineState(_gd.GetUnalignedBufferCopyPipeline());
+        _cce.setComputePipelineState(gd.GetUnalignedBufferCopyPipeline());
         _cce.setBuffer(mtlSrc.DeviceBuffer, UIntPtr.Zero, 0);
         _cce.setBuffer(mtlDst.DeviceBuffer, UIntPtr.Zero, 1);
 
@@ -780,12 +774,12 @@ internal sealed unsafe class MTLCommandList : CommandList
                     break;
                 }
                 case ResourceKind.TextureReadOnly:
-                    TextureView texView = Util.GetTextureView(_gd, resource);
+                    TextureView texView = Util.GetTextureView(gd, resource);
                     MTLTextureView mtlTexView = Util.AssertSubtype<TextureView, MTLTextureView>(texView);
                     BindTexture(mtlTexView, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
                 case ResourceKind.TextureReadWrite:
-                    TextureView texViewRW = Util.GetTextureView(_gd, resource);
+                    TextureView texViewRW = Util.GetTextureView(gd, resource);
                     MTLTextureView mtlTexViewRW = Util.AssertSubtype<TextureView, MTLTextureView>(texViewRW);
                     BindTexture(mtlTexViewRW, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
@@ -839,12 +833,12 @@ internal sealed unsafe class MTLCommandList : CommandList
                     break;
                 }
                 case ResourceKind.TextureReadOnly:
-                    TextureView texView = Util.GetTextureView(_gd, resource);
+                    TextureView texView = Util.GetTextureView(gd, resource);
                     MTLTextureView mtlTexView = Util.AssertSubtype<TextureView, MTLTextureView>(texView);
                     BindTexture(mtlTexView, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
                 case ResourceKind.TextureReadWrite:
-                    TextureView texViewRW = Util.GetTextureView(_gd, resource);
+                    TextureView texViewRW = Util.GetTextureView(gd, resource);
                     MTLTextureView mtlTexViewRW = Util.AssertSubtype<TextureView, MTLTextureView>(texViewRW);
                     BindTexture(mtlTexViewRW, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;

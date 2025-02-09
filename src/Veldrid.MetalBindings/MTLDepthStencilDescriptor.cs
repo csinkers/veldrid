@@ -3,10 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLDepthStencilDescriptor
+public readonly struct MTLDepthStencilDescriptor(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-    public MTLDepthStencilDescriptor(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public MTLCompareFunction depthCompareFunction
     {

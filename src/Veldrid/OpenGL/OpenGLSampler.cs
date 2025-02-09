@@ -4,12 +4,12 @@ using Veldrid.OpenGLBinding;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLSampler : Sampler, OpenGLDeferredResource
+internal sealed unsafe class OpenGLSampler(OpenGLGraphicsDevice gd, in SamplerDescription description)
+    : Sampler, OpenGLDeferredResource
 {
-    readonly OpenGLGraphicsDevice _gd;
-    readonly SamplerDescription _description;
-    InternalSamplerState _noMipmapState;
-    InternalSamplerState _mipmapState;
+    readonly SamplerDescription _description = description;
+    InternalSamplerState _noMipmapState = new();
+    InternalSamplerState _mipmapState = new();
     bool _disposeRequested;
 
     string? _name;
@@ -22,15 +22,6 @@ internal sealed unsafe class OpenGLSampler : Sampler, OpenGLDeferredResource
     public uint NoMipmapSampler => _noMipmapState.Sampler;
     public uint MipmapSampler => _mipmapState.Sampler;
 
-    public OpenGLSampler(OpenGLGraphicsDevice gd, in SamplerDescription description)
-    {
-        _gd = gd;
-        _description = description;
-
-        _mipmapState = new InternalSamplerState();
-        _noMipmapState = new InternalSamplerState();
-    }
-
     public bool Created { get; private set; }
 
     public void EnsureResourcesCreated()
@@ -42,7 +33,7 @@ internal sealed unsafe class OpenGLSampler : Sampler, OpenGLDeferredResource
         if (_nameChanged)
         {
             _nameChanged = false;
-            if (_gd.Extensions.KHR_Debug)
+            if (gd.Extensions.KHR_Debug)
             {
                 SetObjectLabel(ObjectLabelIdentifier.Sampler, _noMipmapState.Sampler, $"{_name}_WithoutMipmap");
                 SetObjectLabel(ObjectLabelIdentifier.Sampler, _mipmapState.Sampler, $"{_name}_WithMipmap");
@@ -52,7 +43,7 @@ internal sealed unsafe class OpenGLSampler : Sampler, OpenGLDeferredResource
 
     void CreateGLResources()
     {
-        GraphicsBackend backendType = _gd.BackendType;
+        GraphicsBackend backendType = gd.BackendType;
         _noMipmapState.CreateGLResources(_description, false, backendType);
         _mipmapState.CreateGLResources(_description, true, backendType);
         Created = true;
@@ -63,7 +54,7 @@ internal sealed unsafe class OpenGLSampler : Sampler, OpenGLDeferredResource
         if (!_disposeRequested)
         {
             _disposeRequested = true;
-            _gd.EnqueueDisposal(this);
+            gd.EnqueueDisposal(this);
         }
     }
 

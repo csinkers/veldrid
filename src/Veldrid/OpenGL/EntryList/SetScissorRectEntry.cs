@@ -1,19 +1,10 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct SetScissorRectEntry
+internal struct SetScissorRectEntry(uint index, uint x, uint y, uint width, uint height)
 {
-    public readonly uint Index;
-    public readonly uint X;
-    public readonly uint Y;
-    public readonly uint Width;
-    public readonly uint Height;
-
-    public SetScissorRectEntry(uint index, uint x, uint y, uint width, uint height)
-    {
-        Index = index;
-        X = x;
-        Y = y;
-        Width = width;
-        Height = height;
-    }
+    public readonly uint Index = index;
+    public readonly uint X = x;
+    public readonly uint Y = y;
+    public readonly uint Width = width;
+    public readonly uint Height = height;
 }

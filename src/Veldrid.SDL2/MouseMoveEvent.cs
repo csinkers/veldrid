@@ -2,18 +2,10 @@
 
 namespace Veldrid.Sdl2;
 
-public readonly struct MouseMoveEvent
+public readonly struct MouseMoveEvent(uint timestamp, uint windowId, Vector2 mousePosition, Vector2 delta)
 {
-    public uint Timestamp { get; }
-    public uint WindowID { get; }
-    public Vector2 MousePosition { get; }
-    public Vector2 Delta { get; }
-
-    public MouseMoveEvent(uint timestamp, uint windowID, Vector2 mousePosition, Vector2 delta)
-    {
-        Timestamp = timestamp;
-        WindowID = windowID;
-        MousePosition = mousePosition;
-        Delta = delta;
-    }
+    public uint Timestamp { get; } = timestamp;
+    public uint WindowID { get; } = windowId;
+    public Vector2 MousePosition { get; } = mousePosition;
+    public Vector2 Delta { get; } = delta;
 }

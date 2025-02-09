@@ -1,17 +1,9 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct DrawIndirectEntry
+internal struct DrawIndirectEntry(Tracked<DeviceBuffer> indirectBuffer, uint offset, uint drawCount, uint stride)
 {
-    public Tracked<DeviceBuffer> IndirectBuffer;
-    public uint Offset;
-    public uint DrawCount;
-    public uint Stride;
-
-    public DrawIndirectEntry(Tracked<DeviceBuffer> indirectBuffer, uint offset, uint drawCount, uint stride)
-    {
-        IndirectBuffer = indirectBuffer;
-        Offset = offset;
-        DrawCount = drawCount;
-        Stride = stride;
-    }
+    public Tracked<DeviceBuffer> IndirectBuffer = indirectBuffer;
+    public uint Offset = offset;
+    public uint DrawCount = drawCount;
+    public uint Stride = stride;
 }

@@ -1527,22 +1527,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         new FormatProps(PixelFormat.R11_G11_B10_Float, 11, 11, 10, 0)
     ];
 
-    struct FormatProps
+    struct FormatProps(PixelFormat format, int redBits, int blueBits, int greenBits, int alphaBits)
     {
-        public readonly PixelFormat Format;
-        public readonly int RedBits;
-        public readonly int BlueBits;
-        public readonly int GreenBits;
-        public readonly int AlphaBits;
-
-        public FormatProps(PixelFormat format, int redBits, int blueBits, int greenBits, int alphaBits)
-        {
-            Format = format;
-            RedBits = redBits;
-            BlueBits = blueBits;
-            GreenBits = greenBits;
-            AlphaBits = alphaBits;
-        }
+        public readonly PixelFormat Format = format;
+        public readonly int RedBits = redBits;
+        public readonly int BlueBits = blueBits;
+        public readonly int GreenBits = greenBits;
+        public readonly int AlphaBits = alphaBits;
     }
 }
 

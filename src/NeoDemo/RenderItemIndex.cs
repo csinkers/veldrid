@@ -2,16 +2,10 @@
 
 namespace Veldrid.NeoDemo;
 
-public struct RenderItemIndex : IComparable<RenderItemIndex>
+public struct RenderItemIndex(RenderOrderKey key, int itemIndex) : IComparable<RenderItemIndex>
 {
-    public RenderOrderKey Key { get; }
-    public int ItemIndex { get; }
-
-    public RenderItemIndex(RenderOrderKey key, int itemIndex)
-    {
-        Key = key;
-        ItemIndex = itemIndex;
-    }
+    public RenderOrderKey Key { get; } = key;
+    public int ItemIndex { get; } = itemIndex;
 
     public int CompareTo(RenderItemIndex other)
     {

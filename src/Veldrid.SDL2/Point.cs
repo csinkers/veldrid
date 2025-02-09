@@ -4,16 +4,10 @@ using System.Diagnostics;
 namespace Veldrid;
 
 [DebuggerDisplay("{DebuggerDisplayString,nq}")]
-public struct Point : IEquatable<Point>
+public struct Point(int x, int y) : IEquatable<Point>
 {
-    public int X;
-    public int Y;
-
-    public Point(int x, int y)
-    {
-        X = x;
-        Y = y;
-    }
+    public int X = x;
+    public int Y = y;
 
     public readonly bool Equals(Point other) => X.Equals(other.X) && Y.Equals(other.Y);
     public readonly override bool Equals(object? obj) => obj is Point p && Equals(p);

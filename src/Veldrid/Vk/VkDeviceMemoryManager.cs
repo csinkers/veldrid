@@ -14,27 +14,17 @@ using VulkanBuffer = TerraFX.Interop.Vulkan.VkBuffer;
 
 namespace Veldrid.Vulkan;
 
-internal sealed unsafe class VkDeviceMemoryManager : IDisposable
+internal sealed unsafe class VkDeviceMemoryManager(
+    VkDevice device,
+    VkPhysicalDevice physicalDevice,
+    ulong bufferImageGranularity,
+    ulong chunkGranularity)
+    : IDisposable
 {
-    readonly VkDevice _device;
-    readonly VkPhysicalDevice _physicalDevice;
-    readonly ulong _bufferImageGranularity;
-    readonly ulong _chunkGranularity;
+    readonly VkPhysicalDevice _physicalDevice = physicalDevice;
     readonly object _allocatorMutex = new();
     readonly Dictionary<uint, ChunkAllocatorSet> _allocatorsByMemoryTypeUnmapped = new();
     readonly Dictionary<uint, ChunkAllocatorSet> _allocatorsByMemoryType = new();
-
-    public VkDeviceMemoryManager(
-        VkDevice device,
-        VkPhysicalDevice physicalDevice,
-        ulong bufferImageGranularity,
-        ulong chunkGranularity)
-    {
-        _device = device;
-        _physicalDevice = physicalDevice;
-        _bufferImageGranularity = bufferImageGranularity;
-        _chunkGranularity = chunkGranularity;
-    }
 
     public VkMemoryBlock Allocate(
         VkPhysicalDeviceMemoryProperties memProperties,
@@ -76,7 +66,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
             ? ChunkAllocator.PersistentMappedChunkSize
             : ChunkAllocator.UnmappedChunkSize;
 
-        ulong alignedSize = ((size + _chunkGranularity - 1) / _chunkGranularity) * _chunkGranularity;
+        ulong alignedSize = ((size + chunkGranularity - 1) / chunkGranularity) * chunkGranularity;
 
         if (dedicated || alignedSize >= minDedicatedAllocationSize)
         {
@@ -84,7 +74,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
             if (dedicatedImage == VkImage.NULL && dedicatedBuffer == VulkanBuffer.NULL)
             {
                 // Round up to the nearest multiple of bufferImageGranularity.
-                dedicatedSize = ((alignedSize + _bufferImageGranularity - 1) / _bufferImageGranularity) * _bufferImageGranularity;
+                dedicatedSize = ((alignedSize + bufferImageGranularity - 1) / bufferImageGranularity) * bufferImageGranularity;
             }
             else
             {
@@ -112,7 +102,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
             }
 
             VkDeviceMemory memory;
-            VkResult allocationResult = vkAllocateMemory(_device, &allocateInfo, null, &memory);
+            VkResult allocationResult = vkAllocateMemory(device, &allocateInfo, null, &memory);
             if (allocationResult != VkResult.VK_SUCCESS)
             {
                 throw new VeldridException("Unable to allocate sufficient Vulkan memory.");
@@ -121,7 +111,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
             void* mappedPtr = null;
             if (persistentMapped)
             {
-                VkResult mapResult = vkMapMemory(_device, memory, 0, dedicatedSize, 0, &mappedPtr);
+                VkResult mapResult = vkMapMemory(device, memory, 0, dedicatedSize, 0, &mappedPtr);
                 if (mapResult != VkResult.VK_SUCCESS)
                 {
                     throw new VeldridException("Unable to map newly-allocated Vulkan memory.");
@@ -147,7 +137,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
     {
         if (block.DedicatedAllocation)
         {
-            vkFreeMemory(_device, block.DeviceMemory, null);
+            vkFreeMemory(device, block.DeviceMemory, null);
         }
         else
         {
@@ -165,7 +155,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
             {
                 if (!_allocatorsByMemoryType.TryGetValue(memoryTypeIndex, out ret))
                 {
-                    ret = new ChunkAllocatorSet(_device, memoryTypeIndex, true);
+                    ret = new ChunkAllocatorSet(device, memoryTypeIndex, true);
                     _allocatorsByMemoryType.Add(memoryTypeIndex, ret);
                 }
             }
@@ -173,7 +163,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
             {
                 if (!_allocatorsByMemoryTypeUnmapped.TryGetValue(memoryTypeIndex, out ret))
                 {
-                    ret = new ChunkAllocatorSet(_device, memoryTypeIndex, false);
+                    ret = new ChunkAllocatorSet(device, memoryTypeIndex, false);
                     _allocatorsByMemoryTypeUnmapped.Add(memoryTypeIndex, ret);
                 }
             }
@@ -182,20 +172,11 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
         }
     }
 
-    sealed class ChunkAllocatorSet : IDisposable
+    sealed class ChunkAllocatorSet(VkDevice device, uint memoryTypeIndex, bool persistentMapped)
+        : IDisposable
     {
-        readonly VkDevice _device;
-        readonly uint _memoryTypeIndex;
-        readonly bool _persistentMapped;
         readonly object _mutex = new();
         readonly List<ChunkAllocator> _allocators = [];
-
-        public ChunkAllocatorSet(VkDevice device, uint memoryTypeIndex, bool persistentMapped)
-        {
-            _device = device;
-            _memoryTypeIndex = memoryTypeIndex;
-            _persistentMapped = persistentMapped;
-        }
 
         public bool Allocate(uint size, uint alignment, out VkMemoryBlock block)
         {
@@ -211,7 +192,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
                     }
                 }
 
-                ChunkAllocator newAllocator = new(_device, _memoryTypeIndex, _persistentMapped);
+                ChunkAllocator newAllocator = new(device, memoryTypeIndex, persistentMapped);
                 allocators.Add(newAllocator);
                 return newAllocator.Allocate(size, alignment, out block);
             }

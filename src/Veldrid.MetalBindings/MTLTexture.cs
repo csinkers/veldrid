@@ -5,11 +5,9 @@ using System.Runtime.InteropServices;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly unsafe struct MTLTexture
+public readonly unsafe struct MTLTexture(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public MTLTexture(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public bool IsNull => NativePtr == IntPtr.Zero;
 

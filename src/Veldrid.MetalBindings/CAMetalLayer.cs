@@ -3,11 +3,9 @@ using System;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct CAMetalLayer
+public readonly struct CAMetalLayer(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public CAMetalLayer(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public static CAMetalLayer New() => s_class.AllocInit<CAMetalLayer>();
 

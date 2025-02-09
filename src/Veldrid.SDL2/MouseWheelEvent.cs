@@ -2,16 +2,9 @@
 
 namespace Veldrid.Sdl2;
 
-public readonly struct MouseWheelEvent
+public readonly struct MouseWheelEvent(uint timestamp, uint windowId, Vector2 wheelDelta)
 {
-    public uint Timestamp { get; }
-    public uint WindowID { get; }
-    public Vector2 WheelDelta { get; }
-
-    public MouseWheelEvent(uint timestamp, uint windowID, Vector2 wheelDelta)
-    {
-        Timestamp = timestamp;
-        WindowID = windowID;
-        WheelDelta = wheelDelta;
-    }
+    public uint Timestamp { get; } = timestamp;
+    public uint WindowID { get; } = windowId;
+    public Vector2 WheelDelta { get; } = wheelDelta;
 }

@@ -11,21 +11,15 @@ using System.Threading;
 namespace Veldrid.Vulkan;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}} ({{{nameof(_target)},nq}})")]
-internal sealed class ResourceRefCount
+internal sealed class ResourceRefCount(IResourceRefCountTarget target)
 {
-    readonly IResourceRefCountTarget _target;
+    readonly IResourceRefCountTarget _target = target;
 
     /// <summary>Combined ref count and closed/disposed flags (so we can atomically modify them).</summary>
-    volatile int _state;
+    volatile int _state = StateBits.RefCountOne; // Ref count 1 and not closed or disposed.
 
     public bool IsClosed => (_state & StateBits.Closed) == StateBits.Closed;
     public bool IsDisposed => (_state & StateBits.Disposed) == StateBits.Disposed;
-
-    public ResourceRefCount(IResourceRefCountTarget target)
-    {
-        _target = target;
-        _state = StateBits.RefCountOne; // Ref count 1 and not closed or disposed.
-    }
 
     public void Increment()
     {

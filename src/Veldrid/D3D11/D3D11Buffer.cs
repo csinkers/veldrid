@@ -190,16 +190,10 @@ internal sealed class D3D11Buffer : DeviceBuffer
         }
     }
 
-    struct OffsetSizePair : IEquatable<OffsetSizePair>
+    struct OffsetSizePair(uint offset, uint size) : IEquatable<OffsetSizePair>
     {
-        public readonly uint Offset;
-        public readonly uint Size;
-
-        public OffsetSizePair(uint offset, uint size)
-        {
-            Offset = offset;
-            Size = size;
-        }
+        public readonly uint Offset = offset;
+        public readonly uint Size = size;
 
         public bool Equals(OffsetSizePair other) => Offset.Equals(other.Offset) && Size.Equals(other.Size);
         public override int GetHashCode() => HashHelper.Combine(Offset.GetHashCode(), Size.GetHashCode());

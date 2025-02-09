@@ -1517,20 +1517,16 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         return false;
     }
 
-    struct FenceSubmissionInfo
+    struct FenceSubmissionInfo(
+        VulkanFence fence,
+        VkCommandList commandList,
+        VkCommandBuffer commandBuffer,
+        bool isPooled)
     {
-        public VulkanFence Fence;
-        public VkCommandList CommandList;
-        public VkCommandBuffer CommandBuffer;
-        public bool IsPooled;
-
-        public FenceSubmissionInfo(VulkanFence fence, VkCommandList commandList, VkCommandBuffer commandBuffer, bool isPooled)
-        {
-            Fence = fence;
-            CommandList = commandList;
-            CommandBuffer = commandBuffer;
-            IsPooled = isPooled;
-        }
+        public VulkanFence Fence = fence;
+        public VkCommandList CommandList = commandList;
+        public VkCommandBuffer CommandBuffer = commandBuffer;
+        public bool IsPooled = isPooled;
     }
 }
 

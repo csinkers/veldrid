@@ -5,11 +5,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct MTLRenderCommandEncoder
+public readonly struct MTLRenderCommandEncoder(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public MTLRenderCommandEncoder(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public bool IsNull => NativePtr == IntPtr.Zero;
 

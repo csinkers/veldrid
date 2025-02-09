@@ -1378,20 +1378,13 @@ internal sealed class D3D11CommandList : CommandList
         public uint ResourceSet;
     }
 
-    readonly struct D3D11BufferRange : IEquatable<D3D11BufferRange>
+    readonly struct D3D11BufferRange(D3D11Buffer buffer, uint offset, uint size) : IEquatable<D3D11BufferRange>
     {
-        public readonly D3D11Buffer Buffer;
-        public readonly uint Offset;
-        public readonly uint Size;
+        public readonly D3D11Buffer Buffer = buffer;
+        public readonly uint Offset = offset;
+        public readonly uint Size = size;
 
         public bool IsFullRange => Offset == 0 && Size == Buffer.SizeInBytes;
-
-        public D3D11BufferRange(D3D11Buffer buffer, uint offset, uint size)
-        {
-            Buffer = buffer;
-            Offset = offset;
-            Size = size;
-        }
 
         public bool Equals(D3D11BufferRange other)
         {

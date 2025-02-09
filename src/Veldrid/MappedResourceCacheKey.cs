@@ -2,16 +2,11 @@
 
 namespace Veldrid;
 
-internal readonly struct MappedResourceCacheKey : IEquatable<MappedResourceCacheKey>
+internal readonly struct MappedResourceCacheKey(MappableResource resource, uint subresource)
+    : IEquatable<MappedResourceCacheKey>
 {
-    public readonly MappableResource Resource;
-    public readonly uint Subresource;
-
-    public MappedResourceCacheKey(MappableResource resource, uint subresource)
-    {
-        Resource = resource ?? throw new ArgumentNullException(nameof(resource));
-        Subresource = subresource;
-    }
+    public readonly MappableResource Resource = resource ?? throw new ArgumentNullException(nameof(resource));
+    public readonly uint Subresource = subresource;
 
     public bool Equals(MappedResourceCacheKey other)
     {

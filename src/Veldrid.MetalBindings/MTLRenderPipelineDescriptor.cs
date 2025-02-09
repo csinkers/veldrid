@@ -5,11 +5,9 @@ using System.Runtime.InteropServices;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct MTLRenderPipelineDescriptor
+public readonly struct MTLRenderPipelineDescriptor(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public MTLRenderPipelineDescriptor(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public static MTLRenderPipelineDescriptor New()
     {

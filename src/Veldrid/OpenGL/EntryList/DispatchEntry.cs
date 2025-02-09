@@ -1,15 +1,8 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct DispatchEntry
+internal struct DispatchEntry(uint groupCountX, uint groupCountY, uint groupCountZ)
 {
-    public uint GroupCountX;
-    public uint GroupCountY;
-    public uint GroupCountZ;
-
-    public DispatchEntry(uint groupCountX, uint groupCountY, uint groupCountZ)
-    {
-        GroupCountX = groupCountX;
-        GroupCountY = groupCountY;
-        GroupCountZ = groupCountZ;
-    }
+    public uint GroupCountX = groupCountX;
+    public uint GroupCountY = groupCountY;
+    public uint GroupCountZ = groupCountZ;
 }

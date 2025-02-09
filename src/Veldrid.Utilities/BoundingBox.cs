@@ -5,16 +5,10 @@ using System.Runtime.InteropServices;
 
 namespace Veldrid.Utilities;
 
-public struct BoundingBox : IEquatable<BoundingBox>
+public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
 {
-    public Vector3 Min;
-    public Vector3 Max;
-
-    public BoundingBox(Vector3 min, Vector3 max)
-    {
-        Min = min;
-        Max = max;
-    }
+    public Vector3 Min = min;
+    public Vector3 Max = max;
 
     public readonly ContainmentType Contains(BoundingBox other)
     {

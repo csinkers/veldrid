@@ -2,32 +2,23 @@
 
 namespace Veldrid.OpenGL;
 
-internal sealed class OpenGLSwapchain : Swapchain
+internal sealed class OpenGLSwapchain(
+    OpenGLGraphicsDevice gd,
+    OpenGLSwapchainFramebuffer framebuffer,
+    Action<uint, uint>? resizeAction)
+    : Swapchain
 {
-    readonly OpenGLGraphicsDevice _gd;
-    readonly OpenGLSwapchainFramebuffer _framebuffer;
-    readonly Action<uint, uint>? _resizeAction;
     bool _disposed;
 
-    public override Framebuffer Framebuffer => _framebuffer;
-    public override bool SyncToVerticalBlank { get => _gd.SyncToVerticalBlank; set => _gd.SyncToVerticalBlank = value; }
+    public override Framebuffer Framebuffer => framebuffer;
+    public override bool SyncToVerticalBlank { get => gd.SyncToVerticalBlank; set => gd.SyncToVerticalBlank = value; }
     public override string? Name { get; set; } = "OpenGL Context Swapchain";
     public override bool IsDisposed => _disposed;
 
-    public OpenGLSwapchain(
-        OpenGLGraphicsDevice gd,
-        OpenGLSwapchainFramebuffer framebuffer,
-        Action<uint, uint>? resizeAction)
-    {
-        _gd = gd;
-        _framebuffer = framebuffer;
-        _resizeAction = resizeAction;
-    }
-
     public override void Resize(uint width, uint height)
     {
-        _framebuffer.Resize(width, height);
-        _resizeAction?.Invoke(width, height);
+        framebuffer.Resize(width, height);
+        resizeAction?.Invoke(width, height);
     }
 
     public override void Dispose()

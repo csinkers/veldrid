@@ -1,15 +1,8 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct SetIndexBufferEntry
+internal struct SetIndexBufferEntry(Tracked<DeviceBuffer> ib, IndexFormat format, uint offset)
 {
-    public readonly Tracked<DeviceBuffer> Buffer;
-    public IndexFormat Format;
-    public uint Offset;
-
-    public SetIndexBufferEntry(Tracked<DeviceBuffer> ib, IndexFormat format, uint offset)
-    {
-        Buffer = ib;
-        Format = format;
-        Offset = offset;
-    }
+    public readonly Tracked<DeviceBuffer> Buffer = ib;
+    public IndexFormat Format = format;
+    public uint Offset = offset;
 }

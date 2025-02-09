@@ -1,15 +1,8 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct SetVertexBufferEntry
+internal struct SetVertexBufferEntry(uint index, Tracked<DeviceBuffer> buffer, uint offset)
 {
-    public readonly uint Index;
-    public readonly Tracked<DeviceBuffer> Buffer;
-    public uint Offset;
-
-    public SetVertexBufferEntry(uint index, Tracked<DeviceBuffer> buffer, uint offset)
-    {
-        Index = index;
-        Buffer = buffer;
-        Offset = offset;
-    }
+    public readonly uint Index = index;
+    public readonly Tracked<DeviceBuffer> Buffer = buffer;
+    public uint Offset = offset;
 }

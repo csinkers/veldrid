@@ -3,15 +3,10 @@ using System.Threading;
 
 namespace Veldrid.D3D11;
 
-internal sealed class D3D11Fence : Fence
+internal sealed class D3D11Fence(bool signaled) : Fence
 {
-    readonly ManualResetEvent _mre;
+    readonly ManualResetEvent _mre = new(signaled);
     bool _disposed;
-
-    public D3D11Fence(bool signaled)
-    {
-        _mre = new ManualResetEvent(signaled);
-    }
 
     public override string? Name { get; set; }
     public ManualResetEvent ResetEvent => _mre;

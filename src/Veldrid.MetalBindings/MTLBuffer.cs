@@ -4,11 +4,9 @@ using System.Runtime.InteropServices;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct MTLBuffer
+public readonly struct MTLBuffer(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public MTLBuffer(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public bool IsNull => NativePtr == IntPtr.Zero;
 

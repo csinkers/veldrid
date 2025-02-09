@@ -3,11 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct UIView
+public readonly struct UIView(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public UIView(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public CALayer layer => objc_msgSend<CALayer>(NativePtr, "layer"u8);
 

@@ -3,15 +3,10 @@ using System.Threading;
 
 namespace Veldrid.OpenGL;
 
-internal sealed class OpenGLFence : Fence
+internal sealed class OpenGLFence(bool signaled) : Fence
 {
-    readonly ManualResetEvent _mre;
+    readonly ManualResetEvent _mre = new(signaled);
     bool _disposed;
-
-    public OpenGLFence(bool signaled)
-    {
-        _mre = new ManualResetEvent(signaled);
-    }
 
     public override string? Name { get; set; }
     public ManualResetEvent ResetEvent => _mre;

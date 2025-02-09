@@ -1,13 +1,7 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct ResolveTextureEntry
+internal struct ResolveTextureEntry(Tracked<Texture> source, Tracked<Texture> destination)
 {
-    public readonly Tracked<Texture> Source;
-    public readonly Tracked<Texture> Destination;
-
-    public ResolveTextureEntry(Tracked<Texture> source, Tracked<Texture> destination)
-    {
-        Source = source;
-        Destination = destination;
-    }
+    public readonly Tracked<Texture> Source = source;
+    public readonly Tracked<Texture> Destination = destination;
 }

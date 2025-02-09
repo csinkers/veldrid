@@ -4,11 +4,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly unsafe struct NSString
+public readonly unsafe struct NSString(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public NSString(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public static implicit operator IntPtr(NSString nss) => nss.NativePtr;
 

@@ -1,11 +1,6 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct GenerateMipmapsEntry
+internal struct GenerateMipmapsEntry(Tracked<Texture> texture)
 {
-    public readonly Tracked<Texture> Texture;
-
-    public GenerateMipmapsEntry(Tracked<Texture> texture)
-    {
-        Texture = texture;
-    }
+    public readonly Tracked<Texture> Texture = texture;
 }

@@ -9,15 +9,14 @@ using Veldrid.SPIRV;
 
 namespace Veldrid.VirtualReality.Sample;
 
-internal class Skybox
+internal class Skybox(
+    Image<Rgba32> front,
+    Image<Rgba32> back,
+    Image<Rgba32> left,
+    Image<Rgba32> right,
+    Image<Rgba32> top,
+    Image<Rgba32> bottom)
 {
-    readonly Image<Rgba32> _front;
-    readonly Image<Rgba32> _back;
-    readonly Image<Rgba32> _left;
-    readonly Image<Rgba32> _right;
-    readonly Image<Rgba32> _top;
-    readonly Image<Rgba32> _bottom;
-
     // Context objects
     ResourceLayout _layout;
     DeviceBuffer _vb;
@@ -26,18 +25,6 @@ internal class Skybox
     DeviceBuffer _ubo;
     ResourceSet _resourceSet;
     readonly List<IDisposable> _disposables = [];
-
-    public Skybox(
-        Image<Rgba32> front, Image<Rgba32> back, Image<Rgba32> left,
-        Image<Rgba32> right, Image<Rgba32> top, Image<Rgba32> bottom)
-    {
-        _front = front;
-        _back = back;
-        _left = left;
-        _right = right;
-        _top = top;
-        _bottom = bottom;
-    }
 
     public void CreateDeviceObjects(GraphicsDevice gd, OutputDescription outputs)
     {
@@ -49,7 +36,7 @@ internal class Skybox
         _ib = factory.CreateBuffer(new BufferDescription((uint)(s_indices.Length * 2), BufferUsage.IndexBuffer));
         gd.UpdateBuffer(_ib, 0, s_indices);
 
-        ImageSharpCubemapTexture imageSharpCubemapTexture = new(_front, _back, _top, _bottom, _right, _left, true);
+        ImageSharpCubemapTexture imageSharpCubemapTexture = new(front, back, top, bottom, right, left, true);
 
         Texture textureCube = imageSharpCubemapTexture.CreateDeviceTexture(gd, factory);
         TextureView textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));

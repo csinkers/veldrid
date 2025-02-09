@@ -3,14 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct UIScreen
+public readonly struct UIScreen(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public UIScreen(IntPtr ptr)
-    {
-        NativePtr = ptr;
-    }
+    public readonly IntPtr NativePtr = ptr;
 
     public CGFloat nativeScale => CGFloat_objc_msgSend(NativePtr, "nativeScale"u8);
 

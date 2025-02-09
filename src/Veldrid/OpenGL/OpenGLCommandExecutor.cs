@@ -7,15 +7,13 @@ using System.Diagnostics;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLCommandExecutor
+internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Action? setSwapchainFramebuffer)
 {
-    readonly OpenGLGraphicsDevice _gd;
-    readonly GraphicsBackend _backend;
-    readonly OpenGLTextureSamplerManager _textureSamplerManager;
-    readonly StagingMemoryPool _stagingMemoryPool;
-    readonly OpenGLExtensions _extensions;
-    readonly GraphicsDeviceFeatures _features;
-    readonly Action? _setSwapchainFramebuffer;
+    readonly GraphicsBackend _backend = gd.BackendType;
+    readonly OpenGLTextureSamplerManager _textureSamplerManager = gd.TextureSamplerManager;
+    readonly StagingMemoryPool _stagingMemoryPool = gd.StagingMemoryPool;
+    readonly OpenGLExtensions _extensions = gd.Extensions;
+    readonly GraphicsDeviceFeatures _features = gd.Features;
 
     Framebuffer? _fb;
     bool _isSwapchainFB;
@@ -40,17 +38,6 @@ internal sealed unsafe class OpenGLCommandExecutor
     bool _computePipelineActive;
     bool _vertexLayoutFlushed;
     bool _indexBufferBound;
-
-    public OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Action? setSwapchainFramebuffer)
-    {
-        _gd = gd;
-        _backend = gd.BackendType;
-        _extensions = gd.Extensions;
-        _textureSamplerManager = gd.TextureSamplerManager;
-        _stagingMemoryPool = gd.StagingMemoryPool;
-        _setSwapchainFramebuffer = setSwapchainFramebuffer;
-        _features = gd.Features;
-    }
 
     public void Begin()
     {
@@ -315,7 +302,7 @@ internal sealed unsafe class OpenGLCommandExecutor
 
         uint totalSlotsBound = 0;
         VertexLayoutDescription[] layouts = _graphicsPipeline.VertexLayouts;
-        bool separateBinding = _gd.Extensions.ARB_vertex_attrib_binding;
+        bool separateBinding = gd.Extensions.ARB_vertex_attrib_binding;
 
         for (int i = 0; i < layouts.Length; i++)
         {
@@ -496,9 +483,9 @@ internal sealed unsafe class OpenGLCommandExecutor
                 CheckLastError();
             }
 
-            if (_setSwapchainFramebuffer != null)
+            if (setSwapchainFramebuffer != null)
             {
-                _setSwapchainFramebuffer();
+                setSwapchainFramebuffer();
             }
             else
             {
@@ -521,9 +508,9 @@ internal sealed unsafe class OpenGLCommandExecutor
         OpenGLBuffer glIB = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(ib);
         glIB.EnsureResourcesCreated();
 
-        if (_gd.IsDebug)
+        if (gd.IsDebug)
         {
-            _gd.ThrowIfMapped(glIB, 0);
+            gd.ThrowIfMapped(glIB, 0);
         }
 
         _drawElementsType = OpenGLFormats.VdToGLDrawElementsType(format);
@@ -1050,7 +1037,7 @@ internal sealed unsafe class OpenGLCommandExecutor
                 }
 
                 case ResourceKind.TextureReadOnly:
-                    TextureView texView = Util.GetTextureView(_gd, resource);
+                    TextureView texView = Util.GetTextureView(gd, resource);
                     OpenGLTextureView glTexView = Util.AssertSubtype<TextureView, OpenGLTextureView>(texView);
                     glTexView.EnsureResourcesCreated();
                     if (pipeline.GetTextureBindingInfo(slot, element, out OpenGLTextureBindingSlotInfo textureBindingInfo))
@@ -1062,7 +1049,7 @@ internal sealed unsafe class OpenGLCommandExecutor
                     break;
 
                 case ResourceKind.TextureReadWrite:
-                    TextureView texViewRW = Util.GetTextureView(_gd, resource);
+                    TextureView texViewRW = Util.GetTextureView(gd, resource);
                     OpenGLTextureView glTexViewRW = Util.AssertSubtype<TextureView, OpenGLTextureView>(texViewRW);
                     glTexViewRW.EnsureResourcesCreated();
                     if (pipeline.GetTextureBindingInfo(slot, element, out OpenGLTextureBindingSlotInfo imageBindingInfo))
@@ -1213,9 +1200,9 @@ internal sealed unsafe class OpenGLCommandExecutor
         OpenGLBuffer glVB = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(vb);
         glVB.EnsureResourcesCreated();
 
-        if (_gd.IsDebug)
+        if (gd.IsDebug)
         {
-            _gd.ThrowIfMapped(glVB, 0);
+            gd.ThrowIfMapped(glVB, 0);
         }
 
         Util.EnsureArrayMinimumSize(ref _vertexBuffers, index + 1);

@@ -8,17 +8,12 @@ namespace Veldrid.Sdl2;
 /// <summary>
 /// A transparent wrapper over a pointer to a native SDL_GameController.
 /// </summary>
-public struct SDL_GameController
+public struct SDL_GameController(IntPtr pointer)
 {
     /// <summary>
     /// The native SDL_GameController pointer.
     /// </summary>
-    public readonly IntPtr NativePointer;
-
-    public SDL_GameController(IntPtr pointer)
-    {
-        NativePointer = pointer;
-    }
+    public readonly IntPtr NativePointer = pointer;
 
     public static implicit operator IntPtr(SDL_GameController controller) => controller.NativePointer;
 

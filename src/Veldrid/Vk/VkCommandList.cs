@@ -1615,20 +1615,13 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         }
     }
 
-    internal readonly struct StagingResourceInfo
+    internal readonly struct StagingResourceInfo()
     {
-        public List<VkBuffer> BuffersUsed { get; }
-        public List<VkTexture> TexturesUsed { get; }
-        public HashSet<ResourceRefCount> Resources { get; }
+        public List<VkBuffer> BuffersUsed { get; } = [];
+        public List<VkTexture> TexturesUsed { get; } = [];
+        public HashSet<ResourceRefCount> Resources { get; } = [];
 
         public bool IsValid => Resources != null;
-
-        public StagingResourceInfo()
-        {
-            BuffersUsed = [];
-            TexturesUsed = [];
-            Resources = [];
-        }
 
         public void AddResource(ResourceRefCount count)
         {

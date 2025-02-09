@@ -2,27 +2,18 @@
 
 namespace Veldrid.Tests.Utilities;
 
-internal unsafe class TextureDataReaderWriter
+internal unsafe class TextureDataReaderWriter(int redBits, int greenBits, int blueBits, int alphaBits)
 {
-    public int RedBits { get; }
-    public int GreenBits { get; }
-    public int BlueBits { get; }
-    public int AlphaBits { get; }
-    public int PixelBytes { get; }
+    public int RedBits { get; } = redBits;
+    public int GreenBits { get; } = greenBits;
+    public int BlueBits { get; } = blueBits;
+    public int AlphaBits { get; } = alphaBits;
+    public int PixelBytes { get; } = (redBits + blueBits + greenBits + alphaBits) / 8;
 
     public ulong RMaxValue => (ulong)Math.Pow(2, RedBits) - 1;
     public ulong GMaxValue => (ulong)Math.Pow(2, GreenBits) - 1;
     public ulong BMaxValue => (ulong)Math.Pow(2, BlueBits) - 1;
     public ulong AMaxValue => (ulong)Math.Pow(2, AlphaBits) - 1;
-
-    public TextureDataReaderWriter(int redBits, int greenBits, int blueBits, int alphaBits)
-    {
-        RedBits = redBits;
-        GreenBits = greenBits;
-        BlueBits = blueBits;
-        AlphaBits = alphaBits;
-        PixelBytes = (redBits + blueBits + greenBits + alphaBits) / 8;
-    }
 
     public WidePixel ReadPixel(byte* pixelPtr)
     {
@@ -112,20 +103,13 @@ internal unsafe class TextureDataReaderWriter
     }
 }
 
-internal struct WidePixel : IEquatable<WidePixel>
+internal struct WidePixel(ulong? r, ulong? g, ulong? b, ulong? a)
+    : IEquatable<WidePixel>
 {
-    public readonly ulong? R;
-    public readonly ulong? G;
-    public readonly ulong? B;
-    public readonly ulong? A;
-
-    public WidePixel(ulong? r, ulong? g, ulong? b, ulong? a)
-    {
-        R = r;
-        G = g;
-        B = b;
-        A = a;
-    }
+    public readonly ulong? R = r;
+    public readonly ulong? G = g;
+    public readonly ulong? B = b;
+    public readonly ulong? A = a;
 
     public bool Equals(WidePixel other)
     {

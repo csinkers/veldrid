@@ -4,11 +4,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct NSView
+public readonly struct NSView(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-        
-    public NSView(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public Bool8 wantsLayer
     {

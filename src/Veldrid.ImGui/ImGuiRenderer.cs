@@ -756,16 +756,10 @@ public class ImGuiRenderer : IDisposable
     }
 
 
-    struct ResourceSetInfo
+    struct ResourceSetInfo(IntPtr imGuiBinding, ResourceSet resourceSet)
     {
-        public readonly IntPtr ImGuiBinding;
-        public readonly ResourceSet ResourceSet;
-
-        public ResourceSetInfo(IntPtr imGuiBinding, ResourceSet resourceSet)
-        {
-            ImGuiBinding = imGuiBinding;
-            ResourceSet = resourceSet;
-        }
+        public readonly IntPtr ImGuiBinding = imGuiBinding;
+        public readonly ResourceSet ResourceSet = resourceSet;
     }
 
     protected virtual void Dispose(bool disposing)

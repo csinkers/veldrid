@@ -1,19 +1,15 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct CopyBufferEntry
+internal struct CopyBufferEntry(
+    Tracked<DeviceBuffer> source,
+    uint sourceOffset,
+    Tracked<DeviceBuffer> destination,
+    uint destinationOffset,
+    uint sizeInBytes)
 {
-    public readonly Tracked<DeviceBuffer> Source;
-    public readonly uint SourceOffset;
-    public readonly Tracked<DeviceBuffer> Destination;
-    public readonly uint DestinationOffset;
-    public readonly uint SizeInBytes;
-
-    public CopyBufferEntry(Tracked<DeviceBuffer> source, uint sourceOffset, Tracked<DeviceBuffer> destination, uint destinationOffset, uint sizeInBytes)
-    {
-        Source = source;
-        SourceOffset = sourceOffset;
-        Destination = destination;
-        DestinationOffset = destinationOffset;
-        SizeInBytes = sizeInBytes;
-    }
+    public readonly Tracked<DeviceBuffer> Source = source;
+    public readonly uint SourceOffset = sourceOffset;
+    public readonly Tracked<DeviceBuffer> Destination = destination;
+    public readonly uint DestinationOffset = destinationOffset;
+    public readonly uint SizeInBytes = sizeInBytes;
 }

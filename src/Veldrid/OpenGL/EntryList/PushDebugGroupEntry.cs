@@ -1,11 +1,6 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct PushDebugGroupEntry
+internal struct PushDebugGroupEntry(Tracked<string> name)
 {
-    public Tracked<string> Name;
-
-    public PushDebugGroupEntry(Tracked<string> name)
-    {
-        Name = name;
-    }
+    public Tracked<string> Name = name;
 }

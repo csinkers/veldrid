@@ -3,14 +3,9 @@ using System.IO;
 
 namespace Veldrid.Tests.Utilities;
 
-internal class FileShaderProvider : IShaderProvider
+internal class FileShaderProvider(string directory) : IShaderProvider
 {
-    readonly string _directory;
-
-    public FileShaderProvider(string directory)
-    {
-        _directory = directory ?? throw new ArgumentNullException(nameof(directory));
-    }
+    readonly string _directory = directory ?? throw new ArgumentNullException(nameof(directory));
 
     public string GetPath(string name)
     {

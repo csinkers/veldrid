@@ -5,14 +5,14 @@ using Veldrid.OpenGL.EntryList;
 
 namespace Veldrid.OpenGL;
 
-internal sealed class OpenGLCommandList : CommandList
+internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListDescription description)
+    : CommandList(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
 {
-    readonly OpenGLGraphicsDevice _gd;
     OpenGLCommandEntryList _currentCommands = null!;
     bool _disposed;
 
     internal OpenGLCommandEntryList CurrentCommands => _currentCommands;
-    internal OpenGLGraphicsDevice Device => _gd;
+    internal OpenGLGraphicsDevice Device => gd;
 
     readonly object _lock = new();
     readonly Stack<OpenGLCommandEntryList> _availableLists = new();
@@ -21,12 +21,6 @@ internal sealed class OpenGLCommandList : CommandList
     public override string? Name { get; set; }
 
     public override bool IsDisposed => _disposed;
-
-    public OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListDescription description)
-        : base(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
-    {
-        _gd = gd;
-    }
 
     public override void Begin()
     {
@@ -112,9 +106,9 @@ internal sealed class OpenGLCommandList : CommandList
 
     private protected override void SetIndexBufferCore(DeviceBuffer buffer, IndexFormat format, uint offset)
     {
-        if (_gd.IsDebug)
+        if (gd.IsDebug)
         {
-            _gd.ThrowIfMapped(buffer, 0);
+            gd.ThrowIfMapped(buffer, 0);
         }
         _currentCommands.SetIndexBuffer(buffer, format, offset);
     }
@@ -141,9 +135,9 @@ internal sealed class OpenGLCommandList : CommandList
 
     private protected override void SetVertexBufferCore(uint index, DeviceBuffer buffer, uint offset)
     {
-        if (_gd.IsDebug)
+        if (gd.IsDebug)
         {
-            _gd.ThrowIfMapped(buffer, 0);
+            gd.ThrowIfMapped(buffer, 0);
         }
         _currentCommands.SetVertexBuffer(index, buffer, offset);
     }
@@ -244,7 +238,7 @@ internal sealed class OpenGLCommandList : CommandList
 
     public override void Dispose()
     {
-        _gd.EnqueueDisposal(this);
+        gd.EnqueueDisposal(this);
     }
 
     public void DestroyResources()

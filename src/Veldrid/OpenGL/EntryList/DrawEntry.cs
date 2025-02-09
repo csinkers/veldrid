@@ -1,17 +1,9 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct DrawEntry
+internal struct DrawEntry(uint vertexCount, uint instanceCount, uint vertexStart, uint instanceStart)
 {
-    public uint VertexCount;
-    public uint InstanceCount;
-    public uint VertexStart;
-    public uint InstanceStart;
-
-    public DrawEntry(uint vertexCount, uint instanceCount, uint vertexStart, uint instanceStart)
-    {
-        VertexCount = vertexCount;
-        InstanceCount = instanceCount;
-        VertexStart = vertexStart;
-        InstanceStart = instanceStart;
-    }
+    public uint VertexCount = vertexCount;
+    public uint InstanceCount = instanceCount;
+    public uint VertexStart = vertexStart;
+    public uint InstanceStart = instanceStart;
 }

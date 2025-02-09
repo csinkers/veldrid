@@ -3,11 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLVertexBufferLayoutDescriptor
+public readonly struct MTLVertexBufferLayoutDescriptor(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public MTLVertexBufferLayoutDescriptor(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public MTLVertexStepFunction stepFunction
     {

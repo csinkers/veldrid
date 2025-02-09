@@ -1,13 +1,7 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct DispatchIndirectEntry
+internal struct DispatchIndirectEntry(Tracked<DeviceBuffer> indirectBuffer, uint offset)
 {
-    public Tracked<DeviceBuffer> IndirectBuffer;
-    public uint Offset;
-
-    public DispatchIndirectEntry(Tracked<DeviceBuffer> indirectBuffer, uint offset)
-    {
-        IndirectBuffer = indirectBuffer;
-        Offset = offset;
-    }
+    public Tracked<DeviceBuffer> IndirectBuffer = indirectBuffer;
+    public uint Offset = offset;
 }

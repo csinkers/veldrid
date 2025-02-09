@@ -5,16 +5,10 @@ using System.Runtime.InteropServices;
 
 namespace Veldrid.Utilities;
 
-public struct BoundingSphere
+public struct BoundingSphere(Vector3 center, float radius)
 {
-    public Vector3 Center;
-    public float Radius;
-
-    public BoundingSphere(Vector3 center, float radius)
-    {
-        Center = center;
-        Radius = radius;
-    }
+    public Vector3 Center = center;
+    public float Radius = radius;
 
     public override readonly string ToString()
     {

@@ -10,16 +10,10 @@ internal sealed unsafe class StagingMemoryPool : IDisposable
 {
     const uint MinimumCapacity = 128;
 
-    readonly List<StagingBlock> _storage;
-    readonly SortedList<uint, uint> _availableBlocks;
+    readonly List<StagingBlock> _storage = [];
+    readonly SortedList<uint, uint> _availableBlocks = new(new CapacityComparer());
     object _lock = new();
     bool _disposed;
-
-    public StagingMemoryPool()
-    {
-        _storage = [];
-        _availableBlocks = new SortedList<uint, uint>(new CapacityComparer());
-    }
 
     public StagingBlock Stage(IntPtr source, uint sizeInBytes)
     {
@@ -114,18 +108,10 @@ internal sealed unsafe class StagingMemoryPool : IDisposable
     }
 }
 
-internal unsafe struct StagingBlock
+internal unsafe struct StagingBlock(uint id, void* data, uint capacity, uint size)
 {
-    public readonly uint Id;
-    public readonly void* Data;
-    public readonly uint Capacity;
-    public uint SizeInBytes;
-
-    public StagingBlock(uint id, void* data, uint capacity, uint size)
-    {
-        Id = id;
-        Data = data;
-        Capacity = capacity;
-        SizeInBytes = size;
-    }
+    public readonly uint Id = id;
+    public readonly void* Data = data;
+    public readonly uint Capacity = capacity;
+    public uint SizeInBytes = size;
 }

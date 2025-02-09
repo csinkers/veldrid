@@ -1,13 +1,7 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct ClearDepthTargetEntry
+internal struct ClearDepthTargetEntry(float depth, byte stencil)
 {
-    public readonly float Depth;
-    public readonly byte Stencil;
-
-    public ClearDepthTargetEntry(float depth, byte stencil)
-    {
-        Depth = depth;
-        Stencil = stencil;
-    }
+    public readonly float Depth = depth;
+    public readonly byte Stencil = stencil;
 }

@@ -5,17 +5,9 @@ using Veldrid.Sdl2;
 
 namespace Veldrid.NeoDemo;
 
-public class ImGuiRenderable : Renderable, IUpdateable
+public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
 {
     ImGuiRenderer _imguiRenderer;
-    int _width;
-    int _height;
-
-    public ImGuiRenderable(int width, int height)
-    {
-        _width = width;
-        _height = height;
-    }
 
     public void WindowResized(int width, int height) => _imguiRenderer.WindowResized(width, height);
 
@@ -23,7 +15,7 @@ public class ImGuiRenderable : Renderable, IUpdateable
     {
         if (_imguiRenderer == null)
         {
-            _imguiRenderer = new ImGuiRenderer(gd, sc.MainSceneFramebuffer.OutputDescription, _width, _height, ColorSpaceHandling.Linear);
+            _imguiRenderer = new ImGuiRenderer(gd, sc.MainSceneFramebuffer.OutputDescription, width, height, ColorSpaceHandling.Linear);
         }
         else
         {

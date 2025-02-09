@@ -3,14 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace Veldrid.NeoDemo;
 
-public struct RenderOrderKey : IComparable<RenderOrderKey>
+public struct RenderOrderKey(ulong value) : IComparable<RenderOrderKey>
 {
-    public readonly ulong Value;
-
-    public RenderOrderKey(ulong value)
-    {
-        Value = value;
-    }
+    public readonly ulong Value = value;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static RenderOrderKey Create(int materialID, float cameraDistance)

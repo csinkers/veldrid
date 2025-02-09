@@ -10,27 +10,21 @@ namespace Veldrid.Utilities;
 /// An object describing generic mesh data. This can be used to construct a vertex buffer and
 /// index buffer, and also exposes functionality for bounding box and sphere computation.
 /// </summary>
-public abstract class ConstructedMesh
+public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, string? materialName)
 {
     /// <summary>
     /// The vertices of the mesh.
     /// </summary>
-    public VertexPositionNormalTexture[] Vertices { get; }
+    public VertexPositionNormalTexture[] Vertices { get; } = vertices ?? throw new ArgumentNullException(nameof(vertices));
 
     /// <summary>
     /// The name of the <see cref="MaterialDefinition"/> associated with this mesh.
     /// </summary>
-    public string? MaterialName { get; }
+    public string? MaterialName { get; } = materialName;
 
     public abstract int IndexCount { get; }
 
     public abstract IndexFormat IndexFormat { get; }
-
-    public ConstructedMesh(VertexPositionNormalTexture[] vertices, string? materialName)
-    {
-        Vertices = vertices ?? throw new ArgumentNullException(nameof(vertices));
-        MaterialName = materialName;
-    }
 
     /// <summary>
     /// Constructs a <see cref="VertexBuffer"/> from this <see cref="MeshData"/>.

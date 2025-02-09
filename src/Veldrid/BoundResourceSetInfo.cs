@@ -2,16 +2,10 @@
 
 namespace Veldrid;
 
-internal struct BoundResourceSetInfo
+internal struct BoundResourceSetInfo(ResourceSet set, ReadOnlySpan<uint> offsets)
 {
-    public ResourceSet Set;
-    public SmallFixedOrDynamicArray Offsets;
-
-    public BoundResourceSetInfo(ResourceSet set, ReadOnlySpan<uint> offsets)
-    {
-        Set = set;
-        Offsets = new SmallFixedOrDynamicArray(offsets);
-    }
+    public ResourceSet Set = set;
+    public SmallFixedOrDynamicArray Offsets = new(offsets);
 
     public unsafe bool Equals(ResourceSet set, ReadOnlySpan<uint> offsets)
     {

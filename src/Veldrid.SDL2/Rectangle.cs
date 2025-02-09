@@ -3,27 +3,16 @@ using System.Numerics;
 
 namespace Veldrid;
 
-public struct Rectangle : IEquatable<Rectangle>
+public struct Rectangle(int x, int y, int width, int height)
+    : IEquatable<Rectangle>
 {
-    public int X;
-    public int Y;
-    public int Width;
-    public int Height;
+    public int X = x;
+    public int Y = y;
+    public int Width = width;
+    public int Height = height;
 
-    public Rectangle(int x, int y, int width, int height)
+    public Rectangle(Point topLeft, Point size) : this(topLeft.X, topLeft.Y, size.X, size.Y)
     {
-        X = x;
-        Y = y;
-        Width = width;
-        Height = height;
-    }
-
-    public Rectangle(Point topLeft, Point size)
-    {
-        X = topLeft.X;
-        Y = topLeft.Y;
-        Width = size.X;
-        Height = size.Y;
     }
 
     public readonly int Left => X;

@@ -3,11 +3,9 @@ using System;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLFunction
+public readonly struct MTLFunction(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public MTLFunction(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public NSDictionary functionConstantsDictionary => objc_msgSend<NSDictionary>(NativePtr, sel_functionConstantsDictionary);
 

@@ -72,19 +72,11 @@ internal sealed class MTLResourceLayout : ResourceLayout
         _disposed = true;
     }
 
-    internal struct ResourceBindingInfo
+    internal struct ResourceBindingInfo(uint slot, ShaderStages stages, ResourceKind kind, bool dynamicBuffer)
     {
-        public uint Slot;
-        public ShaderStages Stages;
-        public ResourceKind Kind;
-        public bool DynamicBuffer;
-
-        public ResourceBindingInfo(uint slot, ShaderStages stages, ResourceKind kind, bool dynamicBuffer)
-        {
-            Slot = slot;
-            Stages = stages;
-            Kind = kind;
-            DynamicBuffer = dynamicBuffer;
-        }
+        public uint Slot = slot;
+        public ShaderStages Stages = stages;
+        public ResourceKind Kind = kind;
+        public bool DynamicBuffer = dynamicBuffer;
     }
 }

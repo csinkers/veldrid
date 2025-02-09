@@ -55,17 +55,8 @@ public abstract class VkSurfaceSource
     internal abstract SwapchainSource GetSurfaceSource();
 }
 
-internal sealed class Win32VkSurfaceInfo : VkSurfaceSource
+internal sealed class Win32VkSurfaceInfo(IntPtr hinstance, IntPtr hwnd) : VkSurfaceSource
 {
-    readonly IntPtr _hinstance;
-    readonly IntPtr _hwnd;
-
-    public Win32VkSurfaceInfo(IntPtr hinstance, IntPtr hwnd)
-    {
-        _hinstance = hinstance;
-        _hwnd = hwnd;
-    }
-
     public override VkSurfaceKHR CreateSurface(VkInstance instance)
     {
         return VkSurfaceUtil.CreateSurface(instance, GetSurfaceSource());
@@ -73,21 +64,12 @@ internal sealed class Win32VkSurfaceInfo : VkSurfaceSource
 
     internal override SwapchainSource GetSurfaceSource()
     {
-        return new Win32SwapchainSource(_hwnd, _hinstance);
+        return new Win32SwapchainSource(hwnd, hinstance);
     }
 }
 
-internal sealed class XlibVkSurfaceInfo : VkSurfaceSource
+internal sealed class XlibVkSurfaceInfo(IntPtr display, IntPtr window) : VkSurfaceSource
 {
-    readonly IntPtr _display;
-    readonly IntPtr _window;
-
-    public XlibVkSurfaceInfo(IntPtr display, IntPtr window)
-    {
-        _display = display;
-        _window = window;
-    }
-
     public override VkSurfaceKHR CreateSurface(VkInstance instance)
     {
         return VkSurfaceUtil.CreateSurface(instance, GetSurfaceSource());
@@ -95,21 +77,12 @@ internal sealed class XlibVkSurfaceInfo : VkSurfaceSource
 
     internal override SwapchainSource GetSurfaceSource()
     {
-        return new XlibSwapchainSource(_display, _window);
+        return new XlibSwapchainSource(display, window);
     }
 }
 
-internal sealed class WaylandVkSurfaceInfo : VkSurfaceSource
+internal sealed class WaylandVkSurfaceInfo(IntPtr display, IntPtr surface) : VkSurfaceSource
 {
-    readonly IntPtr _display;
-    readonly IntPtr _surface;
-
-    public WaylandVkSurfaceInfo(IntPtr display, IntPtr surface)
-    {
-        _display = display;
-        _surface = surface;
-    }
-
     public override VkSurfaceKHR CreateSurface(VkInstance instance)
     {
         return VkSurfaceUtil.CreateSurface(instance, GetSurfaceSource());
@@ -117,6 +90,6 @@ internal sealed class WaylandVkSurfaceInfo : VkSurfaceSource
 
     internal override SwapchainSource GetSurfaceSource()
     {
-        return new WaylandSwapchainSource(_display, _surface);
+        return new WaylandSwapchainSource(display, surface);
     }
 }

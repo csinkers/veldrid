@@ -3,15 +3,10 @@ using System.Threading;
 
 namespace Veldrid.MTL;
 
-internal sealed class MTLFence : Fence
+internal sealed class MTLFence(bool signaled) : Fence
 {
-    readonly ManualResetEvent _mre;
+    readonly ManualResetEvent _mre = new(signaled);
     bool _disposed;
-
-    public MTLFence(bool signaled)
-    {
-        _mre = new ManualResetEvent(signaled);
-    }
 
     public override string? Name { get; set; }
     public ManualResetEvent ResetEvent => _mre;

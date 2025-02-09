@@ -3,11 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct NSArray
+public readonly struct NSArray(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public NSArray(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public UIntPtr count => UIntPtr_objc_msgSend(NativePtr, sel_count);
 

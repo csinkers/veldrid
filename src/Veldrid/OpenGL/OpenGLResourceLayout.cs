@@ -1,20 +1,14 @@
 ﻿namespace Veldrid.OpenGL;
 
-internal sealed class OpenGLResourceLayout : ResourceLayout
+internal sealed class OpenGLResourceLayout(in ResourceLayoutDescription description) : ResourceLayout(description)
 {
     bool _disposed;
 
-    public ResourceLayoutElementDescription[] Elements { get; }
+    public ResourceLayoutElementDescription[] Elements { get; } = Util.ShallowClone(description.Elements);
 
     public override string? Name { get; set; }
 
     public override bool IsDisposed => _disposed;
-
-    public OpenGLResourceLayout(in ResourceLayoutDescription description)
-        : base(description)
-    {
-        Elements = Util.ShallowClone(description.Elements);
-    }
 
     public bool IsDynamicBuffer(uint slot)
     {

@@ -191,14 +191,9 @@ public static class TestUtils
         return Encoding.UTF8.GetString(stringStart, characters);
     }
 
-    class WindowClosable : IDisposable
+    class WindowClosable(Sdl2Window window) : IDisposable
     {
-        public Sdl2Window Window { get; }
-
-        public WindowClosable(Sdl2Window window)
-        {
-            Window = window;
-        }
+        public Sdl2Window Window { get; } = window;
 
         public void Dispose()
         {

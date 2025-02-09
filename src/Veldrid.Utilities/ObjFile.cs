@@ -7,22 +7,18 @@ namespace Veldrid.Utilities;
 /// <summary>
 /// Represents a parset Wavefront OBJ file.
 /// </summary>
-public class ObjFile
+public class ObjFile(
+    Vector3[] positions,
+    Vector3[] normals,
+    Vector2[] texCoords,
+    ObjFile.MeshGroup[] meshGroups,
+    string? materialLibName)
 {
-    public Vector3[] Positions { get; }
-    public Vector3[] Normals { get; }
-    public Vector2[] TexCoords { get; }
-    public MeshGroup[] MeshGroups { get; }
-    public string? MaterialLibName { get; }
-
-    public ObjFile(Vector3[] positions, Vector3[] normals, Vector2[] texCoords, MeshGroup[] meshGroups, string? materialLibName)
-    {
-        Positions = positions ?? throw new ArgumentNullException(nameof(positions));
-        Normals = normals ?? throw new ArgumentNullException(nameof(normals));
-        TexCoords = texCoords ?? throw new ArgumentNullException(nameof(texCoords));
-        MeshGroups = meshGroups ?? throw new ArgumentNullException(nameof(meshGroups));
-        MaterialLibName = materialLibName;
-    }
+    public Vector3[] Positions { get; } = positions ?? throw new ArgumentNullException(nameof(positions));
+    public Vector3[] Normals { get; } = normals ?? throw new ArgumentNullException(nameof(normals));
+    public Vector2[] TexCoords { get; } = texCoords ?? throw new ArgumentNullException(nameof(texCoords));
+    public MeshGroup[] MeshGroups { get; } = meshGroups ?? throw new ArgumentNullException(nameof(meshGroups));
+    public string? MaterialLibName { get; } = materialLibName;
 
     /// <summary>
     /// Gets a <see cref="ConstructedMesh16"/> for the given OBJ <see cref="MeshGroup"/>.
@@ -213,29 +209,22 @@ public class ObjFile
     /// <summary>
     /// An OBJ file construct describing the indices of vertex components.
     /// </summary>
-    public struct FaceVertex : IEquatable<FaceVertex>
+    public struct FaceVertex(int positionIndex, int normalIndex, int texCoordIndex) : IEquatable<FaceVertex>
     {
         /// <summary>
         /// The index of the position component.
         /// </summary>
-        public int PositionIndex;
+        public int PositionIndex = positionIndex;
 
         /// <summary>
         /// The index of the normal component.
         /// </summary>
-        public int NormalIndex;
+        public int NormalIndex = normalIndex;
 
         /// <summary>
         /// The index of the texture coordinate component.
         /// </summary>
-        public int TexCoordIndex;
-
-        public FaceVertex(int positionIndex, int normalIndex, int texCoordIndex)
-        {
-            PositionIndex = positionIndex;
-            NormalIndex = normalIndex;
-            TexCoordIndex = texCoordIndex;
-        }
+        public int TexCoordIndex = texCoordIndex;
 
         public readonly bool Equals(FaceVertex other)
         {
@@ -272,34 +261,26 @@ public class ObjFile
     /// <summary>
     /// An OBJ file construct describing an individual mesh face.
     /// </summary>
-    public struct Face
+    public struct Face(FaceVertex v0, FaceVertex v1, FaceVertex v2, int smoothingGroup = -1)
     {
         /// <summary>
         /// The first vertex.
         /// </summary>
-        public FaceVertex Vertex0;
+        public FaceVertex Vertex0 = v0;
 
         /// <summary>
         /// The second vertex.
         /// </summary>
-        public FaceVertex Vertex1;
+        public FaceVertex Vertex1 = v1;
 
         /// <summary>
         /// The third vertex.
         /// </summary>
-        public FaceVertex Vertex2;
+        public FaceVertex Vertex2 = v2;
 
         /// <summary>
         /// The smoothing group. Describes which kind of vertex smoothing should be applied.
         /// </summary>
-        public int SmoothingGroup;
-
-        public Face(FaceVertex v0, FaceVertex v1, FaceVertex v2, int smoothingGroup = -1)
-        {
-            Vertex0 = v0;
-            Vertex1 = v1;
-            Vertex2 = v2;
-            SmoothingGroup = smoothingGroup;
-        }
+        public int SmoothingGroup = smoothingGroup;
     }
 }

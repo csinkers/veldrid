@@ -1,27 +1,17 @@
 ﻿namespace Veldrid.StartupUtilities;
 
-public struct WindowCreateInfo
+public struct WindowCreateInfo(
+    int x,
+    int y,
+    int windowWidth,
+    int windowHeight,
+    WindowState windowInitialState,
+    string windowTitle)
 {
-    public int X;
-    public int Y;
-    public int WindowWidth;
-    public int WindowHeight;
-    public WindowState WindowInitialState;
-    public string WindowTitle;
-
-    public WindowCreateInfo(
-        int x,
-        int y,
-        int windowWidth,
-        int windowHeight,
-        WindowState windowInitialState,
-        string windowTitle)
-    {
-        X = x;
-        Y = y;
-        WindowWidth = windowWidth;
-        WindowHeight = windowHeight;
-        WindowInitialState = windowInitialState;
-        WindowTitle = windowTitle;
-    }
+    public int X = x;
+    public int Y = y;
+    public int WindowWidth = windowWidth;
+    public int WindowHeight = windowHeight;
+    public WindowState WindowInitialState = windowInitialState;
+    public string WindowTitle = windowTitle;
 }

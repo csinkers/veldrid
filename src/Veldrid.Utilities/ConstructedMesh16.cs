@@ -72,23 +72,15 @@ public class ConstructedMesh16 : ConstructedMesh
         return new RayEnumerator(this, ray);
     }
 
-    public struct RayEnumerator : IEnumerator<float>
+    public struct RayEnumerator(ConstructedMesh16 mesh, Ray ray) : IEnumerator<float>
     {
-        int _indexOffset;
+        int _indexOffset = 0;
 
-        public ConstructedMesh16 Mesh { get; }
-        public Ray Ray { get; }
+        public ConstructedMesh16 Mesh { get; } = mesh ?? throw new ArgumentNullException(nameof(mesh));
+        public Ray Ray { get; } = ray;
 
-        public float Current { get; private set; }
+        public float Current { get; private set; } = default;
         object? IEnumerator.Current => Current;
-
-        public RayEnumerator(ConstructedMesh16 mesh, Ray ray)
-        {
-            Mesh = mesh ?? throw new ArgumentNullException(nameof(mesh));
-            Ray = ray;
-            Current = default;
-            _indexOffset = 0;
-        }
 
         public bool MoveNext()
         {

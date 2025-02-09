@@ -2,30 +2,20 @@
 
 namespace Veldrid.VirtualReality;
 
-public readonly struct HmdPoseState
+public readonly struct HmdPoseState(
+    Matrix4x4 leftEyeProjection,
+    Matrix4x4 rightEyeProjection,
+    Vector3 leftEyePosition,
+    Vector3 rightEyePosition,
+    Quaternion leftEyeRotation,
+    Quaternion rightEyeRotation)
 {
-    public readonly Matrix4x4 LeftEyeProjection;
-    public readonly Matrix4x4 RightEyeProjection;
-    public readonly Vector3 LeftEyePosition;
-    public readonly Vector3 RightEyePosition;
-    public readonly Quaternion LeftEyeRotation;
-    public readonly Quaternion RightEyeRotation;
-
-    public HmdPoseState(
-        Matrix4x4 leftEyeProjection,
-        Matrix4x4 rightEyeProjection,
-        Vector3 leftEyePosition,
-        Vector3 rightEyePosition,
-        Quaternion leftEyeRotation,
-        Quaternion rightEyeRotation)
-    {
-        LeftEyeProjection = leftEyeProjection;
-        RightEyeProjection = rightEyeProjection;
-        LeftEyePosition = leftEyePosition;
-        RightEyePosition = rightEyePosition;
-        LeftEyeRotation = leftEyeRotation;
-        RightEyeRotation = rightEyeRotation;
-    }
+    public readonly Matrix4x4 LeftEyeProjection = leftEyeProjection;
+    public readonly Matrix4x4 RightEyeProjection = rightEyeProjection;
+    public readonly Vector3 LeftEyePosition = leftEyePosition;
+    public readonly Vector3 RightEyePosition = rightEyePosition;
+    public readonly Quaternion LeftEyeRotation = leftEyeRotation;
+    public readonly Quaternion RightEyeRotation = rightEyeRotation;
 
     public Vector3 GetEyePosition(VREye eye)
     {

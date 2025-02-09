@@ -2,9 +2,8 @@ using System;
 
 namespace Veldrid.MetalBindings;
 
-public struct MTLComputePipelineState
+public struct MTLComputePipelineState(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-    public MTLComputePipelineState(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
     public bool IsNull => NativePtr == IntPtr.Zero;
 }

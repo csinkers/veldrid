@@ -75,19 +75,11 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
         _disposed = true;
     }
 
-    internal readonly struct ResourceBindingInfo
+    internal readonly struct ResourceBindingInfo(int slot, ShaderStages stages, ResourceKind kind, bool dynamicBuffer)
     {
-        public readonly int Slot;
-        public readonly ShaderStages Stages;
-        public readonly ResourceKind Kind;
-        public readonly bool DynamicBuffer;
-
-        public ResourceBindingInfo(int slot, ShaderStages stages, ResourceKind kind, bool dynamicBuffer)
-        {
-            Slot = slot;
-            Stages = stages;
-            Kind = kind;
-            DynamicBuffer = dynamicBuffer;
-        }
+        public readonly int Slot = slot;
+        public readonly ShaderStages Stages = stages;
+        public readonly ResourceKind Kind = kind;
+        public readonly bool DynamicBuffer = dynamicBuffer;
     }
 }

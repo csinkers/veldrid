@@ -626,48 +626,33 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
     }
 }
 
-internal readonly struct SetBindingsInfo
+internal readonly struct SetBindingsInfo(
+    Dictionary<uint, OpenGLUniformBinding> uniformBindings,
+    Dictionary<uint, OpenGLTextureBindingSlotInfo> textureBindings,
+    Dictionary<uint, OpenGLSamplerBindingSlotInfo> samplerBindings,
+    Dictionary<uint, OpenGLShaderStorageBinding> storageBufferBindings)
 {
-    readonly Dictionary<uint, OpenGLUniformBinding> _uniformBindings;
-    readonly Dictionary<uint, OpenGLTextureBindingSlotInfo> _textureBindings;
-    readonly Dictionary<uint, OpenGLSamplerBindingSlotInfo> _samplerBindings;
-    readonly Dictionary<uint, OpenGLShaderStorageBinding> _storageBufferBindings;
-
-    public uint UniformBufferCount { get; }
-    public uint ShaderStorageBufferCount { get; }
-
-    public SetBindingsInfo(
-        Dictionary<uint, OpenGLUniformBinding> uniformBindings,
-        Dictionary<uint, OpenGLTextureBindingSlotInfo> textureBindings,
-        Dictionary<uint, OpenGLSamplerBindingSlotInfo> samplerBindings,
-        Dictionary<uint, OpenGLShaderStorageBinding> storageBufferBindings)
-    {
-        _uniformBindings = uniformBindings;
-        UniformBufferCount = (uint)uniformBindings.Count;
-        _textureBindings = textureBindings;
-        _samplerBindings = samplerBindings;
-        _storageBufferBindings = storageBufferBindings;
-        ShaderStorageBufferCount = (uint)storageBufferBindings.Count;
-    }
+    public uint UniformBufferCount { get; } = (uint)uniformBindings.Count;
+    public uint ShaderStorageBufferCount { get; } = (uint)storageBufferBindings.Count;
 
     public bool GetTextureBindingInfo(uint slot, out OpenGLTextureBindingSlotInfo binding)
     {
-        return _textureBindings.TryGetValue(slot, out binding);
+        return textureBindings.TryGetValue(slot, out binding);
     }
 
     public bool GetSamplerBindingInfo(uint slot, out OpenGLSamplerBindingSlotInfo binding)
     {
-        return _samplerBindings.TryGetValue(slot, out binding);
+        return samplerBindings.TryGetValue(slot, out binding);
     }
 
     public bool GetUniformBindingForSlot(uint slot, out OpenGLUniformBinding binding)
     {
-        return _uniformBindings.TryGetValue(slot, out binding);
+        return uniformBindings.TryGetValue(slot, out binding);
     }
 
     public bool GetStorageBufferBindingForSlot(uint slot, out OpenGLShaderStorageBinding binding)
     {
-        return _storageBufferBindings.TryGetValue(slot, out binding);
+        return storageBufferBindings.TryGetValue(slot, out binding);
     }
 }
 
@@ -694,26 +679,14 @@ internal struct OpenGLSamplerBindingSlotInfo
     public int[] RelativeIndices;
 }
 
-internal readonly struct OpenGLUniformBinding
+internal readonly struct OpenGLUniformBinding(uint program, uint blockLocation, uint blockSize)
 {
-    public uint Program { get; }
-    public uint BlockLocation { get; }
-    public uint BlockSize { get; }
-
-    public OpenGLUniformBinding(uint program, uint blockLocation, uint blockSize)
-    {
-        Program = program;
-        BlockLocation = blockLocation;
-        BlockSize = blockSize;
-    }
+    public uint Program { get; } = program;
+    public uint BlockLocation { get; } = blockLocation;
+    public uint BlockSize { get; } = blockSize;
 }
 
-internal readonly struct OpenGLShaderStorageBinding
+internal readonly struct OpenGLShaderStorageBinding(uint storageBlockBinding)
 {
-    public uint StorageBlockBinding { get; }
-
-    public OpenGLShaderStorageBinding(uint storageBlockBinding)
-    {
-        StorageBlockBinding = storageBlockBinding;
-    }
+    public uint StorageBlockBinding { get; } = storageBlockBinding;
 }

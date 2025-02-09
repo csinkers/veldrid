@@ -2,20 +2,12 @@ using System;
 
 namespace Veldrid.MetalBindings;
 
-public struct NSRange
+public struct NSRange(UIntPtr location, UIntPtr length)
 {
-    public UIntPtr location;
-    public UIntPtr length;
+    public UIntPtr location = location;
+    public UIntPtr length = length;
 
-    public NSRange(UIntPtr location, UIntPtr length)
+    public NSRange(uint location, uint length) : this((UIntPtr)location, (UIntPtr)length)
     {
-        this.location = location;
-        this.length = length;
-    }
-
-    public NSRange(uint location, uint length)
-    {
-        this.location = (UIntPtr)location;
-        this.length = (UIntPtr)length;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Veldrid.NeoDemo.Objects;
 
-public class MaterialPropsAndBuffer
+public class MaterialPropsAndBuffer(MaterialProperties mp)
 {
-    MaterialProperties _properties;
+    MaterialProperties _properties = mp;
     bool _newProperties;
 
     public string Name { get; set; }
@@ -14,11 +14,6 @@ public class MaterialPropsAndBuffer
     {
         get => _properties;
         set { _properties = value; _newProperties = true; }
-    }
-
-    public MaterialPropsAndBuffer(MaterialProperties mp)
-    {
-        _properties = mp;
     }
 
     public void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)

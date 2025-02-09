@@ -3,11 +3,9 @@ using System;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct NSObject
+public readonly struct NSObject(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-
-    public NSObject(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public Bool8 IsKindOfClass(IntPtr @class) => bool8_objc_msgSend(NativePtr, sel_isKindOfClass, @class);
 

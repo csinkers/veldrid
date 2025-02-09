@@ -1,11 +1,6 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct SetPipelineEntry
+internal struct SetPipelineEntry(Tracked<Pipeline> pipeline)
 {
-    public readonly Tracked<Pipeline> Pipeline;
-
-    public SetPipelineEntry(Tracked<Pipeline> pipeline)
-    {
-        Pipeline = pipeline;
-    }
+    public readonly Tracked<Pipeline> Pipeline = pipeline;
 }

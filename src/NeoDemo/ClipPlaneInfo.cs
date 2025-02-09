@@ -2,14 +2,8 @@
 
 namespace Veldrid.NeoDemo;
 
-public struct ClipPlaneInfo
+public struct ClipPlaneInfo(Plane clipPlane, bool enabled)
 {
-    public Vector4 ClipPlane;
-    public int Enabled;
-
-    public ClipPlaneInfo(Plane clipPlane, bool enabled)
-    {
-        ClipPlane = new Vector4(clipPlane.Normal, clipPlane.D);
-        Enabled = enabled ? 1 : 0;
-    }
+    public Vector4 ClipPlane = new(clipPlane.Normal, clipPlane.D);
+    public int Enabled = enabled ? 1 : 0;
 }

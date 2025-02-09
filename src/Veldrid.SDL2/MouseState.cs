@@ -1,17 +1,10 @@
 ﻿namespace Veldrid.Sdl2;
 
-public readonly struct MouseState
+public readonly struct MouseState(int x, int y, MouseButton mouseDown)
 {
-    public int X { get; }
-    public int Y { get; }
-    public MouseButton MouseDown { get; }
-
-    public MouseState(int x, int y, MouseButton mouseDown)
-    {
-        X = x;
-        Y = y;
-        MouseDown = mouseDown;
-    }
+    public int X { get; } = x;
+    public int Y { get; } = y;
+    public MouseButton MouseDown { get; } = mouseDown;
 
     public bool IsButtonDown(MouseButton button)
     {

@@ -162,32 +162,17 @@ void main()
     }
 }
 
-internal class MeshPiece
+internal class MeshPiece(DeviceBuffer positions, DeviceBuffer texCoords, DeviceBuffer indices)
 {
-    public DeviceBuffer Positions { get; }
-    public DeviceBuffer TexCoords { get; }
-    public DeviceBuffer Indices { get; }
-    public uint IndexCount { get; }
-
-    public MeshPiece(DeviceBuffer positions, DeviceBuffer texCoords, DeviceBuffer indices)
-    {
-        Positions = positions;
-        TexCoords = texCoords;
-        Indices = indices;
-        IndexCount = indices.SizeInBytes / sizeof(uint);
-    }
+    public DeviceBuffer Positions { get; } = positions;
+    public DeviceBuffer TexCoords { get; } = texCoords;
+    public DeviceBuffer Indices { get; } = indices;
+    public uint IndexCount { get; } = indices.SizeInBytes / sizeof(uint);
 }
 
-internal struct UBO
+internal struct UBO(Matrix4x4 projection, Matrix4x4 view, Matrix4x4 world)
 {
-    public Matrix4x4 Projection;
-    public Matrix4x4 View;
-    public Matrix4x4 World;
-
-    public UBO(Matrix4x4 projection, Matrix4x4 view, Matrix4x4 world)
-    {
-        Projection = projection;
-        View = view;
-        World = world;
-    }
+    public Matrix4x4 Projection = projection;
+    public Matrix4x4 View = view;
+    public Matrix4x4 World = world;
 }

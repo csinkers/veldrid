@@ -5,10 +5,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct MTLLibrary
+public readonly struct MTLLibrary(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-    public MTLLibrary(IntPtr ptr) => NativePtr = ptr;
+    public readonly IntPtr NativePtr = ptr;
 
     public MTLFunction newFunctionWithName(string name)
     {

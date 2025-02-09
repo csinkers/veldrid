@@ -108,15 +108,9 @@ internal sealed unsafe class OpenGLTextureSamplerManager
         }
     }
 
-    struct BoundSamplerStateInfo
+    struct BoundSamplerStateInfo(OpenGLSampler sampler, bool mipmapped)
     {
-        public OpenGLSampler Sampler;
-        public bool Mipmapped;
-
-        public BoundSamplerStateInfo(OpenGLSampler sampler, bool mipmapped)
-        {
-            Sampler = sampler;
-            Mipmapped = mipmapped;
-        }
+        public OpenGLSampler Sampler = sampler;
+        public bool Mipmapped = mipmapped;
     }
 }

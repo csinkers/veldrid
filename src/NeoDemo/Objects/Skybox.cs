@@ -6,15 +6,15 @@ using Veldrid.ImageSharp;
 
 namespace Veldrid.NeoDemo.Objects;
 
-public class Skybox : Renderable
+public class Skybox(
+    Image<Rgba32> front,
+    Image<Rgba32> back,
+    Image<Rgba32> left,
+    Image<Rgba32> right,
+    Image<Rgba32> top,
+    Image<Rgba32> bottom)
+    : Renderable
 {
-    readonly Image<Rgba32> _front;
-    readonly Image<Rgba32> _back;
-    readonly Image<Rgba32> _left;
-    readonly Image<Rgba32> _right;
-    readonly Image<Rgba32> _top;
-    readonly Image<Rgba32> _bottom;
-
     // Context objects
     DeviceBuffer _vb;
     DeviceBuffer _ib;
@@ -22,18 +22,6 @@ public class Skybox : Renderable
     Pipeline _reflectionPipeline;
     ResourceSet _resourceSet;
     readonly DisposeCollector _disposeCollector = new();
-
-    public Skybox(
-        Image<Rgba32> front, Image<Rgba32> back, Image<Rgba32> left,
-        Image<Rgba32> right, Image<Rgba32> top, Image<Rgba32> bottom)
-    {
-        _front = front;
-        _back = back;
-        _left = left;
-        _right = right;
-        _top = top;
-        _bottom = bottom;
-    }
 
     public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
@@ -45,7 +33,7 @@ public class Skybox : Renderable
         _ib = factory.CreateBuffer(new BufferDescription(s_indices.SizeInBytes(), BufferUsage.IndexBuffer));
         cl.UpdateBuffer(_ib, 0, s_indices);
 
-        ImageSharpCubemapTexture imageSharpCubemapTexture = new(_right, _left, _top, _bottom, _back, _front, false);
+        ImageSharpCubemapTexture imageSharpCubemapTexture = new(right, left, top, bottom, back, front, false);
 
         Texture textureCube = imageSharpCubemapTexture.CreateDeviceTexture(gd, factory);
         TextureView textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));

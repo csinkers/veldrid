@@ -1,11 +1,6 @@
 namespace Veldrid.OpenGL.EntryList;
 
-internal struct InsertDebugMarkerEntry
+internal struct InsertDebugMarkerEntry(Tracked<string> name)
 {
-    public Tracked<string> Name;
-
-    public InsertDebugMarkerEntry(Tracked<string> name)
-    {
-        Name = name;
-    }
+    public Tracked<string> Name = name;
 }

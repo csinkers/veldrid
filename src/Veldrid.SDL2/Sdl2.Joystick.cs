@@ -6,17 +6,12 @@ namespace Veldrid.Sdl2;
 /// <summary>
 /// A transparent wrapper over a pointer to a native SDL_Joystick.
 /// </summary>
-public struct SDL_Joystick
+public struct SDL_Joystick(IntPtr pointer)
 {
     /// <summary>
     /// The native SDL_Joystick pointer.
     /// </summary>
-    public readonly IntPtr NativePointer;
-
-    public SDL_Joystick(IntPtr pointer)
-    {
-        NativePointer = pointer;
-    }
+    public readonly IntPtr NativePointer = pointer;
 
     public static implicit operator IntPtr(SDL_Joystick controller) => controller.NativePointer;
 

@@ -6,20 +6,14 @@ using Vortice.Direct3D11;
 
 namespace Veldrid.D3D11;
 
-internal sealed class D3D11ResourceCache : IDisposable
+internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
 {
-    readonly ID3D11Device _device;
     readonly object _lock = new();
 
     readonly Dictionary<BlendStateDescription, ID3D11BlendState> _blendStates = new();
     readonly Dictionary<DepthStencilStateDescription, ID3D11DepthStencilState> _depthStencilStates = new();
     readonly Dictionary<D3D11RasterizerStateCacheKey, ID3D11RasterizerState> _rasterizerStates = new();
     readonly Dictionary<InputLayoutCacheKey, ID3D11InputLayout> _inputLayouts = new();
-
-    public D3D11ResourceCache(ID3D11Device device)
-    {
-        _device = device;
-    }
 
     public void GetPipelineResources(
         in BlendStateDescription blendDesc,
@@ -78,7 +72,7 @@ internal sealed class D3D11ResourceCache : IDisposable
         d3dBlendStateDesc.AlphaToCoverageEnable = description.AlphaToCoverageEnabled;
         d3dBlendStateDesc.IndependentBlendEnable = true;
 
-        return _device.CreateBlendState(d3dBlendStateDesc);
+        return device.CreateBlendState(d3dBlendStateDesc);
     }
 
     ID3D11DepthStencilState GetDepthStencilState(in DepthStencilStateDescription description)
@@ -108,7 +102,7 @@ internal sealed class D3D11ResourceCache : IDisposable
             StencilWriteMask = description.StencilWriteMask
         };
 
-        return _device.CreateDepthStencilState(dssDesc);
+        return device.CreateDepthStencilState(dssDesc);
     }
 
     DepthStencilOperationDescription ToD3D11StencilOpDesc(StencilBehaviorDescription sbd)
@@ -147,7 +141,7 @@ internal sealed class D3D11ResourceCache : IDisposable
             MultisampleEnable = key.Multisampled
         };
 
-        return _device.CreateRasterizerState(rssDesc);
+        return device.CreateRasterizerState(rssDesc);
     }
 
     ID3D11InputLayout? GetInputLayout(VertexLayoutDescription[]? vertexLayouts, byte[]? vsBytecode)
@@ -203,7 +197,7 @@ internal sealed class D3D11ResourceCache : IDisposable
             }
         }
 
-        return _device.CreateInputLayout(elements, vsBytecode);
+        return device.CreateInputLayout(elements, vsBytecode);
     }
 
     string GetSemanticString(VertexElementSemantic semantic)
@@ -291,16 +285,11 @@ internal sealed class D3D11ResourceCache : IDisposable
         }
     }
 
-    struct D3D11RasterizerStateCacheKey : IEquatable<D3D11RasterizerStateCacheKey>
+    struct D3D11RasterizerStateCacheKey(RasterizerStateDescription veldridDescription, bool multisampled)
+        : IEquatable<D3D11RasterizerStateCacheKey>
     {
-        public RasterizerStateDescription VeldridDescription;
-        public bool Multisampled;
-
-        public D3D11RasterizerStateCacheKey(RasterizerStateDescription veldridDescription, bool multisampled)
-        {
-            VeldridDescription = veldridDescription;
-            Multisampled = multisampled;
-        }
+        public RasterizerStateDescription VeldridDescription = veldridDescription;
+        public bool Multisampled = multisampled;
 
         public bool Equals(D3D11RasterizerStateCacheKey other)
         {

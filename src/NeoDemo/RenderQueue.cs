@@ -89,20 +89,11 @@ public class RenderQueue : IEnumerable<Renderable>
     IEnumerator<Renderable> IEnumerable<Renderable>.GetEnumerator() => GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public struct Enumerator : IEnumerator<Renderable>
+    public struct Enumerator(List<RenderItemIndex> indices, List<Renderable> renderables)
+        : IEnumerator<Renderable>
     {
-        readonly List<RenderItemIndex> _indices;
-        readonly List<Renderable> _Renderables;
-        int _nextItemIndex;
-        Renderable _currentItem;
-
-        public Enumerator(List<RenderItemIndex> indices, List<Renderable> Renderables)
-        {
-            _indices = indices;
-            _Renderables = Renderables;
-            _nextItemIndex = 0;
-            _currentItem = null;
-        }
+        int _nextItemIndex = 0;
+        Renderable _currentItem = null;
 
         public Renderable Current => _currentItem;
         object IEnumerator.Current => _currentItem;
@@ -113,15 +104,15 @@ public class RenderQueue : IEnumerable<Renderable>
 
         public bool MoveNext()
         {
-            if (_nextItemIndex >= _indices.Count)
+            if (_nextItemIndex >= indices.Count)
             {
                 _currentItem = null;
                 return false;
             }
             else
             {
-                RenderItemIndex currentIndex = _indices[_nextItemIndex];
-                _currentItem = _Renderables[currentIndex.ItemIndex];
+                RenderItemIndex currentIndex = indices[_nextItemIndex];
+                _currentItem = renderables[currentIndex.ItemIndex];
                 _nextItemIndex += 1;
                 return true;
             }

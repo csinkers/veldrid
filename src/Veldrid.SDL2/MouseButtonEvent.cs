@@ -1,19 +1,10 @@
 ﻿namespace Veldrid;
 
-public readonly struct MouseButtonEvent
+public readonly struct MouseButtonEvent(uint timestamp, uint windowId, MouseButton mouseButton, bool down, byte clicks)
 {
-    public uint Timestamp { get; }
-    public uint WindowID { get; }
-    public MouseButton MouseButton { get; }
-    public bool Down { get; }
-    public byte Clicks { get; }
-
-    public MouseButtonEvent(uint timestamp, uint windowID, MouseButton mouseButton, bool down, byte clicks)
-    {
-        Timestamp = timestamp;
-        WindowID = windowID;
-        MouseButton = mouseButton;
-        Down = down;
-        Clicks = clicks;
-    }
+    public uint Timestamp { get; } = timestamp;
+    public uint WindowID { get; } = windowId;
+    public MouseButton MouseButton { get; } = mouseButton;
+    public bool Down { get; } = down;
+    public byte Clicks { get; } = clicks;
 }

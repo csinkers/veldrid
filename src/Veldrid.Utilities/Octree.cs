@@ -14,16 +14,11 @@ public delegate int RayCastFilter<T>(Ray ray, T item, List<RayCastHit<T>> hits);
 /// The root node may change as items are added and removed from contained nodes.
 /// </summary>
 /// <typeparam name="T">The type stored in the octree.</typeparam>
-public class Octree<T>
+public class Octree<T>(BoundingBox boundingBox, int maxChildren)
 {
-    OctreeNode<T> _currentRoot;
+    OctreeNode<T> _currentRoot = new(boundingBox, maxChildren);
 
     List<OctreeItem<T>> _pendingMoveStage = [];
-
-    public Octree(BoundingBox boundingBox, int maxChildren)
-    {
-        _currentRoot = new OctreeNode<T>(boundingBox, maxChildren);
-    }
 
     /// <summary>
     /// The current root node of the octree. This may change when items are added and removed.
@@ -827,20 +822,15 @@ public class OctreeNode<T>
         }
     }
 
-    class OctreeNodeCache
+    class OctreeNodeCache(int maxChildren)
     {
         readonly Stack<OctreeNode<T>> _cachedNodes = new();
         readonly Stack<OctreeNode<T>[]> _cachedChildren = new();
         readonly Stack<OctreeItem<T>> _cachedItems = new();
 
-        public int MaxChildren { get; private set; }
+        public int MaxChildren { get; private set; } = maxChildren;
 
         public int MaxCachedItemCount { get; set; } = 100;
-
-        public OctreeNodeCache(int maxChildren)
-        {
-            MaxChildren = maxChildren;
-        }
 
         public void AddNode(OctreeNode<T> child)
         {
@@ -944,22 +934,16 @@ public class OctreeNode<T>
     }
 }
 
-public class OctreeItem<T>
+public class OctreeItem<T>(ref BoundingBox bounds, T item)
 {
     /// <summary>The node this item directly resides in. /// </summary>
     public OctreeNode<T>? Container;
-    public BoundingBox Bounds;
+    public BoundingBox Bounds = bounds;
 
     [AllowNull]
-    public T Item;
+    public T Item = item;
 
     public bool HasPendingMove { get; set; }
-
-    public OctreeItem(ref BoundingBox bounds, T item)
-    {
-        Bounds = bounds;
-        Item = item;
-    }
 
     public override string ToString()
     {

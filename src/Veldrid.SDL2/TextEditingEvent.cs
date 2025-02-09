@@ -3,20 +3,16 @@ using System.Text;
 
 namespace Veldrid.Sdl2;
 
-public readonly ref struct TextEditingEvent
+public readonly ref struct TextEditingEvent(
+    uint timestamp,
+    uint windowId,
+    ReadOnlySpan<Rune> runes,
+    int offset,
+    int length)
 {
-    public uint Timestamp { get; }
-    public uint WindowID { get; }
-    public ReadOnlySpan<Rune> Runes { get; }
-    public int Offset { get; }
-    public int Length { get; }
-
-    public TextEditingEvent(uint timestamp, uint windowID, ReadOnlySpan<Rune> runes, int offset, int length)
-    {
-        Timestamp = timestamp;
-        WindowID = windowID;
-        Runes = runes;
-        Offset = offset;
-        Length = length;
-    }
+    public uint Timestamp { get; } = timestamp;
+    public uint WindowID { get; } = windowId;
+    public ReadOnlySpan<Rune> Runes { get; } = runes;
+    public int Offset { get; } = offset;
+    public int Length { get; } = length;
 }

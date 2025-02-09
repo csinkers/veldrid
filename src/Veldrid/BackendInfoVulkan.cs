@@ -145,16 +145,10 @@ public unsafe class BackendInfoVulkan
         return new ReadOnlyCollection<ExtensionProperties>(veldridProps);
     }
 
-    public readonly struct ExtensionProperties
+    public readonly struct ExtensionProperties(string name, uint specVersion)
     {
-        public readonly string Name;
-        public readonly uint SpecVersion;
-
-        public ExtensionProperties(string name, uint specVersion)
-        {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            SpecVersion = specVersion;
-        }
+        public readonly string Name = name ?? throw new ArgumentNullException(nameof(name));
+        public readonly uint SpecVersion = specVersion;
 
         public override string ToString()
         {

@@ -1,15 +1,9 @@
 namespace Veldrid.MetalBindings;
 
-public struct CGRect
+public struct CGRect(CGPoint origin, CGSize size)
 {
-    public CGPoint origin;
-    public CGSize size;
-
-    public CGRect(CGPoint origin, CGSize size)
-    {
-        this.origin = origin;
-        this.size = size;
-    }
+    public CGPoint origin = origin;
+    public CGSize size = size;
 
     public override string ToString() => string.Format("{0}, {1}", origin, size);
 }

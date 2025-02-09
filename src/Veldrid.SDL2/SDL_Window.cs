@@ -5,17 +5,12 @@ namespace Veldrid.Sdl2;
 /// <summary>
 /// A transparent wrapper over a pointer representing an SDL Sdl2Window object.
 /// </summary>
-public struct SDL_Window
+public struct SDL_Window(IntPtr pointer)
 {
     /// <summary>
     /// The native SDL_Window pointer.
     /// </summary>
-    public readonly IntPtr NativePointer;
-
-    public SDL_Window(IntPtr pointer)
-    {
-        NativePointer = pointer;
-    }
+    public readonly IntPtr NativePointer = pointer;
 
     public static implicit operator IntPtr(SDL_Window Sdl2Window) => Sdl2Window.NativePointer;
 

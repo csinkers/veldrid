@@ -6,17 +6,12 @@ namespace Veldrid.Sdl2;
 /// <summary>
 /// A transparent wrapper over a pointer representing an SDL Sdl2Cursor object.
 /// </summary>
-public struct SDL_Cursor
+public struct SDL_Cursor(IntPtr pointer)
 {
     /// <summary>
     /// The native SDL_Cursor pointer.
     /// </summary>
-    public readonly IntPtr NativePointer;
-
-    public SDL_Cursor(IntPtr pointer)
-    {
-        NativePointer = pointer;
-    }
+    public readonly IntPtr NativePointer = pointer;
 
     public static implicit operator IntPtr(SDL_Cursor Sdl2Cursor) => Sdl2Cursor.NativePointer;
 

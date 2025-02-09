@@ -3,69 +3,48 @@ using System.Runtime.CompilerServices;
 
 namespace Veldrid.Utilities;
 
-public struct BoundingFrustum
+public struct BoundingFrustum(Plane left, Plane right, Plane bottom, Plane top, Plane near, Plane far)
 {
-    public Plane Left;
-    public Plane Right;
-    public Plane Bottom;
-    public Plane Top;
-    public Plane Near;
-    public Plane Far;
+    public Plane Left = left;
+    public Plane Right = right;
+    public Plane Bottom = bottom;
+    public Plane Top = top;
+    public Plane Near = near;
+    public Plane Far = far;
 
-    public BoundingFrustum(in Matrix4x4 m)
+    public BoundingFrustum(in Matrix4x4 m) : this(Plane.Normalize(
+        new Plane(
+            m.M14 + m.M11,
+            m.M24 + m.M21,
+            m.M34 + m.M31,
+            m.M44 + m.M41)), Plane.Normalize(
+        new Plane(
+            m.M14 - m.M11,
+            m.M24 - m.M21,
+            m.M34 - m.M31,
+            m.M44 - m.M41)), Plane.Normalize(
+        new Plane(
+            m.M14 + m.M12,
+            m.M24 + m.M22,
+            m.M34 + m.M32,
+            m.M44 + m.M42)), Plane.Normalize(
+        new Plane(
+            m.M14 - m.M12,
+            m.M24 - m.M22,
+            m.M34 - m.M32,
+            m.M44 - m.M42)), Plane.Normalize(
+        new Plane(
+            m.M13,
+            m.M23,
+            m.M33,
+            m.M43)), Plane.Normalize(
+        new Plane(
+            m.M14 - m.M13,
+            m.M24 - m.M23,
+            m.M34 - m.M33,
+            m.M44 - m.M43)))
     {
         // Plane computations: http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
-        Left = Plane.Normalize(
-            new Plane(
-                m.M14 + m.M11,
-                m.M24 + m.M21,
-                m.M34 + m.M31,
-                m.M44 + m.M41));
-
-        Right = Plane.Normalize(
-            new Plane(
-                m.M14 - m.M11,
-                m.M24 - m.M21,
-                m.M34 - m.M31,
-                m.M44 - m.M41));
-
-        Bottom = Plane.Normalize(
-            new Plane(
-                m.M14 + m.M12,
-                m.M24 + m.M22,
-                m.M34 + m.M32,
-                m.M44 + m.M42));
-
-        Top = Plane.Normalize(
-            new Plane(
-                m.M14 - m.M12,
-                m.M24 - m.M22,
-                m.M34 - m.M32,
-                m.M44 - m.M42));
-
-        Near = Plane.Normalize(
-            new Plane(
-                m.M13,
-                m.M23,
-                m.M33,
-                m.M43));
-
-        Far = Plane.Normalize(
-            new Plane(
-                m.M14 - m.M13,
-                m.M24 - m.M23,
-                m.M34 - m.M33,
-                m.M44 - m.M43));
-    }
-
-    public BoundingFrustum(Plane left, Plane right, Plane bottom, Plane top, Plane near, Plane far)
-    {
-        Left = left;
-        Right = right;
-        Bottom = bottom;
-        Top = top;
-        Near = near;
-        Far = far;
     }
 
     public readonly ContainmentType Contains(Vector3 point)

@@ -1,13 +1,7 @@
 namespace Veldrid.MetalBindings;
 
-public struct MTLRegion
+public struct MTLRegion(MTLOrigin origin, MTLSize size)
 {
-    public MTLOrigin origin;
-    public MTLSize size;
-
-    public MTLRegion(MTLOrigin origin, MTLSize size)
-    {
-        this.origin = origin;
-        this.size = size;
-    }
+    public MTLOrigin origin = origin;
+    public MTLSize size = size;
 }

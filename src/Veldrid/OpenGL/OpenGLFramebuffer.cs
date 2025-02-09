@@ -5,9 +5,9 @@ using System;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLFramebuffer : Framebuffer, OpenGLDeferredResource
+internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in FramebufferDescription description)
+    : Framebuffer(description.DepthTarget, description.ColorTargets), OpenGLDeferredResource
 {
-    readonly OpenGLGraphicsDevice _gd;
     uint _framebuffer;
 
     string? _name;
@@ -23,12 +23,6 @@ internal sealed unsafe class OpenGLFramebuffer : Framebuffer, OpenGLDeferredReso
 
     public override bool IsDisposed => _disposeRequested;
 
-    public OpenGLFramebuffer(OpenGLGraphicsDevice gd, in FramebufferDescription description)
-        : base(description.DepthTarget, description.ColorTargets)
-    {
-        _gd = gd;
-    }
-
     public void EnsureResourcesCreated()
     {
         if (!Created)
@@ -38,7 +32,7 @@ internal sealed unsafe class OpenGLFramebuffer : Framebuffer, OpenGLDeferredReso
         if (_nameChanged)
         {
             _nameChanged = false;
-            if (_gd.Extensions.KHR_Debug)
+            if (gd.Extensions.KHR_Debug)
             {
                 SetObjectLabel(ObjectLabelIdentifier.Framebuffer, _framebuffer, _name);
             }
@@ -65,7 +59,7 @@ internal sealed unsafe class OpenGLFramebuffer : Framebuffer, OpenGLDeferredReso
                 OpenGLTexture glTex = Util.AssertSubtype<Texture, OpenGLTexture>(colorAttachment.Target);
                 glTex.EnsureResourcesCreated();
 
-                _gd.TextureSamplerManager.SetTextureTransient(glTex.TextureTarget, glTex.Texture);
+                gd.TextureSamplerManager.SetTextureTransient(glTex.TextureTarget, glTex.Texture);
 
                 TextureTarget textureTarget = GetTextureTarget(glTex, colorAttachment.ArrayLayer);
 
@@ -111,7 +105,7 @@ internal sealed unsafe class OpenGLFramebuffer : Framebuffer, OpenGLDeferredReso
 
             depthTextureID = glDepthTex.Texture;
 
-            _gd.TextureSamplerManager.SetTextureTransient(depthTarget, glDepthTex.Texture);
+            gd.TextureSamplerManager.SetTextureTransient(depthTarget, glDepthTex.Texture);
 
             depthTarget = GetTextureTarget(glDepthTex, depthTargetValue.ArrayLayer);
 
@@ -158,7 +152,7 @@ internal sealed unsafe class OpenGLFramebuffer : Framebuffer, OpenGLDeferredReso
         if (!_disposeRequested)
         {
             _disposeRequested = true;
-            _gd.EnqueueDisposal(this);
+            gd.EnqueueDisposal(this);
         }
     }
 

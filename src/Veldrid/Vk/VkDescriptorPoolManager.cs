@@ -114,32 +114,19 @@ internal sealed class VkDescriptorPoolManager
         }
     }
 
-    sealed class PoolInfo
+    sealed class PoolInfo(VkDescriptorPool pool, uint totalSets, uint descriptorCount)
     {
-        public readonly VkDescriptorPool Pool;
+        public readonly VkDescriptorPool Pool = pool;
 
-        public uint RemainingSets;
+        public uint RemainingSets = totalSets;
 
-        public uint UniformBufferCount;
-        public uint UniformBufferDynamicCount;
-        public uint SampledImageCount;
-        public uint SamplerCount;
-        public uint StorageBufferCount;
-        public uint StorageBufferDynamicCount;
-        public uint StorageImageCount;
-
-        public PoolInfo(VkDescriptorPool pool, uint totalSets, uint descriptorCount)
-        {
-            Pool = pool;
-            RemainingSets = totalSets;
-            UniformBufferCount = descriptorCount;
-            UniformBufferDynamicCount = descriptorCount;
-            SampledImageCount = descriptorCount;
-            SamplerCount = descriptorCount;
-            StorageBufferCount = descriptorCount;
-            StorageBufferDynamicCount = descriptorCount;
-            StorageImageCount = descriptorCount;
-        }
+        public uint UniformBufferCount = descriptorCount;
+        public uint UniformBufferDynamicCount = descriptorCount;
+        public uint SampledImageCount = descriptorCount;
+        public uint SamplerCount = descriptorCount;
+        public uint StorageBufferCount = descriptorCount;
+        public uint StorageBufferDynamicCount = descriptorCount;
+        public uint StorageImageCount = descriptorCount;
 
         internal bool Allocate(DescriptorResourceCounts counts)
         {
@@ -186,14 +173,8 @@ internal sealed class VkDescriptorPoolManager
     }
 }
 
-internal struct DescriptorAllocationToken
+internal struct DescriptorAllocationToken(VkDescriptorSet set, VkDescriptorPool pool)
 {
-    public readonly VkDescriptorSet Set;
-    public readonly VkDescriptorPool Pool;
-
-    public DescriptorAllocationToken(VkDescriptorSet set, VkDescriptorPool pool)
-    {
-        Set = set;
-        Pool = pool;
-    }
+    public readonly VkDescriptorSet Set = set;
+    public readonly VkDescriptorPool Pool = pool;
 }

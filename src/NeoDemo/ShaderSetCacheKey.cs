@@ -2,16 +2,10 @@
 
 namespace Veldrid.NeoDemo;
 
-public struct ShaderSetCacheKey : IEquatable<ShaderSetCacheKey>
+public struct ShaderSetCacheKey(string name, SpecializationConstant[] specializations) : IEquatable<ShaderSetCacheKey>
 {
-    public string Name { get; }
-    public SpecializationConstant[] Specializations { get; }
-
-    public ShaderSetCacheKey(string name, SpecializationConstant[] specializations) : this()
-    {
-        Name = name;
-        Specializations = specializations;
-    }
+    public string Name { get; } = name;
+    public SpecializationConstant[] Specializations { get; } = specializations;
 
     public bool Equals(ShaderSetCacheKey other)
     {

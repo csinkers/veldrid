@@ -1218,16 +1218,10 @@ internal enum ovrLayerFlags
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-internal struct EyePair_Vector3
+internal struct EyePair_Vector3(Vector3 left, Vector3 right)
 {
-    public Vector3 Left;
-    public Vector3 Right;
-
-    public EyePair_Vector3(Vector3 left, Vector3 right)
-    {
-        Left = left;
-        Right = right;
-    }
+    public Vector3 Left = left;
+    public Vector3 Right = right;
 
     public Vector3 this[int index]
     {
@@ -1247,16 +1241,10 @@ internal struct EyePair_Vector3
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-internal struct EyePair_ovrPosef
+internal struct EyePair_ovrPosef(ovrPosef left, ovrPosef right)
 {
-    public ovrPosef Left;
-    public ovrPosef Right;
-
-    public EyePair_ovrPosef(ovrPosef left, ovrPosef right)
-    {
-        Left = left;
-        Right = right;
-    }
+    public ovrPosef Left = left;
+    public ovrPosef Right = right;
 
     public ovrPosef this[int index]
     {

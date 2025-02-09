@@ -101,11 +101,11 @@ internal sealed class MTLPipeline : Pipeline
                     ? NonVertexBufferCount + i
                     : i;
             MTLVertexBufferLayoutDescriptor mtlLayout = vertexDescriptor.layouts[layoutIndex];
-            mtlLayout.stride = (UIntPtr)vdVertexLayouts[i].Stride;
+            mtlLayout.stride = vdVertexLayouts[i].Stride;
             uint stepRate = vdVertexLayouts[i].InstanceStepRate;
             mtlLayout.stepFunction =
                 stepRate == 0 ? MTLVertexStepFunction.PerVertex : MTLVertexStepFunction.PerInstance;
-            mtlLayout.stepRate = (UIntPtr)Math.Max(1, stepRate);
+            mtlLayout.stepRate = Math.Max(1, stepRate);
         }
 
         uint element = 0;
@@ -117,14 +117,13 @@ internal sealed class MTLPipeline : Pipeline
             {
                 VertexElementDescription elementDesc = vdDesc.Elements[j];
                 MTLVertexAttributeDescriptor mtlAttribute = vertexDescriptor.attributes[element];
-                mtlAttribute.bufferIndex = (UIntPtr)(
+                mtlAttribute.bufferIndex =
                     ResourceBindingModel == ResourceBindingModel.Improved
                         ? NonVertexBufferCount + i
-                        : i
-                );
+                        : i;
                 mtlAttribute.format = MTLFormats.VdToMTLVertexFormat(elementDesc.Format);
                 mtlAttribute.offset =
-                    elementDesc.Offset != 0 ? (UIntPtr)elementDesc.Offset : (UIntPtr)offset;
+                    elementDesc.Offset != 0 ? elementDesc.Offset : (UIntPtr)offset;
                 offset += FormatSizeHelpers.GetSizeInBytes(elementDesc.Format);
                 element += 1;
             }
@@ -139,7 +138,7 @@ internal sealed class MTLPipeline : Pipeline
 
         if (outputs.SampleCount != TextureSampleCount.Count1)
         {
-            mtlDesc.sampleCount = (UIntPtr)FormatHelpers.GetSampleCountUInt32(outputs.SampleCount);
+            mtlDesc.sampleCount = FormatHelpers.GetSampleCountUInt32(outputs.SampleCount);
         }
 
         if (outputs.DepthAttachment != null)
@@ -356,7 +355,7 @@ internal sealed class MTLPipeline : Pipeline
             foreach (SpecializationConstant sc in specializations)
             {
                 MTLDataType mtlType = MTLFormats.VdVoMTLShaderConstantType(sc.Type);
-                ret.setConstantValuetypeatIndex(&sc.Data, mtlType, (UIntPtr)sc.ID);
+                ret.setConstantValuetypeatIndex(&sc.Data, mtlType, sc.ID);
             }
         }
 

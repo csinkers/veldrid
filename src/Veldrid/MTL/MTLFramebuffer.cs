@@ -21,8 +21,8 @@ internal sealed class MTLFramebuffer(MTLGraphicsDevice gd, in FramebufferDescrip
             MTLRenderPassColorAttachmentDescriptor colorDescriptor = ret.colorAttachments[(uint)i];
             colorDescriptor.texture = mtlTarget.DeviceTexture;
             colorDescriptor.loadAction = MTLLoadAction.Load;
-            colorDescriptor.slice = (UIntPtr)colorTarget.ArrayLayer;
-            colorDescriptor.level = (UIntPtr)colorTarget.MipLevel;
+            colorDescriptor.slice = colorTarget.ArrayLayer;
+            colorDescriptor.level = colorTarget.MipLevel;
         }
 
         if (DepthTarget != null)
@@ -34,8 +34,8 @@ internal sealed class MTLFramebuffer(MTLGraphicsDevice gd, in FramebufferDescrip
             depthDescriptor.loadAction = MTLLoadAction.Load;
             depthDescriptor.storeAction = MTLStoreAction.Store;
             depthDescriptor.texture = mtlDepthTarget.DeviceTexture;
-            depthDescriptor.slice = (UIntPtr)depthTarget.ArrayLayer;
-            depthDescriptor.level = (UIntPtr)depthTarget.MipLevel;
+            depthDescriptor.slice = depthTarget.ArrayLayer;
+            depthDescriptor.level = depthTarget.MipLevel;
 
             if (FormatHelpers.IsStencilFormat(mtlDepthTarget.Format))
             {
@@ -43,7 +43,7 @@ internal sealed class MTLFramebuffer(MTLGraphicsDevice gd, in FramebufferDescrip
                 stencilDescriptor.loadAction = MTLLoadAction.Load;
                 stencilDescriptor.storeAction = MTLStoreAction.Store;
                 stencilDescriptor.texture = mtlDepthTarget.DeviceTexture;
-                stencilDescriptor.slice = (UIntPtr)depthTarget.ArrayLayer;
+                stencilDescriptor.slice = depthTarget.ArrayLayer;
             }
         }
 

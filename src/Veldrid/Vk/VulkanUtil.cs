@@ -91,7 +91,7 @@ internal static unsafe class VulkanUtil
     public static string[] EnumerateInstanceExtensions()
     {
         uint propCount = 0;
-        VkResult result = vkEnumerateInstanceExtensionProperties((sbyte*)null, &propCount, null);
+        VkResult result = vkEnumerateInstanceExtensionProperties(null, &propCount, null);
         if (result != VkResult.VK_SUCCESS)
         {
             return [];
@@ -107,7 +107,7 @@ internal static unsafe class VulkanUtil
 
         fixed (VkExtensionProperties* propPtr = props)
         {
-            vkEnumerateInstanceExtensionProperties((sbyte*)null, &propCount, propPtr);
+            vkEnumerateInstanceExtensionProperties(null, &propCount, propPtr);
 
             for (int i = 0; i < propCount; i++)
             {

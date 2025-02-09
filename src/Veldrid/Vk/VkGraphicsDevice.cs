@@ -834,7 +834,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         uint propertyCount = 0;
         VkResult result = vkEnumerateDeviceExtensionProperties(
             _physicalDevice,
-            (sbyte*)null,
+            null,
             &propertyCount,
             null
         );
@@ -844,7 +844,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         {
             result = vkEnumerateDeviceExtensionProperties(
                 _physicalDevice,
-                (sbyte*)null,
+                null,
                 &propertyCount,
                 properties
             );

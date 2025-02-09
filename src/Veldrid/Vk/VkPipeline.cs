@@ -253,10 +253,10 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 Unsafe.CopyBlock(fullSpecData + specOffset, srcData, dataSize);
                 mapEntries[i].constantID = specDescs[i].ID;
                 mapEntries[i].offset = specOffset;
-                mapEntries[i].size = (UIntPtr)dataSize;
+                mapEntries[i].size = dataSize;
                 specOffset += dataSize;
             }
-            specializationInfo.dataSize = (UIntPtr)specDataSize;
+            specializationInfo.dataSize = specDataSize;
             specializationInfo.pData = fullSpecData;
             specializationInfo.mapEntryCount = (uint)specializationCount;
             specializationInfo.pMapEntries = mapEntries;
@@ -490,10 +490,10 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 Unsafe.CopyBlock(fullSpecData + specOffset, srcData, dataSize);
                 mapEntries[i].constantID = specDescs[i].ID;
                 mapEntries[i].offset = specOffset;
-                mapEntries[i].size = (UIntPtr)dataSize;
+                mapEntries[i].size = dataSize;
                 specOffset += dataSize;
             }
-            specializationInfo.dataSize = (UIntPtr)specDataSize;
+            specializationInfo.dataSize = specDataSize;
             specializationInfo.pData = fullSpecData;
             specializationInfo.mapEntryCount = (uint)specializationCount;
             specializationInfo.pMapEntries = mapEntries;

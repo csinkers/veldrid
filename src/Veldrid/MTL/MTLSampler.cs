@@ -37,7 +37,7 @@ internal sealed class MTLSampler : Sampler
         }
         mtlDesc.lodMinClamp = description.MinimumLod;
         mtlDesc.lodMaxClamp = description.MaximumLod;
-        mtlDesc.maxAnisotropy = (UIntPtr)(Math.Max(1, description.MaximumAnisotropy));
+        mtlDesc.maxAnisotropy = Math.Max(1, description.MaximumAnisotropy);
         DeviceSampler = gd.Device.newSamplerStateWithDescriptor(mtlDesc);
         ObjectiveCRuntime.release(mtlDesc.NativePtr);
     }

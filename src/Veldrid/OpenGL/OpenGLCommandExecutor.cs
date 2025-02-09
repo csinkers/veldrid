@@ -1081,7 +1081,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
                             ubBaseIndex + ubOffset,
                             glUB.Buffer,
                             (IntPtr)range.Offset,
-                            (UIntPtr)range.SizeInBytes
+                            range.SizeInBytes
                         );
                         CheckLastError();
 
@@ -1126,7 +1126,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
                                 ssboBaseIndex + ssboOffset,
                                 glBuffer.Buffer,
                                 (IntPtr)range.Offset,
-                                (UIntPtr)range.SizeInBytes
+                                range.SizeInBytes
                             );
                         }
                         else
@@ -1136,7 +1136,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
                                 shaderStorageBinding.StorageBlockBinding,
                                 glBuffer.Buffer,
                                 (IntPtr)range.Offset,
-                                (UIntPtr)range.SizeInBytes
+                                range.SizeInBytes
                             );
                         }
                         CheckLastError();
@@ -1429,7 +1429,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
                 glBufferSubData(
                     bufferTarget,
                     (IntPtr)bufferOffsetInBytes,
-                    (UIntPtr)sizeInBytes,
+                    sizeInBytes,
                     dataPtr.ToPointer()
                 );
             }

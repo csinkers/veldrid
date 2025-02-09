@@ -30,7 +30,7 @@ public class ImGuiRenderer : IDisposable
     Pipeline _pipeline;
     ResourceSet _mainResourceSet;
     ResourceSet _fontTextureResourceSet;
-    readonly IntPtr _fontAtlasID = (IntPtr)1;
+    readonly IntPtr _fontAtlasID = 1;
 
     int _windowWidth;
     int _windowHeight;
@@ -288,7 +288,7 @@ public class ImGuiRenderer : IDisposable
     IntPtr GetNextImGuiBindingID()
     {
         int newID = _lastAssignedID++;
-        return (IntPtr)newID;
+        return newID;
     }
 
     /// <summary>

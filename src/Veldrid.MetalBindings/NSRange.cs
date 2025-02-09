@@ -8,5 +8,5 @@ public struct NSRange(UIntPtr location, UIntPtr length)
     public UIntPtr length = length;
 
     public NSRange(uint location, uint length)
-        : this((UIntPtr)location, (UIntPtr)length) { }
+        : this(location, (UIntPtr)length) { }
 }

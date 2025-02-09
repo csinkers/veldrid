@@ -681,12 +681,7 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
             CheckLastError();
 
             uint dataSize = Width * Height * FormatSizeHelpers.GetSizeInBytes(Format);
-            glBufferData(
-                BufferTarget.CopyWriteBuffer,
-                (UIntPtr)dataSize,
-                null,
-                BufferUsageHint.StaticCopy
-            );
+            glBufferData(BufferTarget.CopyWriteBuffer, dataSize, null, BufferUsageHint.StaticCopy);
             CheckLastError();
             _pboSizes[subresource] = dataSize;
         }

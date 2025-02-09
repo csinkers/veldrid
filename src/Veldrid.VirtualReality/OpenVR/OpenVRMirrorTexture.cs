@@ -94,7 +94,7 @@ internal class OpenVRMirrorTexture : IDisposable
         float sampleUVWidth = (float)sampleWidth / eyeWidth;
         float sampleUVHeight = (float)sampleHeight / eyeHeight;
 
-        float max = (float)Math.Max(sampleUVWidth, sampleUVHeight);
+        float max = Math.Max(sampleUVWidth, sampleUVHeight);
         sampleUVWidth /= max;
         sampleUVHeight /= max;
 

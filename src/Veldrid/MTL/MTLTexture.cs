@@ -46,12 +46,12 @@ internal sealed class MTLTexture : Texture
         if (Usage != TextureUsage.Staging)
         {
             MTLTextureDescriptor texDescriptor = MTLTextureDescriptor.New();
-            texDescriptor.width = (UIntPtr)Width;
-            texDescriptor.height = (UIntPtr)Height;
-            texDescriptor.depth = (UIntPtr)Depth;
-            texDescriptor.mipmapLevelCount = (UIntPtr)MipLevels;
-            texDescriptor.arrayLength = (UIntPtr)ArrayLayers;
-            texDescriptor.sampleCount = (UIntPtr)FormatHelpers.GetSampleCountUInt32(SampleCount);
+            texDescriptor.width = Width;
+            texDescriptor.height = Height;
+            texDescriptor.depth = Depth;
+            texDescriptor.mipmapLevelCount = MipLevels;
+            texDescriptor.arrayLength = ArrayLayers;
+            texDescriptor.sampleCount = FormatHelpers.GetSampleCountUInt32(SampleCount);
             texDescriptor.textureType = MTLTextureType;
             texDescriptor.pixelFormat = MTLPixelFormat;
             texDescriptor.textureUsage = MTLFormats.VdToMTLTextureUsage(Usage);
@@ -86,7 +86,7 @@ internal sealed class MTLTexture : Texture
             totalStorageSize *= ArrayLayers;
 
             StagingBuffer = _gd.Device.newBufferWithLengthOptions(
-                (UIntPtr)totalStorageSize,
+                totalStorageSize,
                 MTLResourceOptions.StorageModeShared
             );
         }

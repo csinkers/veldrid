@@ -1,12 +1,11 @@
-﻿namespace Veldrid
+﻿namespace Veldrid;
+
+public enum WindowState
 {
-    public enum WindowState
-    {
-        Normal,
-        FullScreen,
-        Maximized,
-        Minimized,
-        BorderlessFullScreen,
-        Hidden,
-    }
+    Normal,
+    FullScreen,
+    Maximized,
+    Minimized,
+    BorderlessFullScreen,
+    Hidden,
 }

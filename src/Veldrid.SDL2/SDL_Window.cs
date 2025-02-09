@@ -1,24 +1,23 @@
 ﻿using System;
 
-namespace Veldrid.Sdl2
+namespace Veldrid.Sdl2;
+
+/// <summary>
+/// A transparent wrapper over a pointer representing an SDL Sdl2Window object.
+/// </summary>
+public struct SDL_Window
 {
     /// <summary>
-    /// A transparent wrapper over a pointer representing an SDL Sdl2Window object.
+    /// The native SDL_Window pointer.
     /// </summary>
-    public struct SDL_Window
+    public readonly IntPtr NativePointer;
+
+    public SDL_Window(IntPtr pointer)
     {
-        /// <summary>
-        /// The native SDL_Window pointer.
-        /// </summary>
-        public readonly IntPtr NativePointer;
-
-        public SDL_Window(IntPtr pointer)
-        {
-            NativePointer = pointer;
-        }
-
-        public static implicit operator IntPtr(SDL_Window Sdl2Window) => Sdl2Window.NativePointer;
-
-        public static implicit operator SDL_Window(IntPtr pointer) => new(pointer);
+        NativePointer = pointer;
     }
+
+    public static implicit operator IntPtr(SDL_Window Sdl2Window) => Sdl2Window.NativePointer;
+
+    public static implicit operator SDL_Window(IntPtr pointer) => new(pointer);
 }

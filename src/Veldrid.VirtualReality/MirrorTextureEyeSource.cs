@@ -1,9 +1,8 @@
-﻿namespace Veldrid.VirtualReality
+﻿namespace Veldrid.VirtualReality;
+
+public enum MirrorTextureEyeSource
 {
-    public enum MirrorTextureEyeSource
-    {
-        BothEyes,
-        LeftEye,
-        RightEye,
-    }
+    BothEyes,
+    LeftEye,
+    RightEye,
 }

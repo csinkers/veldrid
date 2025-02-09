@@ -1,48 +1,47 @@
 ﻿using System;
 using System.Buffers;
 
-namespace Veldrid
+namespace Veldrid;
+
+internal unsafe struct SmallFixedOrDynamicArray : IDisposable
 {
-    internal unsafe struct SmallFixedOrDynamicArray : IDisposable
+    public const int MaxFixedValues = 5;
+
+    private static ArrayPool<uint> _arrayPool = ArrayPool<uint>.Create();
+
+    public readonly uint Count;
+    private fixed uint FixedData[MaxFixedValues];
+    public uint[]? Data;
+
+    public uint Get(uint i)
     {
-        public const int MaxFixedValues = 5;
+        return Count > MaxFixedValues ? Data![i] : FixedData[i];
+    }
 
-        private static ArrayPool<uint> _arrayPool = ArrayPool<uint>.Create();
-
-        public readonly uint Count;
-        private fixed uint FixedData[MaxFixedValues];
-        public uint[]? Data;
-
-        public uint Get(uint i)
+    public SmallFixedOrDynamicArray(ReadOnlySpan<uint> offsets)
+    {
+        if (offsets.Length > MaxFixedValues)
         {
-            return Count > MaxFixedValues ? Data![i] : FixedData[i];
+            Data = _arrayPool.Rent(offsets.Length);
+        }
+        else
+        {
+            for (int i = 0; i < offsets.Length; i++)
+            {
+                FixedData[i] = offsets[i];
+            }
+            Data = null;
         }
 
-        public SmallFixedOrDynamicArray(ReadOnlySpan<uint> offsets)
-        {
-            if (offsets.Length > MaxFixedValues)
-            {
-                Data = _arrayPool.Rent(offsets.Length);
-            }
-            else
-            {
-                for (int i = 0; i < offsets.Length; i++)
-                {
-                    FixedData[i] = offsets[i];
-                }
-                Data = null;
-            }
+        Count = (uint)offsets.Length;
+    }
 
-            Count = (uint)offsets.Length;
-        }
-
-        public void Dispose()
+    public void Dispose()
+    {
+        if (Data != null)
         {
-            if (Data != null)
-            {
-                _arrayPool.Return(Data);
-                Data = null;
-            }
+            _arrayPool.Return(Data);
+            Data = null;
         }
     }
 }

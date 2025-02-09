@@ -1,8 +1,7 @@
-﻿namespace Veldrid.VirtualReality
+﻿namespace Veldrid.VirtualReality;
+
+public enum VREye
 {
-    public enum VREye
-    {
-        Left = 0,
-        Right = 1,
-    }
+    Left = 0,
+    Right = 1,
 }

@@ -1,12 +1,11 @@
-﻿namespace Veldrid.NeoDemo
+﻿namespace Veldrid.NeoDemo;
+
+class Program
 {
-    class Program
+    unsafe static void Main(string[] args)
     {
-        unsafe static void Main(string[] args)
-        {
-            Sdl2.SDL_version version;
-            Sdl2.Sdl2Native.SDL_GetVersion(&version);
-            new NeoDemo().Run();
-        }
+        Sdl2.SDL_version version;
+        Sdl2.Sdl2Native.SDL_GetVersion(&version);
+        new NeoDemo().Run();
     }
 }

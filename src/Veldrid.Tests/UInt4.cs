@@ -1,10 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Veldrid.Tests
+namespace Veldrid.Tests;
+
+[StructLayout(LayoutKind.Sequential)]
+public struct UInt4
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct UInt4
-    {
-        public uint X, Y, Z, W;
-    }
+    public uint X, Y, Z, W;
 }

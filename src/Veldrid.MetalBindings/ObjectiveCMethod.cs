@@ -1,19 +1,18 @@
 using System;
 
-namespace Veldrid.MetalBindings
+namespace Veldrid.MetalBindings;
+
+public struct ObjectiveCMethod
 {
-    public struct ObjectiveCMethod
-    {
-        public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr;
 
-        public ObjectiveCMethod(IntPtr ptr) => NativePtr = ptr;
+    public ObjectiveCMethod(IntPtr ptr) => NativePtr = ptr;
 
-        public static implicit operator IntPtr(ObjectiveCMethod method) => method.NativePtr;
+    public static implicit operator IntPtr(ObjectiveCMethod method) => method.NativePtr;
 
-        public static implicit operator ObjectiveCMethod(IntPtr ptr) => new(ptr);
+    public static implicit operator ObjectiveCMethod(IntPtr ptr) => new(ptr);
 
-        public Selector GetSelector() => ObjectiveCRuntime.method_getName(this);
+    public Selector GetSelector() => ObjectiveCRuntime.method_getName(this);
 
-        public string GetName() => GetSelector().Name;
-    }
+    public string GetName() => GetSelector().Name;
 }

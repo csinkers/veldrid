@@ -1,7 +1,6 @@
-﻿namespace Veldrid.VirtualReality
+﻿namespace Veldrid.VirtualReality;
+
+public struct VRContextOptions
 {
-    public struct VRContextOptions
-    {
-        public TextureSampleCount EyeFramebufferSampleCount;
-    }
+    public TextureSampleCount EyeFramebufferSampleCount;
 }

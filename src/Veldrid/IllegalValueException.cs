@@ -1,27 +1,26 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Veldrid
+namespace Veldrid;
+
+internal static class Illegal
 {
-    internal static class Illegal
+    [DoesNotReturn]
+    internal static void Value<T>()
     {
-        [DoesNotReturn]
-        internal static void Value<T>()
-        {
-            throw new IllegalValueException<T>();
-        }
+        throw new IllegalValueException<T>();
+    }
 
-        [DoesNotReturn]
-        internal static R Value<T, R>()
-        {
-            throw new IllegalValueException<T, R>();
-        }
+    [DoesNotReturn]
+    internal static R Value<T, R>()
+    {
+        throw new IllegalValueException<T, R>();
+    }
 
-        internal class IllegalValueException<T> : VeldridException
-        {
-        }
+    internal class IllegalValueException<T> : VeldridException
+    {
+    }
 
-        internal class IllegalValueException<T, R> : IllegalValueException<T>
-        {
-        }
+    internal class IllegalValueException<T, R> : IllegalValueException<T>
+    {
     }
 }

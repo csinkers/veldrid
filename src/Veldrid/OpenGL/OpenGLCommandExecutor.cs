@@ -20,21 +20,21 @@ internal sealed unsafe class OpenGLCommandExecutor
     Framebuffer? _fb;
     bool _isSwapchainFB;
     OpenGLPipeline? _graphicsPipeline;
-    BoundResourceSetInfo[] _graphicsResourceSets = Array.Empty<BoundResourceSetInfo>();
+    BoundResourceSetInfo[] _graphicsResourceSets = [];
     bool _graphicsResourcesFlushed;
-    bool[] _newGraphicsResourceSets = Array.Empty<bool>();
-    uint[] _vertexBuffers = Array.Empty<uint>();
-    nuint[] _vbOffsets = Array.Empty<nuint>();
-    bool[] _newVertexBuffers = Array.Empty<bool>();
+    bool[] _newGraphicsResourceSets = [];
+    uint[] _vertexBuffers = [];
+    nuint[] _vbOffsets = [];
+    bool[] _newVertexBuffers = [];
     DrawElementsType _drawElementsType;
     uint _ibOffset;
     PrimitiveType _primitiveType;
     OpenGLBuffer? _indexBuffer;
 
     OpenGLPipeline? _computePipeline;
-    BoundResourceSetInfo[] _computeResourceSets = Array.Empty<BoundResourceSetInfo>();
+    BoundResourceSetInfo[] _computeResourceSets = [];
     bool _computeResourcesFlushed;
-    bool[] _newComputeResourceSets = Array.Empty<bool>();
+    bool[] _newComputeResourceSets = [];
 
     bool _graphicsPipelineActive;
     bool _computePipelineActive;

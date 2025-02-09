@@ -10,7 +10,7 @@ namespace Veldrid;
 public abstract class Framebuffer : DeviceResource, IDisposable
 {
     protected FramebufferAttachment? _depthTarget;
-    protected FramebufferAttachment[] _colorTargets = Array.Empty<FramebufferAttachment>();
+    protected FramebufferAttachment[] _colorTargets = [];
 
     /// <summary>
     /// Gets the depth attachment associated with this instance. May be null if no depth texture is used.

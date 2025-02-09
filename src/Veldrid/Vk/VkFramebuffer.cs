@@ -18,7 +18,7 @@ internal sealed unsafe class VkFramebuffer : VkFramebufferBase
     readonly VkRenderPass _renderPassNoClearLoad;
     readonly VkRenderPass _renderPassNoClear;
     readonly VkRenderPass _renderPassClear;
-    readonly List<VkImageView> _attachmentViews = new();
+    readonly List<VkImageView> _attachmentViews = [];
     string? _name;
 
     public override VulkanFramebuffer CurrentFramebuffer => _deviceFramebuffer;

@@ -423,8 +423,8 @@ public static class VeldridStartup
     static (int Major, int Minor) TestMaxVersion(bool gles)
     {
         (int, int)[] testVersions = gles
-            ? new[] { (3, 2), (3, 0) }
-            : new[] { (4, 6), (4, 3), (4, 0), (3, 3), (3, 0) };
+            ? [(3, 2), (3, 0)]
+            : [(4, 6), (4, 3), (4, 0), (3, 3), (3, 0)];
 
         foreach ((int major, int minor) in testVersions)
         {

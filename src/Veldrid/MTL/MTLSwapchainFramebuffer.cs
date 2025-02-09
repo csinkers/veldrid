@@ -40,7 +40,7 @@ internal sealed class MTLSwapchainFramebuffer : MTLFramebufferBase
         OutputDescription = new OutputDescription(depthAttachment, colorAttachment);
         _placeholderTexture = new MTLPlaceholderTexture(colorFormat);
         _placeholderTexture.Resize(width, height);
-        _colorTargets = new[] { new FramebufferAttachment(_placeholderTexture, 0) };
+        _colorTargets = [new FramebufferAttachment(_placeholderTexture, 0)];
 
         Width = width;
         Height = height;

@@ -9,12 +9,12 @@ namespace Veldrid.OpenGL.EntryList;
 internal unsafe sealed class OpenGLCommandEntryList : IDisposable
 {
     readonly StagingMemoryPool _memoryPool;
-    readonly List<EntryStorageBlock> _blocks = new();
+    readonly List<EntryStorageBlock> _blocks = [];
     EntryStorageBlock _currentBlock;
     int _currentBlockIndex;
     uint _totalEntries;
-    readonly List<object> _resourceList = new();
-    readonly List<StagingBlock> _stagingBlocks = new();
+    readonly List<object> _resourceList = [];
+    readonly List<StagingBlock> _stagingBlocks = [];
 
     // Entry IDs
     const byte BeginEntryID = 1;

@@ -21,7 +21,7 @@ internal sealed class D3D11Swapchain : Swapchain
     bool _disposed;
 
     readonly object _referencedCLsLock = new();
-    HashSet<D3D11CommandList> _referencedCLs = new();
+    HashSet<D3D11CommandList> _referencedCLs = [];
 
     public override Framebuffer Framebuffer => _framebuffer;
 

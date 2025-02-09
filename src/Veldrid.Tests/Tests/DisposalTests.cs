@@ -58,12 +58,11 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
     {
         Shader[] shaders = TestShaders.LoadVertexFragment(RF, "UIntVertexAttribs");
         ShaderSetDescription shaderSet = new(
-            new VertexLayoutDescription[]
-            {
+            [
                 new VertexLayoutDescription(
                     new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                     new VertexElementDescription("Color_UInt", VertexElementSemantic.TextureCoordinate, VertexElementFormat.UInt4))
-            },
+            ],
             shaders);
 
         ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(

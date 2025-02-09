@@ -17,8 +17,8 @@ public class Scene
     readonly Octree<CullRenderable> _octree
         = new(new BoundingBox(Vector3.One * -50, Vector3.One * 50), 2);
 
-    readonly List<Renderable> _freeRenderables = new();
-    readonly List<IUpdateable> _updateables = new();
+    readonly List<Renderable> _freeRenderables = [];
+    readonly List<IUpdateable> _updateables = [];
 
     readonly ConcurrentDictionary<RenderPasses, Func<CullRenderable, bool>> _filters
         = new(new RenderPassesComparer());
@@ -549,7 +549,7 @@ public class Scene
         }
     }
 
-    readonly HashSet<Renderable> _allPerFrameRenderablesSet = new();
+    readonly HashSet<Renderable> _allPerFrameRenderablesSet = [];
     readonly RenderQueue[] _renderQueues = Enumerable.Range(0, 4).Select(i => new RenderQueue()).ToArray();
     readonly List<CullRenderable>[] _cullableStage = Enumerable.Range(0, 4).Select(i => new List<CullRenderable>()).ToArray();
     readonly List<Renderable>[] _renderableStage = Enumerable.Range(0, 4).Select(i => new List<Renderable>()).ToArray();

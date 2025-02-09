@@ -15,7 +15,7 @@ namespace Veldrid;
 public abstract class GraphicsDevice : IDisposable
 {
     readonly object _deferredDisposalLock = new();
-    readonly List<IDisposable> _disposables = new();
+    readonly List<IDisposable> _disposables = [];
     Sampler? _aniso4xSampler;
     bool _disposed;
 

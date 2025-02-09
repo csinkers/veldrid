@@ -32,15 +32,14 @@ internal class FullScreenQuad : Renderable
             new RasterizerStateDescription(FaceCullMode.Back, PolygonFillMode.Solid, FrontFace.Clockwise, true, false),
             PrimitiveTopology.TriangleList,
             new ShaderSetDescription(
-                new[]
-                {
+                [
                     new VertexLayoutDescription(
                         new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                         new VertexElementDescription("TexCoords", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2))
-                },
-                new[] { vs, fs },
+                ],
+                [vs, fs],
                 ShaderHelper.GetSpecializations(gd)),
-            new ResourceLayout[] { resourceLayout },
+            [resourceLayout],
             gd.SwapchainFramebuffer.OutputDescription);
         _pipeline = factory.CreateGraphicsPipeline(pd);
 
@@ -79,5 +78,5 @@ internal class FullScreenQuad : Renderable
     {
     }
 
-    static ushort[] s_quadIndices = new ushort[] { 0, 1, 2, 0, 2, 3 };
+    static ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
 }

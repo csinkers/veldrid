@@ -27,7 +27,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
     readonly Dictionary<MappedResourceCacheKey, MappedResource> _mappedResources = new();
 
     readonly object _stagingResourcesLock = new();
-    readonly List<D3D11Buffer> _availableStagingBuffers = new();
+    readonly List<D3D11Buffer> _availableStagingBuffers = [];
 
     public ID3D11Device Device => _device;
 
@@ -72,11 +72,10 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                 VorticeD3D11.D3D11CreateDevice(adapterPtr,
                     Vortice.Direct3D.DriverType.Hardware,
                     flags,
-                    new[]
-                    {
+                    [
                         Vortice.Direct3D.FeatureLevel.Level_11_1,
-                        Vortice.Direct3D.FeatureLevel.Level_11_0,
-                    },
+                        Vortice.Direct3D.FeatureLevel.Level_11_0
+                    ],
                     out device).CheckError();
             }
             catch
@@ -575,7 +574,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
     }
 
     readonly object _resetEventsLock = new();
-    readonly List<ManualResetEvent[]> _resetEvents = new();
+    readonly List<ManualResetEvent[]> _resetEvents = [];
 
     ManualResetEvent[] GetResetEventArray(int length)
     {

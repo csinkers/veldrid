@@ -188,7 +188,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
         readonly uint _memoryTypeIndex;
         readonly bool _persistentMapped;
         readonly object _mutex = new();
-        readonly List<ChunkAllocator> _allocators = new();
+        readonly List<ChunkAllocator> _allocators = [];
 
         public ChunkAllocatorSet(VkDevice device, uint memoryTypeIndex, bool persistentMapped)
         {
@@ -264,7 +264,7 @@ internal sealed unsafe class VkDeviceMemoryManager : IDisposable
         readonly VkDevice _device;
         readonly uint _memoryTypeIndex;
         readonly bool _persistentMapped;
-        readonly List<VkMemoryBlock> _freeBlocks = new();
+        readonly List<VkMemoryBlock> _freeBlocks = [];
         readonly void* _mappedPtr;
         readonly ulong _totalMemorySize;
 

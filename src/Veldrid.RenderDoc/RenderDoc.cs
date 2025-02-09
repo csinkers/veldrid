@@ -382,7 +382,7 @@ public unsafe class RenderDoc
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            List<string> paths = new();
+            List<string> paths = [];
             string? programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
             if (programFiles != null)
             {
@@ -398,11 +398,11 @@ public unsafe class RenderDoc
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            return new[] { "librenderdoc.dylib" };
+            return ["librenderdoc.dylib"];
         }
         else
         {
-            return new[] { "librenderdoc.so" };
+            return ["librenderdoc.so"];
         }
     }
 }

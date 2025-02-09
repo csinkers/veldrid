@@ -53,8 +53,8 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
     const uint MinStagingBufferSize = 64;
     const uint MaxStagingBufferSize = 512;
 
-    readonly List<VkTexture> _availableStagingTextures = new();
-    readonly List<VkBuffer> _availableStagingBuffers = new();
+    readonly List<VkTexture> _availableStagingTextures = [];
+    readonly List<VkBuffer> _availableStagingBuffers = [];
 
     public override bool GetVulkanInfo(out BackendInfoVulkan info)
     {
@@ -82,9 +82,9 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
 
     readonly object _submittedFencesLock = new();
     readonly ConcurrentQueue<VulkanFence> _availableSubmissionFences = new();
-    readonly List<FenceSubmissionInfo> _submittedFences = new();
+    readonly List<FenceSubmissionInfo> _submittedFences = [];
 
-    readonly List<FixedUtf8String> _surfaceExtensions = new();
+    readonly List<FixedUtf8String> _surfaceExtensions = [];
 
     public VkGraphicsDevice(GraphicsDeviceOptions options, SwapchainDescription? scDesc)
         : this(options, scDesc, new VulkanDeviceOptions())
@@ -468,8 +468,8 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
             pApplicationInfo = &applicationInfo
         };
 
-        List<IntPtr> instanceExtensions = new();
-        List<IntPtr> instanceLayers = new();
+        List<IntPtr> instanceExtensions = [];
+        List<IntPtr> instanceLayers = [];
 
         if (availableInstanceExtensions.Contains(CommonStrings.VK_KHR_portability_subset))
         {
@@ -494,8 +494,8 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
             instanceExtensions.Add(CommonStrings.VK_KHR_get_physical_device_properties2);
         }
 
-        string[] requestedInstanceExtensions = options.InstanceExtensions ?? Array.Empty<string>();
-        List<FixedUtf8String> tempStrings = new();
+        string[] requestedInstanceExtensions = options.InstanceExtensions ?? [];
+        List<FixedUtf8String> tempStrings = [];
         try
         {
             foreach (string requiredExt in requestedInstanceExtensions)
@@ -754,7 +754,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
     {
         GetQueueFamilyIndices(surface);
 
-        HashSet<uint> familyIndices = new() { _graphicsQueueIndex, _presentQueueIndex };
+        HashSet<uint> familyIndices = [_graphicsQueueIndex, _presentQueueIndex];
         VkDeviceQueueCreateInfo* queueCreateInfos = stackalloc VkDeviceQueueCreateInfo[familyIndices.Count];
         uint queueCreateInfosCount = (uint)familyIndices.Count;
 
@@ -777,7 +777,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
 
         VkExtensionProperties[] props = GetDeviceExtensionProperties();
 
-        HashSet<string> requiredDeviceExtensions = new(options.DeviceExtensions ?? Array.Empty<string>());
+        HashSet<string> requiredDeviceExtensions = new(options.DeviceExtensions ?? []);
 
         bool hasMemReqs2 = false;
         bool hasDedicatedAllocation = false;

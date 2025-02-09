@@ -14,7 +14,7 @@ internal sealed unsafe class MTLCommandList : CommandList
     MTLRenderCommandEncoder _rce;
     MTLBlitCommandEncoder _bce;
     MTLComputeCommandEncoder _cce;
-    RgbaFloat?[] _clearColors = Array.Empty<RgbaFloat?>();
+    RgbaFloat?[] _clearColors = [];
     (float depth, byte stencil)? _clearDepth;
     MTLBuffer _indexBuffer;
     uint _ibOffset;
@@ -23,9 +23,9 @@ internal sealed unsafe class MTLCommandList : CommandList
     bool _graphicsPipelineChanged;
     new MTLPipeline _computePipeline;
     bool _computePipelineChanged;
-    MTLViewport[] _viewports = Array.Empty<MTLViewport>();
+    MTLViewport[] _viewports = [];
     bool _viewportsChanged;
-    MTLScissorRect[] _scissorRects = Array.Empty<MTLScissorRect>();
+    MTLScissorRect[] _scissorRects = [];
     bool _scissorRectsChanged;
     uint _graphicsResourceSetCount;
     BoundResourceSetInfo[] _graphicsResourceSets;
@@ -343,7 +343,7 @@ internal sealed unsafe class MTLCommandList : CommandList
         if (useComputeCopy)
         {
             BufferCopyCommand command = new(0, bufferOffsetInBytes, sizeInBytes);
-            CopyBufferUnaligned(copySrc, dstMTLBuffer, stackalloc[] { command });
+            CopyBufferUnaligned(copySrc, dstMTLBuffer, [command]);
         }
         else
         {

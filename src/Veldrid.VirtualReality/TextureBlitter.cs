@@ -22,11 +22,11 @@ internal class TextureBlitter : IDisposable
         OutputDescription outputDesc,
         bool srgbOutput)
     {
-        SpecializationConstant[] specConstants = new[]
-        {
+        SpecializationConstant[] specConstants =
+        [
             new SpecializationConstant(0, srgbOutput),
             new SpecializationConstant(1, gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES)
-        };
+        ];
 
         Shader[] shaders = factory.CreateFromSpirv(
             new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
@@ -46,10 +46,10 @@ internal class TextureBlitter : IDisposable
             RasterizerStateDescription.CullNone,
             PrimitiveTopology.TriangleStrip,
             new ShaderSetDescription(
-                Array.Empty<VertexLayoutDescription>(),
-                new[] { shaders[0], shaders[1] },
+                [],
+                [shaders[0], shaders[1]],
                 specConstants),
-            new[] { _rl, _sampleRegionLayout },
+            [_rl, _sampleRegionLayout],
             outputDesc));
 
         _sampleRegionUB = factory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));

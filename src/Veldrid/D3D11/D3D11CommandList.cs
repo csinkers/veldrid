@@ -18,8 +18,8 @@ internal sealed class D3D11CommandList : CommandList
     bool _disposed;
     ID3D11CommandList? _commandList;
 
-    Viewport[] _viewports = Array.Empty<Viewport>();
-    RawRect[] _scissors = Array.Empty<RawRect>();
+    Viewport[] _viewports = [];
+    RawRect[] _scissors = [];
     bool _viewportsChanged;
     bool _scissorRectsChanged;
 
@@ -80,11 +80,11 @@ internal sealed class D3D11CommandList : CommandList
     readonly List<(DeviceBuffer, int)> _boundComputeUAVBuffers = new(MaxUAVs);
     readonly List<(DeviceBuffer, int)> _boundOMUAVBuffers = new(MaxUAVs);
 
-    readonly List<D3D11Buffer> _availableStagingBuffers = new();
-    readonly List<D3D11Buffer> _submittedStagingBuffers = new();
+    readonly List<D3D11Buffer> _availableStagingBuffers = [];
+    readonly List<D3D11Buffer> _submittedStagingBuffers = [];
 
     uint _viewportCount;
-    readonly List<D3D11Swapchain> _referencedSwapchains = new();
+    readonly List<D3D11Swapchain> _referencedSwapchains = [];
 
     public D3D11CommandList(D3D11GraphicsDevice gd, in CommandListDescription description)
         : base(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
@@ -771,7 +771,7 @@ internal sealed class D3D11CommandList : CommandList
             return ret;
         }
 
-        return new List<BoundTextureInfo>();
+        return [];
     }
 
     void BindStorageBufferView(D3D11BufferRange range, int slot, ShaderStages stages)

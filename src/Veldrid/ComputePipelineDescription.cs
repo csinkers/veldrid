@@ -81,7 +81,7 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
         uint threadGroupSizeZ)
     {
         ComputeShader = shaderStage;
-        ResourceLayouts = new[] { resourceLayout };
+        ResourceLayouts = [resourceLayout];
         ThreadGroupSizeX = threadGroupSizeX;
         ThreadGroupSizeY = threadGroupSizeY;
         ThreadGroupSizeZ = threadGroupSizeZ;
@@ -109,7 +109,7 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
         SpecializationConstant[] specializations)
     {
         ComputeShader = shaderStage;
-        ResourceLayouts = new[] { resourceLayout };
+        ResourceLayouts = [resourceLayout];
         ThreadGroupSizeX = threadGroupSizeX;
         ThreadGroupSizeY = threadGroupSizeY;
         ThreadGroupSizeZ = threadGroupSizeZ;

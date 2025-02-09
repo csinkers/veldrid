@@ -12,14 +12,13 @@ public abstract class PipelineTests<T> : GraphicsDeviceTestBase<T>
         Framebuffer framebuffer = RF.CreateFramebuffer(new FramebufferDescription(null, colorTex));
 
         ShaderSetDescription shaderSet = new(
-            new VertexLayoutDescription[]
-            {
+            [
                 new VertexLayoutDescription(
                     24,
                     0,
                     new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                     new VertexElementDescription("Color_UInt", VertexElementSemantic.TextureCoordinate, VertexElementFormat.UInt4))
-            },
+            ],
             TestShaders.LoadVertexFragment(RF, "UIntVertexAttribs"));
 
         ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(

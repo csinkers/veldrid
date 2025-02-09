@@ -180,23 +180,23 @@ internal static class Util
     {
         if (gd.IsClipSpaceYInverted)
         {
-            return new float[]
-            {
+            return
+            [
                 -1, -1, 0, 0,
                 1, -1, 1, 0,
                 1, 1, 1, 1,
                 -1, 1, 0, 1
-            };
+            ];
         }
         else
         {
-            return new float[]
-            {
+            return
+            [
                 -1, 1, 0, 0,
                 1, 1, 1, 0,
                 1, -1, 1, 1,
                 -1, -1, 0, 1
-            };
+            ];
         }
     }
 }

@@ -15,8 +15,8 @@ namespace Veldrid.VirtualReality.Sample;
 internal class AssimpMesh : IDisposable
 {
     readonly GraphicsDevice _gd;
-    readonly List<IDisposable> _disposables = new();
-    readonly List<MeshPiece> _meshPieces = new();
+    readonly List<IDisposable> _disposables = [];
+    readonly List<MeshPiece> _meshPieces = [];
     readonly Pipeline _pipeline;
     readonly DeviceBuffer _wvpBuffer;
     readonly Texture _texture;
@@ -57,7 +57,7 @@ internal class AssimpMesh : IDisposable
             DepthStencilStateDescription.DepthOnlyLessEqual,
             RasterizerStateDescription.CullNone,
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { shaders[0], shaders[1] }),
+            new ShaderSetDescription([positionLayoutDesc, texCoordLayoutDesc], [shaders[0], shaders[1]]),
             rl,
             outputs));
         _disposables.Add(_pipeline);

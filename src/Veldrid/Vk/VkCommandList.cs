@@ -24,22 +24,22 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
     uint _viewportCount;
     bool _viewportsChanged = false;
-    VkViewport[] _viewports = Array.Empty<VkViewport>();
+    VkViewport[] _viewports = [];
     bool _scissorRectsChanged = false;
-    VkRect2D[] _scissorRects = Array.Empty<VkRect2D>();
+    VkRect2D[] _scissorRects = [];
 
-    VkClearValue[] _clearValues = Array.Empty<VkClearValue>();
-    bool[] _validColorClearValues = Array.Empty<bool>();
+    VkClearValue[] _clearValues = [];
+    bool[] _validColorClearValues = [];
     VkClearValue? _depthClearValue;
-    readonly List<VkTexture> _dispatchStorageImages = new();
+    readonly List<VkTexture> _dispatchStorageImages = [];
 
     // Graphics State
     VkFramebufferBase? _currentFramebuffer;
     bool _currentFramebufferEverActive;
     VkRenderPass _activeRenderPass;
     VkPipeline? _currentGraphicsPipeline;
-    BoundResourceSetInfo[] _currentGraphicsResourceSets = Array.Empty<BoundResourceSetInfo>();
-    bool[] _graphicsResourceSetsChanged = Array.Empty<bool>();
+    BoundResourceSetInfo[] _currentGraphicsResourceSets = [];
+    bool[] _graphicsResourceSetsChanged = [];
 
     bool _newFramebuffer; // Render pass cycle state
 
@@ -50,14 +50,14 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
     // Compute State
     VkPipeline? _currentComputePipeline;
-    BoundResourceSetInfo[] _currentComputeResourceSets = Array.Empty<BoundResourceSetInfo>();
-    bool[] _computeResourceSetsChanged = Array.Empty<bool>();
+    BoundResourceSetInfo[] _currentComputeResourceSets = [];
+    bool[] _computeResourceSetsChanged = [];
     string? _name;
     string _stagingBufferName;
 
     readonly object _commandBufferListLock = new();
     readonly Stack<VkCommandBuffer> _availableCommandBuffers = new();
-    readonly List<VkCommandBuffer> _submittedCommandBuffers = new();
+    readonly List<VkCommandBuffer> _submittedCommandBuffers = [];
 
     StagingResourceInfo _currentStagingInfo;
     readonly Dictionary<VkCommandBuffer, StagingResourceInfo> _submittedStagingInfos = new();
@@ -1625,9 +1625,9 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
         public StagingResourceInfo()
         {
-            BuffersUsed = new List<VkBuffer>();
-            TexturesUsed = new List<VkTexture>();
-            Resources = new HashSet<ResourceRefCount>();
+            BuffersUsed = [];
+            TexturesUsed = [];
+            Resources = [];
         }
 
         public void AddResource(ResourceRefCount count)

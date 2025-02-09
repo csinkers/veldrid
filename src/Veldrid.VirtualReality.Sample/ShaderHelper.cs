@@ -10,8 +10,10 @@ internal static class ShaderHelper
     {
         bool fixClipZ = false;
         bool invertY = false;
-        List<SpecializationConstant> specializations = new();
-        specializations.Add(new SpecializationConstant(102, gd.IsDepthRangeZeroToOne));
+        List<SpecializationConstant> specializations =
+        [
+            new SpecializationConstant(102, gd.IsDepthRangeZeroToOne)
+        ];
         switch (gd.BackendType)
         {
             case GraphicsBackend.Direct3D11:

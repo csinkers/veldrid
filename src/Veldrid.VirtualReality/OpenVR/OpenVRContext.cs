@@ -111,7 +111,7 @@ internal class OpenVRContext : VRContext
 
     public override HmdPoseState WaitForPoses()
     {
-        EVRCompositorError compositorError = _compositor.WaitGetPoses(_devicePoses, Array.Empty<TrackedDevicePose_t>());
+        EVRCompositorError compositorError = _compositor.WaitGetPoses(_devicePoses, []);
 
         TrackedDevicePose_t hmdPose = _devicePoses[OVR.k_unTrackedDeviceIndex_Hmd];
         Matrix4x4 deviceToAbsolute = ToSysMatrix(hmdPose.mDeviceToAbsoluteTracking);

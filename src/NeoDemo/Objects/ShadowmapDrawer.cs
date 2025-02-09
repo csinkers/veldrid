@@ -54,12 +54,12 @@ public class ShadowmapDrawer : Renderable
         _ib = factory.CreateBuffer(new BufferDescription(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer));
         cl.UpdateBuffer(_ib, 0, s_quadIndices);
 
-        VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
-        {
+        VertexLayoutDescription[] vertexLayouts =
+        [
             new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                 new VertexElementDescription("TexCoord", VertexElementSemantic.TextureCoordinate,  VertexElementFormat.Float2))
-        };
+        ];
 
         (Shader vs, Shader fs) = StaticResourceCache.GetShaders(gd, gd.ResourceFactory, "ShadowmapPreviewShader");
 
@@ -76,9 +76,9 @@ public class ShadowmapDrawer : Renderable
             PrimitiveTopology.TriangleList,
             new ShaderSetDescription(
                 vertexLayouts,
-                new[] { vs, fs },
+                [vs, fs],
                 ShaderHelper.GetSpecializations(gd)),
-            new ResourceLayout[] { layout },
+            [layout],
             sc.MainSceneFramebuffer.OutputDescription);
 
         _pipeline = factory.CreateGraphicsPipeline(pd);
@@ -135,15 +135,15 @@ public class ShadowmapDrawer : Renderable
         cl.DrawIndexed((uint)s_quadIndices.Length, 1, 0, 0, 0);
     }
 
-    static float[] s_quadVerts = new float[]
-    {
+    static float[] s_quadVerts =
+    [
         0, 0, 0, 0,
         1, 0, 1, 0,
         1, 1, 1, 1,
         0, 1, 0, 1
-    };
+    ];
 
-    static ushort[] s_quadIndices = new ushort[] { 0, 1, 2, 0, 2, 3 };
+    static ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
 
     public struct SizeInfo
     {

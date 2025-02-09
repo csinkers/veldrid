@@ -1053,10 +1053,10 @@ public abstract class CommandList : DeviceResource, IDisposable
     public void CopyBuffer(
         DeviceBuffer source, uint sourceOffset, DeviceBuffer destination, uint destinationOffset, uint sizeInBytes)
     {
-        ReadOnlySpan<BufferCopyCommand> commands = stackalloc[]
-        {
+        ReadOnlySpan<BufferCopyCommand> commands =
+        [
             new BufferCopyCommand(sourceOffset, destinationOffset, sizeInBytes)
-        };
+        ];
         CopyBufferCore(source, destination, commands);
     }
 

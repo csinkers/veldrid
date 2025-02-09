@@ -232,7 +232,7 @@ internal static class Util
     {
         if (array == null)
         {
-            return Array.Empty<T>();
+            return [];
         }
         return (T[])array.Clone();
     }

@@ -216,7 +216,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
             result = vkBindBufferMemory(_gd.Device, _stagingBuffer, _memoryBlock.DeviceMemory, _memoryBlock.Offset);
             CheckResult(result);
 
-            _imageLayouts = Array.Empty<VkImageLayout>();
+            _imageLayouts = [];
         }
 
         RefCount = new ResourceRefCount(this);
@@ -256,7 +256,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         SampleCount = sampleCount;
         VkSampleCount = VkFormats.VdToVkSampleCount(sampleCount);
         _optimalImage = existingImage;
-        _imageLayouts = new[] { VkImageLayout.VK_IMAGE_LAYOUT_UNDEFINED };
+        _imageLayouts = [VkImageLayout.VK_IMAGE_LAYOUT_UNDEFINED];
         _isSwapchainTexture = isSwapchainTexture;
         _leaveOpen = leaveOpen;
 

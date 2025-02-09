@@ -68,9 +68,9 @@ public class MtlParser
 
     class ParseContext
     {
-        static readonly char[] s_whitespaceChars = new char[] { ' ' };
+        static readonly char[] s_whitespaceChars = [' '];
 
-        readonly List<MaterialDefinition> _definitions = new();
+        readonly List<MaterialDefinition> _definitions = [];
         MaterialDefinition? _currentDefinition;
 
         int _currentLine;

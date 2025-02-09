@@ -9,14 +9,14 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
     readonly VkGraphicsDevice _gd;
     readonly DescriptorResourceCounts _descriptorCounts;
     readonly DescriptorAllocationToken _descriptorAllocationToken;
-    readonly List<ResourceRefCount> _refCounts = new();
+    readonly List<ResourceRefCount> _refCounts = [];
     string? _name;
 
     public VkDescriptorSet DescriptorSet => _descriptorAllocationToken.Set;
 
-    readonly List<VkTexture> _sampledTextures = new();
+    readonly List<VkTexture> _sampledTextures = [];
     public List<VkTexture> SampledTextures => _sampledTextures;
-    readonly List<VkTexture> _storageImages = new();
+    readonly List<VkTexture> _storageImages = [];
     public List<VkTexture> StorageTextures => _storageImages;
 
     public ResourceRefCount RefCount { get; }

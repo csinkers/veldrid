@@ -25,7 +25,7 @@ internal class Skybox
     Pipeline _pipeline;
     DeviceBuffer _ubo;
     ResourceSet _resourceSet;
-    readonly List<IDisposable> _disposables = new();
+    readonly List<IDisposable> _disposables = [];
 
     public Skybox(
         Image<Rgba32> front, Image<Rgba32> back, Image<Rgba32> left,
@@ -54,11 +54,11 @@ internal class Skybox
         Texture textureCube = imageSharpCubemapTexture.CreateDeviceTexture(gd, factory);
         TextureView textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
 
-        VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
-        {
+        VertexLayoutDescription[] vertexLayouts =
+        [
             new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3))
-        };
+        ];
 
         Shader[] shaders = factory.CreateFromSpirv(
             new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(VertexShader), "main"),
@@ -77,7 +77,7 @@ internal class Skybox
             new RasterizerStateDescription(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, true, true),
             PrimitiveTopology.TriangleList,
             new ShaderSetDescription(vertexLayouts, shaders),
-            new ResourceLayout[] { _layout },
+            [_layout],
             outputs);
 
         _pipeline = factory.CreateGraphicsPipeline(pd);
@@ -105,8 +105,8 @@ internal class Skybox
         cl.SetViewport(0, new Viewport(0, 0, fb.Width, fb.Height, 0, 1));
     }
 
-    static readonly Vector3[] s_vertices = new Vector3[]
-    {
+    static readonly Vector3[] s_vertices =
+    [
         // Top
         new Vector3(-20.0f,20.0f,-20.0f),
         new Vector3(20.0f,20.0f,-20.0f),
@@ -136,18 +136,18 @@ internal class Skybox
         new Vector3(-20.0f,20.0f,20.0f),
         new Vector3(20.0f,20.0f,20.0f),
         new Vector3(20.0f,-20.0f,20.0f),
-        new Vector3(-20.0f,-20.0f,20.0f),
-    };
+        new Vector3(-20.0f,-20.0f,20.0f)
+    ];
 
-    static readonly ushort[] s_indices = new ushort[]
-    {
+    static readonly ushort[] s_indices =
+    [
         0,1,2, 0,2,3,
         4,5,6, 4,6,7,
         8,9,10, 8,10,11,
         12,13,14, 12,14,15,
         16,17,18, 16,18,19,
-        20,21,22, 20,22,23,
-    };
+        20,21,22, 20,22,23
+    ];
 
     internal const string VertexShader =
         @"

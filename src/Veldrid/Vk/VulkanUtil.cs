@@ -60,7 +60,7 @@ internal unsafe static class VulkanUtil
         CheckResult(result);
         if (propCount == 0)
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         VkLayerProperties[] props = new VkLayerProperties[propCount];
@@ -86,12 +86,12 @@ internal unsafe static class VulkanUtil
         VkResult result = vkEnumerateInstanceExtensionProperties((sbyte*)null, &propCount, null);
         if (result != VkResult.VK_SUCCESS)
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         if (propCount == 0)
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         VkExtensionProperties[] props = new VkExtensionProperties[propCount];

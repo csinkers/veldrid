@@ -14,8 +14,8 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
     readonly PixelFormat? _depthFormat;
     uint _currentImageIndex;
 
-    VkFramebuffer[] _scFramebuffers = Array.Empty<VkFramebuffer>();
-    VkImage[] _scImages = Array.Empty<VkImage>();
+    VkFramebuffer[] _scFramebuffers = [];
+    VkImage[] _scImages = [];
     VkFormat _scImageFormat;
     VkExtent2D _scExtent;
 

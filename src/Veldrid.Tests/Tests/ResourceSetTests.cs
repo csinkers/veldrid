@@ -124,12 +124,11 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
         DeviceBuffer orthoBuffer = RF.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
         ShaderSetDescription shaderSet = new(
-            new VertexLayoutDescription[]
-            {
+            [
                 new VertexLayoutDescription(
                     new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                     new VertexElementDescription("Color_UInt", VertexElementSemantic.TextureCoordinate, VertexElementFormat.UInt4))
-            },
+            ],
             TestShaders.LoadVertexFragment(RF, "UIntVertexAttribs"));
 
         ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(
@@ -165,12 +164,11 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
         DeviceBuffer orthoBuffer = RF.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
         ShaderSetDescription shaderSet = new(
-            new VertexLayoutDescription[]
-            {
+            [
                 new VertexLayoutDescription(
                     new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                     new VertexElementDescription("Color_UInt", VertexElementSemantic.TextureCoordinate, VertexElementFormat.UInt4))
-            },
+            ],
             TestShaders.LoadVertexFragment(RF, "UIntVertexAttribs"));
 
         ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(

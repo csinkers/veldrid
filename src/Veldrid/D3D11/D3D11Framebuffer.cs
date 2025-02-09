@@ -110,7 +110,7 @@ internal sealed class D3D11Framebuffer : Framebuffer
         }
         else
         {
-            RenderTargetViews = Array.Empty<ID3D11RenderTargetView>();
+            RenderTargetViews = [];
         }
     }
 

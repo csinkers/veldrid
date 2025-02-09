@@ -81,13 +81,13 @@ public class SceneContext
 
         PointLightsInfo pli = new();
         pli.NumActiveLights = 4;
-        pli.PointLights = new PointLightInfo[4]
-        {
+        pli.PointLights =
+        [
             new PointLightInfo { Color = new Vector3(.6f, .6f, .6f), Position = new Vector3(-50, 5, 0), Range = 75f },
             new PointLightInfo { Color = new Vector3(.6f, .35f, .4f), Position = new Vector3(0, 5, 0), Range = 100f },
             new PointLightInfo { Color = new Vector3(.6f, .6f, 0.35f), Position = new Vector3(50, 5, 0), Range = 40f },
-            new PointLightInfo { Color = new Vector3(0.4f, 0.4f, .6f), Position = new Vector3(25, 5, 45), Range = 150f },
-        };
+            new PointLightInfo { Color = new Vector3(0.4f, 0.4f, .6f), Position = new Vector3(25, 5, 45), Range = 150f }
+        ];
 
         cl.UpdateBuffer(PointLightsBuffer, 0, pli.GetBlittable());
 
@@ -261,17 +261,17 @@ public class CascadedShadowMaps
         NearShadowMap.Name = "Near Shadow Map";
         NearShadowMapView = factory.CreateTextureView(NearShadowMap);
         NearShadowMapFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(
-            new FramebufferAttachmentDescription(NearShadowMap, 0), Array.Empty<FramebufferAttachmentDescription>()));
+            new FramebufferAttachmentDescription(NearShadowMap, 0), []));
 
         MidShadowMap = factory.CreateTexture(desc);
         MidShadowMapView = factory.CreateTextureView(new TextureViewDescription(MidShadowMap, 0, 1, 0, 1));
         MidShadowMapFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(
-            new FramebufferAttachmentDescription(MidShadowMap, 0), Array.Empty<FramebufferAttachmentDescription>()));
+            new FramebufferAttachmentDescription(MidShadowMap, 0), []));
 
         FarShadowMap = factory.CreateTexture(desc);
         FarShadowMapView = factory.CreateTextureView(new TextureViewDescription(FarShadowMap, 0, 1, 0, 1));
         FarShadowMapFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(
-            new FramebufferAttachmentDescription(FarShadowMap, 0), Array.Empty<FramebufferAttachmentDescription>()));
+            new FramebufferAttachmentDescription(FarShadowMap, 0), []));
     }
 
     public void DestroyDeviceObjects()

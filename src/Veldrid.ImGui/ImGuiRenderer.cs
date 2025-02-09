@@ -40,7 +40,7 @@ public class ImGuiRenderer : IDisposable
     readonly Dictionary<TextureView, ResourceSetInfo> _setsByView = new();
     readonly Dictionary<Texture, TextureView> _autoViewsByTexture = new();
     readonly Dictionary<IntPtr, ResourceSetInfo> _viewsById = new();
-    readonly List<IDisposable> _ownedResources = new();
+    readonly List<IDisposable> _ownedResources = [];
     int _lastAssignedID = 100;
     bool _frameBegun;
     bool _disposed;
@@ -138,13 +138,13 @@ public class ImGuiRenderer : IDisposable
         _fragmentShader = factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, _gd.BackendType == GraphicsBackend.Vulkan ? "main" : "FS"));
         _fragmentShader.Name = "ImGui.NET Fragment Shader";
 
-        VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
-        {
+        VertexLayoutDescription[] vertexLayouts =
+        [
             new VertexLayoutDescription(
                 new VertexElementDescription("in_position", VertexElementSemantic.Position, VertexElementFormat.Float2),
                 new VertexElementDescription("in_texCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                 new VertexElementDescription("in_color", VertexElementSemantic.Color, VertexElementFormat.Byte4_Norm))
-        };
+        ];
 
         _layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
             new ResourceLayoutElementDescription("ProjectionMatrixBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
@@ -162,13 +162,12 @@ public class ImGuiRenderer : IDisposable
             PrimitiveTopology.TriangleList,
             new ShaderSetDescription(
                 vertexLayouts,
-                new[] { _vertexShader, _fragmentShader },
-                new[]
-                {
+                [_vertexShader, _fragmentShader],
+                [
                     new SpecializationConstant(0, gd.IsClipSpaceYInverted),
-                    new SpecializationConstant(1, _colorSpaceHandling == ColorSpaceHandling.Legacy),
-                }),
-            new ResourceLayout[] { _layout, _textureLayout },
+                    new SpecializationConstant(1, _colorSpaceHandling == ColorSpaceHandling.Legacy)
+                ]),
+            [_layout, _textureLayout],
             outputDescription,
             ResourceBindingModel.Default);
         _pipeline = factory.CreateGraphicsPipeline(pd);

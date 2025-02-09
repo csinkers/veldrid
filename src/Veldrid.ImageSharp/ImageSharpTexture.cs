@@ -51,7 +51,7 @@ public class ImageSharpTexture
         }
         else
         {
-            Images = new Image<Rgba32>[] { image };
+            Images = [image];
         }
     }
 

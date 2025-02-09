@@ -16,7 +16,7 @@ internal sealed class OpenGLCommandList : CommandList
 
     readonly object _lock = new();
     readonly Stack<OpenGLCommandEntryList> _availableLists = new();
-    readonly List<OpenGLCommandEntryList> _submittedLists = new();
+    readonly List<OpenGLCommandEntryList> _submittedLists = [];
 
     public override string? Name { get; set; }
 

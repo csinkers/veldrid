@@ -8,7 +8,7 @@ namespace Veldrid.Vulkan;
 internal sealed class VkDescriptorPoolManager
 {
     readonly VkGraphicsDevice _gd;
-    readonly List<PoolInfo> _pools = new();
+    readonly List<PoolInfo> _pools = [];
     readonly object _lock = new();
 
     public VkDescriptorPoolManager(VkGraphicsDevice gd)

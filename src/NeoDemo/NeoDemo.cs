@@ -29,7 +29,7 @@ public class NeoDemo
 
     event Action<int, int> _resizeHandled;
 
-    readonly string[] _msaaOptions = new string[] { "Off", "2x", "4x", "8x", "16x", "32x" };
+    readonly string[] _msaaOptions = ["Off", "2x", "4x", "8x", "16x", "32x"];
     int _msaaOption = 0;
     bool _colorRedMask = true;
     bool _colorGreenMask = true;

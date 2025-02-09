@@ -47,13 +47,13 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
     ExecutionThread _executionThread;
     readonly object _commandListDisposalLock = new();
     readonly Dictionary<OpenGLCommandList, int> _submittedCommandListCounts = new();
-    readonly HashSet<OpenGLCommandList> _commandListsToDispose = new();
+    readonly HashSet<OpenGLCommandList> _commandListsToDispose = [];
 
     readonly object _mappedResourceLock = new();
     readonly Dictionary<MappedResourceCacheKey, MappedResourceInfo> _mappedResources = new();
 
     readonly object _resetEventsLock = new();
-    readonly List<ManualResetEvent[]> _resetEvents = new();
+    readonly List<ManualResetEvent[]> _resetEvents = [];
 
     bool _syncToVBlank;
 
@@ -135,7 +135,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         glGetIntegerv(GetPName.NumExtensions, &extensionCount);
         CheckLastError();
 
-        HashSet<string> extensions = new();
+        HashSet<string> extensions = [];
         for (uint i = 0; i < extensionCount; i++)
         {
             byte* extensionNamePtr = glGetStringi(StringNameIndexed.Extensions, i);
@@ -1222,7 +1222,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         readonly IntPtr _context;
         readonly Thread _thread;
         bool _terminated;
-        readonly List<Exception> _exceptions = new();
+        readonly List<Exception> _exceptions = [];
         readonly Queue<ManualResetEvent> _resetEventPool = new();
 
         public ExecutionThread(

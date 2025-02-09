@@ -34,7 +34,8 @@ public class FormatSizeHelpersTests : IDisposable
         }
     }
 
-    static HashSet<PixelFormat> CompressedPixelFormats = new() {
+    static HashSet<PixelFormat> CompressedPixelFormats =
+    [
         PixelFormat.BC1_Rgba_UNorm,
         PixelFormat.BC1_Rgba_UNorm_SRgb,
         PixelFormat.BC1_Rgb_UNorm,
@@ -57,8 +58,8 @@ public class FormatSizeHelpersTests : IDisposable
 
         PixelFormat.ETC2_R8_G8_B8_A1_UNorm,
         PixelFormat.ETC2_R8_G8_B8_A8_UNorm,
-        PixelFormat.ETC2_R8_G8_B8_UNorm,
-    };
+        PixelFormat.ETC2_R8_G8_B8_UNorm
+    ];
 
     static IEnumerable<PixelFormat> UncompressedPixelFormats
         = Enum.GetValues<PixelFormat>()

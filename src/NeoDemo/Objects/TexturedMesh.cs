@@ -109,13 +109,13 @@ public class TexturedMesh : CullRenderable
         }
         _alphaMapView = StaticResourceCache.GetTextureView(gd.ResourceFactory, _alphamapTexture);
 
-        VertexLayoutDescription[] shadowDepthVertexLayouts = new VertexLayoutDescription[]
-        {
+        VertexLayoutDescription[] shadowDepthVertexLayouts =
+        [
             new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
                 new VertexElementDescription("Normal", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
                 new VertexElementDescription("TexCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2))
-        };
+        ];
 
         (Shader depthVS, Shader depthFS) = StaticResourceCache.GetShaders(gd, gd.ResourceFactory, "ShadowDepth");
 
@@ -134,21 +134,21 @@ public class TexturedMesh : CullRenderable
             PrimitiveTopology.TriangleList,
             new ShaderSetDescription(
                 shadowDepthVertexLayouts,
-                new[] { depthVS, depthFS },
-                new[] { new SpecializationConstant(100, gd.IsClipSpaceYInverted) }),
-            new ResourceLayout[] { projViewCombinedLayout, worldLayout },
+                [depthVS, depthFS],
+                [new SpecializationConstant(100, gd.IsClipSpaceYInverted)]),
+            [projViewCombinedLayout, worldLayout],
             sc.NearShadowMapFramebuffer.OutputDescription);
         _shadowMapPipeline = StaticResourceCache.GetPipeline(gd.ResourceFactory, ref depthPD);
 
         _shadowMapResourceSets = CreateShadowMapResourceSets(gd.ResourceFactory, disposeFactory, cl, sc, projViewCombinedLayout, worldLayout);
 
-        VertexLayoutDescription[] mainVertexLayouts = new VertexLayoutDescription[]
-        {
+        VertexLayoutDescription[] mainVertexLayouts =
+        [
             new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
                 new VertexElementDescription("Normal", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
                 new VertexElementDescription("TexCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2))
-        };
+        ];
 
         (Shader mainVS, Shader mainFS) = StaticResourceCache.GetShaders(gd, gd.ResourceFactory, "ShadowMain");
 
@@ -191,8 +191,9 @@ public class TexturedMesh : CullRenderable
             gd.IsDepthRangeZeroToOne ? DepthStencilStateDescription.DepthOnlyGreaterEqual : DepthStencilStateDescription.DepthOnlyLessEqual,
             RasterizerStateDescription.Default,
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(mainVertexLayouts, new[] { mainVS, mainFS }, new[] { new SpecializationConstant(100, gd.IsClipSpaceYInverted) }),
-            new ResourceLayout[] { projViewLayout, mainSharedLayout, mainPerObjectLayout, reflectionLayout },
+            new ShaderSetDescription(mainVertexLayouts, [mainVS, mainFS], [new SpecializationConstant(100, gd.IsClipSpaceYInverted)
+            ]),
+            [projViewLayout, mainSharedLayout, mainPerObjectLayout, reflectionLayout],
             sc.MainSceneFramebuffer.OutputDescription);
         _pipeline = StaticResourceCache.GetPipeline(gd.ResourceFactory, ref mainPD);
         _pipeline.Name = "TexturedMesh Main Pipeline";

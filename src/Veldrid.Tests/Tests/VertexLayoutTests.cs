@@ -34,10 +34,9 @@ public abstract class VertexLayoutTests<T> : GraphicsDeviceTestBase<T>
         }
 
         ShaderSetDescription shaderSet = new(
-            new VertexLayoutDescription[]
-            {
+            [
                 vertexLayoutDesc
-            },
+            ],
             TestShaders.LoadVertexFragment(RF, "VertexLayoutTestShader"));
 
         try
@@ -48,7 +47,7 @@ public abstract class VertexLayoutTests<T> : GraphicsDeviceTestBase<T>
                 RasterizerStateDescription.Default,
                 PrimitiveTopology.TriangleList,
                 shaderSet,
-                Array.Empty<ResourceLayout>(),
+                [],
                 fb.OutputDescription));
         }
         catch when (!succeeds) { }

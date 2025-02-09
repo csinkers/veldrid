@@ -24,7 +24,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
     MTLCommandBuffer _latestSubmittedCB;
 
     readonly object _resetEventsLock = new();
-    readonly List<ManualResetEvent[]> _resetEvents = new();
+    readonly List<ManualResetEvent[]> _resetEvents = [];
 
     const string UnalignedBufferCopyPipelineMacOSName = "MTL_UnalignedBufferCopy_macOS";
     const string UnalignedBufferCopyPipelineiOSName = "MTL_UnalignedBufferCopy_iOS";

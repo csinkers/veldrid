@@ -18,7 +18,7 @@ public class Octree<T>
 {
     OctreeNode<T> _currentRoot;
 
-    List<OctreeItem<T>> _pendingMoveStage = new();
+    List<OctreeItem<T>> _pendingMoveStage = [];
 
     public Octree(BoundingBox boundingBox, int maxChildren)
     {
@@ -142,9 +142,9 @@ public class Octree<T>
 [DebuggerDisplay("{DebuggerDisplayString,nq}")]
 public class OctreeNode<T>
 {
-    readonly List<OctreeItem<T>> _items = new();
+    readonly List<OctreeItem<T>> _items = [];
     readonly OctreeNodeCache _nodeCache;
-    OctreeNode<T>[] _children = Array.Empty<OctreeNode<T>>();
+    OctreeNode<T>[] _children = [];
     BoundingBox _bounds;
 
     public BoundingBox Bounds { get { return _bounds; } set { _bounds = value; } }
@@ -515,7 +515,7 @@ public class OctreeNode<T>
             }
 
             _nodeCache.AddAndClearChildrenArray(_children);
-            _children = Array.Empty<OctreeNode<T>>();
+            _children = [];
         }
     }
 
@@ -718,7 +718,7 @@ public class OctreeNode<T>
         if (_children.Length != 0)
         {
             _nodeCache.AddAndClearChildrenArray(Children);
-            _children = Array.Empty<OctreeNode<T>>();
+            _children = [];
         }
     }
 
@@ -854,7 +854,7 @@ public class OctreeNode<T>
                     item.Container = null;
                 }
                 child.Parent = null;
-                child._children = Array.Empty<OctreeNode<T>>();
+                child._children = [];
 
                 _cachedNodes.Push(child);
             }

@@ -1374,8 +1374,8 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     {
         foreach (FormatProps props in s_allFormatProps)
         {
-            yield return new object[]
-            {
+            yield return
+            [
                 props.Format, props.RedBits, props.GreenBits, props.BlueBits, props.AlphaBits,
                 TextureType.Texture2D,
                 64, 64, 1, 1, 1,
@@ -1386,7 +1386,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
                 0, 0,
                 0, 0, 0,
                 0, 0
-            };
+            ];
         }
     }
 
@@ -1475,7 +1475,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     }
 
     static readonly FormatProps[] s_allFormatProps =
-    {
+    [
         new FormatProps(PixelFormat.R8_UNorm, 8, 0, 0, 0),
         new FormatProps(PixelFormat.R8_SNorm, 8, 0, 0, 0),
         new FormatProps(PixelFormat.R8_UInt, 8, 0, 0, 0),
@@ -1525,7 +1525,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         new FormatProps(PixelFormat.R10_G10_B10_A2_UInt, 10, 10, 10, 2),
         new FormatProps(PixelFormat.R10_G10_B10_A2_UNorm, 10, 10, 10, 2),
         new FormatProps(PixelFormat.R11_G11_B10_Float, 11, 11, 10, 0)
-    };
+    ];
 
     struct FormatProps
     {

@@ -50,11 +50,11 @@ public class Skybox : Renderable
         Texture textureCube = imageSharpCubemapTexture.CreateDeviceTexture(gd, factory);
         TextureView textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
 
-        VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
-        {
+        VertexLayoutDescription[] vertexLayouts =
+        [
             new VertexLayoutDescription(
                 new VertexElementDescription("vsin_Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3))
-        };
+        ];
 
         (Shader vs, Shader fs) = StaticResourceCache.GetShaders(gd, gd.ResourceFactory, "Skybox");
 
@@ -69,8 +69,8 @@ public class Skybox : Renderable
             gd.IsDepthRangeZeroToOne ? DepthStencilStateDescription.DepthOnlyGreaterEqual : DepthStencilStateDescription.DepthOnlyLessEqual,
             new RasterizerStateDescription(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, true, true),
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(vertexLayouts, new[] { vs, fs }, ShaderHelper.GetSpecializations(gd)),
-            new ResourceLayout[] { _layout },
+            new ShaderSetDescription(vertexLayouts, [vs, fs], ShaderHelper.GetSpecializations(gd)),
+            [_layout],
             sc.MainSceneFramebuffer.OutputDescription);
 
         _pipeline = factory.CreateGraphicsPipeline(pd);
@@ -127,8 +127,8 @@ public class Skybox : Renderable
         return new RenderOrderKey(ulong.MaxValue);
     }
 
-    static readonly VertexPosition[] s_vertices = new VertexPosition[]
-    {
+    static readonly VertexPosition[] s_vertices =
+    [
         // Top
         new VertexPosition(new Vector3(-20.0f,20.0f,-20.0f)),
         new VertexPosition(new Vector3(20.0f,20.0f,-20.0f)),
@@ -158,18 +158,18 @@ public class Skybox : Renderable
         new VertexPosition(new Vector3(-20.0f,20.0f,20.0f)),
         new VertexPosition(new Vector3(20.0f,20.0f,20.0f)),
         new VertexPosition(new Vector3(20.0f,-20.0f,20.0f)),
-        new VertexPosition(new Vector3(-20.0f,-20.0f,20.0f)),
-    };
+        new VertexPosition(new Vector3(-20.0f,-20.0f,20.0f))
+    ];
 
-    static readonly ushort[] s_indices = new ushort[]
-    {
+    static readonly ushort[] s_indices =
+    [
         0,1,2, 0,2,3,
         4,5,6, 4,6,7,
         8,9,10, 8,10,11,
         12,13,14, 12,14,15,
         16,17,18, 16,18,19,
-        20,21,22, 20,22,23,
-    };
+        20,21,22, 20,22,23
+    ];
 
     ResourceLayout _layout;
 }

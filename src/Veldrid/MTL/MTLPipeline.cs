@@ -8,7 +8,7 @@ namespace Veldrid.MTL;
 internal sealed class MTLPipeline : Pipeline
 {
     bool _disposed;
-    List<MTLFunction> _specializedFunctions = new();
+    List<MTLFunction> _specializedFunctions = [];
 
     public MTLRenderPipelineState RenderPipelineState { get; }
     public MTLComputePipelineState ComputePipelineState { get; }
@@ -81,7 +81,7 @@ internal sealed class MTLPipeline : Pipeline
         }
 
         // Vertex layouts
-        VertexLayoutDescription[] vdVertexLayouts = description.ShaderSet.VertexLayouts ?? Array.Empty<VertexLayoutDescription>();
+        VertexLayoutDescription[] vdVertexLayouts = description.ShaderSet.VertexLayouts ?? [];
         MTLVertexDescriptor vertexDescriptor = mtlDesc.vertexDescriptor;
 
         for (uint i = 0; i < vdVertexLayouts.Length; i++)

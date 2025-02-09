@@ -62,7 +62,7 @@ internal sealed class D3D11Pipeline : Pipeline
             }
         }
 
-        VertexLayoutDescription[] vertexLayouts = description.ShaderSet.VertexLayouts ?? Array.Empty<VertexLayoutDescription>();
+        VertexLayoutDescription[] vertexLayouts = description.ShaderSet.VertexLayouts ?? [];
 
         cache.GetPipelineResources(
             description.BlendState,
@@ -103,7 +103,7 @@ internal sealed class D3D11Pipeline : Pipeline
         }
         else
         {
-            VertexStrides = Array.Empty<int>();
+            VertexStrides = [];
         }
     }
 

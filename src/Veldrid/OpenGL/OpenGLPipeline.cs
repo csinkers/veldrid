@@ -39,7 +39,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
     bool _disposeRequested;
     bool _disposed;
 
-    SetBindingsInfo[] _setInfos = Array.Empty<SetBindingsInfo>();
+    SetBindingsInfo[] _setInfos = [];
 
     public uint[] VertexStrides { get; }
 
@@ -79,11 +79,11 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         : base(description)
     {
         _gd = gd;
-        GraphicsShaders = Array.Empty<Shader>();
-        VertexLayouts = Array.Empty<VertexLayoutDescription>();
+        GraphicsShaders = [];
+        VertexLayouts = [];
         IsComputePipeline = true;
         ComputeShader = description.ComputeShader;
-        VertexStrides = Array.Empty<uint>();
+        VertexStrides = [];
 #if !VALIDATE_USAGE
             ResourceLayouts = Util.ShallowClone(description.ResourceLayouts);
 #endif
@@ -304,7 +304,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
             Dictionary<uint, OpenGLSamplerBindingSlotInfo> samplerBindings = new();
             Dictionary<uint, OpenGLShaderStorageBinding> storageBufferBindings = new();
 
-            List<int> samplerTrackedRelativeTextureIndices = new();
+            List<int> samplerTrackedRelativeTextureIndices = [];
             for (uint i = 0; i < resources.Length; i++)
             {
                 ResourceLayoutElementDescription resource = resources[i];
@@ -435,7 +435,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
 
         uint uniformBufferIndex = 0;
 
-        List<string> names = new();
+        List<string> names = [];
         while (true)
         {
             uint actualLength;
@@ -466,7 +466,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
 
         uint uniformIndex = 0;
 
-        List<string> names = new();
+        List<string> names = [];
         while (true)
         {
             uint actualLength;
@@ -506,7 +506,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         if (maxLength > byteBuffer.Length)
             byteBuffer = new byte[maxLength];
 
-        List<string> names = new();
+        List<string> names = [];
         for (uint resourceIndex = 0; resourceIndex < resourceCount; resourceIndex++)
         {
             uint actualLength;

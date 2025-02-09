@@ -330,14 +330,15 @@ void main()
             TextureUsage.Sampled | TextureUsage.Storage | TextureUsage.Cubemap);
         Texture computeOutput = RF.CreateTexture(texDesc);
 
-        Vector4[] faceColors = new Vector4[] {
+        Vector4[] faceColors =
+        [
             new Vector4(0 * 42),
             new Vector4(1 * 42),
             new Vector4(2 * 42),
             new Vector4(3 * 42),
             new Vector4(4 * 42),
             new Vector4(5 * 42)
-        };
+        ];
 
         ResourceLayout computeLayout = RF.CreateResourceLayout(new ResourceLayoutDescription(
             new ResourceLayoutElementDescription("ComputeOutput", ResourceKind.TextureReadWrite, ShaderStages.Compute)));
@@ -399,14 +400,15 @@ void main()
 
         TextureView computeOutputMipLevel = RF.CreateTextureView(new TextureViewDescription(computeOutput, BoundMipLevel, 1, 0, 1));
 
-        Vector4[] faceColors = new Vector4[] {
+        Vector4[] faceColors =
+        [
             new Vector4(0 * 42),
             new Vector4(1 * 42),
             new Vector4(2 * 42),
             new Vector4(3 * 42),
             new Vector4(4 * 42),
             new Vector4(5 * 42)
-        };
+        ];
 
         ResourceLayout computeLayout = RF.CreateResourceLayout(new ResourceLayoutDescription(
             new ResourceLayoutElementDescription("ComputeOutput", ResourceKind.TextureReadWrite, ShaderStages.Compute)));
@@ -494,8 +496,8 @@ void main()
 
         if (combinedLayout)
         {
-            layouts = new[]
-            {
+            layouts =
+            [
                 RF.CreateResourceLayout(new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription(
                         "CopySrc",
@@ -507,16 +509,16 @@ void main()
                         ResourceKind.StructuredBufferReadWrite,
                         ShaderStages.Compute,
                         ResourceLayoutElementOptions.DynamicBinding)))
-            };
-            sets = new[]
-            {
+            ];
+            sets =
+            [
                 RF.CreateResourceSet(new ResourceSetDescription(layouts[0], srcRange, dstRange))
-            };
+            ];
         }
         else
         {
-            layouts = new[]
-            {
+            layouts =
+            [
                 RF.CreateResourceLayout(new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription(
                         "CopySrc",
@@ -529,12 +531,12 @@ void main()
                         ResourceKind.StructuredBufferReadWrite,
                         ShaderStages.Compute,
                         ResourceLayoutElementOptions.DynamicBinding)))
-            };
-            sets = new[]
-            {
+            ];
+            sets =
+            [
                 RF.CreateResourceSet(new ResourceSetDescription(layouts[0], srcRange)),
-                RF.CreateResourceSet(new ResourceSetDescription(layouts[1], dstRange)),
-            };
+                RF.CreateResourceSet(new ResourceSetDescription(layouts[1], dstRange))
+            ];
         }
 
         Pipeline pipeline = RF.CreateComputePipeline(new ComputePipelineDescription(
@@ -550,11 +552,11 @@ void main()
         cl.SetPipeline(pipeline);
         if (combinedLayout)
         {
-            uint[] offsets = new[]
-            {
+            uint[] offsets =
+            [
                 srcBindingMultiple * GD.StructuredBufferMinOffsetAlignment,
                 dstBindingMultiple * GD.StructuredBufferMinOffsetAlignment
-            };
+            ];
             cl.SetComputeResourceSet(0, sets[0], offsets);
         }
         else
@@ -594,10 +596,10 @@ void main()
         foreach (uint dstBindingMultiple in new uint[] { 0, 2, 10 })
         foreach (bool combinedLayout in new[] { false, true })
         {
-            yield return new object[]
-            {
+            yield return
+            [
                 srcSetMultiple, srcBindingMultiple, dstSetMultiple, dstBindingMultiple, combinedLayout
-            };
+            ];
         }
     }
 

@@ -17,7 +17,7 @@ internal sealed unsafe class StagingMemoryPool : IDisposable
 
     public StagingMemoryPool()
     {
-        _storage = new List<StagingBlock>();
+        _storage = [];
         _availableBlocks = new SortedList<uint, uint>(new CapacityComparer());
     }
 

@@ -15,7 +15,7 @@ public class ObjParser
 {
     const int InitialReadBufferSize = 1024 * 8;
 
-    static readonly char[] _whitespaceChar = new[] { ' ' };
+    static readonly char[] _whitespaceChar = [' '];
     static readonly char _slashChar = '/';
 
     readonly ParseContext _pc = new();
@@ -124,16 +124,16 @@ public class ObjParser
 
     class ParseContext
     {
-        List<Vector3> _positions = new();
-        List<Vector3> _normals = new();
-        List<Vector2> _texCoords = new();
+        List<Vector3> _positions = [];
+        List<Vector3> _normals = [];
+        List<Vector2> _texCoords = [];
 
-        List<ObjFile.MeshGroup> _groups = new();
+        List<ObjFile.MeshGroup> _groups = [];
 
         string? _currentGroupName;
         string? _currentMaterial;
         int _currentSmoothingGroup;
-        List<ObjFile.Face> _currentGroupFaces = new();
+        List<ObjFile.Face> _currentGroupFaces = [];
 
         int _currentLine;
         string? _materialLibName;

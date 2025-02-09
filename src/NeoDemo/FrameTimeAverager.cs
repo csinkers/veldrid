@@ -4,8 +4,8 @@ public class FrameTimeAverager
 {
     readonly double _timeLimit = 666;
 
-    double _accumulatedTime = 0;
-    int _frameCount = 0;
+    double _accumulatedTime;
+    int _frameCount;
     readonly double _decayRate = .3;
 
     public double CurrentAverageFrameTimeSeconds { get; private set; }

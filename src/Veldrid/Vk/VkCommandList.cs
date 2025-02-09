@@ -23,9 +23,9 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     bool _commandBufferEnded;
 
     uint _viewportCount;
-    bool _viewportsChanged = false;
+    bool _viewportsChanged;
     VkViewport[] _viewports = [];
-    bool _scissorRectsChanged = false;
+    bool _scissorRectsChanged;
     VkRect2D[] _scissorRects = [];
 
     VkClearValue[] _clearValues = [];
@@ -43,8 +43,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
     bool _newFramebuffer; // Render pass cycle state
 
-    bool _vertexBindingsChanged = false;
-    uint _numVertexBindings = 0;
+    bool _vertexBindingsChanged;
+    uint _numVertexBindings;
     VulkanBuffer[] _vertexBindings = new VulkanBuffer[1];
     ulong[] _vertexOffsets = new ulong[1];
 

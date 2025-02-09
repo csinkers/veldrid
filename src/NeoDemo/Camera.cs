@@ -23,7 +23,7 @@ public class Camera : IUpdateable
     float _pitch;
 
     Vector2 _mousePressedPos;
-    bool _mousePressed = false;
+    bool _mousePressed;
     GraphicsDevice _gd;
     bool _useReverseDepth;
     float _windowWidth;

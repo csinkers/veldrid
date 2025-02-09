@@ -9242,7 +9242,7 @@ internal class OpenVR
         CVRSpatialAnchors? m_pVRSpatialAnchors;
     };
 
-    static COpenVRContext? _OpenVRInternal_ModuleContext = null;
+    static COpenVRContext? _OpenVRInternal_ModuleContext;
     static COpenVRContext OpenVRInternal_ModuleContext
     {
         get

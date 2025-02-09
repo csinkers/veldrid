@@ -10,8 +10,8 @@ internal sealed unsafe class OpenGLSampler(
 ) : Sampler, OpenGLDeferredResource
 {
     readonly SamplerDescription _description = description;
-    InternalSamplerState _noMipmapState = new();
-    InternalSamplerState _mipmapState = new();
+    InternalSamplerState _noMipmapState;
+    InternalSamplerState _mipmapState;
     bool _disposeRequested;
 
     string? _name;

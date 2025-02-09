@@ -23,7 +23,7 @@ internal sealed class D3D11CommandList : CommandList
     bool _viewportsChanged;
     bool _scissorRectsChanged;
 
-    uint _numVertexBindings = 0;
+    uint _numVertexBindings;
     ID3D11Buffer[] _vertexBindings = new ID3D11Buffer[1];
     int[]? _vertexStrides;
     int[] _vertexOffsets = new int[1];

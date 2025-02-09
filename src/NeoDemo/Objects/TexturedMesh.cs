@@ -10,7 +10,7 @@ public class TexturedMesh : CullRenderable
 {
     // Useful for testing uniform bindings with an offset.
     static readonly bool s_useUniformOffset = false;
-    uint _uniformOffset = 0;
+    uint _uniformOffset;
 
     readonly string _name;
     readonly ConstructedMesh _meshData;

@@ -15,7 +15,7 @@ internal sealed unsafe class OpenGLTextureSamplerManager
     readonly uint _lastTextureUnit;
     readonly OpenGLTextureView?[] _textureUnitTextures;
     readonly BoundSamplerStateInfo[] _textureUnitSamplers;
-    uint _currentActiveUnit = 0;
+    uint _currentActiveUnit;
 
     public OpenGLTextureSamplerManager(OpenGLExtensions extensions)
     {

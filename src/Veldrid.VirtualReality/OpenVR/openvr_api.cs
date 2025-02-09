@@ -2809,7 +2809,7 @@ internal struct IVRSpatialAnchors
 
 internal class CVRSystem
 {
-    IVRSystem FnTable;
+    readonly IVRSystem FnTable;
 
     internal CVRSystem(IntPtr pInterface)
     {
@@ -3352,7 +3352,7 @@ internal class CVRSystem
 
 internal class CVRExtendedDisplay
 {
-    IVRExtendedDisplay FnTable;
+    readonly IVRExtendedDisplay FnTable;
 
     internal CVRExtendedDisplay(IntPtr pInterface)
     {
@@ -3393,7 +3393,7 @@ internal class CVRExtendedDisplay
 
 internal class CVRTrackedCamera
 {
-    IVRTrackedCamera FnTable;
+    readonly IVRTrackedCamera FnTable;
 
     internal CVRTrackedCamera(IntPtr pInterface)
     {
@@ -3581,7 +3581,7 @@ internal class CVRTrackedCamera
 
 internal class CVRApplications
 {
-    IVRApplications FnTable;
+    readonly IVRApplications FnTable;
 
     internal CVRApplications(IntPtr pInterface)
     {
@@ -3878,7 +3878,7 @@ internal class CVRApplications
 
 internal class CVRChaperone
 {
-    IVRChaperone FnTable;
+    readonly IVRChaperone FnTable;
 
     internal CVRChaperone(IntPtr pInterface)
     {
@@ -3944,7 +3944,7 @@ internal class CVRChaperone
 
 internal class CVRChaperoneSetup
 {
-    IVRChaperoneSetup FnTable;
+    readonly IVRChaperoneSetup FnTable;
 
     internal CVRChaperoneSetup(IntPtr pInterface)
     {
@@ -4100,7 +4100,7 @@ internal class CVRChaperoneSetup
 
 internal class CVRCompositor
 {
-    IVRCompositor FnTable;
+    readonly IVRCompositor FnTable;
 
     internal CVRCompositor(IntPtr pInterface)
     {
@@ -4412,7 +4412,7 @@ internal class CVRCompositor
 
 internal class CVROverlay
 {
-    IVROverlay FnTable;
+    readonly IVROverlay FnTable;
 
     internal CVROverlay(IntPtr pInterface)
     {
@@ -5360,7 +5360,7 @@ internal class CVROverlay
 
 internal class CVRRenderModels
 {
-    IVRRenderModels FnTable;
+    readonly IVRRenderModels FnTable;
 
     internal CVRRenderModels(IntPtr pInterface)
     {
@@ -5610,7 +5610,7 @@ internal class CVRRenderModels
 
 internal class CVRNotifications
 {
-    IVRNotifications FnTable;
+    readonly IVRNotifications FnTable;
 
     internal CVRNotifications(IntPtr pInterface)
     {
@@ -5649,7 +5649,7 @@ internal class CVRNotifications
 
 internal class CVRSettings
 {
-    IVRSettings FnTable;
+    readonly IVRSettings FnTable;
 
     internal CVRSettings(IntPtr pInterface)
     {
@@ -5754,7 +5754,7 @@ internal class CVRSettings
 
 internal class CVRScreenshots
 {
-    IVRScreenshots FnTable;
+    readonly IVRScreenshots FnTable;
 
     internal CVRScreenshots(IntPtr pInterface)
     {
@@ -5851,7 +5851,7 @@ internal class CVRScreenshots
 
 internal class CVRResources
 {
-    IVRResources FnTable;
+    readonly IVRResources FnTable;
 
     internal CVRResources(IntPtr pInterface)
     {
@@ -5883,7 +5883,7 @@ internal class CVRResources
 
 internal class CVRDriverManager
 {
-    IVRDriverManager FnTable;
+    readonly IVRDriverManager FnTable;
 
     internal CVRDriverManager(IntPtr pInterface)
     {
@@ -5911,7 +5911,7 @@ internal class CVRDriverManager
 
 internal class CVRInput
 {
-    IVRInput FnTable;
+    readonly IVRInput FnTable;
 
     internal CVRInput(IntPtr pInterface)
     {
@@ -6172,7 +6172,7 @@ internal class CVRInput
 
 internal class CVRIOBuffer
 {
-    IVRIOBuffer FnTable;
+    readonly IVRIOBuffer FnTable;
 
     internal CVRIOBuffer(IntPtr pInterface)
     {
@@ -6226,7 +6226,7 @@ internal class CVRIOBuffer
 
 internal class CVRSpatialAnchors
 {
-    IVRSpatialAnchors FnTable;
+    readonly IVRSpatialAnchors FnTable;
 
     internal CVRSpatialAnchors(IntPtr pInterface)
     {

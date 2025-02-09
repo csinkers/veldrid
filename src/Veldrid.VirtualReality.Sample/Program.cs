@@ -14,7 +14,7 @@ namespace Veldrid.VirtualReality.Sample;
 internal class Program
 {
     static Vector3 _userPosition;
-    static double _motionSpeed = 2.0;
+    static readonly double _motionSpeed = 2.0;
     static bool _useOculus;
     static bool _switchVRContext;
 

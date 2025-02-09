@@ -8,16 +8,16 @@ namespace Veldrid.NeoDemo;
 
 public class Camera : IUpdateable
 {
-    float _fov = 1f;
-    float _near = 1f;
-    float _far = 1000f;
+    readonly float _fov = 1f;
+    readonly float _near = 1f;
+    readonly float _far = 1000f;
 
     Matrix4x4 _viewMatrix;
     Matrix4x4 _projectionMatrix;
 
     Vector3 _position = new(0, 3, 0);
     Vector3 _lookDirection = new(0, -.3f, -1f);
-    float _moveSpeed = 10.0f;
+    readonly float _moveSpeed = 10.0f;
 
     float _yaw;
     float _pitch;

@@ -30,11 +30,11 @@ public class ImGuiRenderer : IDisposable
     Pipeline _pipeline;
     ResourceSet _mainResourceSet;
     ResourceSet _fontTextureResourceSet;
-    IntPtr _fontAtlasID = (IntPtr)1;
+    readonly IntPtr _fontAtlasID = (IntPtr)1;
 
     int _windowWidth;
     int _windowHeight;
-    Vector2 _scaleFactor = Vector2.One;
+    readonly Vector2 _scaleFactor = Vector2.One;
 
     // Image trackers
     readonly Dictionary<TextureView, ResourceSetInfo> _setsByView = new();

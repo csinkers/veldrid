@@ -10,7 +10,7 @@ internal class OpenVRMirrorTexture : IDisposable
 
     readonly Dictionary<OutputDescription, TextureBlitter> _blitters = new();
 
-    OpenVRContext _context;
+    readonly OpenVRContext _context;
     ResourceSet _leftSet;
     ResourceSet _rightSet;
 

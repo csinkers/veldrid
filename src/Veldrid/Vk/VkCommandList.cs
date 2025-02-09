@@ -16,7 +16,7 @@ namespace Veldrid.Vulkan;
 internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarget
 {
     readonly VkGraphicsDevice _gd;
-    VkCommandPool _pool;
+    readonly VkCommandPool _pool;
     VkCommandBuffer _cb;
 
     bool _commandBufferBegun;

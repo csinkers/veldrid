@@ -721,7 +721,7 @@ internal sealed unsafe class OpenGLCommandEntryList : IDisposable
     {
         const int DefaultStorageBlockSize = 1024 * 16;
 
-        public byte[] Bytes;
+        public readonly byte[] Bytes;
         public uint Offset;
 
         public readonly uint RemainingSize => (uint)Bytes.Length - Offset;

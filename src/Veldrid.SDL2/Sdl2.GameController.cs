@@ -155,7 +155,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_GameController SDL_GameControllerOpen_t(int joystick_index);
 
-    static SDL_GameControllerOpen_t s_sdl_gameControllerOpen =
+    static readonly SDL_GameControllerOpen_t s_sdl_gameControllerOpen =
         LoadFunction<SDL_GameControllerOpen_t>("SDL_GameControllerOpen");
 
     /// <summary>
@@ -170,7 +170,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_GameControllerClose_t(SDL_GameController gamecontroller);
 
-    static SDL_GameControllerClose_t s_sdl_gameControllerClose =
+    static readonly SDL_GameControllerClose_t s_sdl_gameControllerClose =
         LoadFunction<SDL_GameControllerClose_t>("SDL_GameControllerClose");
 
     /// <summary>
@@ -182,7 +182,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_IsGameController_t(int joystick_index);
 
-    static SDL_IsGameController_t s_sdl_isGameController = LoadFunction<SDL_IsGameController_t>(
+    static readonly SDL_IsGameController_t s_sdl_isGameController = LoadFunction<SDL_IsGameController_t>(
         "SDL_IsGameController"
     );
 
@@ -195,7 +195,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate byte* SDL_GameControllerNameForIndex_t(int joystick_index);
 
-    static SDL_GameControllerNameForIndex_t s_sdl_gameControllerNameForIndex =
+    static readonly SDL_GameControllerNameForIndex_t s_sdl_gameControllerNameForIndex =
         LoadFunction<SDL_GameControllerNameForIndex_t>("SDL_GameControllerNameForIndex");
 
     /// <summary>
@@ -209,7 +209,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_GameController SDL_GameControllerFromInstanceID_t(int joyid);
 
-    static SDL_GameControllerFromInstanceID_t s_sdl_gameControllerFromInstanceID =
+    static readonly SDL_GameControllerFromInstanceID_t s_sdl_gameControllerFromInstanceID =
         LoadFunction<SDL_GameControllerFromInstanceID_t>("SDL_GameControllerFromInstanceID");
 
     /// <summary>
@@ -221,7 +221,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate byte* SDL_GameControllerName_t(SDL_GameController gamecontroller);
 
-    static SDL_GameControllerName_t s_sdl_gameControllerName =
+    static readonly SDL_GameControllerName_t s_sdl_gameControllerName =
         LoadFunction<SDL_GameControllerName_t>("SDL_GameControllerName");
 
     /// <summary>
@@ -233,7 +233,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate ushort SDL_GameControllerGetVendor_t(SDL_GameController gamecontroller);
 
-    static SDL_GameControllerGetVendor_t s_sdl_gameControllerGetVendor =
+    static readonly SDL_GameControllerGetVendor_t s_sdl_gameControllerGetVendor =
         LoadFunction<SDL_GameControllerGetVendor_t>("SDL_GameControllerGetVendor");
 
     /// <summary>
@@ -246,7 +246,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate ushort SDL_GameControllerGetProduct_t(SDL_GameController gamecontroller);
 
-    static SDL_GameControllerGetProduct_t s_sdl_gameControllerGetProduct =
+    static readonly SDL_GameControllerGetProduct_t s_sdl_gameControllerGetProduct =
         LoadFunction<SDL_GameControllerGetProduct_t>("SDL_GameControllerGetProduct");
 
     /// <summary>
@@ -259,7 +259,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate ushort SDL_GameControllerGetProductVersion_t(SDL_GameController gamecontroller);
 
-    static SDL_GameControllerGetProductVersion_t s_sdl_gameControllerGetProductVersion =
+    static readonly SDL_GameControllerGetProductVersion_t s_sdl_gameControllerGetProductVersion =
         LoadFunction<SDL_GameControllerGetProductVersion_t>("SDL_GameControllerGetProductVersion");
 
     /// <summary>
@@ -272,7 +272,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GameControllerGetAttached_t(SDL_GameController gamecontroller);
 
-    static SDL_GameControllerGetAttached_t s_sdl_gameControllerGetAttached =
+    static readonly SDL_GameControllerGetAttached_t s_sdl_gameControllerGetAttached =
         LoadFunction<SDL_GameControllerGetAttached_t>("SDL_GameControllerGetAttached");
 
     /// <summary>
@@ -284,7 +284,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_Joystick SDL_GameControllerGetJoystick_t(SDL_GameController gamecontroller);
 
-    static SDL_GameControllerGetJoystick_t s_sdl_gameControllerGetJoystick =
+    static readonly SDL_GameControllerGetJoystick_t s_sdl_gameControllerGetJoystick =
         LoadFunction<SDL_GameControllerGetJoystick_t>("SDL_GameControllerGetJoystick");
 
     /// <summary>
@@ -296,7 +296,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GameControllerEventState_t(int state);
 
-    static SDL_GameControllerEventState_t s_sdl_gameControllerEventState =
+    static readonly SDL_GameControllerEventState_t s_sdl_gameControllerEventState =
         LoadFunction<SDL_GameControllerEventState_t>("SDL_GameControllerEventState");
 
     /// <summary>
@@ -312,7 +312,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_GameControllerUpdate_t();
 
-    static SDL_GameControllerUpdate_t s_sdl_gameControllerUpdate =
+    static readonly SDL_GameControllerUpdate_t s_sdl_gameControllerUpdate =
         LoadFunction<SDL_GameControllerUpdate_t>("SDL_GameControllerUpdate");
 
     /// <summary>
@@ -328,7 +328,7 @@ public static unsafe partial class Sdl2Native
         SDL_GameControllerAxis axis
     );
 
-    static SDL_GameControllerGetAxis_t s_sdl_gameControllerGetAxis =
+    static readonly SDL_GameControllerGetAxis_t s_sdl_gameControllerGetAxis =
         LoadFunction<SDL_GameControllerGetAxis_t>("SDL_GameControllerGetAxis");
 
     /// <summary>
@@ -348,7 +348,7 @@ public static unsafe partial class Sdl2Native
         SDL_GameControllerButton button
     );
 
-    static SDL_GameControllerGetButton_t s_sdl_gameControllerGetButton =
+    static readonly SDL_GameControllerGetButton_t s_sdl_gameControllerGetButton =
         LoadFunction<SDL_GameControllerGetButton_t>("SDL_GameControllerGetButton");
 
     /// <summary>

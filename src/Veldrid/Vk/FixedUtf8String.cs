@@ -7,7 +7,7 @@ namespace Veldrid.Vulkan;
 internal sealed unsafe class FixedUtf8String : IDisposable
 {
     IntPtr _handle;
-    int _numBytes;
+    readonly int _numBytes;
 
     public byte* StringPtr => (byte*)_handle;
 

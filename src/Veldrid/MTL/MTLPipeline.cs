@@ -8,7 +8,7 @@ namespace Veldrid.MTL;
 internal sealed class MTLPipeline : Pipeline
 {
     bool _disposed;
-    List<MTLFunction> _specializedFunctions = [];
+    readonly List<MTLFunction> _specializedFunctions = [];
 
     public MTLRenderPipelineState RenderPipelineState { get; }
     public MTLComputePipelineState ComputePipelineState { get; }

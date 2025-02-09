@@ -7,7 +7,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_GetVersion_t(SDL_version* version);
 
-    static SDL_GetVersion_t s_getVersion = LoadFunction<SDL_GetVersion_t>("SDL_GetVersion");
+    static readonly SDL_GetVersion_t s_getVersion = LoadFunction<SDL_GetVersion_t>("SDL_GetVersion");
 
     public static void SDL_GetVersion(SDL_version* version) => s_getVersion(version);
 }

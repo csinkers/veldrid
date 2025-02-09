@@ -7,7 +7,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_Keymod SDL_GetModState_t();
 
-    static SDL_GetModState_t s_sdl_getModState = Sdl2Native.LoadFunction<SDL_GetModState_t>(
+    static readonly SDL_GetModState_t s_sdl_getModState = Sdl2Native.LoadFunction<SDL_GetModState_t>(
         "SDL_GetModState"
     );
 

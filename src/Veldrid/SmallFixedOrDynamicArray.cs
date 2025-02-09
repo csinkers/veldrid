@@ -7,7 +7,7 @@ internal unsafe struct SmallFixedOrDynamicArray : IDisposable
 {
     public const int MaxFixedValues = 5;
 
-    static ArrayPool<uint> _arrayPool = ArrayPool<uint>.Create();
+    static readonly ArrayPool<uint> _arrayPool = ArrayPool<uint>.Create();
 
     public readonly uint Count;
     fixed uint FixedData[MaxFixedValues];

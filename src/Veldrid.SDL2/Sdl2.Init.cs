@@ -7,7 +7,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_Init_t(SDLInitFlags flags);
 
-    static SDL_Init_t s_sdl_init = LoadFunction<SDL_Init_t>("SDL_Init");
+    static readonly SDL_Init_t s_sdl_init = LoadFunction<SDL_Init_t>("SDL_Init");
 
     public static int SDL_Init(SDLInitFlags flags) => s_sdl_init(flags);
 }

@@ -59,9 +59,9 @@ internal sealed class D3D11CommandList : CommandList
     bool[] _invalidatedComputeResourceSets = new bool[1];
     string? _name;
     bool _vertexBindingsChanged;
-    ID3D11Buffer[] _cbOut = new ID3D11Buffer[1];
-    int[] _firstConstRef = new int[1];
-    int[] _numConstsRef = new int[1];
+    readonly ID3D11Buffer[] _cbOut = new ID3D11Buffer[1];
+    readonly int[] _firstConstRef = new int[1];
+    readonly int[] _numConstsRef = new int[1];
 
     // Cached resources
     const int MaxCachedUniformBuffers = 15;

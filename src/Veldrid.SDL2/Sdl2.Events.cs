@@ -8,21 +8,21 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_PumpEvents_t();
 
-    static SDL_PumpEvents_t s_sdl_pumpEvents = LoadFunction<SDL_PumpEvents_t>("SDL_PumpEvents");
+    static readonly SDL_PumpEvents_t s_sdl_pumpEvents = LoadFunction<SDL_PumpEvents_t>("SDL_PumpEvents");
 
     public static void SDL_PumpEvents() => s_sdl_pumpEvents();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_PollEvent_t(SDL_Event* @event);
 
-    static SDL_PollEvent_t s_sdl_pollEvent = LoadFunction<SDL_PollEvent_t>("SDL_PollEvent");
+    static readonly SDL_PollEvent_t s_sdl_pollEvent = LoadFunction<SDL_PollEvent_t>("SDL_PollEvent");
 
     public static int SDL_PollEvent(SDL_Event* @event) => s_sdl_pollEvent(@event);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_AddEventWatch_t(SDL_EventFilter filter, void* userdata);
 
-    static SDL_AddEventWatch_t s_sdl_addEventWatch = LoadFunction<SDL_AddEventWatch_t>(
+    static readonly SDL_AddEventWatch_t s_sdl_addEventWatch = LoadFunction<SDL_AddEventWatch_t>(
         "SDL_AddEventWatch"
     );
 
@@ -32,7 +32,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_SetEventFilter_t(SDL_EventFilter filter, void* userdata);
 
-    static SDL_SetEventFilter_t s_sdl_setEventFilter = LoadFunction<SDL_SetEventFilter_t>(
+    static readonly SDL_SetEventFilter_t s_sdl_setEventFilter = LoadFunction<SDL_SetEventFilter_t>(
         "SDL_SetEventFilter"
     );
 
@@ -42,7 +42,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_FilterEvents_t(SDL_EventFilter filter, void* userdata);
 
-    static SDL_FilterEvents_t s_sdl_filterEvents = LoadFunction<SDL_FilterEvents_t>(
+    static readonly SDL_FilterEvents_t s_sdl_filterEvents = LoadFunction<SDL_FilterEvents_t>(
         "SDL_FilterEvents"
     );
 

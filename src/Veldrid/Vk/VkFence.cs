@@ -7,7 +7,7 @@ namespace Veldrid.Vulkan;
 internal sealed unsafe class VkFence : Fence, IResourceRefCountTarget
 {
     readonly VkGraphicsDevice _gd;
-    VulkanFence _fence;
+    readonly VulkanFence _fence;
     string? _name;
 
     public ResourceRefCount RefCount { get; }

@@ -1800,7 +1800,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     {
         StringBuilder.AppendInterpolatedStringHandler _innerHandler;
 
-        StringBuilder _builder;
+        readonly StringBuilder _builder;
 
         /// <summary>
         /// Whether this handler can currently build a string.

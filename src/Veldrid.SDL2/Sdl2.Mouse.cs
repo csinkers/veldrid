@@ -46,7 +46,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_ShowCursor_t(int toggle);
 
-    static SDL_ShowCursor_t s_sdl_showCursor = LoadFunction<SDL_ShowCursor_t>("SDL_ShowCursor");
+    static readonly SDL_ShowCursor_t s_sdl_showCursor = LoadFunction<SDL_ShowCursor_t>("SDL_ShowCursor");
 
     /// <summary>
     /// Toggle whether or not the cursor should be shown.
@@ -56,7 +56,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_WarpMouseInWindow_t(SDL_Window window, int x, int y);
 
-    static SDL_WarpMouseInWindow_t s_sdl_warpMouseInWindow = LoadFunction<SDL_WarpMouseInWindow_t>(
+    static readonly SDL_WarpMouseInWindow_t s_sdl_warpMouseInWindow = LoadFunction<SDL_WarpMouseInWindow_t>(
         "SDL_WarpMouseInWindow"
     );
 
@@ -69,7 +69,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_SetRelativeMouseMode_t(bool enabled);
 
-    static SDL_SetRelativeMouseMode_t s_sdl_setRelativeMouseMode =
+    static readonly SDL_SetRelativeMouseMode_t s_sdl_setRelativeMouseMode =
         LoadFunction<SDL_SetRelativeMouseMode_t>("SDL_SetRelativeMouseMode");
 
     /// <summary>
@@ -86,7 +86,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_CaptureMouse_t(bool enabled);
 
-    static SDL_CaptureMouse_t s_sdl_captureMouse = LoadFunction<SDL_CaptureMouse_t>(
+    static readonly SDL_CaptureMouse_t s_sdl_captureMouse = LoadFunction<SDL_CaptureMouse_t>(
         "SDL_CaptureMouse"
     );
 
@@ -102,7 +102,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_SetWindowGrab_t(SDL_Window window, bool grabbed);
 
-    static SDL_SetWindowGrab_t s_sdl_setWindowGrabbed = LoadFunction<SDL_SetWindowGrab_t>(
+    static readonly SDL_SetWindowGrab_t s_sdl_setWindowGrabbed = LoadFunction<SDL_SetWindowGrab_t>(
         "SDL_SetWindowGrab"
     );
 
@@ -116,7 +116,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_Cursor SDL_CreateSystemCursor_t(SDL_SystemCursor id);
 
-    static SDL_CreateSystemCursor_t s_sdl_createSystemCursor =
+    static readonly SDL_CreateSystemCursor_t s_sdl_createSystemCursor =
         LoadFunction<SDL_CreateSystemCursor_t>("SDL_CreateSystemCursor");
 
     /// <summary>
@@ -128,7 +128,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_FreeCursor_t(SDL_Cursor cursor);
 
-    static SDL_FreeCursor_t s_sdl_freeCursor = LoadFunction<SDL_FreeCursor_t>("SDL_FreeCursor");
+    static readonly SDL_FreeCursor_t s_sdl_freeCursor = LoadFunction<SDL_FreeCursor_t>("SDL_FreeCursor");
 
     /// <summary>
     /// Free a cursor created with SDL_CreateCursor(), SDL_CreateColorCursor() or SDL_CreateSystemCursor().
@@ -138,7 +138,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_Cursor SDL_GetDefaultCursor_t();
 
-    static SDL_GetDefaultCursor_t s_sdl_getDefaultCursor = LoadFunction<SDL_GetDefaultCursor_t>(
+    static readonly SDL_GetDefaultCursor_t s_sdl_getDefaultCursor = LoadFunction<SDL_GetDefaultCursor_t>(
         "SDL_GetDefaultCursor"
     );
 
@@ -150,7 +150,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_SetCursor_t(SDL_Cursor cursor);
 
-    static SDL_SetCursor_t s_sdl_setCursor = LoadFunction<SDL_SetCursor_t>("SDL_SetCursor");
+    static readonly SDL_SetCursor_t s_sdl_setCursor = LoadFunction<SDL_SetCursor_t>("SDL_SetCursor");
 
     /// <summary>
     /// Set the active cursor.

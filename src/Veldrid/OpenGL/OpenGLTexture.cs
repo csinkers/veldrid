@@ -10,9 +10,9 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
 {
     readonly OpenGLGraphicsDevice _gd;
     uint _texture;
-    uint[] _framebuffers;
-    uint[] _pbos;
-    uint[] _pboSizes;
+    readonly uint[] _framebuffers;
+    readonly uint[] _pbos;
+    readonly uint[] _pboSizes;
     bool _disposeRequested;
     bool _disposed;
 

@@ -17,7 +17,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
     readonly MTLDevice _device;
     readonly MTLCommandQueue _commandQueue;
     readonly bool[] _supportedSampleCounts;
-    BackendInfoMetal _metalInfo;
+    readonly BackendInfoMetal _metalInfo;
 
     readonly object _submittedCommandsLock = new();
     readonly Dictionary<MTLCommandBuffer, MTLFence> _submittedCBs = new();

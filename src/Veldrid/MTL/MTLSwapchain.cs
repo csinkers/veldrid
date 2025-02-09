@@ -6,9 +6,9 @@ namespace Veldrid.MTL;
 internal sealed class MTLSwapchain : Swapchain
 {
     readonly MTLSwapchainFramebuffer _framebuffer;
-    CAMetalLayer _metalLayer;
+    readonly CAMetalLayer _metalLayer;
     readonly MTLGraphicsDevice _gd;
-    UIView _uiView; // Valid only when a UIViewSwapchainSource is used.
+    readonly UIView _uiView; // Valid only when a UIViewSwapchainSource is used.
     bool _syncToVerticalBlank;
     bool _disposed;
 

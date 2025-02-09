@@ -21,11 +21,11 @@ internal unsafe class OculusContext : VRContext
     ovrTimewarpProjectionDesc _posTimewarpProjectionDesc;
     double _sensorSampleTime;
     EyePair_ovrPosef _eyeRenderPoses;
-    Quaternion[] _rotations = new Quaternion[2];
-    Vector3[] _positions = new Vector3[2];
-    Matrix4x4[] _projections = new Matrix4x4[2];
+    readonly Quaternion[] _rotations = new Quaternion[2];
+    readonly Vector3[] _positions = new Vector3[2];
+    readonly Matrix4x4[] _projections = new Matrix4x4[2];
 
-    static Lazy<bool> s_isSupported = new(CheckSupport);
+    static readonly Lazy<bool> s_isSupported = new(CheckSupport);
 
     static bool CheckSupport()
     {

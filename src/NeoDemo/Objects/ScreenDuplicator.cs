@@ -114,5 +114,5 @@ internal class ScreenDuplicator : Renderable
         SceneContext sc
     ) { }
 
-    static ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
+    static readonly ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
 }

@@ -33,16 +33,16 @@ public class Scene
 
     public bool ThreadedRendering { get; set; } = false;
 
-    float _lScale = 1f;
-    float _rScale = 1f;
-    float _tScale = 1f;
-    float _bScale = 1f;
-    float _nScale = 4f;
-    float _fScale = 4f;
+    readonly float _lScale = 1f;
+    readonly float _rScale = 1f;
+    readonly float _tScale = 1f;
+    readonly float _bScale = 1f;
+    readonly float _nScale = 4f;
+    readonly float _fScale = 4f;
 
-    float _nearCascadeLimit = 100;
-    float _midCascadeLimit = 300;
-    float _farCascadeLimit;
+    readonly float _nearCascadeLimit = 100;
+    readonly float _midCascadeLimit = 300;
+    readonly float _farCascadeLimit;
 
     public Scene(GraphicsDevice gd, Sdl2Window window, Sdl2ControllerTracker? controller)
     {
@@ -859,7 +859,7 @@ public class Scene
         }
     }
 
-    static Func<RenderPasses, Func<CullRenderable, bool>> s_createFilterFunc = rp =>
+    static readonly Func<RenderPasses, Func<CullRenderable, bool>> s_createFilterFunc = rp =>
         CreateFilter(rp);
     CommandList _resourceUpdateCL;
 

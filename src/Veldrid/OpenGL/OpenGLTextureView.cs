@@ -8,7 +8,7 @@ namespace Veldrid.OpenGL;
 internal sealed class OpenGLTextureView : TextureView, OpenGLDeferredResource
 {
     readonly OpenGLGraphicsDevice _gd;
-    bool _needsTextureView;
+    readonly bool _needsTextureView;
     uint _textureView;
     bool _disposeRequested;
     bool _disposed;

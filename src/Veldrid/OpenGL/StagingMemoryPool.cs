@@ -12,7 +12,7 @@ internal sealed unsafe class StagingMemoryPool : IDisposable
 
     readonly List<StagingBlock> _storage = [];
     readonly SortedList<uint, uint> _availableBlocks = new(new CapacityComparer());
-    object _lock = new();
+    readonly object _lock = new();
     bool _disposed;
 
     public StagingBlock Stage(IntPtr source, uint sizeInBytes)

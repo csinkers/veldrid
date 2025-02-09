@@ -26,9 +26,9 @@ public unsafe class Sdl2Window
     public uint WindowID { get; private set; }
     bool _exists;
 
-    SimpleInputSnapshot _publicSnapshot = new();
+    readonly SimpleInputSnapshot _publicSnapshot = new();
     SimpleInputSnapshot _privateSnapshot = new();
-    SimpleInputSnapshot _privateBackbuffer = new();
+    readonly SimpleInputSnapshot _privateBackbuffer = new();
 
     // Threaded Sdl2Window flags
     readonly bool _threadedProcessing;
@@ -44,8 +44,8 @@ public unsafe class Sdl2Window
     Vector2 _currentMouseDelta;
 
     // Cached Sdl2Window state (for threaded processing)
-    BufferedValue<Point> _cachedPosition = new();
-    BufferedValue<Point> _cachedSize = new();
+    readonly BufferedValue<Point> _cachedPosition = new();
+    readonly BufferedValue<Point> _cachedSize = new();
     string? _cachedWindowTitle;
     bool _newWindowTitleReceived;
     bool _firstMouseEvent = true;

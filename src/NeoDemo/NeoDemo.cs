@@ -16,15 +16,15 @@ public class NeoDemo
 {
     Sdl2Window _window;
     GraphicsDevice _gd;
-    Scene _scene;
+    readonly Scene _scene;
     readonly ImGuiRenderable _igRenderable;
     readonly SceneContext _sc = new();
     bool _windowResized;
     bool _recreateWindow = true;
 
-    static double _desiredFrameLengthSeconds = 1.0 / 60.0;
-    static bool _limitFrameRate = false;
-    static FrameTimeAverager _fta = new(0.666);
+    static readonly double _desiredFrameLengthSeconds = 1.0 / 60.0;
+    static readonly bool _limitFrameRate = false;
+    static readonly FrameTimeAverager _fta = new(0.666);
     CommandList _frameCommands;
 
     event Action<int, int> _resizeHandled;
@@ -41,7 +41,7 @@ public class NeoDemo
     readonly Dictionary<string, ImageSharpTexture> _textures = new();
     Sdl2ControllerTracker? _controllerTracker;
     bool _colorSrgb = true;
-    FullScreenQuad _fsq;
+    readonly FullScreenQuad _fsq;
     static RenderDoc? _renderDoc;
     bool _controllerDebugMenu;
     bool _showImguiDemo;

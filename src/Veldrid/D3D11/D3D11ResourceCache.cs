@@ -326,7 +326,7 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
     ) : IEquatable<D3D11RasterizerStateCacheKey>
     {
         public RasterizerStateDescription VeldridDescription = veldridDescription;
-        public bool Multisampled = multisampled;
+        public readonly bool Multisampled = multisampled;
 
         public bool Equals(D3D11RasterizerStateCacheKey other)
         {

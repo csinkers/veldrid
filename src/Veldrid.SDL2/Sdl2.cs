@@ -52,14 +52,14 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate byte* SDL_GetError_t();
 
-    static SDL_GetError_t s_sdl_getError = LoadFunction<SDL_GetError_t>("SDL_GetError");
+    static readonly SDL_GetError_t s_sdl_getError = LoadFunction<SDL_GetError_t>("SDL_GetError");
 
     public static byte* SDL_GetError() => s_sdl_getError();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_ClearError_t();
 
-    static SDL_ClearError_t s_sdl_clearError = LoadFunction<SDL_ClearError_t>("SDL_ClearError");
+    static readonly SDL_ClearError_t s_sdl_clearError = LoadFunction<SDL_ClearError_t>("SDL_ClearError");
 
     public static byte* SDL_ClearError()
     {
@@ -70,7 +70,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_free_t(void* ptr);
 
-    static SDL_free_t s_sdl_free = LoadFunction<SDL_free_t>("SDL_free");
+    static readonly SDL_free_t s_sdl_free = LoadFunction<SDL_free_t>("SDL_free");
 
     public static void SDL_free(void* ptr)
     {

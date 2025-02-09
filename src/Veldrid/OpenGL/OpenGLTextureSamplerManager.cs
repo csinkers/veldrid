@@ -113,7 +113,7 @@ internal sealed unsafe class OpenGLTextureSamplerManager
 
     struct BoundSamplerStateInfo(OpenGLSampler sampler, bool mipmapped)
     {
-        public OpenGLSampler Sampler = sampler;
+        public readonly OpenGLSampler Sampler = sampler;
         public bool Mipmapped = mipmapped;
     }
 }

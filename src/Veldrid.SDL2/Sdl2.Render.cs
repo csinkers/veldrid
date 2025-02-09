@@ -7,7 +7,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_Renderer SDL_CreateRenderer_t(SDL_Window SDL2Window, int index, uint flags);
 
-    static SDL_CreateRenderer_t s_sdl_createRenderer = LoadFunction<SDL_CreateRenderer_t>(
+    static readonly SDL_CreateRenderer_t s_sdl_createRenderer = LoadFunction<SDL_CreateRenderer_t>(
         "SDL_CreateRenderer"
     );
 
@@ -17,7 +17,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_DestroyRenderer_t(SDL_Renderer renderer);
 
-    static SDL_DestroyRenderer_t s_sdl_destroyRenderer = LoadFunction<SDL_DestroyRenderer_t>(
+    static readonly SDL_DestroyRenderer_t s_sdl_destroyRenderer = LoadFunction<SDL_DestroyRenderer_t>(
         "SDL_DestroyRenderer"
     );
 
@@ -27,7 +27,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_SetRenderDrawColor_t(SDL_Renderer renderer, byte r, byte g, byte b, byte a);
 
-    static SDL_SetRenderDrawColor_t s_sdl_setRenderDrawColor =
+    static readonly SDL_SetRenderDrawColor_t s_sdl_setRenderDrawColor =
         LoadFunction<SDL_SetRenderDrawColor_t>("SDL_SetRenderDrawColor");
 
     public static int SDL_SetRenderDrawColor(
@@ -41,14 +41,14 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_RenderClear_t(SDL_Renderer renderer);
 
-    static SDL_RenderClear_t s_sdl_renderClear = LoadFunction<SDL_RenderClear_t>("SDL_RenderClear");
+    static readonly SDL_RenderClear_t s_sdl_renderClear = LoadFunction<SDL_RenderClear_t>("SDL_RenderClear");
 
     public static int SDL_RenderClear(SDL_Renderer renderer) => s_sdl_renderClear(renderer);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_RenderFillRect_t(SDL_Renderer renderer, void* rect);
 
-    static SDL_RenderFillRect_t s_sdl_renderFillRect = LoadFunction<SDL_RenderFillRect_t>(
+    static readonly SDL_RenderFillRect_t s_sdl_renderFillRect = LoadFunction<SDL_RenderFillRect_t>(
         "SDL_RenderFillRect"
     );
 
@@ -58,7 +58,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_RenderPresent_t(SDL_Renderer renderer);
 
-    static SDL_RenderPresent_t s_sdl_renderPresent = LoadFunction<SDL_RenderPresent_t>(
+    static readonly SDL_RenderPresent_t s_sdl_renderPresent = LoadFunction<SDL_RenderPresent_t>(
         "SDL_RenderPresent"
     );
 

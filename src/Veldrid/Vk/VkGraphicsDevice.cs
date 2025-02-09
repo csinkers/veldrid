@@ -21,7 +21,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
     VkPhysicalDevice _physicalDevice;
     string? _driverName;
     string? _driverInfo;
-    VkDeviceMemoryManager _memoryManager;
+    readonly VkDeviceMemoryManager _memoryManager;
     VkPhysicalDeviceProperties _physicalDeviceProperties;
     VkPhysicalDeviceFeatures _physicalDeviceFeatures;
     VkPhysicalDeviceMemoryProperties _physicalDeviceMemProperties;
@@ -41,8 +41,8 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
     readonly BackendInfoVulkan _vulkanInfo;
 
     const int MaxSharedCommandLists = 4;
-    Stack<VkCommandList> _sharedCommandLists = new(MaxSharedCommandLists);
-    VkDescriptorPoolManager _descriptorPoolManager;
+    readonly Stack<VkCommandList> _sharedCommandLists = new(MaxSharedCommandLists);
+    readonly VkDescriptorPoolManager _descriptorPoolManager;
     bool _standardValidationSupported;
     bool _khronosValidationSupported;
     vkGetBufferMemoryRequirements2_t? _getBufferMemoryRequirements2;
@@ -1752,10 +1752,10 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         bool isPooled
     )
     {
-        public VulkanFence Fence = fence;
-        public VkCommandList CommandList = commandList;
-        public VkCommandBuffer CommandBuffer = commandBuffer;
-        public bool IsPooled = isPooled;
+        public readonly VulkanFence Fence = fence;
+        public readonly VkCommandList CommandList = commandList;
+        public readonly VkCommandBuffer CommandBuffer = commandBuffer;
+        public readonly bool IsPooled = isPooled;
     }
 }
 

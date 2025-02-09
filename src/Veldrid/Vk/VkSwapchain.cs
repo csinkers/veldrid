@@ -14,7 +14,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
     readonly VkSurfaceKHR _surface;
     VkSwapchainKHR _deviceSwapchain;
     readonly VkSwapchainFramebuffer _framebuffer;
-    VulkanFence _imageAvailableFence;
+    readonly VulkanFence _imageAvailableFence;
     readonly uint _presentQueueIndex;
     readonly VkQueue _presentQueue;
     bool _syncToVBlank;

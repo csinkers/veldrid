@@ -125,16 +125,16 @@ public class ObjParser
 
     class ParseContext
     {
-        List<Vector3> _positions = [];
-        List<Vector3> _normals = [];
-        List<Vector2> _texCoords = [];
+        readonly List<Vector3> _positions = [];
+        readonly List<Vector3> _normals = [];
+        readonly List<Vector2> _texCoords = [];
 
-        List<ObjFile.MeshGroup> _groups = [];
+        readonly List<ObjFile.MeshGroup> _groups = [];
 
         string? _currentGroupName;
         string? _currentMaterial;
         int _currentSmoothingGroup;
-        List<ObjFile.Face> _currentGroupFaces = [];
+        readonly List<ObjFile.Face> _currentGroupFaces = [];
 
         int _currentLine;
         string? _materialLibName;

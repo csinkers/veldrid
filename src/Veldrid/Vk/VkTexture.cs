@@ -25,9 +25,9 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
     public VkFormat VkFormat { get; }
     public VkSampleCountFlags VkSampleCount { get; }
 
-    VkImageLayout[] _imageLayouts;
-    bool _isSwapchainTexture;
-    bool _leaveOpen;
+    readonly VkImageLayout[] _imageLayouts;
+    readonly bool _isSwapchainTexture;
+    readonly bool _leaveOpen;
     string? _name;
 
     public ResourceRefCount RefCount { get; }

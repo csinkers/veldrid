@@ -23,7 +23,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_NumJoysticks_t();
 
-    static SDL_NumJoysticks_t s_sdl_numJoysticks = LoadFunction<SDL_NumJoysticks_t>(
+    static readonly SDL_NumJoysticks_t s_sdl_numJoysticks = LoadFunction<SDL_NumJoysticks_t>(
         "SDL_NumJoysticks"
     );
 
@@ -35,7 +35,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_JoystickInstanceID_t(SDL_Joystick joystick);
 
-    static SDL_JoystickInstanceID_t s_sdl_joystickInstanceID =
+    static readonly SDL_JoystickInstanceID_t s_sdl_joystickInstanceID =
         Sdl2Native.LoadFunction<SDL_JoystickInstanceID_t>("SDL_JoystickInstanceID");
 
     /// <summary>

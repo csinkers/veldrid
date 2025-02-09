@@ -10,7 +10,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate IntPtr SDL_GL_CreateContext_t(SDL_Window SDL2Window);
 
-    static SDL_GL_CreateContext_t s_gl_createContext = LoadFunction<SDL_GL_CreateContext_t>(
+    static readonly SDL_GL_CreateContext_t s_gl_createContext = LoadFunction<SDL_GL_CreateContext_t>(
         "SDL_GL_CreateContext"
     );
 
@@ -20,7 +20,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate IntPtr SDL_GL_GetProcAddress_t(string proc);
 
-    static SDL_GL_GetProcAddress_t s_getProcAddress = LoadFunction<SDL_GL_GetProcAddress_t>(
+    static readonly SDL_GL_GetProcAddress_t s_getProcAddress = LoadFunction<SDL_GL_GetProcAddress_t>(
         "SDL_GL_GetProcAddress"
     );
 
@@ -32,7 +32,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate IntPtr SDL_GL_GetCurrentContext_t();
 
-    static SDL_GL_GetCurrentContext_t s_gl_getCurrentContext =
+    static readonly SDL_GL_GetCurrentContext_t s_gl_getCurrentContext =
         LoadFunction<SDL_GL_GetCurrentContext_t>("SDL_GL_GetCurrentContext");
 
     public static IntPtr SDL_GL_GetCurrentContext()
@@ -44,7 +44,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_GL_SwapWindow_t(SDL_Window SDL2Window);
 
-    static SDL_GL_SwapWindow_t s_gl_swapWindow = LoadFunction<SDL_GL_SwapWindow_t>(
+    static readonly SDL_GL_SwapWindow_t s_gl_swapWindow = LoadFunction<SDL_GL_SwapWindow_t>(
         "SDL_GL_SwapWindow"
     );
 
@@ -53,7 +53,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GL_SetAttribute_t(SDL_GLAttribute attr, int value);
 
-    static SDL_GL_SetAttribute_t s_gl_setAttribute = LoadFunction<SDL_GL_SetAttribute_t>(
+    static readonly SDL_GL_SetAttribute_t s_gl_setAttribute = LoadFunction<SDL_GL_SetAttribute_t>(
         "SDL_GL_SetAttribute"
     );
 
@@ -63,7 +63,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GL_GetAttribute_t(SDL_GLAttribute attr, int* value);
 
-    static SDL_GL_GetAttribute_t s_gl_getAttribute = LoadFunction<SDL_GL_GetAttribute_t>(
+    static readonly SDL_GL_GetAttribute_t s_gl_getAttribute = LoadFunction<SDL_GL_GetAttribute_t>(
         "SDL_GL_GetAttribute"
     );
 
@@ -73,7 +73,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GL_MakeCurrent_t(SDL_Window SDL2Window, IntPtr context);
 
-    static SDL_GL_MakeCurrent_t s_gl_makeCurrent = LoadFunction<SDL_GL_MakeCurrent_t>(
+    static readonly SDL_GL_MakeCurrent_t s_gl_makeCurrent = LoadFunction<SDL_GL_MakeCurrent_t>(
         "SDL_GL_MakeCurrent"
     );
 
@@ -83,7 +83,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GL_SetSwapInterval_t(int interval);
 
-    static SDL_GL_SetSwapInterval_t s_gl_setSwapInterval = LoadFunction<SDL_GL_SetSwapInterval_t>(
+    static readonly SDL_GL_SetSwapInterval_t s_gl_setSwapInterval = LoadFunction<SDL_GL_SetSwapInterval_t>(
         "SDL_GL_SetSwapInterval"
     );
 
@@ -92,7 +92,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_GL_DeleteContext_t(IntPtr context);
 
-    static SDL_GL_DeleteContext_t s_gl_deleteContext = LoadFunction<SDL_GL_DeleteContext_t>(
+    static readonly SDL_GL_DeleteContext_t s_gl_deleteContext = LoadFunction<SDL_GL_DeleteContext_t>(
         "SDL_GL_DeleteContext"
     );
 

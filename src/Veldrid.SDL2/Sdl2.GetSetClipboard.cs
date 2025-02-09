@@ -9,7 +9,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate byte* SDL_GetClipboardText_t();
 
-    static SDL_GetClipboardText_t s_sdl_getClipboardText = LoadFunction<SDL_GetClipboardText_t>(
+    static readonly SDL_GetClipboardText_t s_sdl_getClipboardText = LoadFunction<SDL_GetClipboardText_t>(
         "SDL_GetClipboardText"
     );
 
@@ -40,7 +40,7 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_SetClipboardText_t(byte* text);
 
-    static SDL_SetClipboardText_t s_sdl_setClipboardText = LoadFunction<SDL_SetClipboardText_t>(
+    static readonly SDL_SetClipboardText_t s_sdl_setClipboardText = LoadFunction<SDL_SetClipboardText_t>(
         "SDL_SetClipboardText"
     );
 

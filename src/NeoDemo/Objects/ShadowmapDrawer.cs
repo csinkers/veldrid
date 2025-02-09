@@ -214,9 +214,9 @@ public class ShadowmapDrawer : Renderable
         cl.DrawIndexed((uint)s_quadIndices.Length, 1, 0, 0, 0);
     }
 
-    static float[] s_quadVerts = [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1];
+    static readonly float[] s_quadVerts = [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1];
 
-    static ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
+    static readonly ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
 
     public struct SizeInfo
     {

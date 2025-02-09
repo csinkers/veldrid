@@ -18,7 +18,7 @@ public class Octree<T>(BoundingBox boundingBox, int maxChildren)
 {
     OctreeNode<T> _currentRoot = new(boundingBox, maxChildren);
 
-    List<OctreeItem<T>> _pendingMoveStage = [];
+    readonly List<OctreeItem<T>> _pendingMoveStage = [];
 
     /// <summary>
     /// The current root node of the octree. This may change when items are added and removed.

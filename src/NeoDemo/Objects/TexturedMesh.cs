@@ -18,7 +18,7 @@ public class TexturedMesh : CullRenderable
     readonly ImageSharpTexture? _alphaTextureData;
     readonly Transform _transform = new();
 
-    BoundingBox _centeredBounds;
+    readonly BoundingBox _centeredBounds;
     DeviceBuffer _vb;
     DeviceBuffer _ib;
     int _indexCount;
@@ -42,7 +42,7 @@ public class TexturedMesh : CullRenderable
 
     readonly MaterialPropsAndBuffer _materialProps;
     readonly Vector3 _objectCenter;
-    bool _materialPropsOwned = false;
+    readonly bool _materialPropsOwned = false;
 
     public MaterialProperties MaterialProperties
     {

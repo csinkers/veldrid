@@ -259,7 +259,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
         readonly ulong _totalMemorySize;
 
 #if ALLOC_TRACK
-        SortedList<uint, ulong> _allocatedBlocks = new();
+        readonly SortedList<uint, ulong> _allocatedBlocks = new();
 #endif
 
         public readonly VkDeviceMemory Memory;

@@ -21,7 +21,7 @@ internal class OpenVRContext : VRContext
     Matrix4x4 _projRight;
     Matrix4x4 _headToEyeLeft;
     Matrix4x4 _headToEyeRight;
-    TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
+    readonly TrackedDevicePose_t[] _devicePoses = new TrackedDevicePose_t[1];
 
     public override string DeviceName => _deviceName;
 

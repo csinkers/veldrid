@@ -14,7 +14,7 @@ namespace Veldrid;
 public class BackendInfoMetal
 {
     readonly MTLGraphicsDevice _gd;
-    ReadOnlyCollection<MTLFeatureSet> _featureSet;
+    readonly ReadOnlyCollection<MTLFeatureSet> _featureSet;
 
     internal BackendInfoMetal(MTLGraphicsDevice gd)
     {

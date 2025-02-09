@@ -17,11 +17,11 @@ internal sealed class D3D11Swapchain : Swapchain
     int _syncInterval;
     D3D11Framebuffer _framebuffer = null!;
     D3D11Texture? _depthTexture;
-    float _pixelScale = 1f;
+    readonly float _pixelScale = 1f;
     bool _disposed;
 
     readonly object _referencedCLsLock = new();
-    HashSet<D3D11CommandList> _referencedCLs = [];
+    readonly HashSet<D3D11CommandList> _referencedCLs = [];
 
     public override Framebuffer Framebuffer => _framebuffer;
 

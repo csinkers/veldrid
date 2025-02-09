@@ -52,7 +52,7 @@ public abstract class CommandList : DeviceResource, IDisposable
 
     internal StringBuilder GetDebugStringBuilder()
     {
-        return (_debugStringBuilder ??= new StringBuilder()).Clear();
+        return (_debugStringBuilder ??= new()).Clear();
     }
 
     internal void ClearCachedState()
@@ -571,7 +571,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// <param name="index">The color target index.</param>
     public void SetFullViewport(uint index)
     {
-        SetViewport(index, new Viewport(0, 0, _framebuffer!.Width, _framebuffer.Height, 0, 1));
+        SetViewport(index, new(0, 0, _framebuffer!.Width, _framebuffer.Height, 0, 1));
     }
 
     /// <summary>
@@ -1146,7 +1146,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     {
         ReadOnlySpan<BufferCopyCommand> commands =
         [
-            new BufferCopyCommand(sourceOffset, destinationOffset, sizeInBytes),
+            new(sourceOffset, destinationOffset, sizeInBytes),
         ];
         CopyBufferCore(source, destination, commands);
     }
@@ -1824,12 +1824,7 @@ public abstract class CommandList : DeviceResource, IDisposable
             if (commandList._features.CommandListDebugMarkers)
             {
                 _builder = commandList.GetDebugStringBuilder();
-                _innerHandler = new StringBuilder.AppendInterpolatedStringHandler(
-                    literalLength,
-                    formattedCount,
-                    _builder,
-                    provider
-                );
+                _innerHandler = new(literalLength, formattedCount, _builder, provider);
                 shouldAppend = true;
             }
             else

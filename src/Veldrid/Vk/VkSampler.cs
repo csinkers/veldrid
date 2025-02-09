@@ -51,7 +51,7 @@ internal sealed unsafe class VkSampler : Sampler, IResourceRefCountTarget
         VulkanSampler sampler;
         vkCreateSampler(_gd.Device, &samplerCI, null, &sampler);
         _sampler = sampler;
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
     }
 
     public override string? Name

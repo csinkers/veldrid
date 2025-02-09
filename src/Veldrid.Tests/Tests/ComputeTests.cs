@@ -61,11 +61,11 @@ void main()
         const uint OutputTextureSize = 32;
 
         using Shader computeShader = RF.CreateFromSpirv(
-            new ShaderDescription(ShaderStages.Compute, Encoding.ASCII.GetBytes(shaderText), "main")
+            new(ShaderStages.Compute, Encoding.ASCII.GetBytes(shaderText), "main")
         );
 
         using ResourceLayout computeLayout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "TextureToFill",
                     ResourceKind.TextureReadWrite,
@@ -80,14 +80,11 @@ void main()
         );
 
         using Pipeline computePipeline = RF.CreateComputePipeline(
-            new ComputePipelineDescription(computeShader, computeLayout, 16, 16, 1)
+            new(computeShader, computeLayout, 16, 16, 1)
         );
 
         using DeviceBuffer fillValueBuffer = RF.CreateBuffer(
-            new BufferDescription(
-                (uint)Marshal.SizeOf<FillValueStruct>(),
-                BufferUsage.UniformBuffer
-            )
+            new((uint)Marshal.SizeOf<FillValueStruct>(), BufferUsage.UniformBuffer)
         );
 
         // Create our output texture.
@@ -105,7 +102,7 @@ void main()
         using TextureView computeTargetTextureView = RF.CreateTextureView(computeTargetTexture);
 
         using ResourceSet computeResourceSet = RF.CreateResourceSet(
-            new ResourceSetDescription(computeLayout, computeTargetTextureView, fillValueBuffer)
+            new(computeLayout, computeTargetTextureView, fillValueBuffer)
         );
 
         using CommandList cl = RF.CreateCommandList();
@@ -130,7 +127,7 @@ void main()
         // Read back from our texture and make sure it has been properly filled.
         for (uint depth = 0; depth < computeTargetTexture.Depth; depth++)
         {
-            RgbaFloat expectedFillValue = new(new Vector4(FillValue * (depth + 1)));
+            RgbaFloat expectedFillValue = new(new(FillValue * (depth + 1)));
             int notFilledCount = CountTexelsNotFilledAtDepth(
                 GD,
                 computeTargetTexture,
@@ -236,7 +233,7 @@ void main()
         SkipIfNotComputeShader();
 
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "Params",
                     ResourceKind.UniformBuffer,
@@ -258,22 +255,13 @@ void main()
         uint width = 1024;
         uint height = 1024;
         DeviceBuffer paramsBuffer = RF.CreateBuffer(
-            new BufferDescription(
-                (uint)Unsafe.SizeOf<BasicComputeTestParams>(),
-                BufferUsage.UniformBuffer
-            )
+            new((uint)Unsafe.SizeOf<BasicComputeTestParams>(), BufferUsage.UniformBuffer)
         );
         DeviceBuffer sourceBuffer = RF.CreateBuffer(
-            new BufferDescription(
-                width * height * sizeof(float),
-                BufferUsage.StructuredBufferReadWrite
-            )
+            new(width * height * sizeof(float), BufferUsage.StructuredBufferReadWrite)
         );
         DeviceBuffer destinationBuffer = RF.CreateBuffer(
-            new BufferDescription(
-                width * height * sizeof(float),
-                BufferUsage.StructuredBufferReadWrite
-            )
+            new(width * height * sizeof(float), BufferUsage.StructuredBufferReadWrite)
         );
 
         GD.UpdateBuffer(
@@ -292,17 +280,11 @@ void main()
         GD.UpdateBuffer(sourceBuffer, 0, sourceData);
 
         ResourceSet rs = RF.CreateResourceSet(
-            new ResourceSetDescription(layout, paramsBuffer, sourceBuffer, destinationBuffer)
+            new(layout, paramsBuffer, sourceBuffer, destinationBuffer)
         );
 
         Pipeline pipeline = RF.CreateComputePipeline(
-            new ComputePipelineDescription(
-                TestShaders.LoadCompute(RF, "BasicComputeTest"),
-                layout,
-                16,
-                16,
-                1
-            )
+            new(TestShaders.LoadCompute(RF, "BasicComputeTest"), layout, 16, 16, 1)
         );
 
         CommandList cl = RF.CreateCommandList();
@@ -353,7 +335,7 @@ void main()
         SkipIfNotComputeShader();
 
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "Params",
                     ResourceKind.UniformBuffer,
@@ -375,10 +357,7 @@ void main()
         uint width = 1024;
         uint height = 1024;
         DeviceBuffer paramsBuffer = RF.CreateBuffer(
-            new BufferDescription(
-                (uint)Unsafe.SizeOf<ComputeTextureCopyParams>(),
-                BufferUsage.UniformBuffer
-            )
+            new((uint)Unsafe.SizeOf<ComputeTextureCopyParams>(), BufferUsage.UniformBuffer)
         );
         Texture srcTexture = RF.CreateTexture(
             TextureDescription.Texture2D(
@@ -418,18 +397,10 @@ void main()
         }
         GD.UpdateTexture(srcTexture, srcData, 0, 0, 0, width, height, 1, 0, 0);
 
-        ResourceSet rs = RF.CreateResourceSet(
-            new ResourceSetDescription(layout, paramsBuffer, srcTexture, dstTexture)
-        );
+        ResourceSet rs = RF.CreateResourceSet(new(layout, paramsBuffer, srcTexture, dstTexture));
 
         Pipeline pipeline = RF.CreateComputePipeline(
-            new ComputePipelineDescription(
-                TestShaders.LoadCompute(RF, "ComputeTextureCopy"),
-                layout,
-                16,
-                16,
-                1
-            )
+            new(TestShaders.LoadCompute(RF, "ComputeTextureCopy"), layout, 16, 16, 1)
         );
 
         CommandList cl = RF.CreateCommandList();
@@ -475,16 +446,16 @@ void main()
 
         Vector4[] faceColors =
         [
-            new Vector4(0 * 42),
-            new Vector4(1 * 42),
-            new Vector4(2 * 42),
-            new Vector4(3 * 42),
-            new Vector4(4 * 42),
-            new Vector4(5 * 42),
+            new(0 * 42),
+            new(1 * 42),
+            new(2 * 42),
+            new(3 * 42),
+            new(4 * 42),
+            new(5 * 42),
         ];
 
         ResourceLayout computeLayout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "ComputeOutput",
                     ResourceKind.TextureReadWrite,
@@ -492,18 +463,10 @@ void main()
                 )
             )
         );
-        ResourceSet computeSet = RF.CreateResourceSet(
-            new ResourceSetDescription(computeLayout, computeOutput)
-        );
+        ResourceSet computeSet = RF.CreateResourceSet(new(computeLayout, computeOutput));
 
         Pipeline computePipeline = RF.CreateComputePipeline(
-            new ComputePipelineDescription(
-                TestShaders.LoadCompute(RF, "ComputeCubemapGenerator"),
-                computeLayout,
-                32,
-                32,
-                1
-            )
+            new(TestShaders.LoadCompute(RF, "ComputeCubemapGenerator"), computeLayout, 32, 32, 1)
         );
 
         CommandList cl = RF.CreateCommandList();
@@ -572,16 +535,16 @@ void main()
 
         Vector4[] faceColors =
         [
-            new Vector4(0 * 42),
-            new Vector4(1 * 42),
-            new Vector4(2 * 42),
-            new Vector4(3 * 42),
-            new Vector4(4 * 42),
-            new Vector4(5 * 42),
+            new(0 * 42),
+            new(1 * 42),
+            new(2 * 42),
+            new(3 * 42),
+            new(4 * 42),
+            new(5 * 42),
         ];
 
         ResourceLayout computeLayout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "ComputeOutput",
                     ResourceKind.TextureReadWrite,
@@ -589,18 +552,10 @@ void main()
                 )
             )
         );
-        ResourceSet computeSet = RF.CreateResourceSet(
-            new ResourceSetDescription(computeLayout, computeOutputMipLevel)
-        );
+        ResourceSet computeSet = RF.CreateResourceSet(new(computeLayout, computeOutputMipLevel));
 
         Pipeline computePipeline = RF.CreateComputePipeline(
-            new ComputePipelineDescription(
-                TestShaders.LoadCompute(RF, "ComputeCubemapGenerator"),
-                computeLayout,
-                32,
-                32,
-                1
-            )
+            new(TestShaders.LoadCompute(RF, "ComputeCubemapGenerator"), computeLayout, 32, 32, 1)
         );
 
         using (Texture readback = GetReadback(computeOutput))
@@ -646,7 +601,7 @@ void main()
                     uint mipSize = (uint)(TexSize / (1 << (int)mip));
                     RgbaByte expectedColor =
                         mip == BoundMipLevel
-                            ? new RgbaByte(
+                            ? new(
                                 (byte)faceColors[face].X,
                                 (byte)faceColors[face].Y,
                                 (byte)faceColors[face].Z,
@@ -700,16 +655,10 @@ void main()
             GD.StructuredBufferMinOffsetAlignment * (dstSetMultiple + dstBindingMultiple);
 
         DeviceBuffer copySrc = RF.CreateBuffer(
-            new BufferDescription(
-                totalSrcAlignment + dataSize,
-                BufferUsage.StructuredBufferReadOnly
-            )
+            new(totalSrcAlignment + dataSize, BufferUsage.StructuredBufferReadOnly)
         );
         DeviceBuffer copyDst = RF.CreateBuffer(
-            new BufferDescription(
-                totalDstAlignment + dataSize,
-                BufferUsage.StructuredBufferReadWrite
-            )
+            new(totalDstAlignment + dataSize, BufferUsage.StructuredBufferReadWrite)
         );
 
         ResourceLayout[] layouts;
@@ -731,7 +680,7 @@ void main()
             layouts =
             [
                 RF.CreateResourceLayout(
-                    new ResourceLayoutDescription(
+                    new(
                         new ResourceLayoutElementDescription(
                             "CopySrc",
                             ResourceKind.StructuredBufferReadOnly,
@@ -747,17 +696,14 @@ void main()
                     )
                 ),
             ];
-            sets =
-            [
-                RF.CreateResourceSet(new ResourceSetDescription(layouts[0], srcRange, dstRange)),
-            ];
+            sets = [RF.CreateResourceSet(new(layouts[0], srcRange, dstRange))];
         }
         else
         {
             layouts =
             [
                 RF.CreateResourceLayout(
-                    new ResourceLayoutDescription(
+                    new(
                         new ResourceLayoutElementDescription(
                             "CopySrc",
                             ResourceKind.StructuredBufferReadOnly,
@@ -767,7 +713,7 @@ void main()
                     )
                 ),
                 RF.CreateResourceLayout(
-                    new ResourceLayoutDescription(
+                    new(
                         new ResourceLayoutElementDescription(
                             "CopyDst",
                             ResourceKind.StructuredBufferReadWrite,
@@ -779,13 +725,13 @@ void main()
             ];
             sets =
             [
-                RF.CreateResourceSet(new ResourceSetDescription(layouts[0], srcRange)),
-                RF.CreateResourceSet(new ResourceSetDescription(layouts[1], dstRange)),
+                RF.CreateResourceSet(new(layouts[0], srcRange)),
+                RF.CreateResourceSet(new(layouts[1], dstRange)),
             ];
         }
 
         Pipeline pipeline = RF.CreateComputePipeline(
-            new ComputePipelineDescription(
+            new(
                 TestShaders.LoadCompute(
                     RF,
                     combinedLayout ? "FillBuffer" : "FillBuffer_SeparateLayout"
@@ -872,7 +818,7 @@ void main()
         SkipIfNotComputeShader();
 
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "Params",
                     ResourceKind.StructuredBufferReadOnly,
@@ -887,14 +833,11 @@ void main()
         );
 
         DeviceBuffer paramsBuffer = RF.CreateBuffer(
-            new BufferDescription(
-                (uint)sizeof(IndirectDrawIndexedArguments),
-                BufferUsage.StructuredBufferReadOnly
-            )
+            new((uint)sizeof(IndirectDrawIndexedArguments), BufferUsage.StructuredBufferReadOnly)
         );
 
         DeviceBuffer dstBuffer = RF.CreateBuffer(
-            new BufferDescription(
+            new(
                 (uint)sizeof(IndirectDrawIndexedArguments),
                 dstUsage | BufferUsage.StructuredBufferReadWrite
             )
@@ -910,18 +853,10 @@ void main()
         };
         GD.UpdateBuffer(paramsBuffer, 0, paramsValue);
 
-        ResourceSet rs = RF.CreateResourceSet(
-            new ResourceSetDescription(layout, paramsBuffer, dstBuffer)
-        );
+        ResourceSet rs = RF.CreateResourceSet(new(layout, paramsBuffer, dstBuffer));
 
         Pipeline pipeline = RF.CreateComputePipeline(
-            new ComputePipelineDescription(
-                TestShaders.LoadCompute(RF, "FillIndirectBufferComputeTest"),
-                layout,
-                1,
-                1,
-                1
-            )
+            new(TestShaders.LoadCompute(RF, "FillIndirectBufferComputeTest"), layout, 1, 1, 1)
         );
 
         CommandList cl = RF.CreateCommandList();

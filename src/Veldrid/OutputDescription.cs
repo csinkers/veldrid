@@ -74,13 +74,11 @@ public struct OutputDescription : IEquatable<OutputDescription>
         ];
         for (int i = 0; i < colorAttachments.Length; i++)
         {
-            colorAttachments[i] = new OutputAttachmentDescription(
-                fbColorAttachments[i].Target.Format
-            );
+            colorAttachments[i] = new(fbColorAttachments[i].Target.Format);
             sampleCount = fbColorAttachments[i].Target.SampleCount;
         }
 
-        return new OutputDescription(depthAttachment, colorAttachments, sampleCount);
+        return new(depthAttachment, colorAttachments, sampleCount);
     }
 
     /// <summary>

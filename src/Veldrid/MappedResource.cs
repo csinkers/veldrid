@@ -98,7 +98,7 @@ public readonly struct MappedResource
     /// <returns>The span of bytes.</returns>
     public readonly unsafe Span<byte> AsBytes()
     {
-        return new Span<byte>((void*)Data, (int)SizeInBytes);
+        return new((void*)Data, (int)SizeInBytes);
     }
 }
 

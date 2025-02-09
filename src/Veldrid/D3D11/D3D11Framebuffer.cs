@@ -84,7 +84,7 @@ internal sealed class D3D11Framebuffer : Framebuffer
                     if (d3dColorTarget.SampleCount == TextureSampleCount.Count1)
                     {
                         rtvDesc.ViewDimension = RenderTargetViewDimension.Texture2DArray;
-                        rtvDesc.Texture2DArray = new Texture2DArrayRenderTargetView
+                        rtvDesc.Texture2DArray = new()
                         {
                             ArraySize = 1,
                             FirstArraySlice = (int)colorTargets[i].ArrayLayer,
@@ -95,7 +95,7 @@ internal sealed class D3D11Framebuffer : Framebuffer
                     {
                         rtvDesc.ViewDimension =
                             RenderTargetViewDimension.Texture2DMultisampledArray;
-                        rtvDesc.Texture2DMSArray = new Texture2DMultisampledArrayRenderTargetView
+                        rtvDesc.Texture2DMSArray = new()
                         {
                             ArraySize = 1,
                             FirstArraySlice = (int)colorTargets[i].ArrayLayer,

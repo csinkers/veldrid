@@ -252,11 +252,7 @@ internal static unsafe class VkSurfaceUtil
     )
     {
         NSWindow nswindow = new(nsWindowSource.NSWindow);
-        return CreateNSViewSurfaceExt(
-            ext,
-            instance,
-            new NSViewSwapchainSource(nswindow.contentView.NativePtr)
-        );
+        return CreateNSViewSurfaceExt(ext, instance, new(nswindow.contentView.NativePtr));
     }
 
     static unsafe VkSurfaceKHR CreateNSWindowSurfaceMvk(
@@ -266,11 +262,7 @@ internal static unsafe class VkSurfaceUtil
     )
     {
         NSWindow nswindow = new(nsWindowSource.NSWindow);
-        return CreateNSViewSurfaceMvk(
-            mvk,
-            instance,
-            new NSViewSwapchainSource(nswindow.contentView.NativePtr)
-        );
+        return CreateNSViewSurfaceMvk(mvk, instance, new(nswindow.contentView.NativePtr));
     }
 
     static void GetMetalLayerFromNSView(NSView contentView, out CAMetalLayer metalLayer)

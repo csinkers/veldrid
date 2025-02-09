@@ -34,7 +34,7 @@ public abstract class VertexLayoutTests<T> : GraphicsDeviceTestBase<T>
                 TextureUsage.RenderTarget
             )
         );
-        Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, outTex));
+        Framebuffer fb = RF.CreateFramebuffer(new(null, outTex));
 
         VertexLayoutDescription vertexLayoutDesc = new(
             new VertexElementDescription(
@@ -76,7 +76,7 @@ public abstract class VertexLayoutTests<T> : GraphicsDeviceTestBase<T>
         try
         {
             RF.CreateGraphicsPipeline(
-                new GraphicsPipelineDescription(
+                new(
                     BlendStateDescription.SingleOverrideBlend,
                     DepthStencilStateDescription.Disabled,
                     RasterizerStateDescription.Default,

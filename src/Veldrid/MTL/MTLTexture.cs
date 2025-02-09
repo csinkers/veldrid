@@ -94,7 +94,7 @@ internal sealed class MTLTexture : Texture
 
     public MTLTexture(ulong nativeTexture, in TextureDescription description)
     {
-        DeviceTexture = new MetalBindings.MTLTexture((IntPtr)nativeTexture);
+        DeviceTexture = new((IntPtr)nativeTexture);
         Width = description.Width;
         Height = description.Height;
         Depth = description.Depth;

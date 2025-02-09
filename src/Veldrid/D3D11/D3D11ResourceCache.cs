@@ -120,7 +120,7 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
 
     DepthStencilOperationDescription ToD3D11StencilOpDesc(StencilBehaviorDescription sbd)
     {
-        return new DepthStencilOperationDescription
+        return new()
         {
             StencilFunc = D3D11Formats.VdToD3D11ComparisonFunc(sbd.Comparison),
             StencilPassOp = D3D11Formats.VdToD3D11StencilOperation(sbd.Pass),
@@ -204,7 +204,7 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
             for (int i = 0; i < elementDescs.Length; i++)
             {
                 VertexElementDescription desc = elementDescs[i];
-                elements[element] = new InputElementDescription(
+                elements[element] = new(
                     GetSemanticString(desc.Semantic),
                     SemanticIndices.GetAndIncrement(ref si, desc.Semantic),
                     D3D11Formats.ToDxgiFormat(desc.Format),
@@ -306,7 +306,7 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
                     original[i].Elements.Clone();
             }
 
-            return new InputLayoutCacheKey { VertexLayouts = vertexLayouts };
+            return new() { VertexLayouts = vertexLayouts };
         }
 
         public bool Equals(InputLayoutCacheKey other)

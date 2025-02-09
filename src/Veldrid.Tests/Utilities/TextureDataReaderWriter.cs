@@ -27,7 +27,7 @@ internal unsafe class TextureDataReaderWriter(
         ulong? b = ReadBits(pixelPtr, RedBits + GreenBits, BlueBits);
         ulong? a = ReadBits(pixelPtr, RedBits + GreenBits + BlueBits, AlphaBits);
 
-        return new WidePixel(r, g, b, a);
+        return new(r, g, b, a);
     }
 
     ulong? ReadBits(byte* pixelPtr, int bitOffset, int numBits)
@@ -87,7 +87,7 @@ internal unsafe class TextureDataReaderWriter(
         ulong? g = GreenBits != 0 ? (y % GMaxValue) : null;
         ulong? b = BlueBits != 0 ? (z % BMaxValue) : null;
         ulong? a = AlphaBits != 0 ? 1 : null;
-        return new WidePixel(r, g, b, a);
+        return new(r, g, b, a);
     }
 
     bool IsBitSet(byte* basePtr, int bit)

@@ -155,7 +155,7 @@ public struct TextureDescription : IEquatable<TextureDescription>
         TextureUsage usage
     )
     {
-        return new TextureDescription(
+        return new(
             width,
             1,
             1,
@@ -191,7 +191,7 @@ public struct TextureDescription : IEquatable<TextureDescription>
         TextureUsage usage
     )
     {
-        return new TextureDescription(
+        return new(
             width,
             height,
             1,
@@ -230,7 +230,7 @@ public struct TextureDescription : IEquatable<TextureDescription>
         TextureSampleCount sampleCount
     )
     {
-        return new TextureDescription(
+        return new(
             width,
             height,
             1,
@@ -265,7 +265,7 @@ public struct TextureDescription : IEquatable<TextureDescription>
         TextureUsage usage
     )
     {
-        return new TextureDescription(
+        return new(
             width,
             height,
             depth,

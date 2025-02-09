@@ -19,7 +19,7 @@ public class BackendInfoMetal
     internal BackendInfoMetal(MTLGraphicsDevice gd)
     {
         _gd = gd;
-        _featureSet = new ReadOnlyCollection<MTLFeatureSet>(_gd.MetalFeatures.ToArray());
+        _featureSet = new(_gd.MetalFeatures.ToArray());
     }
 
     public ReadOnlyCollection<MTLFeatureSet> FeatureSet => _featureSet;

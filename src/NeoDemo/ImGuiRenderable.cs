@@ -13,7 +13,7 @@ public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
     {
         if (_imguiRenderer == null)
         {
-            _imguiRenderer = new ImGuiRenderer(
+            _imguiRenderer = new(
                 gd,
                 sc.MainSceneFramebuffer.OutputDescription,
                 width,
@@ -38,7 +38,7 @@ public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
 
     public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
     {
-        return new RenderOrderKey(ulong.MaxValue);
+        return new(ulong.MaxValue);
     }
 
     public override void Render(

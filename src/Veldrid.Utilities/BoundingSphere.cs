@@ -86,13 +86,13 @@ public struct BoundingSphere(Vector3 center, float radius)
     )
     {
         float maxDistanceSquared = GetMaxDistanceSquared(center, pointBytes, pointStride);
-        return new BoundingSphere(center, MathF.Sqrt(maxDistanceSquared));
+        return new(center, MathF.Sqrt(maxDistanceSquared));
     }
 
     public static BoundingSphere CreateFromPoints(ReadOnlySpan<byte> pointBytes, int pointStride)
     {
         Vector3 center = GetCenter(pointBytes, pointStride);
         float radiusSquared = GetMaxDistanceSquared(center, pointBytes, pointStride);
-        return new BoundingSphere(center, MathF.Sqrt(radiusSquared));
+        return new(center, MathF.Sqrt(radiusSquared));
     }
 }

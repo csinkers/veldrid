@@ -129,31 +129,31 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         switch (_device.FeatureLevel)
         {
             case Vortice.Direct3D.FeatureLevel.Level_10_0:
-                ApiVersion = new GraphicsApiVersion(10, 0, 0, 0);
+                ApiVersion = new(10, 0, 0, 0);
                 break;
 
             case Vortice.Direct3D.FeatureLevel.Level_10_1:
-                ApiVersion = new GraphicsApiVersion(10, 1, 0, 0);
+                ApiVersion = new(10, 1, 0, 0);
                 break;
 
             case Vortice.Direct3D.FeatureLevel.Level_11_0:
-                ApiVersion = new GraphicsApiVersion(11, 0, 0, 0);
+                ApiVersion = new(11, 0, 0, 0);
                 break;
 
             case Vortice.Direct3D.FeatureLevel.Level_11_1:
-                ApiVersion = new GraphicsApiVersion(11, 1, 0, 0);
+                ApiVersion = new(11, 1, 0, 0);
                 break;
 
             case Vortice.Direct3D.FeatureLevel.Level_12_0:
-                ApiVersion = new GraphicsApiVersion(12, 0, 0, 0);
+                ApiVersion = new(12, 0, 0, 0);
                 break;
 
             case Vortice.Direct3D.FeatureLevel.Level_12_1:
-                ApiVersion = new GraphicsApiVersion(12, 1, 0, 0);
+                ApiVersion = new(12, 1, 0, 0);
                 break;
 
             case Vortice.Direct3D.FeatureLevel.Level_12_2:
-                ApiVersion = new GraphicsApiVersion(12, 2, 0, 0);
+                ApiVersion = new(12, 2, 0, 0);
                 break;
         }
 
@@ -167,7 +167,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
 
         IsDriverDebug = (flags & DeviceCreationFlags.Debug) != 0;
 
-        Features = new GraphicsDeviceFeatures(
+        Features = new(
             computeShader: true,
             geometryShader: true,
             tessellationShaders: true,
@@ -193,7 +193,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         );
 
         ResourceFactory = new D3D11ResourceFactory(this);
-        _d3d11Info = new BackendInfoD3D11(this);
+        _d3d11Info = new(this);
 
         PostDeviceCreated();
     }
@@ -336,7 +336,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             sampleCounts |= (1 << 5);
         }
 
-        properties = new PixelFormatProperties(
+        properties = new(
             MaxTextureDimension,
             type == TextureType.Texture1D ? 1 : MaxTextureDimension,
             type != TextureType.Texture3D ? 1 : MaxVolumeExtent,
@@ -380,7 +380,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                         Vortice.Direct3D11.MapFlags.None
                     );
 
-                    mappedResource = new MappedResource(
+                    mappedResource = new(
                         resource,
                         mode,
                         msr.DataPointer + (nint)offsetInBytes,
@@ -410,7 +410,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                         out MappedSubresource msr
                     );
 
-                    mappedResource = new MappedResource(
+                    mappedResource = new(
                         resource,
                         mode,
                         msr.DataPointer + (nint)offsetInBytes,
@@ -546,7 +546,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         }
 
         DeviceBuffer staging = ResourceFactory.CreateBuffer(
-            new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)
+            new(sizeInBytes, BufferUsage.StagingWrite)
         );
 
         return Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(staging);

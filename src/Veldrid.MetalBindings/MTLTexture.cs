@@ -47,7 +47,7 @@ public readonly unsafe struct MTLTexture(IntPtr ptr)
             levelRange,
             sliceRange
         );
-        return new MTLTexture(ret);
+        return new(ret);
     }
 
     static readonly Selector sel_replaceRegion =

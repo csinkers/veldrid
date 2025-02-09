@@ -14,7 +14,7 @@ public readonly struct MTLLibrary(IntPtr ptr)
         NSString nameNSS = NSString.New(name);
         IntPtr function = IntPtr_objc_msgSend(NativePtr, sel_newFunctionWithName, nameNSS);
         release(nameNSS.NativePtr);
-        return new MTLFunction(function);
+        return new(function);
     }
 
     public unsafe MTLFunction newFunctionWithNameConstantValues(
@@ -35,10 +35,10 @@ public readonly struct MTLLibrary(IntPtr ptr)
 
         if (function == IntPtr.Zero)
         {
-            throw new Exception($"Failed to create MTLFunction: {error.localizedDescription}");
+            throw new($"Failed to create MTLFunction: {error.localizedDescription}");
         }
 
-        return new MTLFunction(function);
+        return new(function);
     }
 
     static readonly Selector sel_newFunctionWithName = "newFunctionWithName:"u8;

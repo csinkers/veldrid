@@ -19,7 +19,7 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
                 TextureUsage.RenderTarget
             )
         );
-        Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, colorTarget));
+        Framebuffer fb = RF.CreateFramebuffer(new(null, colorTarget));
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -63,7 +63,7 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
                 TextureUsage.RenderTarget
             )
         );
-        Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, colorTarget));
+        Framebuffer fb = RF.CreateFramebuffer(new(null, colorTarget));
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -84,7 +84,7 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
                 TextureUsage.DepthStencil
             )
         );
-        Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(depthTarget));
+        Framebuffer fb = RF.CreateFramebuffer(new(depthTarget));
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -105,9 +105,7 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
         );
         Texture colorTarget0 = RF.CreateTexture(desc);
         Texture colorTarget1 = RF.CreateTexture(desc);
-        Framebuffer fb = RF.CreateFramebuffer(
-            new FramebufferDescription(null, colorTarget0, colorTarget1)
-        );
+        Framebuffer fb = RF.CreateFramebuffer(new(null, colorTarget0, colorTarget1));
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -136,10 +134,7 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
         for (uint level = 0; level < 11; level++)
         {
             framebuffers[level] = RF.CreateFramebuffer(
-                new FramebufferDescription(
-                    null,
-                    [new FramebufferAttachmentDescription(testTex, 0, level)]
-                )
+                new(null, [new FramebufferAttachmentDescription(testTex, 0, level)])
             );
         }
 
@@ -148,7 +143,7 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
         for (uint level = 0; level < 11; level++)
         {
             cl.SetFramebuffer(framebuffers[level]);
-            cl.ClearColorTarget(0, new RgbaFloat(level, level, level, 1));
+            cl.ClearColorTarget(0, new(level, level, level, 1));
         }
 
         Texture readback = RF.CreateTexture(
@@ -179,7 +174,7 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
             for (uint y = 0; y < mipHeight; y++)
             for (uint x = 0; x < mipWidth; x++)
             {
-                Assert.Equal(new RgbaFloat(level, level, level, 1), readView[x, y]);
+                Assert.Equal(new(level, level, level, 1), readView[x, y]);
             }
 
             GD.Unmap(readback, level);

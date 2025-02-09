@@ -46,10 +46,10 @@ public readonly unsafe struct MTLDevice(IntPtr nativePtr)
 
         if (library == IntPtr.Zero)
         {
-            throw new Exception("Shader compilation failed: " + error.localizedDescription);
+            throw new("Shader compilation failed: " + error.localizedDescription);
         }
 
-        return new MTLLibrary(library);
+        return new(library);
     }
 
     public MTLLibrary newLibraryWithData(DispatchData data)
@@ -64,10 +64,10 @@ public readonly unsafe struct MTLDevice(IntPtr nativePtr)
 
         if (library == IntPtr.Zero)
         {
-            throw new Exception("Unable to load Metal library: " + error.localizedDescription);
+            throw new("Unable to load Metal library: " + error.localizedDescription);
         }
 
-        return new MTLLibrary(library);
+        return new(library);
     }
 
     public MTLRenderPipelineState newRenderPipelineStateWithDescriptor(
@@ -84,12 +84,10 @@ public readonly unsafe struct MTLDevice(IntPtr nativePtr)
 
         if (error.NativePtr != IntPtr.Zero)
         {
-            throw new Exception(
-                "Failed to create new MTLRenderPipelineState: " + error.localizedDescription
-            );
+            throw new("Failed to create new MTLRenderPipelineState: " + error.localizedDescription);
         }
 
-        return new MTLRenderPipelineState(ret);
+        return new(ret);
     }
 
     public MTLComputePipelineState newComputePipelineStateWithDescriptor(
@@ -108,12 +106,10 @@ public readonly unsafe struct MTLDevice(IntPtr nativePtr)
 
         if (error.NativePtr != IntPtr.Zero)
         {
-            throw new Exception(
-                "Failed to create new MTLRenderPipelineState: " + error.localizedDescription
-            );
+            throw new("Failed to create new MTLRenderPipelineState: " + error.localizedDescription);
         }
 
-        return new MTLComputePipelineState(ret);
+        return new(ret);
     }
 
     public MTLCommandQueue newCommandQueue() =>
@@ -128,13 +124,13 @@ public readonly unsafe struct MTLDevice(IntPtr nativePtr)
             length,
             options
         );
-        return new MTLBuffer(buffer);
+        return new(buffer);
     }
 
     public MTLBuffer newBufferWithLengthOptions(nuint length, MTLResourceOptions options)
     {
         IntPtr buffer = IntPtr_objc_msgSend(NativePtr, sel_newBufferWithLength, length, options);
-        return new MTLBuffer(buffer);
+        return new(buffer);
     }
 
     public MTLTexture newTextureWithDescriptor(MTLTextureDescriptor descriptor) =>

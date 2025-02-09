@@ -16,7 +16,7 @@ internal class ScreenDuplicator : Renderable
         _disposeCollector = factory.DisposeCollector;
 
         ResourceLayout resourceLayout = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "SourceTexture",
                     ResourceKind.TextureReadOnly,
@@ -40,15 +40,15 @@ internal class ScreenDuplicator : Renderable
         blend.ColorWriteMask = sc.MainSceneMask;
 
         GraphicsPipelineDescription pd = new(
-            new BlendStateDescription(RgbaFloat.Black, blend, blend),
+            new(RgbaFloat.Black, blend, blend),
             gd.IsDepthRangeZeroToOne
                 ? DepthStencilStateDescription.DepthOnlyGreaterEqual
                 : DepthStencilStateDescription.DepthOnlyLessEqual,
             RasterizerStateDescription.Default,
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(
+            new(
                 [
-                    new VertexLayoutDescription(
+                    new(
                         new VertexElementDescription(
                             "Position",
                             VertexElementSemantic.TextureCoordinate,
@@ -71,14 +71,10 @@ internal class ScreenDuplicator : Renderable
 
         float[] verts = Util.GetFullScreenQuadVerts(gd);
 
-        _vb = factory.CreateBuffer(
-            new BufferDescription(verts.SizeInBytes(), BufferUsage.VertexBuffer)
-        );
+        _vb = factory.CreateBuffer(new(verts.SizeInBytes(), BufferUsage.VertexBuffer));
         cl.UpdateBuffer(_vb, 0, verts);
 
-        _ib = factory.CreateBuffer(
-            new BufferDescription(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer)
-        );
+        _ib = factory.CreateBuffer(new(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer));
         cl.UpdateBuffer(_ib, 0, s_quadIndices);
     }
 
@@ -89,7 +85,7 @@ internal class ScreenDuplicator : Renderable
 
     public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
     {
-        return new RenderOrderKey();
+        return new();
     }
 
     public override void Render(

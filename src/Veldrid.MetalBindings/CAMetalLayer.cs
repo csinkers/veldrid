@@ -15,7 +15,7 @@ public readonly struct CAMetalLayer(IntPtr ptr)
 
         if (layerObject.IsKindOfClass(s_class))
         {
-            metalLayer = new CAMetalLayer(layerPointer);
+            metalLayer = new(layerPointer);
             return true;
         }
 
@@ -68,7 +68,7 @@ public readonly struct CAMetalLayer(IntPtr ptr)
         set => objc_msgSend(NativePtr, "setDisplaySyncEnabled:"u8, value);
     }
 
-    static readonly ObjCClass s_class = new ObjCClass("CAMetalLayer"u8);
+    static readonly ObjCClass s_class = new("CAMetalLayer"u8);
     static readonly Selector sel_device = "device"u8;
     static readonly Selector sel_setDevice = "setDevice:"u8;
     static readonly Selector sel_pixelFormat = "pixelFormat"u8;

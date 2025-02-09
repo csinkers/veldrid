@@ -226,7 +226,7 @@ internal sealed unsafe class VkFramebuffer : VkFramebufferBase
                 image = vkColorTarget.OptimalDeviceImage,
                 format = vkColorTarget.VkFormat,
                 viewType = VkImageViewType.VK_IMAGE_VIEW_TYPE_2D,
-                subresourceRange = new VkImageSubresourceRange()
+                subresourceRange = new()
                 {
                     aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
                     baseMipLevel = colorTargetDescs[i].MipLevel,
@@ -260,7 +260,7 @@ internal sealed unsafe class VkFramebuffer : VkFramebufferBase
                     depthTargetDesc.Target.ArrayLayers == 1
                         ? VkImageViewType.VK_IMAGE_VIEW_TYPE_2D
                         : VkImageViewType.VK_IMAGE_VIEW_TYPE_2D_ARRAY,
-                subresourceRange = new VkImageSubresourceRange()
+                subresourceRange = new()
                 {
                     aspectMask = hasStencil
                         ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT

@@ -33,13 +33,9 @@ internal sealed class D3D11Swapchain : Swapchain
             {
                 byte* pname = stackalloc byte[1024];
                 int size = 1024 - 1;
-                _dxgiSwapChain.GetPrivateData(
-                    CommonGuid.DebugObjectName,
-                    ref size,
-                    new IntPtr(pname)
-                );
+                _dxgiSwapChain.GetPrivateData(CommonGuid.DebugObjectName, ref size, new(pname));
                 pname[size] = 0;
-                return Marshal.PtrToStringAnsi(new IntPtr(pname));
+                return Marshal.PtrToStringAnsi(new(pname));
             }
         }
         set
@@ -87,13 +83,13 @@ internal sealed class D3D11Swapchain : Swapchain
             {
                 BufferCount = 2,
                 Windowed = true,
-                BufferDescription = new ModeDescription(
+                BufferDescription = new(
                     (int)description.Width,
                     (int)description.Height,
                     _colorFormat
                 ),
                 OutputWindow = win32Source.Hwnd,
-                SampleDescription = new SampleDescription(1, 0),
+                SampleDescription = new(1, 0),
                 SwapEffect = SwapEffect.Discard,
                 BufferUsage = Usage.RenderTargetOutput,
             };
@@ -117,7 +113,7 @@ internal sealed class D3D11Swapchain : Swapchain
                 Format = _colorFormat,
                 Height = (int)(description.Height * _pixelScale),
                 Width = (int)(description.Width * _pixelScale),
-                SampleDescription = new SampleDescription(1, 0),
+                SampleDescription = new(1, 0),
                 SwapEffect = SwapEffect.FlipSequential,
                 BufferUsage = Usage.RenderTargetOutput,
             };
@@ -214,7 +210,7 @@ internal sealed class D3D11Swapchain : Swapchain
                 TextureUsage.DepthStencil,
                 TextureType.Texture2D
             );
-            _depthTexture = new D3D11Texture(_gd.Device, depthDesc);
+            _depthTexture = new(_gd.Device, depthDesc);
         }
 
         D3D11Texture backBufferVdTexture = new(
@@ -224,7 +220,7 @@ internal sealed class D3D11Swapchain : Swapchain
         );
 
         FramebufferDescription desc = new(_depthTexture, backBufferVdTexture);
-        _framebuffer = new D3D11Framebuffer(_gd.Device, desc) { Swapchain = this };
+        _framebuffer = new(_gd.Device, desc) { Swapchain = this };
     }
 
     public void AddCommandListReference(D3D11CommandList cl)

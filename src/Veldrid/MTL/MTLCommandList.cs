@@ -94,7 +94,7 @@ internal sealed unsafe class MTLCommandList(
     {
         PreComputeCommand();
         _cce.dispatchThreadGroups(
-            new MTLSize(groupCountX, groupCountY, groupCountZ),
+            new(groupCountX, groupCountY, groupCountZ),
             _computePipeline.ThreadsPerThreadgroup
         );
     }
@@ -329,13 +329,13 @@ internal sealed unsafe class MTLCommandList(
     public override void SetScissorRect(uint index, uint x, uint y, uint width, uint height)
     {
         _scissorRectsChanged = true;
-        _scissorRects[index] = new MTLScissorRect(x, y, width, height);
+        _scissorRects[index] = new(x, y, width, height);
     }
 
     public override void SetViewport(uint index, in Viewport viewport)
     {
         _viewportsChanged = true;
-        _viewports[index] = new MTLViewport(
+        _viewports[index] = new(
             viewport.X,
             viewport.Y,
             viewport.Width,
@@ -364,9 +364,7 @@ internal sealed unsafe class MTLCommandList(
 
         // TODO: Cache these, and rely on the command buffer's completion callback to add them back to a shared pool.
         using MTLBuffer copySrc = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(
-            gd.ResourceFactory.CreateBuffer(
-                new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)
-            )
+            gd.ResourceFactory.CreateBuffer(new(sizeInBytes, BufferUsage.StagingWrite))
         );
 
         gd.UpdateBuffer(copySrc, 0, source, sizeInBytes);
@@ -466,7 +464,7 @@ internal sealed unsafe class MTLCommandList(
             copyInfo.CopySize = (uint)command.Length;
 
             _cce.setBytes(&copyInfo, (UIntPtr)sizeof(MTLUnalignedBufferCopyInfo), 2);
-            _cce.dispatchThreadGroups(new MTLSize(1, 1, 1), new MTLSize(1, 1, 1));
+            _cce.dispatchThreadGroups(new(1, 1, 1), new(1, 1, 1));
         }
     }
 
@@ -553,7 +551,7 @@ internal sealed unsafe class MTLCommandList(
                     dstTexture,
                     dstBaseArrayLayer + layer,
                     dstMipLevel,
-                    new MTLOrigin(dstX, dstY, dstZ)
+                    new(dstX, dstY, dstZ)
                 );
             }
         }
@@ -719,12 +717,12 @@ internal sealed unsafe class MTLCommandList(
                     srcMTLTexture.DeviceTexture,
                     srcBaseArrayLayer + layer,
                     srcMipLevel,
-                    new MTLOrigin(srcX, srcY, srcZ),
-                    new MTLSize(width, height, depth),
+                    new(srcX, srcY, srcZ),
+                    new(width, height, depth),
                     dstMTLTexture.DeviceTexture,
                     dstBaseArrayLayer + layer,
                     dstMipLevel,
-                    new MTLOrigin(dstX, dstY, dstZ)
+                    new(dstX, dstY, dstZ)
                 );
             }
         }
@@ -831,7 +829,7 @@ internal sealed unsafe class MTLCommandList(
         if (!set.Equals(rs, dynamicOffsets))
         {
             set.Offsets.Dispose();
-            set = new BoundResourceSetInfo(rs, dynamicOffsets);
+            set = new(rs, dynamicOffsets);
             _computeResourceSetsActive[slot] = false;
         }
     }
@@ -869,7 +867,7 @@ internal sealed unsafe class MTLCommandList(
         if (!set.Equals(rs, dynamicOffsets))
         {
             set.Offsets.Dispose();
-            set = new BoundResourceSetInfo(rs, dynamicOffsets);
+            set = new(rs, dynamicOffsets);
             _graphicsResourceSetsActive[slot] = false;
         }
     }
@@ -1136,7 +1134,7 @@ internal sealed unsafe class MTLCommandList(
                 MTLRenderPassColorAttachmentDescriptor attachment = rpDesc.colorAttachments[0];
                 attachment.loadAction = MTLLoadAction.Clear;
                 RgbaFloat c = clearColor.GetValueOrDefault();
-                attachment.clearColor = new MTLClearColor(c.R, c.G, c.B, c.A);
+                attachment.clearColor = new(c.R, c.G, c.B, c.A);
                 _clearColors[i] = null;
             }
         }

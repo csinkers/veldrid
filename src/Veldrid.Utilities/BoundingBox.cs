@@ -64,7 +64,7 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
             max = Vector3.Max(max, Vector3.Transform(cornersPtr[i], mat));
         }
 
-        return new BoundingBox(min, max);
+        return new(min, max);
     }
 
     public static BoundingBox CreateFromPoints(
@@ -76,7 +76,7 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
     {
         if (points.Length == 0)
         {
-            return new BoundingBox(offset, offset);
+            return new(offset, offset);
         }
 
         Vector3 min = Vector3.Transform(points[0], rotation);
@@ -102,7 +102,7 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
                 max.Z = pos.Z;
         }
 
-        return new BoundingBox((min * scale) + offset, (max * scale) + offset);
+        return new((min * scale) + offset, (max * scale) + offset);
     }
 
     public static BoundingBox CreateFromPoints(
@@ -117,7 +117,7 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
         nuint pointCount = (nuint)pointBytes.Length / stride;
         if (pointCount < 1)
         {
-            return new BoundingBox(offset, offset);
+            return new(offset, offset);
         }
 
         ref byte ptr = ref MemoryMarshal.GetReference(pointBytes);
@@ -152,12 +152,12 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
                 max.Z = pos.Z;
         }
 
-        return new BoundingBox((min * scale) + offset, (max * scale) + offset);
+        return new((min * scale) + offset, (max * scale) + offset);
     }
 
     public static BoundingBox Combine(BoundingBox box1, BoundingBox box2)
     {
-        return new BoundingBox(Vector3.Min(box1.Min, box2.Min), Vector3.Max(box1.Max, box2.Max));
+        return new(Vector3.Min(box1.Min, box2.Min), Vector3.Max(box1.Max, box2.Max));
     }
 
     public static bool operator ==(BoundingBox first, BoundingBox second)
@@ -201,15 +201,15 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
 
     public readonly void GetCorners(out AlignedBoxCorners corners)
     {
-        corners.NearBottomLeft = new Vector3(Min.X, Min.Y, Max.Z);
-        corners.NearBottomRight = new Vector3(Max.X, Min.Y, Max.Z);
-        corners.NearTopLeft = new Vector3(Min.X, Max.Y, Max.Z);
-        corners.NearTopRight = new Vector3(Max.X, Max.Y, Max.Z);
+        corners.NearBottomLeft = new(Min.X, Min.Y, Max.Z);
+        corners.NearBottomRight = new(Max.X, Min.Y, Max.Z);
+        corners.NearTopLeft = new(Min.X, Max.Y, Max.Z);
+        corners.NearTopRight = new(Max.X, Max.Y, Max.Z);
 
-        corners.FarBottomLeft = new Vector3(Min.X, Min.Y, Min.Z);
-        corners.FarBottomRight = new Vector3(Max.X, Min.Y, Min.Z);
-        corners.FarTopLeft = new Vector3(Min.X, Max.Y, Min.Z);
-        corners.FarTopRight = new Vector3(Max.X, Max.Y, Min.Z);
+        corners.FarBottomLeft = new(Min.X, Min.Y, Min.Z);
+        corners.FarBottomRight = new(Max.X, Min.Y, Min.Z);
+        corners.FarTopLeft = new(Min.X, Max.Y, Min.Z);
+        corners.FarTopRight = new(Max.X, Max.Y, Min.Z);
     }
 
     public readonly bool ContainsNaN()

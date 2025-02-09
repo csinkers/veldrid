@@ -95,7 +95,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
         _cb = GetNextCommandBuffer();
         _stagingBufferName = $"Staging Buffer (CommandList)";
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
     }
 
     VkCommandBuffer GetNextCommandBuffer()
@@ -256,10 +256,10 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             {
                 baseArrayLayer = 0,
                 layerCount = 1,
-                rect = new VkRect2D()
+                rect = new()
                 {
-                    offset = new VkOffset2D(),
-                    extent = new VkExtent2D() { width = colorTex.Width, height = colorTex.Height },
+                    offset = new(),
+                    extent = new() { width = colorTex.Width, height = colorTex.Height },
                 },
             };
             vkCmdClearAttachments(_cb, 1, &clearAttachment, 1, &clearRect);
@@ -276,7 +276,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     {
         VkClearValue clearValue = new()
         {
-            depthStencil = new VkClearDepthStencilValue() { depth = depth, stencil = stencil },
+            depthStencil = new() { depth = depth, stencil = stencil },
         };
 
         if (_activeRenderPass != VkRenderPass.NULL)
@@ -300,7 +300,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 {
                     baseArrayLayer = 0,
                     layerCount = 1,
-                    rect = new VkRect2D() { offset = new VkOffset2D(), extent = renderableExtent },
+                    rect = new() { offset = new(), extent = renderableExtent },
                 };
                 vkCmdClearAttachments(_cb, 1, &clearAttachment, 1, &clearRect);
             }
@@ -577,22 +577,14 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 : VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
         VkImageResolve region = new()
         {
-            extent = new VkExtent3D()
+            extent = new()
             {
                 width = source.Width,
                 height = source.Height,
                 depth = source.Depth,
             },
-            srcSubresource = new VkImageSubresourceLayers()
-            {
-                layerCount = 1,
-                aspectMask = aspectFlags,
-            },
-            dstSubresource = new VkImageSubresourceLayers()
-            {
-                layerCount = 1,
-                aspectMask = aspectFlags,
-            },
+            srcSubresource = new() { layerCount = 1, aspectMask = aspectFlags },
+            dstSubresource = new() { layerCount = 1, aspectMask = aspectFlags },
         };
 
         vkSource.TransitionImageLayout(
@@ -740,11 +732,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         VkRenderPassBeginInfo renderPassBI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            renderArea = new VkRect2D()
-            {
-                offset = new VkOffset2D(),
-                extent = _currentFramebuffer.RenderableExtent,
-            },
+            renderArea = new() { offset = new(), extent = _currentFramebuffer.RenderableExtent },
             framebuffer = _currentFramebuffer.CurrentFramebuffer,
         };
 
@@ -941,7 +929,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         if (!set.Equals(rs, dynamicOffsets))
         {
             set.Offsets.Dispose();
-            set = new BoundResourceSetInfo(rs, dynamicOffsets);
+            set = new(rs, dynamicOffsets);
             _graphicsResourceSetsChanged[slot] = true;
             Util.AssertSubtype<ResourceSet, VkResourceSet>(rs);
         }
@@ -957,7 +945,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         if (!set.Equals(rs, dynamicOffsets))
         {
             set.Offsets.Dispose();
-            set = new BoundResourceSetInfo(rs, dynamicOffsets);
+            set = new(rs, dynamicOffsets);
             _computeResourceSetsChanged[slot] = true;
             Util.AssertSubtype<ResourceSet, VkResourceSet>(rs);
         }
@@ -967,8 +955,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     {
         VkRect2D scissor = new()
         {
-            offset = new VkOffset2D() { x = (int)x, y = (int)y },
-            extent = new VkExtent2D() { width = width, height = height },
+            offset = new() { x = (int)x, y = (int)y },
+            extent = new() { width = width, height = height },
         };
 
         VkRect2D[] scissorRects = _scissorRects;
@@ -991,7 +979,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         float vpHeight = yInverted ? viewport.Height : -viewport.Height;
 
         _viewportsChanged = true;
-        _viewports[index] = new VkViewport()
+        _viewports[index] = new()
         {
             x = viewport.X,
             y = vpY,
@@ -1234,13 +1222,13 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
             VkImageCopy region = new()
             {
-                srcOffset = new VkOffset3D()
+                srcOffset = new()
                 {
                     x = (int)srcX,
                     y = (int)srcY,
                     z = (int)srcZ,
                 },
-                dstOffset = new VkOffset3D()
+                dstOffset = new()
                 {
                     x = (int)dstX,
                     y = (int)dstY,
@@ -1248,7 +1236,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 },
                 srcSubresource = srcSubresource,
                 dstSubresource = dstSubresource,
-                extent = new VkExtent3D()
+                extent = new()
                 {
                     width = width,
                     height = height,
@@ -1362,13 +1350,13 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                     + (compressedX * blockSizeInBytes),
                 bufferRowLength = bufferRowLength,
                 bufferImageHeight = bufferImageHeight,
-                imageExtent = new VkExtent3D()
+                imageExtent = new()
                 {
                     width = copyWidth,
                     height = copyheight,
                     depth = depth,
                 },
-                imageOffset = new VkOffset3D()
+                imageOffset = new()
                 {
                     x = (int)dstX,
                     y = (int)dstY,
@@ -1456,13 +1444,13 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                         + (dstZ * depthPitch)
                         + (compressedDstY * rowPitch)
                         + (compressedDstX * blockSizeInBytes),
-                    imageExtent = new VkExtent3D
+                    imageExtent = new()
                     {
                         width = width,
                         height = height,
                         depth = depth,
                     },
-                    imageOffset = new VkOffset3D
+                    imageOffset = new()
                     {
                         x = (int)srcX,
                         y = (int)srcY,
@@ -1609,23 +1597,23 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             uint mipHeight = Math.Max(height >> 1, 1);
             uint mipDepth = Math.Max(depth >> 1, 1);
 
-            region.srcSubresource = new VkImageSubresourceLayers()
+            region.srcSubresource = new()
             {
                 aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
                 baseArrayLayer = 0,
                 layerCount = layerCount,
                 mipLevel = level - 1,
             };
-            region.srcOffsets[0] = new VkOffset3D();
-            region.srcOffsets[1] = new VkOffset3D()
+            region.srcOffsets[0] = new();
+            region.srcOffsets[1] = new()
             {
                 x = (int)width,
                 y = (int)height,
                 z = (int)depth,
             };
-            region.dstOffsets[0] = new VkOffset3D();
+            region.dstOffsets[0] = new();
 
-            region.dstSubresource = new VkImageSubresourceLayers()
+            region.dstSubresource = new()
             {
                 aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
                 baseArrayLayer = 0,
@@ -1633,7 +1621,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 mipLevel = level,
             };
 
-            region.dstOffsets[1] = new VkOffset3D()
+            region.dstOffsets[1] = new()
             {
                 x = (int)mipWidth,
                 y = (int)mipHeight,
@@ -1986,7 +1974,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     {
         if (!_availableStagingInfos.TryDequeue(out StagingResourceInfo ret))
         {
-            ret = new StagingResourceInfo();
+            ret = new();
         }
         return ret;
     }
@@ -2016,6 +2004,6 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     [DoesNotReturn]
     static void ThrowUnreachableStateException()
     {
-        throw new Exception("Implementation reached unexpected condition.");
+        throw new("Implementation reached unexpected condition.");
     }
 }

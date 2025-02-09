@@ -41,9 +41,9 @@ internal sealed class D3D11Sampler : Sampler
     {
         return borderColor switch
         {
-            SamplerBorderColor.TransparentBlack => new Color4(0, 0, 0, 0),
-            SamplerBorderColor.OpaqueBlack => new Color4(0, 0, 0, 1),
-            SamplerBorderColor.OpaqueWhite => new Color4(1, 1, 1, 1),
+            SamplerBorderColor.TransparentBlack => new(0, 0, 0, 0),
+            SamplerBorderColor.OpaqueBlack => new(0, 0, 0, 1),
+            SamplerBorderColor.OpaqueWhite => new(1, 1, 1, 1),
             _ => Illegal.Value<SamplerBorderColor, Color4>(),
         };
     }

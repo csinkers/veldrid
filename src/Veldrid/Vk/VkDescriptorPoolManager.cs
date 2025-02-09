@@ -37,7 +37,7 @@ internal sealed class VkDescriptorPoolManager
             VkResult result = vkAllocateDescriptorSets(_gd.Device, &dsAI, &set);
             VulkanUtil.CheckResult(result);
 
-            return new DescriptorAllocationToken(set, pool);
+            return new(set, pool);
         }
     }
 
@@ -106,7 +106,7 @@ internal sealed class VkDescriptorPoolManager
         VkResult result = vkCreateDescriptorPool(_gd.Device, &poolCI, null, &descriptorPool);
         VulkanUtil.CheckResult(result);
 
-        return new PoolInfo(descriptorPool, totalSets, descriptorCount);
+        return new(descriptorPool, totalSets, descriptorCount);
     }
 
     internal unsafe void DestroyAll()

@@ -16,7 +16,7 @@ public struct MTLVertexBufferLayoutDescriptorArray
                 Selectors.objectAtIndexedSubscript,
                 index
             );
-            return new MTLVertexBufferLayoutDescriptor(value);
+            return new(value);
         }
         set =>
             objc_msgSend(NativePtr, Selectors.setObjectAtIndexedSubscript, value.NativePtr, index);

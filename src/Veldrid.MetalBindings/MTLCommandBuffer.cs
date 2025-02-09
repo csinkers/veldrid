@@ -11,7 +11,7 @@ public readonly struct MTLCommandBuffer
 
     public MTLRenderCommandEncoder renderCommandEncoderWithDescriptor(MTLRenderPassDescriptor desc)
     {
-        return new MTLRenderCommandEncoder(
+        return new(
             IntPtr_objc_msgSend(NativePtr, sel_renderCommandEncoderWithDescriptor, desc.NativePtr)
         );
     }

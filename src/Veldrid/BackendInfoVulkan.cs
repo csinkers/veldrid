@@ -21,13 +21,9 @@ public unsafe class BackendInfoVulkan
     internal BackendInfoVulkan(VkGraphicsDevice gd)
     {
         _gd = gd;
-        _instanceLayers = new ReadOnlyCollection<string>(VulkanUtil.EnumerateInstanceLayers());
-        _instanceExtensions = new ReadOnlyCollection<string>(
-            VulkanUtil.EnumerateInstanceExtensions()
-        );
-        _deviceExtensions = new Lazy<ReadOnlyCollection<ExtensionProperties>>(
-            EnumerateDeviceExtensions
-        );
+        _instanceLayers = new(VulkanUtil.EnumerateInstanceLayers());
+        _instanceExtensions = new(VulkanUtil.EnumerateInstanceExtensions());
+        _deviceExtensions = new(EnumerateDeviceExtensions);
     }
 
     /// <summary>
@@ -151,13 +147,10 @@ public unsafe class BackendInfoVulkan
         for (int i = 0; i < vkProps.Length; i++)
         {
             VkExtensionProperties prop = vkProps[i];
-            veldridProps[i] = new ExtensionProperties(
-                Util.GetString(prop.extensionName),
-                prop.specVersion
-            );
+            veldridProps[i] = new(Util.GetString(prop.extensionName), prop.specVersion);
         }
 
-        return new ReadOnlyCollection<ExtensionProperties>(veldridProps);
+        return new(veldridProps);
     }
 
     public readonly struct ExtensionProperties(string name, uint specVersion)

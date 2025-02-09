@@ -245,11 +245,7 @@ internal class OculusMirrorTexture : IDisposable
         if (_set == null)
         {
             _set = _context.GraphicsDevice.ResourceFactory.CreateResourceSet(
-                new ResourceSetDescription(
-                    blitter.ResourceLayout,
-                    _vdMirrorTexView,
-                    _context.GraphicsDevice.PointSampler
-                )
+                new(blitter.ResourceLayout, _vdMirrorTexView, _context.GraphicsDevice.PointSampler)
             );
         }
 
@@ -260,7 +256,7 @@ internal class OculusMirrorTexture : IDisposable
     {
         if (!_blitters.TryGetValue(outputDescription, out TextureBlitter ret))
         {
-            ret = new TextureBlitter(
+            ret = new(
                 _context.GraphicsDevice,
                 _context.GraphicsDevice.ResourceFactory,
                 outputDescription,

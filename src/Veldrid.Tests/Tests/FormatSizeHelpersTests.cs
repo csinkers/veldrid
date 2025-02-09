@@ -55,8 +55,8 @@ public class FormatSizeHelpersTests : IDisposable
         PixelFormat.ETC2_R8_G8_B8_UNorm,
     ];
 
-    static readonly IEnumerable<PixelFormat> UncompressedPixelFormats = Enum.GetValues<PixelFormat>()
-        .Where(format => !CompressedPixelFormats.Contains(format));
+    static readonly IEnumerable<PixelFormat> UncompressedPixelFormats =
+        Enum.GetValues<PixelFormat>().Where(format => !CompressedPixelFormats.Contains(format));
 
     public static IEnumerable<object[]> CompressedPixelFormatMemberData =>
         CompressedPixelFormats.Select(format => new object[] { format });

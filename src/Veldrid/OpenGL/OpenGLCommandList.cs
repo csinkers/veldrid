@@ -52,7 +52,7 @@ internal sealed class OpenGLCommandList(
             }
             else
             {
-                return new OpenGLCommandEntryList(this);
+                return new(this);
             }
         }
     }

@@ -17,9 +17,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_DestroyRenderer_t(SDL_Renderer renderer);
 
-    static readonly SDL_DestroyRenderer_t s_sdl_destroyRenderer = LoadFunction<SDL_DestroyRenderer_t>(
-        "SDL_DestroyRenderer"
-    );
+    static readonly SDL_DestroyRenderer_t s_sdl_destroyRenderer =
+        LoadFunction<SDL_DestroyRenderer_t>("SDL_DestroyRenderer");
 
     public static void SDL_DestroyRenderer(SDL_Renderer renderer) =>
         s_sdl_destroyRenderer(renderer);
@@ -41,7 +40,9 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_RenderClear_t(SDL_Renderer renderer);
 
-    static readonly SDL_RenderClear_t s_sdl_renderClear = LoadFunction<SDL_RenderClear_t>("SDL_RenderClear");
+    static readonly SDL_RenderClear_t s_sdl_renderClear = LoadFunction<SDL_RenderClear_t>(
+        "SDL_RenderClear"
+    );
 
     public static int SDL_RenderClear(SDL_Renderer renderer) => s_sdl_renderClear(renderer);
 

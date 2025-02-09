@@ -59,7 +59,9 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_ClearError_t();
 
-    static readonly SDL_ClearError_t s_sdl_clearError = LoadFunction<SDL_ClearError_t>("SDL_ClearError");
+    static readonly SDL_ClearError_t s_sdl_clearError = LoadFunction<SDL_ClearError_t>(
+        "SDL_ClearError"
+    );
 
     public static byte* SDL_ClearError()
     {

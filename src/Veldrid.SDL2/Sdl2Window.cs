@@ -302,7 +302,7 @@ public unsafe class Sdl2Window
     public Point ClientToScreen(Point p)
     {
         Point position = _cachedPosition;
-        return new Point(p.X + position.X, p.Y + position.Y);
+        return new(p.X + position.X, p.Y + position.Y);
     }
 
     public void SetMousePosition(Vector2 position) =>
@@ -408,7 +408,7 @@ public unsafe class Sdl2Window
 
     public InputSnapshot PumpEvents()
     {
-        _currentMouseDelta = new Vector2();
+        _currentMouseDelta = new();
         if (_threadedProcessing)
         {
             SimpleInputSnapshot snapshot = Interlocked.Exchange(
@@ -611,15 +611,11 @@ public unsafe class Sdl2Window
             {
                 if (dropEvent.type == SDL_EventType.DropFile)
                 {
-                    DropFile?.Invoke(
-                        new DropFileEvent(utf8, dropEvent.timestamp, dropEvent.windowID)
-                    );
+                    DropFile?.Invoke(new(utf8, dropEvent.timestamp, dropEvent.windowID));
                 }
                 else if (dropEvent.type == SDL_EventType.DropText)
                 {
-                    DropText?.Invoke(
-                        new DropTextEvent(utf8, dropEvent.timestamp, dropEvent.windowID)
-                    );
+                    DropText?.Invoke(new(utf8, dropEvent.timestamp, dropEvent.windowID));
                 }
             }
             finally
@@ -760,8 +756,8 @@ public unsafe class Sdl2Window
                 Exposed?.Invoke();
                 break;
             case SDL_WindowEventID.Moved:
-                _cachedPosition.Value = new Point(windowEvent.data1, windowEvent.data2);
-                Moved?.Invoke(new Point(windowEvent.data1, windowEvent.data2));
+                _cachedPosition.Value = new(windowEvent.data1, windowEvent.data2);
+                Moved?.Invoke(new(windowEvent.data1, windowEvent.data2));
                 break;
             default:
                 Debug.WriteLine("Unhandled SDL WindowEvent: " + windowEvent.@event);
@@ -780,7 +776,7 @@ public unsafe class Sdl2Window
         int w,
             h;
         SDL_GetWindowSize(_window, &w, &h);
-        _cachedSize.Value = new Point(w, h);
+        _cachedSize.Value = new(w, h);
     }
 
     void RefreshCachedPosition()
@@ -788,24 +784,24 @@ public unsafe class Sdl2Window
         int x,
             y;
         SDL_GetWindowPosition(_window, &x, &y);
-        _cachedPosition.Value = new Point(x, y);
+        _cachedPosition.Value = new(x, y);
     }
 
     MouseState GetCurrentMouseState()
     {
-        return new MouseState(_currentMouseX, _currentMouseY, _currentMouseDown);
+        return new(_currentMouseX, _currentMouseY, _currentMouseDown);
     }
 
     public Point ScreenToClient(Point p)
     {
         Point position = _cachedPosition;
-        return new Point(p.X - position.X, p.Y - position.Y);
+        return new(p.X - position.X, p.Y - position.Y);
     }
 
     void SetWindowPosition(int x, int y)
     {
         SDL_SetWindowPosition(_window, x, y);
-        _cachedPosition.Value = new Point(x, y);
+        _cachedPosition.Value = new(x, y);
     }
 
     Point GetWindowSize()
@@ -816,7 +812,7 @@ public unsafe class Sdl2Window
     void SetWindowSize(int width, int height)
     {
         SDL_SetWindowSize(_window, width, height);
-        _cachedSize.Value = new Point(width, height);
+        _cachedSize.Value = new(width, height);
     }
 
     IntPtr GetUnderlyingWindowHandle()
@@ -848,10 +844,9 @@ public unsafe class Sdl2Window
 
     class SimpleInputSnapshot : InputSnapshot
     {
-        public List<Rune> InputEvents { get; private set; } = new List<Rune>();
-        public List<KeyEvent> KeyEvents { get; private set; } = new List<KeyEvent>();
-        public List<MouseButtonEvent> MouseEvents { get; private set; } =
-            new List<MouseButtonEvent>();
+        public List<Rune> InputEvents { get; private set; } = new();
+        public List<KeyEvent> KeyEvents { get; private set; } = new();
+        public List<MouseButtonEvent> MouseEvents { get; private set; } = new();
 
         public Vector2 MousePosition { get; set; }
         public Vector2 WheelDelta { get; set; }

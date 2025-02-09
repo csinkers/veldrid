@@ -21,7 +21,7 @@ internal sealed unsafe class FixedUtf8String : IDisposable
         int byteCount = Util.UTF8.GetByteCount(span);
         _handle = Marshal.AllocHGlobal(byteCount + 1);
         _numBytes = byteCount + 1; // Includes null terminator
-        int encodedCount = Util.UTF8.GetBytes(span, new Span<byte>(StringPtr, _numBytes));
+        int encodedCount = Util.UTF8.GetBytes(span, new(StringPtr, _numBytes));
         Debug.Assert(encodedCount == byteCount);
         StringPtr[encodedCount] = 0;
     }

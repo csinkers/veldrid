@@ -9,7 +9,7 @@ public class DisposeCollectorResourceFactory(
     public DisposeCollector DisposeCollector { get; } = disposeCollector;
 
     public DisposeCollectorResourceFactory(ResourceFactory factory)
-        : this(factory, new DisposeCollector()) { }
+        : this(factory, new()) { }
 
     public override GraphicsBackend BackendType => Factory.BackendType;
 

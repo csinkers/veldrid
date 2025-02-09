@@ -327,18 +327,14 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                             &blockSize
                         );
                         CheckLastError();
-                        uniformBindings[i] = new OpenGLUniformBinding(
-                            _program,
-                            blockIndex,
-                            (uint)blockSize
-                        );
+                        uniformBindings[i] = new(_program, blockIndex, (uint)blockSize);
                     }
                 }
                 else if (resource.Kind == ResourceKind.TextureReadOnly)
                 {
                     int location = GetUniformLocation(resource.Name, ref byteBuffer);
                     relativeTextureIndex += 1;
-                    textureBindings[i] = new OpenGLTextureBindingSlotInfo()
+                    textureBindings[i] = new()
                     {
                         RelativeIndex = relativeTextureIndex,
                         UniformLocation = location,
@@ -349,7 +345,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                 {
                     int location = GetUniformLocation(resource.Name, ref byteBuffer);
                     relativeImageIndex += 1;
-                    textureBindings[i] = new OpenGLTextureBindingSlotInfo()
+                    textureBindings[i] = new()
                     {
                         RelativeIndex = relativeImageIndex,
                         UniformLocation = location,
@@ -378,7 +374,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                         storageBlockIndex += 1;
                     }
 
-                    storageBufferBindings[i] = new OpenGLShaderStorageBinding(storageBlockBinding);
+                    storageBufferBindings[i] = new(storageBlockBinding);
                 }
                 else
                 {
@@ -386,14 +382,11 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
 
                     int[] relativeIndices = samplerTrackedRelativeTextureIndices.ToArray();
                     samplerTrackedRelativeTextureIndices.Clear();
-                    samplerBindings[i] = new OpenGLSamplerBindingSlotInfo()
-                    {
-                        RelativeIndices = relativeIndices,
-                    };
+                    samplerBindings[i] = new() { RelativeIndices = relativeIndices };
                 }
             }
 
-            _setInfos[setSlot] = new SetBindingsInfo(
+            _setInfos[setSlot] = new(
                 uniformBindings,
                 textureBindings,
                 samplerBindings,

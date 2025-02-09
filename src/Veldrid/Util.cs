@@ -281,16 +281,12 @@ internal static class Util
         if (resource.Kind == BindableResourceKind.DeviceBufferRange)
         {
             DeviceBufferRange range = resource.GetDeviceBufferRange();
-            return new DeviceBufferRange(
-                range.Buffer,
-                range.Offset + additionalOffset,
-                range.SizeInBytes
-            );
+            return new(range.Buffer, range.Offset + additionalOffset, range.SizeInBytes);
         }
         else if (resource.Kind == BindableResourceKind.DeviceBuffer)
         {
             DeviceBuffer buffer = resource.GetDeviceBuffer();
-            return new DeviceBufferRange(buffer, additionalOffset, buffer.SizeInBytes);
+            return new(buffer, additionalOffset, buffer.SizeInBytes);
         }
         else
         {

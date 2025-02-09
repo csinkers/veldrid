@@ -97,7 +97,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
             VkMemoryDedicatedAllocateInfo dedicatedAI;
             if (dedicated)
             {
-                dedicatedAI = new VkMemoryDedicatedAllocateInfo()
+                dedicatedAI = new()
                 {
                     sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
                     buffer = dedicatedBuffer,
@@ -123,7 +123,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
                 }
             }
 
-            return new VkMemoryBlock(memory, 0, dedicatedSize, memoryTypeBits, mappedPtr, true);
+            return new(memory, 0, dedicatedSize, memoryTypeBits, mappedPtr, true);
         }
         else
         {
@@ -164,7 +164,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
             {
                 if (!_allocatorsByMemoryType.TryGetValue(memoryTypeIndex, out ret))
                 {
-                    ret = new ChunkAllocatorSet(device, memoryTypeIndex, true);
+                    ret = new(device, memoryTypeIndex, true);
                     _allocatorsByMemoryType.Add(memoryTypeIndex, ret);
                 }
             }
@@ -172,7 +172,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
             {
                 if (!_allocatorsByMemoryTypeUnmapped.TryGetValue(memoryTypeIndex, out ret))
                 {
-                    ret = new ChunkAllocatorSet(device, memoryTypeIndex, false);
+                    ret = new(device, memoryTypeIndex, false);
                     _allocatorsByMemoryTypeUnmapped.Add(memoryTypeIndex, ret);
                 }
             }

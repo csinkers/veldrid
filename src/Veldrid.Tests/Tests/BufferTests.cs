@@ -14,7 +14,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         uint expectedSize = 64;
         BufferUsage expectedUsage = BufferUsage.DynamicWrite | BufferUsage.UniformBuffer;
 
-        DeviceBuffer buffer = RF.CreateBuffer(new BufferDescription(expectedSize, expectedUsage));
+        DeviceBuffer buffer = RF.CreateBuffer(new(expectedSize, expectedUsage));
 
         Assert.Equal(expectedUsage, buffer.Usage);
         Assert.Equal(expectedSize, buffer.SizeInBytes);
@@ -138,9 +138,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         {
             DeviceBuffer[] dsts = Enumerable
                 .Range(0, chainLength)
-                .Select(i =>
-                    RF.CreateBuffer(new BufferDescription(1024, BufferUsage.UniformBuffer))
-                )
+                .Select(i => RF.CreateBuffer(new(1024, BufferUsage.UniformBuffer)))
                 .ToArray();
 
             CommandList copyCL = RF.CreateCommandList();
@@ -170,9 +168,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.If(GD.BackendType == GraphicsBackend.Vulkan); // TODO
         Skip.If(GD.BackendType == GraphicsBackend.Metal); // TODO
 
-        DeviceBuffer buffer = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.StagingReadWrite)
-        );
+        DeviceBuffer buffer = RF.CreateBuffer(new(1024, BufferUsage.StagingReadWrite));
         MappedResourceView<int> view = GD.Map<int>(buffer, MapMode.ReadWrite);
         int[] data = Enumerable.Range(0, 256).Select(i => 2 * i).ToArray();
         Assert.Throws<VeldridMappedResourceException>(() => GD.UpdateBuffer(buffer, 0, data));
@@ -184,9 +180,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.If(GD.BackendType == GraphicsBackend.Vulkan); // TODO
         Skip.If(GD.BackendType == GraphicsBackend.Metal); // TODO
 
-        DeviceBuffer buffer = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.StagingReadWrite)
-        );
+        DeviceBuffer buffer = RF.CreateBuffer(new(1024, BufferUsage.StagingReadWrite));
         MappedResource map = GD.Map(buffer, MapMode.ReadWrite);
         Assert.Throws<VeldridMappedResourceException>(() => GD.Map(buffer, MapMode.ReadWrite));
         GD.Unmap(buffer);
@@ -195,24 +189,22 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Map_DifferentMode_WriteToReadFails()
     {
-        DeviceBuffer buffer = RF.CreateBuffer(new BufferDescription(1024, BufferUsage.StagingRead));
+        DeviceBuffer buffer = RF.CreateBuffer(new(1024, BufferUsage.StagingRead));
         Assert.Throws<VeldridException>(() => GD.Map(buffer, MapMode.Write));
     }
 
     [Fact]
     public void Map_DifferentMode_ReadFromWriteFails()
     {
-        DeviceBuffer buffer = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.StagingWrite)
-        );
+        DeviceBuffer buffer = RF.CreateBuffer(new(1024, BufferUsage.StagingWrite));
         Assert.Throws<VeldridException>(() => GD.Map(buffer, MapMode.Read));
     }
 
     [Fact]
     public unsafe void UnusualSize()
     {
-        DeviceBuffer src = RF.CreateBuffer(new BufferDescription(208, BufferUsage.UniformBuffer));
-        DeviceBuffer dst = RF.CreateBuffer(new BufferDescription(208, BufferUsage.StagingRead));
+        DeviceBuffer src = RF.CreateBuffer(new(208, BufferUsage.UniformBuffer));
+        DeviceBuffer dst = RF.CreateBuffer(new(208, BufferUsage.StagingRead));
 
         byte[] data = Enumerable.Range(0, 208).Select(i => (byte)(i * 150)).ToArray();
         GD.UpdateBuffer(src, 0, data);
@@ -234,7 +226,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     public void Update_Dynamic_NonZeroOffset()
     {
         DeviceBuffer dynamic = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.DynamicWrite | BufferUsage.UniformBuffer)
+            new(1024, BufferUsage.DynamicWrite | BufferUsage.UniformBuffer)
         );
 
         byte[] initialData = Enumerable.Range(0, 1024).Select(i => (byte)i).ToArray();
@@ -248,7 +240,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         GD.SubmitCommands(cl);
         GD.WaitForIdle();
 
-        DeviceBuffer dst = RF.CreateBuffer(new BufferDescription(1024, BufferUsage.StagingRead));
+        DeviceBuffer dst = RF.CreateBuffer(new(1024, BufferUsage.StagingRead));
 
         cl.Begin();
         cl.CopyBuffer(dynamic, 0, dst, 0, dynamic.SizeInBytes);
@@ -272,7 +264,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     public void Dynamic_MapRead_Fails()
     {
         DeviceBuffer dynamic = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.DynamicRead | BufferUsage.UniformBuffer)
+            new(1024, BufferUsage.DynamicRead | BufferUsage.UniformBuffer)
         );
         Assert.Throws<VeldridException>(() => GD.Map(dynamic, MapMode.ReadWrite));
     }
@@ -280,9 +272,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void CommandList_Update_Staging()
     {
-        DeviceBuffer staging = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.StagingRead)
-        );
+        DeviceBuffer staging = RF.CreateBuffer(new(1024, BufferUsage.StagingRead));
         byte[] data = Enumerable.Range(0, 1024).Select(i => (byte)i).ToArray();
 
         CommandList cl = RF.CreateCommandList();
@@ -543,7 +533,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
 
     DeviceBuffer CreateBuffer(uint size, BufferUsage usage)
     {
-        return RF.CreateBuffer(new BufferDescription(size, usage));
+        return RF.CreateBuffer(new(size, usage));
     }
 }
 

@@ -14,31 +14,15 @@ public static partial class PrimitiveShapes
 
         VertexPositionNormalTexture[] vertices =
         [
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, 0, -halfHeight),
-                Vector3.UnitY,
-                new Vector2(0, 0) * uvScale
-            ),
-            new VertexPositionNormalTexture(
-                new Vector3(halfWidth, 0, -halfHeight),
-                Vector3.UnitY,
-                new Vector2(1, 0) * uvScale
-            ),
-            new VertexPositionNormalTexture(
-                new Vector3(halfWidth, 0, halfHeight),
-                Vector3.UnitY,
-                new Vector2(1, 1) * uvScale
-            ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, 0, halfHeight),
-                Vector3.UnitY,
-                new Vector2(0, 1) * uvScale
-            ),
+            new(new(-halfWidth, 0, -halfHeight), Vector3.UnitY, new Vector2(0, 0) * uvScale),
+            new(new(halfWidth, 0, -halfHeight), Vector3.UnitY, new Vector2(1, 0) * uvScale),
+            new(new(halfWidth, 0, halfHeight), Vector3.UnitY, new Vector2(1, 1) * uvScale),
+            new(new(-halfWidth, 0, halfHeight), Vector3.UnitY, new Vector2(0, 1) * uvScale),
         ];
 
         ushort[] indices = [0, 1, 2, 0, 2, 3];
 
-        return new ConstructedMesh16(vertices, indices, null);
+        return new(vertices, indices, null);
     }
 
     internal static ConstructedMesh16 Box(float width, float height, float depth, float uvUnit)
@@ -52,129 +36,129 @@ public static partial class PrimitiveShapes
         VertexPositionNormalTexture[] vertices =
         [
             // Top
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, +halfHeight, -halfDepth),
-                new Vector3(0, 1, 0),
+            new(
+                new(-halfWidth, +halfHeight, -halfDepth),
+                new(0, 1, 0),
                 new Vector2(0, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, +halfHeight, -halfDepth),
-                new Vector3(0, 1, 0),
+            new(
+                new(+halfWidth, +halfHeight, -halfDepth),
+                new(0, 1, 0),
                 new Vector2(1, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, +halfHeight, +halfDepth),
-                new Vector3(0, 1, 0),
+            new(
+                new(+halfWidth, +halfHeight, +halfDepth),
+                new(0, 1, 0),
                 new Vector2(1, 1) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, +halfHeight, +halfDepth),
-                new Vector3(0, 1, 0),
+            new(
+                new(-halfWidth, +halfHeight, +halfDepth),
+                new(0, 1, 0),
                 new Vector2(0, 1) * uvScale
             ),
             // Bottom
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, -halfHeight, +halfDepth),
-                new Vector3(0, -1, 0),
+            new(
+                new(-halfWidth, -halfHeight, +halfDepth),
+                new(0, -1, 0),
                 new Vector2(0, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, -halfHeight, +halfDepth),
-                new Vector3(0, -1, 0),
+            new(
+                new(+halfWidth, -halfHeight, +halfDepth),
+                new(0, -1, 0),
                 new Vector2(1, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, -halfHeight, -halfDepth),
-                new Vector3(0, -1, 0),
+            new(
+                new(+halfWidth, -halfHeight, -halfDepth),
+                new(0, -1, 0),
                 new Vector2(1, 1) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, -halfHeight, -halfDepth),
-                new Vector3(0, -1, 0),
+            new(
+                new(-halfWidth, -halfHeight, -halfDepth),
+                new(0, -1, 0),
                 new Vector2(0, 1) * uvScale
             ),
             // Left
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, +halfHeight, -halfDepth),
-                new Vector3(-1, 0, 0),
+            new(
+                new(-halfWidth, +halfHeight, -halfDepth),
+                new(-1, 0, 0),
                 new Vector2(0, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, +halfHeight, +halfDepth),
-                new Vector3(-1, 0, 0),
+            new(
+                new(-halfWidth, +halfHeight, +halfDepth),
+                new(-1, 0, 0),
                 new Vector2(1, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, -halfHeight, +halfDepth),
-                new Vector3(-1, 0, 0),
+            new(
+                new(-halfWidth, -halfHeight, +halfDepth),
+                new(-1, 0, 0),
                 new Vector2(1, 1) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, -halfHeight, -halfDepth),
-                new Vector3(-1, 0, 0),
+            new(
+                new(-halfWidth, -halfHeight, -halfDepth),
+                new(-1, 0, 0),
                 new Vector2(0, 1) * uvScale
             ),
             // Right
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, +halfHeight, +halfDepth),
-                new Vector3(1, 0, 0),
+            new(
+                new(+halfWidth, +halfHeight, +halfDepth),
+                new(1, 0, 0),
                 new Vector2(0, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, +halfHeight, -halfDepth),
-                new Vector3(1, 0, 0),
+            new(
+                new(+halfWidth, +halfHeight, -halfDepth),
+                new(1, 0, 0),
                 new Vector2(1, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, -halfHeight, -halfDepth),
-                new Vector3(1, 0, 0),
+            new(
+                new(+halfWidth, -halfHeight, -halfDepth),
+                new(1, 0, 0),
                 new Vector2(1, 1) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, -halfHeight, +halfDepth),
-                new Vector3(1, 0, 0),
+            new(
+                new(+halfWidth, -halfHeight, +halfDepth),
+                new(1, 0, 0),
                 new Vector2(0, 1) * uvScale
             ),
             // Back
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, +halfHeight, -halfDepth),
-                new Vector3(0, 0, -1),
+            new(
+                new(+halfWidth, +halfHeight, -halfDepth),
+                new(0, 0, -1),
                 new Vector2(0, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, +halfHeight, -halfDepth),
-                new Vector3(0, 0, -1),
+            new(
+                new(-halfWidth, +halfHeight, -halfDepth),
+                new(0, 0, -1),
                 new Vector2(1, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, -halfHeight, -halfDepth),
-                new Vector3(0, 0, -1),
+            new(
+                new(-halfWidth, -halfHeight, -halfDepth),
+                new(0, 0, -1),
                 new Vector2(1, 1) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, -halfHeight, -halfDepth),
-                new Vector3(0, 0, -1),
+            new(
+                new(+halfWidth, -halfHeight, -halfDepth),
+                new(0, 0, -1),
                 new Vector2(0, 1) * uvScale
             ),
             // Front
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, +halfHeight, +halfDepth),
-                new Vector3(0, 0, 1),
+            new(
+                new(-halfWidth, +halfHeight, +halfDepth),
+                new(0, 0, 1),
                 new Vector2(0, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, +halfHeight, +halfDepth),
-                new Vector3(0, 0, 1),
+            new(
+                new(+halfWidth, +halfHeight, +halfDepth),
+                new(0, 0, 1),
                 new Vector2(1, 0) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(+halfWidth, -halfHeight, +halfDepth),
-                new Vector3(0, 0, 1),
+            new(
+                new(+halfWidth, -halfHeight, +halfDepth),
+                new(0, 0, 1),
                 new Vector2(1, 1) * uvScale
             ),
-            new VertexPositionNormalTexture(
-                new Vector3(-halfWidth, -halfHeight, +halfDepth),
-                new Vector3(0, 0, 1),
+            new(
+                new(-halfWidth, -halfHeight, +halfDepth),
+                new(0, 0, 1),
                 new Vector2(0, 1) * uvScale
             ),
         ];
@@ -219,6 +203,6 @@ public static partial class PrimitiveShapes
             23,
         ];
 
-        return new ConstructedMesh16(vertices, indices, null);
+        return new(vertices, indices, null);
     }
 }

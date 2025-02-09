@@ -388,7 +388,7 @@ internal sealed class D3D11CommandList : CommandList
         if (!set.Equals(rs, dynamicOffsets))
         {
             set.Offsets.Dispose();
-            set = new BoundResourceSetInfo(rs, dynamicOffsets);
+            set = new(rs, dynamicOffsets);
             ActivateResourceSet(slot, ref set, true);
         }
     }
@@ -403,7 +403,7 @@ internal sealed class D3D11CommandList : CommandList
         if (!set.Equals(rs, dynamicOffsets))
         {
             set.Offsets.Dispose();
-            set = new BoundResourceSetInfo(rs, dynamicOffsets);
+            set = new(rs, dynamicOffsets);
             ActivateResourceSet(slot, ref set, false);
         }
     }
@@ -527,7 +527,7 @@ internal sealed class D3D11CommandList : CommandList
     {
         DeviceBufferRange range = Util.GetBufferRange(resource, additionalOffset);
         D3D11Buffer buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(range.Buffer);
-        return new D3D11BufferRange(buffer, range.Offset, range.SizeInBytes);
+        return new(buffer, range.Offset, range.SizeInBytes);
     }
 
     void UnbindSRVTexture(Texture target)
@@ -806,7 +806,7 @@ internal sealed class D3D11CommandList : CommandList
     public override void SetScissorRect(uint index, uint x, uint y, uint width, uint height)
     {
         _scissorRectsChanged = true;
-        _scissors[index] = new RawRect((int)x, (int)y, (int)(x + width), (int)(y + height));
+        _scissors[index] = new((int)x, (int)y, (int)(x + width), (int)(y + height));
     }
 
     public override void SetViewport(uint index, in Viewport viewport)
@@ -826,7 +826,7 @@ internal sealed class D3D11CommandList : CommandList
                 _boundSRVs.Add(texView.Target, list);
             }
             list.Add(
-                new BoundTextureInfo
+                new()
                 {
                     Slot = slot,
                     Stages = stages,
@@ -1115,7 +1115,7 @@ internal sealed class D3D11CommandList : CommandList
                 _boundUAVs.Add(texture, list);
             }
             list.Add(
-                new BoundTextureInfo
+                new()
                 {
                     Slot = slot,
                     Stages = stages,
@@ -1380,7 +1380,7 @@ internal sealed class D3D11CommandList : CommandList
         }
 
         DeviceBuffer staging = _gd.ResourceFactory.CreateBuffer(
-            new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)
+            new(sizeInBytes, BufferUsage.StagingWrite)
         );
 
         return Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(staging);

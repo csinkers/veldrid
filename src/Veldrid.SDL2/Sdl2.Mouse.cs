@@ -46,7 +46,9 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_ShowCursor_t(int toggle);
 
-    static readonly SDL_ShowCursor_t s_sdl_showCursor = LoadFunction<SDL_ShowCursor_t>("SDL_ShowCursor");
+    static readonly SDL_ShowCursor_t s_sdl_showCursor = LoadFunction<SDL_ShowCursor_t>(
+        "SDL_ShowCursor"
+    );
 
     /// <summary>
     /// Toggle whether or not the cursor should be shown.
@@ -56,9 +58,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_WarpMouseInWindow_t(SDL_Window window, int x, int y);
 
-    static readonly SDL_WarpMouseInWindow_t s_sdl_warpMouseInWindow = LoadFunction<SDL_WarpMouseInWindow_t>(
-        "SDL_WarpMouseInWindow"
-    );
+    static readonly SDL_WarpMouseInWindow_t s_sdl_warpMouseInWindow =
+        LoadFunction<SDL_WarpMouseInWindow_t>("SDL_WarpMouseInWindow");
 
     /// <summary>
     /// Move mouse position to the given position in the window.
@@ -128,7 +129,9 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_FreeCursor_t(SDL_Cursor cursor);
 
-    static readonly SDL_FreeCursor_t s_sdl_freeCursor = LoadFunction<SDL_FreeCursor_t>("SDL_FreeCursor");
+    static readonly SDL_FreeCursor_t s_sdl_freeCursor = LoadFunction<SDL_FreeCursor_t>(
+        "SDL_FreeCursor"
+    );
 
     /// <summary>
     /// Free a cursor created with SDL_CreateCursor(), SDL_CreateColorCursor() or SDL_CreateSystemCursor().
@@ -138,9 +141,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_Cursor SDL_GetDefaultCursor_t();
 
-    static readonly SDL_GetDefaultCursor_t s_sdl_getDefaultCursor = LoadFunction<SDL_GetDefaultCursor_t>(
-        "SDL_GetDefaultCursor"
-    );
+    static readonly SDL_GetDefaultCursor_t s_sdl_getDefaultCursor =
+        LoadFunction<SDL_GetDefaultCursor_t>("SDL_GetDefaultCursor");
 
     /// <summary>
     /// Get the default cursor.
@@ -150,7 +152,9 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_SetCursor_t(SDL_Cursor cursor);
 
-    static readonly SDL_SetCursor_t s_sdl_setCursor = LoadFunction<SDL_SetCursor_t>("SDL_SetCursor");
+    static readonly SDL_SetCursor_t s_sdl_setCursor = LoadFunction<SDL_SetCursor_t>(
+        "SDL_SetCursor"
+    );
 
     /// <summary>
     /// Set the active cursor.

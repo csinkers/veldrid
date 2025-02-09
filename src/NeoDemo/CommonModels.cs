@@ -8,131 +8,35 @@ public static class CubeModel
     public static readonly VertexPositionNormalTexture[] Vertices =
     [
         // Top
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, .5f, -.5f),
-            new Vector3(0, 1, 0),
-            new Vector2(0, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, .5f, -.5f),
-            new Vector3(0, 1, 0),
-            new Vector2(1, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, .5f, .5f),
-            new Vector3(0, 1, 0),
-            new Vector2(1, 1)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, .5f, .5f),
-            new Vector3(0, 1, 0),
-            new Vector2(0, 1)
-        ),
+        new(new(-.5f, .5f, -.5f), new(0, 1, 0), new(0, 0)),
+        new(new(.5f, .5f, -.5f), new(0, 1, 0), new(1, 0)),
+        new(new(.5f, .5f, .5f), new(0, 1, 0), new(1, 1)),
+        new(new(-.5f, .5f, .5f), new(0, 1, 0), new(0, 1)),
         // Bottom
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, -.5f, .5f),
-            new Vector3(0, -1, 0),
-            new Vector2(0, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, -.5f, .5f),
-            new Vector3(0, -1, 0),
-            new Vector2(1, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, -.5f, -.5f),
-            new Vector3(0, -1, 0),
-            new Vector2(1, 1)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, -.5f, -.5f),
-            new Vector3(0, -1, 0),
-            new Vector2(0, 1)
-        ),
+        new(new(-.5f, -.5f, .5f), new(0, -1, 0), new(0, 0)),
+        new(new(.5f, -.5f, .5f), new(0, -1, 0), new(1, 0)),
+        new(new(.5f, -.5f, -.5f), new(0, -1, 0), new(1, 1)),
+        new(new(-.5f, -.5f, -.5f), new(0, -1, 0), new(0, 1)),
         // Left
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, .5f, -.5f),
-            new Vector3(-1, 0, 0),
-            new Vector2(0, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, .5f, .5f),
-            new Vector3(-1, 0, 0),
-            new Vector2(1, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, -.5f, .5f),
-            new Vector3(-1, 0, 0),
-            new Vector2(1, 1)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, -.5f, -.5f),
-            new Vector3(-1, 0, 0),
-            new Vector2(0, 1)
-        ),
+        new(new(-.5f, .5f, -.5f), new(-1, 0, 0), new(0, 0)),
+        new(new(-.5f, .5f, .5f), new(-1, 0, 0), new(1, 0)),
+        new(new(-.5f, -.5f, .5f), new(-1, 0, 0), new(1, 1)),
+        new(new(-.5f, -.5f, -.5f), new(-1, 0, 0), new(0, 1)),
         // Right
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, .5f, .5f),
-            new Vector3(1, 0, 0),
-            new Vector2(0, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, .5f, -.5f),
-            new Vector3(1, 0, 0),
-            new Vector2(1, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, -.5f, -.5f),
-            new Vector3(1, 0, 0),
-            new Vector2(1, 1)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, -.5f, .5f),
-            new Vector3(1, 0, 0),
-            new Vector2(0, 1)
-        ),
+        new(new(.5f, .5f, .5f), new(1, 0, 0), new(0, 0)),
+        new(new(.5f, .5f, -.5f), new(1, 0, 0), new(1, 0)),
+        new(new(.5f, -.5f, -.5f), new(1, 0, 0), new(1, 1)),
+        new(new(.5f, -.5f, .5f), new(1, 0, 0), new(0, 1)),
         // Back
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, .5f, -.5f),
-            new Vector3(0, 0, -1),
-            new Vector2(0, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, .5f, -.5f),
-            new Vector3(0, 0, -1),
-            new Vector2(1, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, -.5f, -.5f),
-            new Vector3(0, 0, -1),
-            new Vector2(1, 1)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, -.5f, -.5f),
-            new Vector3(0, 0, -1),
-            new Vector2(0, 1)
-        ),
+        new(new(.5f, .5f, -.5f), new(0, 0, -1), new(0, 0)),
+        new(new(-.5f, .5f, -.5f), new(0, 0, -1), new(1, 0)),
+        new(new(-.5f, -.5f, -.5f), new(0, 0, -1), new(1, 1)),
+        new(new(.5f, -.5f, -.5f), new(0, 0, -1), new(0, 1)),
         // Front
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, .5f, .5f),
-            new Vector3(0, 0, 1),
-            new Vector2(0, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, .5f, .5f),
-            new Vector3(0, 0, 1),
-            new Vector2(1, 0)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(.5f, -.5f, .5f),
-            new Vector3(0, 0, 1),
-            new Vector2(1, 1)
-        ),
-        new VertexPositionNormalTexture(
-            new Vector3(-.5f, -.5f, .5f),
-            new Vector3(0, 0, 1),
-            new Vector2(0, 1)
-        ),
+        new(new(-.5f, .5f, .5f), new(0, 0, 1), new(0, 0)),
+        new(new(.5f, .5f, .5f), new(0, 0, 1), new(1, 0)),
+        new(new(.5f, -.5f, .5f), new(0, 0, 1), new(1, 1)),
+        new(new(-.5f, -.5f, .5f), new(0, 0, 1), new(0, 1)),
     ];
 
     public static readonly ushort[] Indices =

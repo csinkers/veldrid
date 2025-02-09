@@ -7,7 +7,7 @@ namespace Veldrid.NeoDemo;
 public class DirectionalLight
 {
     RgbaFloat _color = RgbaFloat.White;
-    public Transform Transform { get; } = new Transform();
+    public Transform Transform { get; } = new();
 
     public Vector3 Direction => Transform.Forward;
 
@@ -25,17 +25,13 @@ public class DirectionalLight
 
     public DirectionalLight()
     {
-        Vector3 lightDir = Vector3.Normalize(new Vector3(0.15f, -1f, -0.15f));
+        Vector3 lightDir = Vector3.Normalize(new(0.15f, -1f, -0.15f));
         Transform.Rotation = Util.FromToRotation(-Vector3.UnitZ, lightDir);
     }
 
     internal DirectionalLightInfo GetInfo()
     {
-        return new DirectionalLightInfo
-        {
-            Direction = Transform.Forward,
-            Color = Color.ToVector4(),
-        };
+        return new() { Direction = Transform.Forward, Color = Color.ToVector4() };
     }
 }
 

@@ -68,7 +68,7 @@ internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice)
             VkFormats.VdToVkPixelFormat(description.Format, description.Usage),
             description.Usage,
             description.SampleCount,
-            new VkImage(nativeTexture),
+            new(nativeTexture),
             false,
             true
         );

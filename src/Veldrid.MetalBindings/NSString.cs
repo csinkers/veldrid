@@ -29,7 +29,7 @@ public readonly unsafe struct NSString(IntPtr ptr)
                 (IntPtr)utf16Ptr,
                 length
             );
-            return new NSString(newString);
+            return new(newString);
         }
     }
 

@@ -72,18 +72,14 @@ public class ShadowmapDrawer : Renderable
     public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
         ResourceFactory factory = gd.ResourceFactory;
-        _vb = factory.CreateBuffer(
-            new BufferDescription(s_quadVerts.SizeInBytes(), BufferUsage.VertexBuffer)
-        );
+        _vb = factory.CreateBuffer(new(s_quadVerts.SizeInBytes(), BufferUsage.VertexBuffer));
         cl.UpdateBuffer(_vb, 0, s_quadVerts);
-        _ib = factory.CreateBuffer(
-            new BufferDescription(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer)
-        );
+        _ib = factory.CreateBuffer(new(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer));
         cl.UpdateBuffer(_ib, 0, s_quadIndices);
 
         VertexLayoutDescription[] vertexLayouts =
         [
-            new VertexLayoutDescription(
+            new(
                 new VertexElementDescription(
                     "Position",
                     VertexElementSemantic.TextureCoordinate,
@@ -104,7 +100,7 @@ public class ShadowmapDrawer : Renderable
         );
 
         ResourceLayout layout = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "Projection",
                     ResourceKind.UniformBuffer,
@@ -130,10 +126,10 @@ public class ShadowmapDrawer : Renderable
 
         GraphicsPipelineDescription pd = new(
             BlendStateDescription.SingleOverrideBlend,
-            new DepthStencilStateDescription(false, true, ComparisonKind.Always),
+            new(false, true, ComparisonKind.Always),
             RasterizerStateDescription.Default,
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(vertexLayouts, [vs, fs], ShaderHelper.GetSpecializations(gd)),
+            new(vertexLayouts, [vs, fs], ShaderHelper.GetSpecializations(gd)),
             [layout],
             sc.MainSceneFramebuffer.OutputDescription
         );
@@ -141,21 +137,15 @@ public class ShadowmapDrawer : Renderable
         _pipeline = factory.CreateGraphicsPipeline(pd);
 
         _sizeInfoBuffer = factory.CreateBuffer(
-            new BufferDescription((uint)Unsafe.SizeOf<SizeInfo>(), BufferUsage.UniformBuffer)
+            new((uint)Unsafe.SizeOf<SizeInfo>(), BufferUsage.UniformBuffer)
         );
         UpdateSizeInfoBuffer();
         _orthographicBuffer = factory.CreateBuffer(
-            new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffer)
+            new((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffer)
         );
 
         _resourceSet = factory.CreateResourceSet(
-            new ResourceSetDescription(
-                layout,
-                _orthographicBuffer,
-                _sizeInfoBuffer,
-                _bindingGetter(),
-                gd.PointSampler
-            )
+            new(layout, _orthographicBuffer, _sizeInfoBuffer, _bindingGetter(), gd.PointSampler)
         );
 
         OnWindowResized();

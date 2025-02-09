@@ -54,9 +54,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_Window SDL_CreateWindowFrom_t(IntPtr data);
 
-    static readonly SDL_CreateWindowFrom_t s_sdl_createWindowFrom = LoadFunction<SDL_CreateWindowFrom_t>(
-        "SDL_CreateWindowFrom"
-    );
+    static readonly SDL_CreateWindowFrom_t s_sdl_createWindowFrom =
+        LoadFunction<SDL_CreateWindowFrom_t>("SDL_CreateWindowFrom");
 
     public static SDL_Window SDL_CreateWindowFrom(IntPtr data) => s_sdl_createWindowFrom(data);
 
@@ -82,9 +81,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_GetWindowPosition_t(SDL_Window SDL2Window, int* x, int* y);
 
-    static readonly SDL_GetWindowPosition_t s_getWindowPosition = LoadFunction<SDL_GetWindowPosition_t>(
-        "SDL_GetWindowPosition"
-    );
+    static readonly SDL_GetWindowPosition_t s_getWindowPosition =
+        LoadFunction<SDL_GetWindowPosition_t>("SDL_GetWindowPosition");
 
     public static void SDL_GetWindowPosition(SDL_Window Sdl2Window, int* x, int* y) =>
         s_getWindowPosition(Sdl2Window, x, y);
@@ -92,9 +90,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_SetWindowPosition_t(SDL_Window SDL2Window, int x, int y);
 
-    static readonly SDL_SetWindowPosition_t s_setWindowPosition = LoadFunction<SDL_SetWindowPosition_t>(
-        "SDL_SetWindowPosition"
-    );
+    static readonly SDL_SetWindowPosition_t s_setWindowPosition =
+        LoadFunction<SDL_SetWindowPosition_t>("SDL_SetWindowPosition");
 
     public static void SDL_SetWindowPosition(SDL_Window Sdl2Window, int x, int y) =>
         s_setWindowPosition(Sdl2Window, x, y);
@@ -157,9 +154,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_SetWindowBordered_t(SDL_Window SDL2Window, uint bordered);
 
-    static readonly SDL_SetWindowBordered_t s_setWindowBordered = LoadFunction<SDL_SetWindowBordered_t>(
-        "SDL_SetWindowBordered"
-    );
+    static readonly SDL_SetWindowBordered_t s_setWindowBordered =
+        LoadFunction<SDL_SetWindowBordered_t>("SDL_SetWindowBordered");
 
     public static void SDL_SetWindowBordered(SDL_Window Sdl2Window, uint bordered) =>
         s_setWindowBordered(Sdl2Window, bordered);
@@ -185,7 +181,9 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_RaiseWindow_t(SDL_Window SDL2Window);
 
-    static readonly SDL_RaiseWindow_t s_raiseWindow = LoadFunction<SDL_RaiseWindow_t>("SDL_RaiseWindow");
+    static readonly SDL_RaiseWindow_t s_raiseWindow = LoadFunction<SDL_RaiseWindow_t>(
+        "SDL_RaiseWindow"
+    );
 
     public static void SDL_RaiseWindow(SDL_Window Sdl2Window) => s_raiseWindow(Sdl2Window);
 
@@ -201,30 +199,35 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_ShowWindow_t(SDL_Window SDL2Window);
 
-    static readonly SDL_ShowWindow_t s_showWindow = LoadFunction<SDL_ShowWindow_t>("SDL_ShowWindow");
+    static readonly SDL_ShowWindow_t s_showWindow = LoadFunction<SDL_ShowWindow_t>(
+        "SDL_ShowWindow"
+    );
 
     public static void SDL_ShowWindow(SDL_Window Sdl2Window) => s_showWindow(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_HideWindow_t(SDL_Window SDL2Window);
 
-    static readonly SDL_HideWindow_t s_hideWindow = LoadFunction<SDL_HideWindow_t>("SDL_HideWindow");
+    static readonly SDL_HideWindow_t s_hideWindow = LoadFunction<SDL_HideWindow_t>(
+        "SDL_HideWindow"
+    );
 
     public static void SDL_HideWindow(SDL_Window Sdl2Window) => s_hideWindow(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate uint SDL_GetWindowID_t(SDL_Window SDL2Window);
 
-    static readonly SDL_GetWindowID_t s_getWindowID = LoadFunction<SDL_GetWindowID_t>("SDL_GetWindowID");
+    static readonly SDL_GetWindowID_t s_getWindowID = LoadFunction<SDL_GetWindowID_t>(
+        "SDL_GetWindowID"
+    );
 
     public static uint SDL_GetWindowID(SDL_Window Sdl2Window) => s_getWindowID(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_SetWindowOpacity_t(SDL_Window window, float opacity);
 
-    static readonly SDL_SetWindowOpacity_t s_setWindowOpacity = LoadFunction<SDL_SetWindowOpacity_t>(
-        "SDL_SetWindowOpacity"
-    );
+    static readonly SDL_SetWindowOpacity_t s_setWindowOpacity =
+        LoadFunction<SDL_SetWindowOpacity_t>("SDL_SetWindowOpacity");
 
     public static int SDL_SetWindowOpacity(SDL_Window Sdl2Window, float opacity) =>
         s_setWindowOpacity(Sdl2Window, opacity);
@@ -232,9 +235,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GetWindowOpacity_t(SDL_Window window, float* opacity);
 
-    static readonly SDL_GetWindowOpacity_t s_getWindowOpacity = LoadFunction<SDL_GetWindowOpacity_t>(
-        "SDL_GetWindowOpacity"
-    );
+    static readonly SDL_GetWindowOpacity_t s_getWindowOpacity =
+        LoadFunction<SDL_GetWindowOpacity_t>("SDL_GetWindowOpacity");
 
     public static int SDL_GetWindowOpacity(SDL_Window Sdl2Window, float* opacity) =>
         s_getWindowOpacity(Sdl2Window, opacity);
@@ -242,9 +244,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_SetWindowResizable_t(SDL_Window window, uint resizable);
 
-    static readonly SDL_SetWindowResizable_t s_setWindowResizable = LoadFunction<SDL_SetWindowResizable_t>(
-        "SDL_SetWindowResizable"
-    );
+    static readonly SDL_SetWindowResizable_t s_setWindowResizable =
+        LoadFunction<SDL_SetWindowResizable_t>("SDL_SetWindowResizable");
 
     public static void SDL_SetWindowResizable(SDL_Window window, uint resizable) =>
         s_setWindowResizable(window, resizable);
@@ -252,9 +253,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GetDisplayBounds_t(int displayIndex, Rectangle* rect);
 
-    static readonly SDL_GetDisplayBounds_t s_sdl_getDisplayBounds = LoadFunction<SDL_GetDisplayBounds_t>(
-        "SDL_GetDisplayBounds"
-    );
+    static readonly SDL_GetDisplayBounds_t s_sdl_getDisplayBounds =
+        LoadFunction<SDL_GetDisplayBounds_t>("SDL_GetDisplayBounds");
 
     public static int SDL_GetDisplayBounds(int displayIndex, Rectangle* rect) =>
         s_sdl_getDisplayBounds(displayIndex, rect);

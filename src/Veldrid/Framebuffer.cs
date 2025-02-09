@@ -58,7 +58,7 @@ public abstract class Framebuffer : DeviceResource, IDisposable
         FramebufferAttachment[] colorTargets = new FramebufferAttachment[colorTargetDescs.Length];
         for (int i = 0; i < colorTargets.Length; i++)
         {
-            colorTargets[i] = new FramebufferAttachment(
+            colorTargets[i] = new(
                 colorTargetDescs[i].Target,
                 colorTargetDescs[i].ArrayLayer,
                 colorTargetDescs[i].MipLevel

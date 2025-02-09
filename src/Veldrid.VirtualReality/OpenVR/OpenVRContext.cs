@@ -47,7 +47,7 @@ internal class OpenVRContext : VRContext
         _compositor =
             OVR.Compositor ?? throw new VeldridException("Failed to access the OpenVR Compositor.");
 
-        _mirrorTexture = new OpenVRMirrorTexture(this);
+        _mirrorTexture = new(this);
     }
 
     internal static bool IsSupported()
@@ -139,14 +139,7 @@ internal class OpenVRContext : VRContext
             out Vector3 rightPosition
         );
 
-        return new HmdPoseState(
-            _projLeft,
-            _projRight,
-            leftPosition,
-            rightPosition,
-            leftRotation,
-            rightRotation
-        );
+        return new(_projLeft, _projRight, leftPosition, rightPosition, leftRotation, rightRotation);
     }
 
     public override void SubmitFrame()
@@ -293,12 +286,12 @@ internal class OpenVRContext : VRContext
                 _options.EyeFramebufferSampleCount
             )
         );
-        return factory.CreateFramebuffer(new FramebufferDescription(depthTarget, colorTarget));
+        return factory.CreateFramebuffer(new(depthTarget, colorTarget));
     }
 
     static Matrix4x4 ToSysMatrix(HmdMatrix34_t hmdMat)
     {
-        return new Matrix4x4(
+        return new(
             hmdMat.m0,
             hmdMat.m4,
             hmdMat.m8,
@@ -320,7 +313,7 @@ internal class OpenVRContext : VRContext
 
     static Matrix4x4 ToSysMatrix(HmdMatrix44_t hmdMat)
     {
-        return new Matrix4x4(
+        return new(
             hmdMat.m0,
             hmdMat.m4,
             hmdMat.m8,

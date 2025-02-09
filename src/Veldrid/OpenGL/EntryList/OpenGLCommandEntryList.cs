@@ -301,7 +301,7 @@ internal sealed unsafe class OpenGLCommandEntryList : IDisposable
                         executor.SetGraphicsResourceSet(
                             srse.Slot,
                             rs,
-                            new ReadOnlySpan<uint>(dynamicOffsetsPtr, srse.DynamicOffsetCount)
+                            new(dynamicOffsetsPtr, srse.DynamicOffsetCount)
                         );
                     }
                     else
@@ -309,7 +309,7 @@ internal sealed unsafe class OpenGLCommandEntryList : IDisposable
                         executor.SetComputeResourceSet(
                             srse.Slot,
                             rs,
-                            new ReadOnlySpan<uint>(dynamicOffsetsPtr, srse.DynamicOffsetCount)
+                            new(dynamicOffsetsPtr, srse.DynamicOffsetCount)
                         );
                     }
                     currentOffset += (uint)Unsafe.SizeOf<SetResourceSetEntry>();
@@ -563,11 +563,11 @@ internal sealed unsafe class OpenGLCommandEntryList : IDisposable
                 ((uint*)block.Data)[i] = dynamicOffsets[i];
             }
 
-            entry = new SetResourceSetEntry(slot, Track(rs), isGraphics, block);
+            entry = new(slot, Track(rs), isGraphics, block);
         }
         else
         {
-            entry = new SetResourceSetEntry(slot, Track(rs), isGraphics, dynamicOffsets);
+            entry = new(slot, Track(rs), isGraphics, dynamicOffsets);
         }
 
         AddEntry(SetResourceSetEntryID, ref entry);
@@ -714,7 +714,7 @@ internal sealed unsafe class OpenGLCommandEntryList : IDisposable
     Tracked<T> Track<T>(T item)
         where T : class
     {
-        return new Tracked<T>(_resourceList, item);
+        return new(_resourceList, item);
     }
 
     struct EntryStorageBlock : IEquatable<EntryStorageBlock>
@@ -750,7 +750,7 @@ internal sealed unsafe class OpenGLCommandEntryList : IDisposable
 
         public static EntryStorageBlock New()
         {
-            return new EntryStorageBlock(DefaultStorageBlockSize);
+            return new(DefaultStorageBlockSize);
         }
 
         internal void Clear()

@@ -53,7 +53,7 @@ public readonly struct GraphicsApiVersion(int major, int minor, int subminor, in
             }
         }
 
-        version = new GraphicsApiVersion(major, minor, 0, releaseNumber);
+        version = new(major, minor, 0, releaseNumber);
         return true;
     }
 }

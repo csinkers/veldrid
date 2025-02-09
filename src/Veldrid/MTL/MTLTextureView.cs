@@ -31,8 +31,8 @@ internal sealed class MTLTextureView : TextureView
             TargetDeviceTexture = targetMTLTexture.DeviceTexture.newTextureView(
                 MTLFormats.VdToMTLPixelFormat(Format, description.Target.Usage),
                 targetMTLTexture.MTLTextureType,
-                new NSRange(BaseMipLevel, MipLevels),
-                new NSRange(BaseArrayLayer, effectiveArrayLayers)
+                new(BaseMipLevel, MipLevels),
+                new(BaseArrayLayer, effectiveArrayLayers)
             );
         }
         else

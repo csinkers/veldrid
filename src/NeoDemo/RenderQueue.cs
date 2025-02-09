@@ -58,7 +58,7 @@ public class RenderQueue : IEnumerable<Renderable>
     public void Add(Renderable item, Vector3 viewPosition)
     {
         int index = _renderables.Count;
-        _indices.Add(new RenderItemIndex(item.GetRenderOrderKey(viewPosition), index));
+        _indices.Add(new(item.GetRenderOrderKey(viewPosition), index));
         _renderables.Add(item);
         Debug.Assert(_renderables.IndexOf(item) == index);
     }
@@ -83,7 +83,7 @@ public class RenderQueue : IEnumerable<Renderable>
 
     public Enumerator GetEnumerator()
     {
-        return new Enumerator(_indices, _renderables);
+        return new(_indices, _renderables);
     }
 
     IEnumerator<Renderable> IEnumerable<Renderable>.GetEnumerator() => GetEnumerator();

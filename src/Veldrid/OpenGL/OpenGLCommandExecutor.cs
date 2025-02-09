@@ -991,7 +991,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
         if (!set.Equals(rs, dynamicOffsets))
         {
             set.Offsets.Dispose();
-            set = new BoundResourceSetInfo(rs, dynamicOffsets);
+            set = new(rs, dynamicOffsets);
             _newGraphicsResourceSets[slot] = true;
             _graphicsResourcesFlushed = false;
         }
@@ -1003,7 +1003,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
         if (!set.Equals(rs, dynamicOffsets))
         {
             set.Offsets.Dispose();
-            set = new BoundResourceSetInfo(rs, dynamicOffsets);
+            set = new(rs, dynamicOffsets);
             _newComputeResourceSets[slot] = true;
             _computeResourcesFlushed = false;
         }

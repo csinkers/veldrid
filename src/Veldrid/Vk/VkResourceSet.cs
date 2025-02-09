@@ -28,7 +28,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
         : base(description)
     {
         _gd = gd;
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
         VkResourceLayout vkLayout = Util.AssertSubtype<ResourceLayout, VkResourceLayout>(
             description.Layout
         );
@@ -50,7 +50,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
         {
             VkDescriptorType type = vkLayout.DescriptorTypes[i];
 
-            descriptorWrites[i] = new VkWriteDescriptorSet()
+            descriptorWrites[i] = new()
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
                 descriptorCount = 1,
@@ -68,7 +68,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
             {
                 DeviceBufferRange range = Util.GetBufferRange(boundResources[i], 0);
                 VkBuffer rangedVkBuffer = Util.AssertSubtype<DeviceBuffer, VkBuffer>(range.Buffer);
-                bufferInfos[i] = new VkDescriptorBufferInfo()
+                bufferInfos[i] = new()
                 {
                     buffer = rangedVkBuffer.DeviceBuffer,
                     offset = range.Offset,
@@ -81,7 +81,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
             {
                 TextureView texView = Util.GetTextureView(_gd, boundResources[i]);
                 VkTextureView vkTexView = Util.AssertSubtype<TextureView, VkTextureView>(texView);
-                imageInfos[i] = new VkDescriptorImageInfo()
+                imageInfos[i] = new()
                 {
                     imageView = vkTexView.ImageView,
                     imageLayout = VkImageLayout.VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
@@ -94,7 +94,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
             {
                 TextureView texView = Util.GetTextureView(_gd, boundResources[i]);
                 VkTextureView vkTexView = Util.AssertSubtype<TextureView, VkTextureView>(texView);
-                imageInfos[i] = new VkDescriptorImageInfo()
+                imageInfos[i] = new()
                 {
                     imageView = vkTexView.ImageView,
                     imageLayout = VkImageLayout.VK_IMAGE_LAYOUT_GENERAL,
@@ -108,7 +108,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
                 VkSampler sampler = Util.AssertSubtype<Sampler, VkSampler>(
                     boundResources[i].GetSampler()
                 );
-                imageInfos[i] = new VkDescriptorImageInfo() { sampler = sampler.DeviceSampler };
+                imageInfos[i] = new() { sampler = sampler.DeviceSampler };
                 descriptorWrites[i].pImageInfo = &imageInfos[i];
                 _refCounts.Add(sampler.RefCount);
             }

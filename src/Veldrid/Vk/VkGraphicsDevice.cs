@@ -90,7 +90,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
     readonly List<FixedUtf8String> _surfaceExtensions = [];
 
     public VkGraphicsDevice(GraphicsDeviceOptions options, SwapchainDescription? scDesc)
-        : this(options, scDesc, new VulkanDeviceOptions()) { }
+        : this(options, scDesc, new()) { }
 
     public VkGraphicsDevice(
         GraphicsDeviceOptions options,
@@ -115,14 +115,14 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         CreatePhysicalDevice();
         CreateLogicalDevice(surface, options.PreferStandardClipSpaceYDirection, vkOptions);
 
-        _memoryManager = new VkDeviceMemoryManager(
+        _memoryManager = new(
             _device,
             _physicalDevice,
             _physicalDeviceProperties.limits.bufferImageGranularity,
             1024
         );
 
-        Features = new GraphicsDeviceFeatures(
+        Features = new(
             computeShader: true,
             geometryShader: (VkBool32)_physicalDeviceFeatures.geometryShader,
             tessellationShaders: (VkBool32)_physicalDeviceFeatures.tessellationShader,
@@ -152,11 +152,11 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
             MainSwapchain = new VkSwapchain(this, desc, surface);
         }
 
-        _descriptorPoolManager = new VkDescriptorPoolManager(this);
+        _descriptorPoolManager = new(this);
 
         CreateGraphicsCommandPool();
 
-        _vulkanInfo = new BackendInfoVulkan(this);
+        _vulkanInfo = new(this);
 
         PostDeviceCreated();
     }
@@ -254,7 +254,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
 
         lock (_submittedFencesLock)
         {
-            _submittedFences.Add(new FenceSubmissionInfo(submissionFence, vkCL, vkCB, isPooled));
+            _submittedFences.Add(new(submissionFence, vkCL, vkCB, isPooled));
         }
     }
 
@@ -1043,7 +1043,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
             string driverInfo = Util.GetString(driverProps.driverInfo);
 
             VkConformanceVersion conforming = driverProps.conformanceVersion;
-            ApiVersion = new GraphicsApiVersion(
+            ApiVersion = new(
                 conforming.major,
                 conforming.minor,
                 conforming.subminor,
@@ -1216,7 +1216,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
             }
         }
 
-        return new MappedResource(
+        return new(
             resource,
             mode,
             mappedPtr,
@@ -1415,7 +1415,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         }
         CheckResult(result);
 
-        properties = new PixelFormatProperties(
+        properties = new(
             vkProps.maxExtent.width,
             vkProps.maxExtent.height,
             vkProps.maxExtent.depth,
@@ -1628,9 +1628,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
 
         uint newBufferSize = Math.Max(MinStagingBufferSize, size);
         VkBuffer newBuffer = (VkBuffer)
-            ResourceFactory.CreateBuffer(
-                new BufferDescription(newBufferSize, BufferUsage.StagingWrite)
-            );
+            ResourceFactory.CreateBuffer(new(newBufferSize, BufferUsage.StagingWrite));
         return newBuffer;
     }
 

@@ -31,14 +31,10 @@ internal class Skybox(
     {
         ResourceFactory factory = gd.ResourceFactory;
 
-        _vb = factory.CreateBuffer(
-            new BufferDescription((uint)(s_vertices.Length * 12), BufferUsage.VertexBuffer)
-        );
+        _vb = factory.CreateBuffer(new((uint)(s_vertices.Length * 12), BufferUsage.VertexBuffer));
         gd.UpdateBuffer(_vb, 0, s_vertices);
 
-        _ib = factory.CreateBuffer(
-            new BufferDescription((uint)(s_indices.Length * 2), BufferUsage.IndexBuffer)
-        );
+        _ib = factory.CreateBuffer(new((uint)(s_indices.Length * 2), BufferUsage.IndexBuffer));
         gd.UpdateBuffer(_ib, 0, s_indices);
 
         ImageSharpCubemapTexture imageSharpCubemapTexture = new(
@@ -58,7 +54,7 @@ internal class Skybox(
 
         VertexLayoutDescription[] vertexLayouts =
         [
-            new VertexLayoutDescription(
+            new(
                 new VertexElementDescription(
                     "Position",
                     VertexElementSemantic.TextureCoordinate,
@@ -68,11 +64,7 @@ internal class Skybox(
         ];
 
         Shader[] shaders = factory.CreateFromSpirv(
-            new ShaderDescription(
-                ShaderStages.Vertex,
-                Encoding.ASCII.GetBytes(VertexShader),
-                "main"
-            ),
+            new(ShaderStages.Vertex, Encoding.ASCII.GetBytes(VertexShader), "main"),
             new ShaderDescription(
                 ShaderStages.Fragment,
                 Encoding.ASCII.GetBytes(FragmentShader),
@@ -83,7 +75,7 @@ internal class Skybox(
         _disposables.Add(shaders[1]);
 
         _layout = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "UBO",
                     ResourceKind.UniformBuffer,
@@ -105,15 +97,9 @@ internal class Skybox(
         GraphicsPipelineDescription pd = new(
             BlendStateDescription.SingleAlphaBlend,
             DepthStencilStateDescription.DepthOnlyLessEqual,
-            new RasterizerStateDescription(
-                FaceCullMode.None,
-                PolygonFillMode.Solid,
-                FrontFace.Clockwise,
-                true,
-                true
-            ),
+            new(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, true, true),
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(vertexLayouts, shaders),
+            new(vertexLayouts, shaders),
             [_layout],
             outputs
         );
@@ -121,12 +107,10 @@ internal class Skybox(
         _pipeline = factory.CreateGraphicsPipeline(pd);
 
         _ubo = factory.CreateBuffer(
-            new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+            new(64 * 3, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
         );
 
-        _resourceSet = factory.CreateResourceSet(
-            new ResourceSetDescription(_layout, _ubo, textureView, gd.PointSampler)
-        );
+        _resourceSet = factory.CreateResourceSet(new(_layout, _ubo, textureView, gd.PointSampler));
     }
 
     public void Render(CommandList cl, Framebuffer fb, Matrix4x4 proj, Matrix4x4 view)
@@ -137,44 +121,44 @@ internal class Skybox(
         cl.SetPipeline(_pipeline);
         cl.SetGraphicsResourceSet(0, _resourceSet);
         float depth = 1;
-        cl.SetViewport(0, new Viewport(0, 0, fb.Width, fb.Height, depth, depth));
+        cl.SetViewport(0, new(0, 0, fb.Width, fb.Height, depth, depth));
         cl.DrawIndexed((uint)s_indices.Length, 1, 0, 0, 0);
 
-        cl.SetViewport(0, new Viewport(0, 0, fb.Width, fb.Height, 0, 1));
+        cl.SetViewport(0, new(0, 0, fb.Width, fb.Height, 0, 1));
     }
 
     static readonly Vector3[] s_vertices =
     [
         // Top
-        new Vector3(-20.0f, 20.0f, -20.0f),
-        new Vector3(20.0f, 20.0f, -20.0f),
-        new Vector3(20.0f, 20.0f, 20.0f),
-        new Vector3(-20.0f, 20.0f, 20.0f),
+        new(-20.0f, 20.0f, -20.0f),
+        new(20.0f, 20.0f, -20.0f),
+        new(20.0f, 20.0f, 20.0f),
+        new(-20.0f, 20.0f, 20.0f),
         // Bottom
-        new Vector3(-20.0f, -20.0f, 20.0f),
-        new Vector3(20.0f, -20.0f, 20.0f),
-        new Vector3(20.0f, -20.0f, -20.0f),
-        new Vector3(-20.0f, -20.0f, -20.0f),
+        new(-20.0f, -20.0f, 20.0f),
+        new(20.0f, -20.0f, 20.0f),
+        new(20.0f, -20.0f, -20.0f),
+        new(-20.0f, -20.0f, -20.0f),
         // Left
-        new Vector3(-20.0f, 20.0f, -20.0f),
-        new Vector3(-20.0f, 20.0f, 20.0f),
-        new Vector3(-20.0f, -20.0f, 20.0f),
-        new Vector3(-20.0f, -20.0f, -20.0f),
+        new(-20.0f, 20.0f, -20.0f),
+        new(-20.0f, 20.0f, 20.0f),
+        new(-20.0f, -20.0f, 20.0f),
+        new(-20.0f, -20.0f, -20.0f),
         // Right
-        new Vector3(20.0f, 20.0f, 20.0f),
-        new Vector3(20.0f, 20.0f, -20.0f),
-        new Vector3(20.0f, -20.0f, -20.0f),
-        new Vector3(20.0f, -20.0f, 20.0f),
+        new(20.0f, 20.0f, 20.0f),
+        new(20.0f, 20.0f, -20.0f),
+        new(20.0f, -20.0f, -20.0f),
+        new(20.0f, -20.0f, 20.0f),
         // Back
-        new Vector3(20.0f, 20.0f, -20.0f),
-        new Vector3(-20.0f, 20.0f, -20.0f),
-        new Vector3(-20.0f, -20.0f, -20.0f),
-        new Vector3(20.0f, -20.0f, -20.0f),
+        new(20.0f, 20.0f, -20.0f),
+        new(-20.0f, 20.0f, -20.0f),
+        new(-20.0f, -20.0f, -20.0f),
+        new(20.0f, -20.0f, -20.0f),
         // Front
-        new Vector3(-20.0f, 20.0f, 20.0f),
-        new Vector3(20.0f, 20.0f, 20.0f),
-        new Vector3(20.0f, -20.0f, 20.0f),
-        new Vector3(-20.0f, -20.0f, 20.0f),
+        new(-20.0f, 20.0f, 20.0f),
+        new(20.0f, 20.0f, 20.0f),
+        new(20.0f, -20.0f, 20.0f),
+        new(-20.0f, -20.0f, 20.0f),
     ];
 
     static readonly ushort[] s_indices =

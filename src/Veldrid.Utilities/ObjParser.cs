@@ -278,9 +278,7 @@ public class ObjParser
                 ObjFile.FaceVertex faceVertex1 = ParseFaceVertex(piece2);
                 ObjFile.FaceVertex faceVertex2 = ParseFaceVertex(piece3);
 
-                DiscoverFace(
-                    new ObjFile.Face(faceVertex0, faceVertex1, faceVertex2, _currentSmoothingGroup)
-                );
+                DiscoverFace(new(faceVertex0, faceVertex1, faceVertex2, _currentSmoothingGroup));
                 piece2 = piece3;
             }
         }
@@ -313,7 +311,7 @@ public class ObjParser
             int normal =
                 secondSlash == -1 ? -1 : ParseInt(thirdSlice, "the first face normal index");
 
-            return new ObjFile.FaceVertex(position, normal, texCoord);
+            return new(position, normal, texCoord);
         }
 
         [DoesNotReturn]
@@ -392,7 +390,7 @@ public class ObjParser
                     );
                 }
 
-                _groups.Add(new ObjFile.MeshGroup(_currentGroupName, _currentMaterial, faces));
+                _groups.Add(new(_currentGroupName, _currentMaterial, faces));
 
                 _currentGroupName = null;
                 _currentMaterial = null;
@@ -409,7 +407,7 @@ public class ObjParser
 
         public ObjFile FinalizeFile()
         {
-            return new ObjFile(
+            return new(
                 _positions.ToArray(),
                 _normals.ToArray(),
                 _texCoords.ToArray(),
@@ -431,7 +429,7 @@ public class ObjParser
                 && FastParse.TryParseDouble(zStr, out double z, out _)
             )
             {
-                return new Vector3((float)x, (float)y, (float)z);
+                return new((float)x, (float)y, (float)z);
             }
             ThrowParseException(location);
             return default;
@@ -444,7 +442,7 @@ public class ObjParser
                 && FastParse.TryParseDouble(yStr, out double y, out _)
             )
             {
-                return new Vector2((float)x, (float)y);
+                return new((float)x, (float)y);
             }
             ThrowParseException(location);
             return default;

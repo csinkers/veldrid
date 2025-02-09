@@ -99,7 +99,7 @@ public class TexturedMesh : CullRenderable
         }
 
         _worldAndInverseBuffer = disposeFactory.CreateBuffer(
-            new BufferDescription(bufferSize, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+            new(bufferSize, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
         );
         if (_materialPropsOwned)
         {
@@ -127,7 +127,7 @@ public class TexturedMesh : CullRenderable
 
         VertexLayoutDescription[] shadowDepthVertexLayouts =
         [
-            new VertexLayoutDescription(
+            new(
                 new VertexElementDescription(
                     "Position",
                     VertexElementSemantic.TextureCoordinate,
@@ -154,7 +154,7 @@ public class TexturedMesh : CullRenderable
 
         ResourceLayout projViewCombinedLayout = StaticResourceCache.GetResourceLayout(
             gd.ResourceFactory,
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "ViewProjection",
                     ResourceKind.UniformBuffer,
@@ -165,7 +165,7 @@ public class TexturedMesh : CullRenderable
 
         ResourceLayout worldLayout = StaticResourceCache.GetResourceLayout(
             gd.ResourceFactory,
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "WorldAndInverse",
                     ResourceKind.UniformBuffer,
@@ -182,11 +182,7 @@ public class TexturedMesh : CullRenderable
                 : DepthStencilStateDescription.DepthOnlyLessEqual,
             RasterizerStateDescription.Default,
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(
-                shadowDepthVertexLayouts,
-                [depthVS, depthFS],
-                [new SpecializationConstant(100, gd.IsClipSpaceYInverted)]
-            ),
+            new(shadowDepthVertexLayouts, [depthVS, depthFS], [new(100, gd.IsClipSpaceYInverted)]),
             [projViewCombinedLayout, worldLayout],
             sc.NearShadowMapFramebuffer.OutputDescription
         );
@@ -203,7 +199,7 @@ public class TexturedMesh : CullRenderable
 
         VertexLayoutDescription[] mainVertexLayouts =
         [
-            new VertexLayoutDescription(
+            new(
                 new VertexElementDescription(
                     "Position",
                     VertexElementSemantic.TextureCoordinate,
@@ -235,7 +231,7 @@ public class TexturedMesh : CullRenderable
 
         ResourceLayout mainSharedLayout = StaticResourceCache.GetResourceLayout(
             gd.ResourceFactory,
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "LightViewProjection1",
                     ResourceKind.UniformBuffer,
@@ -276,7 +272,7 @@ public class TexturedMesh : CullRenderable
 
         ResourceLayout mainPerObjectLayout = StaticResourceCache.GetResourceLayout(
             gd.ResourceFactory,
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "WorldAndInverse",
                     ResourceKind.UniformBuffer,
@@ -333,7 +329,7 @@ public class TexturedMesh : CullRenderable
 
         ResourceLayout reflectionLayout = StaticResourceCache.GetResourceLayout(
             gd.ResourceFactory,
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "ReflectionMap",
                     ResourceKind.TextureReadOnly,
@@ -367,11 +363,7 @@ public class TexturedMesh : CullRenderable
                 : DepthStencilStateDescription.DepthOnlyLessEqual,
             RasterizerStateDescription.Default,
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(
-                mainVertexLayouts,
-                [mainVS, mainFS],
-                [new SpecializationConstant(100, gd.IsClipSpaceYInverted)]
-            ),
+            new(mainVertexLayouts, [mainVS, mainFS], [new(100, gd.IsClipSpaceYInverted)]),
             [projViewLayout, mainSharedLayout, mainPerObjectLayout, reflectionLayout],
             sc.MainSceneFramebuffer.OutputDescription
         );
@@ -383,16 +375,12 @@ public class TexturedMesh : CullRenderable
 
         _mainProjViewRS = StaticResourceCache.GetResourceSet(
             gd.ResourceFactory,
-            new ResourceSetDescription(
-                projViewLayout,
-                sc.ProjectionMatrixBuffer,
-                sc.ViewMatrixBuffer
-            )
+            new(projViewLayout, sc.ProjectionMatrixBuffer, sc.ViewMatrixBuffer)
         );
 
         _mainSharedRS = StaticResourceCache.GetResourceSet(
             gd.ResourceFactory,
-            new ResourceSetDescription(
+            new(
                 mainSharedLayout,
                 sc.LightViewProjectionBuffer0,
                 sc.LightViewProjectionBuffer1,
@@ -405,7 +393,7 @@ public class TexturedMesh : CullRenderable
         );
 
         _mainPerObjectRS = disposeFactory.CreateResourceSet(
-            new ResourceSetDescription(
+            new(
                 mainPerObjectLayout,
                 new DeviceBufferRange(_worldAndInverseBuffer, _uniformOffset, 128),
                 _materialProps.UniformBuffer,
@@ -422,7 +410,7 @@ public class TexturedMesh : CullRenderable
 
         _reflectionRS = StaticResourceCache.GetResourceSet(
             gd.ResourceFactory,
-            new ResourceSetDescription(
+            new(
                 reflectionLayout,
                 _alphaMapView, // Doesn't really matter -- just don't bind the actual reflection map since it's being rendered to.
                 gd.PointSampler,
@@ -433,7 +421,7 @@ public class TexturedMesh : CullRenderable
 
         _noReflectionRS = StaticResourceCache.GetResourceSet(
             gd.ResourceFactory,
-            new ResourceSetDescription(
+            new(
                 reflectionLayout,
                 sc.ReflectionColorView,
                 gd.PointSampler,
@@ -462,13 +450,10 @@ public class TexturedMesh : CullRenderable
                 : sc.LightViewProjectionBuffer2;
             ret[i * 2] = StaticResourceCache.GetResourceSet(
                 sharedFactory,
-                new ResourceSetDescription(projViewLayout, viewProjBuffer)
+                new(projViewLayout, viewProjBuffer)
             );
             ResourceSet worldRS = disposeFactory.CreateResourceSet(
-                new ResourceSetDescription(
-                    worldLayout,
-                    new DeviceBufferRange(_worldAndInverseBuffer, _uniformOffset, 128)
-                )
+                new(worldLayout, new DeviceBufferRange(_worldAndInverseBuffer, _uniformOffset, 128))
             );
             ret[i * 2 + 1] = worldRS;
         }

@@ -13,10 +13,7 @@ namespace Veldrid.NeoDemo;
 
 public class Scene
 {
-    readonly Octree<CullRenderable> _octree = new(
-        new BoundingBox(Vector3.One * -50, Vector3.One * 50),
-        2
-    );
+    readonly Octree<CullRenderable> _octree = new(new(Vector3.One * -50, Vector3.One * 50), 2);
 
     readonly List<Renderable> _freeRenderables = [];
     readonly List<IUpdateable> _updateables = [];
@@ -25,7 +22,7 @@ public class Scene
         new RenderPassesComparer()
     );
 
-    internal MirrorMesh MirrorMesh { get; set; } = new MirrorMesh();
+    internal MirrorMesh MirrorMesh { get; set; } = new();
 
     readonly Camera _camera;
 
@@ -46,7 +43,7 @@ public class Scene
 
     public Scene(GraphicsDevice gd, Sdl2Window window, Sdl2ControllerTracker? controller)
     {
-        _camera = new Camera(gd, window, controller);
+        _camera = new(gd, window, controller);
         _farCascadeLimit = _camera.FarDistance;
         _updateables.Add(_camera);
     }
@@ -206,7 +203,7 @@ public class Scene
         cl.SetFramebuffer(sc.ReflectionFramebuffer);
         float fbWidth = sc.ReflectionFramebuffer.Width;
         float fbHeight = sc.ReflectionFramebuffer.Height;
-        cl.SetViewport(0, new Viewport(0, 0, fbWidth, fbHeight, 0, 1));
+        cl.SetViewport(0, new(0, 0, fbWidth, fbHeight, 0, 1));
         cl.SetFullViewports();
         cl.SetFullScissorRects();
         cl.ClearColorTarget(0, RgbaFloat.Black);
@@ -254,13 +251,13 @@ public class Scene
         cl.SetFramebuffer(sc.MainSceneFramebuffer);
         fbWidth = sc.MainSceneFramebuffer.Width;
         fbHeight = sc.MainSceneFramebuffer.Height;
-        cl.SetViewport(0, new Viewport(0, 0, fbWidth, fbHeight, 0, 1));
+        cl.SetViewport(0, new(0, 0, fbWidth, fbHeight, 0, 1));
         cl.SetFullViewports();
         cl.SetFullScissorRects();
         cl.ClearColorTarget(0, RgbaFloat.Black);
         cl.ClearDepthStencil(depthClear);
         sc.UpdateCameraBuffers(cl); // Re-set because reflection step changed it.
-        cameraFrustum = new BoundingFrustum(_camera.ViewMatrix * _camera.ProjectionMatrix);
+        cameraFrustum = new(_camera.ViewMatrix * _camera.ProjectionMatrix);
         Render(
             gd,
             cl,
@@ -321,7 +318,7 @@ public class Scene
             cl,
             sc,
             RenderPasses.Duplicator,
-            new BoundingFrustum(),
+            new(),
             _camera.Position,
             _renderQueues[0],
             _cullableStage[0],
@@ -341,7 +338,7 @@ public class Scene
             cl,
             sc,
             RenderPasses.SwapchainOutput,
-            new BoundingFrustum(),
+            new(),
             _camera.Position,
             _renderQueues[0],
             _cullableStage[0],
@@ -413,7 +410,7 @@ public class Scene
             cls[1]
                 .SetViewport(
                     0,
-                    new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
+                    new(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
                 );
             cls[1].SetScissorRect(0, 0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height);
             cls[1].ClearDepthStencil(depthClear);
@@ -449,7 +446,7 @@ public class Scene
             cls[2]
                 .SetViewport(
                     0,
-                    new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
+                    new(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
                 );
             cls[2].SetScissorRect(0, 0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height);
             cls[2].ClearDepthStencil(depthClear);
@@ -485,7 +482,7 @@ public class Scene
             cls[3]
                 .SetViewport(
                     0,
-                    new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
+                    new(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
                 );
             cls[3].SetScissorRect(0, 0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height);
             cls[3].ClearDepthStencil(depthClear);
@@ -510,7 +507,7 @@ public class Scene
             cls[4].SetFramebuffer(sc.ReflectionFramebuffer);
             float scWidth = sc.ReflectionFramebuffer.Width;
             float scHeight = sc.ReflectionFramebuffer.Height;
-            cls[4].SetViewport(0, new Viewport(0, 0, scWidth, scHeight, 0, 1));
+            cls[4].SetViewport(0, new(0, 0, scWidth, scHeight, 0, 1));
             cls[4].SetFullViewports();
             cls[4].SetFullScissorRects();
             cls[4].ClearColorTarget(0, RgbaFloat.Black);
@@ -556,12 +553,12 @@ public class Scene
             cls[4].SetFramebuffer(sc.MainSceneFramebuffer);
             scWidth = sc.MainSceneFramebuffer.Width;
             scHeight = sc.MainSceneFramebuffer.Height;
-            cls[4].SetViewport(0, new Viewport(0, 0, scWidth, scHeight, 0, 1));
+            cls[4].SetViewport(0, new(0, 0, scWidth, scHeight, 0, 1));
             cls[4].SetScissorRect(0, 0, 0, (uint)scWidth, (uint)scHeight);
             cls[4].ClearColorTarget(0, RgbaFloat.Black);
             cls[4].ClearDepthStencil(depthClear);
             sc.UpdateCameraBuffers(cls[4]);
-            cameraFrustum = new BoundingFrustum(_camera.ViewMatrix * _camera.ProjectionMatrix);
+            cameraFrustum = new(_camera.ViewMatrix * _camera.ProjectionMatrix);
             Render(
                 gd,
                 cls[4],
@@ -627,8 +624,8 @@ public class Scene
         cl.SetFramebuffer(sc.DuplicatorFramebuffer);
         uint fbWidth = sc.DuplicatorFramebuffer.Width;
         uint fbHeight = sc.DuplicatorFramebuffer.Height;
-        cl.SetViewport(0, new Viewport(0, 0, fbWidth, fbHeight, 0, 1));
-        cl.SetViewport(1, new Viewport(0, 0, fbWidth, fbHeight, 0, 1));
+        cl.SetViewport(0, new(0, 0, fbWidth, fbHeight, 0, 1));
+        cl.SetViewport(1, new(0, 0, fbWidth, fbHeight, 0, 1));
         cl.SetScissorRect(0, 0, 0, fbWidth, fbHeight);
         cl.SetScissorRect(1, 0, 0, fbWidth, fbHeight);
         Render(
@@ -636,7 +633,7 @@ public class Scene
             cl,
             sc,
             RenderPasses.Duplicator,
-            new BoundingFrustum(),
+            new(),
             _camera.Position,
             _renderQueues[0],
             _cullableStage[0],
@@ -648,14 +645,14 @@ public class Scene
         cl.SetFramebuffer(gd.SwapchainFramebuffer);
         fbWidth = gd.SwapchainFramebuffer.Width;
         fbHeight = gd.SwapchainFramebuffer.Height;
-        cl.SetViewport(0, new Viewport(0, 0, fbWidth, fbHeight, 0, 1));
+        cl.SetViewport(0, new(0, 0, fbWidth, fbHeight, 0, 1));
         cl.SetScissorRect(0, 0, 0, fbWidth, fbHeight);
         Render(
             gd,
             cl,
             sc,
             RenderPasses.SwapchainOutput,
-            new BoundingFrustum(),
+            new(),
             _camera.Position,
             _renderQueues[0],
             _cullableStage[0],
@@ -756,7 +753,7 @@ public class Scene
 
         Matrix4x4 viewProjectionMatrix = lightView * lightProjection;
 
-        lightFrustum = new BoundingFrustum(viewProjectionMatrix);
+        lightFrustum = new(viewProjectionMatrix);
         return viewProjectionMatrix;
     }
 

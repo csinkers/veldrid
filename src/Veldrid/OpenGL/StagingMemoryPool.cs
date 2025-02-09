@@ -69,7 +69,7 @@ internal sealed unsafe class StagingMemoryPool : IDisposable
         uint capacity = Math.Max(MinimumCapacity, sizeInBytes);
         IntPtr ptr = Marshal.AllocHGlobal((int)capacity);
         uint id = (uint)_storage.Count;
-        stagingBlock = new StagingBlock(id, (void*)ptr, capacity, sizeInBytes);
+        stagingBlock = new(id, (void*)ptr, capacity, sizeInBytes);
         _storage.Add(stagingBlock);
     }
 

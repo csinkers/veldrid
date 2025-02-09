@@ -83,7 +83,7 @@ public class ObjFile(
             indices[(i * 3) + 1] = index2;
         }
 
-        return new ConstructedMesh16(vertices.ToArray(), indices, group.Material);
+        return new(vertices.ToArray(), indices, group.Material);
     }
 
     /// <summary>
@@ -145,7 +145,7 @@ public class ObjFile(
             indices[(i * 3) + 1] = index2;
         }
 
-        return new ConstructedMesh32(vertices.ToArray(), indices, group.Material);
+        return new(vertices.ToArray(), indices, group.Material);
     }
 
     ushort GetOrCreate16(
@@ -206,7 +206,7 @@ public class ObjFile(
         Vector2 texCoord =
             key.TexCoordIndex == -1 ? Vector2.Zero : TexCoords[key.TexCoordIndex - 1];
 
-        return new VertexPositionNormalTexture(position, normal, texCoord);
+        return new(position, normal, texCoord);
     }
 
     Vector3 ComputeNormal(FaceVertex v1, FaceVertex v2, FaceVertex v3)

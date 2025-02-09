@@ -151,7 +151,7 @@ internal static unsafe class VulkanUtil
             srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             image = image,
-            subresourceRange = new VkImageSubresourceRange()
+            subresourceRange = new()
             {
                 aspectMask = aspectMask,
                 baseMipLevel = baseMipLevel,

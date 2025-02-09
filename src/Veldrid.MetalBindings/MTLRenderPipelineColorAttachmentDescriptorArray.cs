@@ -14,7 +14,7 @@ public struct MTLRenderPipelineColorAttachmentDescriptorArray
         get
         {
             IntPtr ptr = IntPtr_objc_msgSend(NativePtr, Selectors.objectAtIndexedSubscript, index);
-            return new MTLRenderPipelineColorAttachmentDescriptor(ptr);
+            return new(ptr);
         }
         set
         {

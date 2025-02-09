@@ -393,7 +393,7 @@ public unsafe class RenderDoc
     {
         if (NativeLibrary.TryLoad(renderDocLibPath, out IntPtr lib))
         {
-            renderDoc = new RenderDoc(lib);
+            renderDoc = new(lib);
             return true;
         }
         renderDoc = null;

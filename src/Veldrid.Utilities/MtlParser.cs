@@ -91,7 +91,7 @@ public class MtlParser
                 case "newmtl":
                     ExpectExactly(pieces, 1, "newmtl");
                     FinalizeCurrentMaterial();
-                    _currentDefinition = new MaterialDefinition(pieces[1]);
+                    _currentDefinition = new(pieces[1]);
                     break;
 
                 case "ka":
@@ -242,7 +242,7 @@ public class MtlParser
 
         public MtlFile FinalizeFile()
         {
-            return new MtlFile(_definitions);
+            return new(_definitions);
         }
 
         Vector3 ParseVector3(string xStr, string yStr, string zStr, string location)
@@ -253,7 +253,7 @@ public class MtlParser
                 float y = float.Parse(yStr, CultureInfo.InvariantCulture);
                 float z = float.Parse(zStr, CultureInfo.InvariantCulture);
 
-                return new Vector3(x, y, z);
+                return new(x, y, z);
             }
             catch (FormatException fe)
             {
@@ -268,7 +268,7 @@ public class MtlParser
                 float x = float.Parse(xStr, CultureInfo.InvariantCulture);
                 float y = float.Parse(yStr, CultureInfo.InvariantCulture);
 
-                return new Vector2(x, y);
+                return new(x, y);
             }
             catch (FormatException fe)
             {
@@ -340,7 +340,7 @@ public class MtlParser
                 _currentLine,
                 _currentLineText
             );
-            return new MtlParseException(message, e);
+            return new(message, e);
         }
     }
 }

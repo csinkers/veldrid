@@ -27,7 +27,7 @@ internal sealed unsafe class VkFence : Fence, IResourceRefCountTarget
         VulkanUtil.CheckResult(result);
         _fence = fence;
 
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
     }
 
     public override void Reset()

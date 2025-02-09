@@ -35,7 +35,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
     {
         _gd = gd;
         IsComputePipeline = false;
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
 
         VkGraphicsPipelineCreateInfo pipelineCI = new()
         {
@@ -121,7 +121,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             depthTestEnable = (VkBool32)vdDssDesc.DepthTestEnabled,
             depthCompareOp = VkFormats.VdToVkCompareOp(vdDssDesc.DepthComparison),
             stencilTestEnable = (VkBool32)vdDssDesc.StencilTestEnabled,
-            front = new VkStencilOpState()
+            front = new()
             {
                 failOp = VkFormats.VdToVkStencilOp(vdDssDesc.StencilFront.Fail),
                 passOp = VkFormats.VdToVkStencilOp(vdDssDesc.StencilFront.Pass),
@@ -131,7 +131,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 writeMask = vdDssDesc.StencilWriteMask,
                 reference = vdDssDesc.StencilReference,
             },
-            back = new VkStencilOpState()
+            back = new()
             {
                 failOp = VkFormats.VdToVkStencilOp(vdDssDesc.StencilBack.Fail),
                 passOp = VkFormats.VdToVkStencilOp(vdDssDesc.StencilBack.Pass),
@@ -188,7 +188,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         for (int binding = 0; binding < inputDescriptions.Length; binding++)
         {
             VertexLayoutDescription inputDesc = inputDescriptions[binding];
-            bindingDescs[binding] = new VkVertexInputBindingDescription()
+            bindingDescs[binding] = new()
             {
                 binding = (uint)binding,
                 inputRate =
@@ -203,7 +203,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             {
                 VertexElementDescription inputElement = inputDesc.Elements[location];
 
-                attributeDescs[targetIndex] = new VkVertexInputAttributeDescription()
+                attributeDescs[targetIndex] = new()
                 {
                     format = VkFormats.VdToVkVertexElementFormat(inputElement.Format),
                     binding = (uint)binding,
@@ -272,10 +272,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
                 module = vkShader.ShaderModule,
                 stage = VkFormats.VdToVkShaderStages(shader.Stage),
-                pName =
-                    shader.EntryPoint == "main"
-                        ? CommonStrings.main
-                        : new FixedUtf8String(shader.EntryPoint),
+                pName = shader.EntryPoint == "main" ? CommonStrings.main : new(shader.EntryPoint),
                 pSpecializationInfo = &specializationInfo,
             };
             stages.Add(stageCI);
@@ -446,7 +443,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
     {
         _gd = gd;
         IsComputePipeline = true;
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
 
         // Pipeline Layout
         ResourceLayout[] resourceLayouts = description.ResourceLayouts;
@@ -509,10 +506,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             module = vkShader.ShaderModule,
             stage = VkFormats.VdToVkShaderStages(shader.Stage),
-            pName =
-                shader.EntryPoint == "main"
-                    ? CommonStrings.main
-                    : new FixedUtf8String(shader.EntryPoint),
+            pName = shader.EntryPoint == "main" ? CommonStrings.main : new(shader.EntryPoint),
             pSpecializationInfo = &specializationInfo,
         };
 

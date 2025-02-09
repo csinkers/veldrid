@@ -161,7 +161,7 @@ public class OctreeNode<T>
 
     public static OctreeNode<T> CreateNewTree(ref BoundingBox bounds, int maxChildren)
     {
-        return new OctreeNode<T>(ref bounds, maxChildren, new OctreeNodeCache(maxChildren), null);
+        return new(ref bounds, maxChildren, new(maxChildren), null);
     }
 
     public OctreeNode<T> AddItem(BoundingBox itemBounds, T item)
@@ -423,7 +423,7 @@ public class OctreeNode<T>
             _children[i].CoreGetPreciseBounds(ref min, ref max);
         }
 
-        return new BoundingBox(min, max);
+        return new(min, max);
     }
 
     public int GetItemCount()
@@ -727,7 +727,7 @@ public class OctreeNode<T>
     }
 
     public OctreeNode(BoundingBox box, int maxChildren)
-        : this(ref box, maxChildren, new OctreeNodeCache(maxChildren), null) { }
+        : this(ref box, maxChildren, new(maxChildren), null) { }
 
     OctreeNode(
         ref BoundingBox bounds,
@@ -959,7 +959,7 @@ public class OctreeNode<T>
             }
             else
             {
-                octreeItem = new OctreeItem<T>(ref bounds, item);
+                octreeItem = new(ref bounds, item);
             }
 
             return octreeItem;

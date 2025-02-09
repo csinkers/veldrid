@@ -9030,7 +9030,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRSystem = new CVRSystem(pInterface);
+                    m_pVRSystem = new(pInterface);
             }
             return m_pVRSystem;
         }
@@ -9046,7 +9046,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRChaperone = new CVRChaperone(pInterface);
+                    m_pVRChaperone = new(pInterface);
             }
             return m_pVRChaperone;
         }
@@ -9062,7 +9062,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRChaperoneSetup = new CVRChaperoneSetup(pInterface);
+                    m_pVRChaperoneSetup = new(pInterface);
             }
             return m_pVRChaperoneSetup;
         }
@@ -9078,7 +9078,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRCompositor = new CVRCompositor(pInterface);
+                    m_pVRCompositor = new(pInterface);
             }
             return m_pVRCompositor;
         }
@@ -9094,7 +9094,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVROverlay = new CVROverlay(pInterface);
+                    m_pVROverlay = new(pInterface);
             }
             return m_pVROverlay;
         }
@@ -9110,7 +9110,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRRenderModels = new CVRRenderModels(pInterface);
+                    m_pVRRenderModels = new(pInterface);
             }
             return m_pVRRenderModels;
         }
@@ -9126,7 +9126,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRExtendedDisplay = new CVRExtendedDisplay(pInterface);
+                    m_pVRExtendedDisplay = new(pInterface);
             }
             return m_pVRExtendedDisplay;
         }
@@ -9142,7 +9142,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRSettings = new CVRSettings(pInterface);
+                    m_pVRSettings = new(pInterface);
             }
             return m_pVRSettings;
         }
@@ -9158,7 +9158,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRApplications = new CVRApplications(pInterface);
+                    m_pVRApplications = new(pInterface);
             }
             return m_pVRApplications;
         }
@@ -9174,7 +9174,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRScreenshots = new CVRScreenshots(pInterface);
+                    m_pVRScreenshots = new(pInterface);
             }
             return m_pVRScreenshots;
         }
@@ -9190,7 +9190,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRTrackedCamera = new CVRTrackedCamera(pInterface);
+                    m_pVRTrackedCamera = new(pInterface);
             }
             return m_pVRTrackedCamera;
         }
@@ -9206,7 +9206,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRInput = new CVRInput(pInterface);
+                    m_pVRInput = new(pInterface);
             }
             return m_pVRInput;
         }
@@ -9222,7 +9222,7 @@ internal class OpenVR
                     ref eError
                 );
                 if (pInterface != IntPtr.Zero && eError == EVRInitError.None)
-                    m_pVRSpatialAnchors = new CVRSpatialAnchors(pInterface);
+                    m_pVRSpatialAnchors = new(pInterface);
             }
             return m_pVRSpatialAnchors;
         }
@@ -9248,7 +9248,7 @@ internal class OpenVR
         get
         {
             if (_OpenVRInternal_ModuleContext == null)
-                _OpenVRInternal_ModuleContext = new COpenVRContext();
+                _OpenVRInternal_ModuleContext = new();
             return _OpenVRInternal_ModuleContext;
         }
     }

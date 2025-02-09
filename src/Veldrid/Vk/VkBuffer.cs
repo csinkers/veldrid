@@ -141,7 +141,7 @@ internal sealed unsafe class VkBuffer : DeviceBuffer, IResourceRefCountTarget
         result = vkBindBufferMemory(gd.Device, _deviceBuffer, _memory.DeviceMemory, _memory.Offset);
         CheckResult(result);
 
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
 
         if (bd.InitialData != IntPtr.Zero)
         {

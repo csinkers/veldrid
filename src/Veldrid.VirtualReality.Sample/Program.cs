@@ -32,7 +32,7 @@ internal class Program
         }
 
         Sdl2Window window = VeldridStartup.CreateWindow(
-            new WindowCreateInfo(
+            new(
                 Sdl2Native.SDL_WINDOWPOS_CENTERED,
                 Sdl2Native.SDL_WINDOWPOS_CENTERED,
                 1280,
@@ -194,7 +194,7 @@ internal class Program
 
             windowCL.Begin();
             windowCL.SetFramebuffer(sc.Framebuffer);
-            windowCL.ClearColorTarget(0, new RgbaFloat(0f, 0f, 0.2f, 1f));
+            windowCL.ClearColorTarget(0, new(0f, 0f, 0.2f, 1f));
             vrContext.RenderMirrorTexture(windowCL, sc.Framebuffer, eyeSource);
             igr.Render(gd, windowCL);
             windowCL.End();
@@ -273,16 +273,12 @@ internal class Program
 
         mesh.Render(
             cl,
-            new UBO(
-                proj,
-                view,
-                Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(0f, -1, -2f)
-            )
+            new(proj, view, Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(0f, -1, -2f))
         );
 
         mesh.Render(
             cl,
-            new UBO(
+            new(
                 proj,
                 view,
                 Matrix4x4.CreateScale(0.66f) * Matrix4x4.CreateTranslation(-0.5f, -1, -2f)
@@ -291,7 +287,7 @@ internal class Program
 
         mesh.Render(
             cl,
-            new UBO(
+            new(
                 proj,
                 view,
                 Matrix4x4.CreateScale(1.5f) * Matrix4x4.CreateTranslation(0.5f, -1, -2f)
@@ -350,7 +346,7 @@ internal class Program
             VulkanDeviceOptions vdo = new(instance, device);
             GraphicsDevice gd = GraphicsDevice.CreateVulkan(gdo, vdo);
             Swapchain sc = gd.ResourceFactory.CreateSwapchain(
-                new SwapchainDescription(
+                new(
                     VeldridStartup.GetSwapchainSource(window),
                     (uint)window.Width,
                     (uint)window.Height,

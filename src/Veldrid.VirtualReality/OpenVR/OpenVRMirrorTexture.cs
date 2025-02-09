@@ -28,9 +28,9 @@ internal class OpenVRMirrorTexture : IDisposable
         {
             case MirrorTextureEyeSource.BothEyes:
                 float width = fb.Width * 0.5f;
-                cl.SetViewport(0, new Viewport(0, 0, width, fb.Height, 0, 1));
+                cl.SetViewport(0, new(0, 0, width, fb.Height, 0, 1));
                 BlitLeftEye(cl, blitter, width / fb.Height);
-                cl.SetViewport(0, new Viewport(width, 0, width, fb.Height, 0, 1));
+                cl.SetViewport(0, new(width, 0, width, fb.Height, 0, 1));
                 BlitRightEye(cl, blitter, width / fb.Height);
                 break;
             case MirrorTextureEyeSource.LeftEye:
@@ -98,8 +98,8 @@ internal class OpenVRMirrorTexture : IDisposable
         sampleUVWidth /= max;
         sampleUVHeight /= max;
 
-        minUV = new Vector2(0.5f - sampleUVWidth / 2f, 0.5f - sampleUVHeight / 2f);
-        maxUV = new Vector2(0.5f + sampleUVWidth / 2f, 0.5f + sampleUVHeight / 2f);
+        minUV = new(0.5f - sampleUVWidth / 2f, 0.5f - sampleUVHeight / 2f);
+        maxUV = new(0.5f + sampleUVWidth / 2f, 0.5f + sampleUVHeight / 2f);
     }
 
     ResourceSet GetLeftEyeSet(ResourceLayout rl)
@@ -129,7 +129,7 @@ internal class OpenVRMirrorTexture : IDisposable
         TextureView view = factory.CreateTextureView(target);
         _disposables.Add(view);
         ResourceSet rs = factory.CreateResourceSet(
-            new ResourceSetDescription(rl, view, _context.GraphicsDevice.PointSampler)
+            new(rl, view, _context.GraphicsDevice.PointSampler)
         );
         _disposables.Add(rs);
 
@@ -140,7 +140,7 @@ internal class OpenVRMirrorTexture : IDisposable
     {
         if (!_blitters.TryGetValue(outputDescription, out TextureBlitter ret))
         {
-            ret = new TextureBlitter(
+            ret = new(
                 _context.GraphicsDevice,
                 _context.GraphicsDevice.ResourceFactory,
                 outputDescription,

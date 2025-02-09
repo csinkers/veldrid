@@ -43,7 +43,7 @@ public static class TestUtils
 
     public static GraphicsDevice CreateVulkanDevice()
     {
-        return GraphicsDevice.CreateVulkan(new GraphicsDeviceOptions(true));
+        return GraphicsDevice.CreateVulkan(new(true));
     }
 
     public static void CreateVulkanDeviceWithSwapchain(
@@ -91,7 +91,7 @@ public static class TestUtils
 
     public static GraphicsDevice CreateD3D11Device()
     {
-        return GraphicsDevice.CreateD3D11(new GraphicsDeviceOptions(true));
+        return GraphicsDevice.CreateD3D11(new(true));
     }
 
     public static void CreateD3D11DeviceWithSwapchain(
@@ -198,9 +198,7 @@ public static class TestUtils
             Console.WriteLine("Metal is not supported on this system.");
             return null;
         }
-        return GraphicsDevice.CreateMetal(
-            new GraphicsDeviceOptions(true, null, false, ResourceBindingModel.Improved)
-        );
+        return GraphicsDevice.CreateMetal(new(true, null, false, ResourceBindingModel.Improved));
     }
 
     public static void CreateMetalDeviceWithSwapchain(
@@ -289,7 +287,7 @@ public abstract class GraphicsDeviceTestBase<T> : IDisposable
             throw new PlatformNotSupportedException();
         }
         _gd = gd;
-        _factory = new DisposeCollectorResourceFactory(_gd.ResourceFactory);
+        _factory = new(_gd.ResourceFactory);
     }
 
     protected DeviceBuffer GetReadback(DeviceBuffer buffer)
@@ -301,9 +299,7 @@ public abstract class GraphicsDeviceTestBase<T> : IDisposable
         }
         else
         {
-            readback = RF.CreateBuffer(
-                new BufferDescription(buffer.SizeInBytes, BufferUsage.StagingReadWrite)
-            );
+            readback = RF.CreateBuffer(new(buffer.SizeInBytes, BufferUsage.StagingReadWrite));
             readback.Name = $"Readback for ({buffer.Name})";
 
             CommandList cl = RF.CreateCommandList();

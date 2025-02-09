@@ -29,7 +29,7 @@ public class BackendInfoOpenGL
     internal BackendInfoOpenGL(OpenGLGraphicsDevice gd)
     {
         _gd = gd;
-        _extensions = new ReadOnlyCollection<string>(gd.Extensions.ToArray());
+        _extensions = new(gd.Extensions.ToArray());
     }
 
     /// <summary>

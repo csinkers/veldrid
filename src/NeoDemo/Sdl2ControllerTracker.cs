@@ -46,7 +46,7 @@ public class Sdl2ControllerTracker : IDisposable
         {
             if (SDL_IsGameController(i))
             {
-                sct = new Sdl2ControllerTracker(i);
+                sct = new(i);
                 return true;
             }
         }

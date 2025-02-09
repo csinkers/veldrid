@@ -9,7 +9,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
     public void ResourceSet_BufferInsteadOfTextureView_Fails()
     {
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "TV0",
                     ResourceKind.TextureReadOnly,
@@ -18,11 +18,11 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
             )
         );
 
-        DeviceBuffer ub = RF.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+        DeviceBuffer ub = RF.CreateBuffer(new(64, BufferUsage.UniformBuffer));
 
         Assert.Throws<VeldridException>(() =>
         {
-            ResourceSet set = RF.CreateResourceSet(new ResourceSetDescription(layout, ub));
+            ResourceSet set = RF.CreateResourceSet(new(layout, ub));
         });
     }
 
@@ -30,7 +30,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
     public void ResourceSet_IncorrectTextureUsage_Fails()
     {
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "TV0",
                     ResourceKind.TextureReadWrite,
@@ -53,7 +53,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
 
         Assert.Throws<VeldridException>(() =>
         {
-            ResourceSet set = RF.CreateResourceSet(new ResourceSetDescription(layout, tv));
+            ResourceSet set = RF.CreateResourceSet(new(layout, tv));
         });
     }
 
@@ -61,7 +61,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
     public void ResourceSet_IncorrectBufferUsage_Fails()
     {
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "RWB0",
                     ResourceKind.StructuredBufferReadWrite,
@@ -70,15 +70,11 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
             )
         );
 
-        DeviceBuffer readOnlyBuffer = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.UniformBuffer)
-        );
+        DeviceBuffer readOnlyBuffer = RF.CreateBuffer(new(1024, BufferUsage.UniformBuffer));
 
         Assert.Throws<VeldridException>(() =>
         {
-            ResourceSet set = RF.CreateResourceSet(
-                new ResourceSetDescription(layout, readOnlyBuffer)
-            );
+            ResourceSet set = RF.CreateResourceSet(new(layout, readOnlyBuffer));
         });
     }
 
@@ -86,7 +82,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
     public void ResourceSet_TooFewOrTooManyElements_Fails()
     {
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "UB0",
                     ResourceKind.UniformBuffer,
@@ -105,26 +101,26 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
             )
         );
 
-        DeviceBuffer ub = RF.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+        DeviceBuffer ub = RF.CreateBuffer(new(64, BufferUsage.UniformBuffer));
 
         Assert.Throws<VeldridException>(() =>
         {
-            RF.CreateResourceSet(new ResourceSetDescription(layout, ub));
+            RF.CreateResourceSet(new(layout, ub));
         });
 
         Assert.Throws<VeldridException>(() =>
         {
-            RF.CreateResourceSet(new ResourceSetDescription(layout, ub, ub));
+            RF.CreateResourceSet(new(layout, ub, ub));
         });
 
         Assert.Throws<VeldridException>(() =>
         {
-            RF.CreateResourceSet(new ResourceSetDescription(layout, ub, ub, ub, ub));
+            RF.CreateResourceSet(new(layout, ub, ub, ub, ub));
         });
 
         Assert.Throws<VeldridException>(() =>
         {
-            RF.CreateResourceSet(new ResourceSetDescription(layout, ub, ub, ub, ub, ub));
+            RF.CreateResourceSet(new(layout, ub, ub, ub, ub, ub));
         });
     }
 
@@ -132,7 +128,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
     public void ResourceSet_InvalidUniformOffset_Fails()
     {
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "UB0",
                     ResourceKind.UniformBuffer,
@@ -141,14 +137,12 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
             )
         );
 
-        DeviceBuffer buffer = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.UniformBuffer)
-        );
+        DeviceBuffer buffer = RF.CreateBuffer(new(1024, BufferUsage.UniformBuffer));
 
         Assert.Throws<VeldridException>(() =>
         {
             RF.CreateResourceSet(
-                new ResourceSetDescription(
+                new(
                     layout,
                     new DeviceBufferRange(buffer, GD.UniformBufferMinOffsetAlignment - 1, 256)
                 )
@@ -158,7 +152,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
         Assert.Throws<VeldridException>(() =>
         {
             RF.CreateResourceSet(
-                new ResourceSetDescription(
+                new(
                     layout,
                     new DeviceBufferRange(buffer, GD.UniformBufferMinOffsetAlignment + 1, 256)
                 )
@@ -170,7 +164,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
     public void ResourceSet_NoPipelineBound_Fails()
     {
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "UB0",
                     ResourceKind.UniformBuffer,
@@ -178,9 +172,9 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
                 )
             )
         );
-        DeviceBuffer ub = RF.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+        DeviceBuffer ub = RF.CreateBuffer(new(64, BufferUsage.UniformBuffer));
 
-        ResourceSet rs = RF.CreateResourceSet(new ResourceSetDescription(layout, ub));
+        ResourceSet rs = RF.CreateResourceSet(new(layout, ub));
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -191,16 +185,12 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void ResourceSet_InvalidSlot_Fails()
     {
-        DeviceBuffer infoBuffer = RF.CreateBuffer(
-            new BufferDescription(16, BufferUsage.UniformBuffer)
-        );
-        DeviceBuffer orthoBuffer = RF.CreateBuffer(
-            new BufferDescription(64, BufferUsage.UniformBuffer)
-        );
+        DeviceBuffer infoBuffer = RF.CreateBuffer(new(16, BufferUsage.UniformBuffer));
+        DeviceBuffer orthoBuffer = RF.CreateBuffer(new(64, BufferUsage.UniformBuffer));
 
         ShaderSetDescription shaderSet = new(
             [
-                new VertexLayoutDescription(
+                new(
                     new VertexElementDescription(
                         "Position",
                         VertexElementSemantic.TextureCoordinate,
@@ -217,7 +207,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
         );
 
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "InfoBuffer",
                     ResourceKind.UniformBuffer,
@@ -231,9 +221,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
             )
         );
 
-        ResourceSet set = RF.CreateResourceSet(
-            new ResourceSetDescription(layout, infoBuffer, orthoBuffer)
-        );
+        ResourceSet set = RF.CreateResourceSet(new(layout, infoBuffer, orthoBuffer));
 
         GraphicsPipelineDescription gpd = new(
             BlendStateDescription.SingleOverrideBlend,
@@ -242,10 +230,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
             PrimitiveTopology.PointList,
             shaderSet,
             layout,
-            new OutputDescription(
-                null,
-                new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm)
-            )
+            new(null, new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm))
         );
 
         Pipeline pipeline = RF.CreateGraphicsPipeline(gpd);
@@ -262,16 +247,12 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void ResourceSet_IncompatibleSet_Fails()
     {
-        DeviceBuffer infoBuffer = RF.CreateBuffer(
-            new BufferDescription(16, BufferUsage.UniformBuffer)
-        );
-        DeviceBuffer orthoBuffer = RF.CreateBuffer(
-            new BufferDescription(64, BufferUsage.UniformBuffer)
-        );
+        DeviceBuffer infoBuffer = RF.CreateBuffer(new(16, BufferUsage.UniformBuffer));
+        DeviceBuffer orthoBuffer = RF.CreateBuffer(new(64, BufferUsage.UniformBuffer));
 
         ShaderSetDescription shaderSet = new(
             [
-                new VertexLayoutDescription(
+                new(
                     new VertexElementDescription(
                         "Position",
                         VertexElementSemantic.TextureCoordinate,
@@ -288,7 +269,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
         );
 
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "InfoBuffer",
                     ResourceKind.UniformBuffer,
@@ -303,7 +284,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
         );
 
         ResourceLayout layout2 = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "InfoBuffer",
                     ResourceKind.UniformBuffer,
@@ -318,7 +299,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
         );
 
         ResourceLayout layout3 = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "InfoBuffer",
                     ResourceKind.UniformBuffer,
@@ -339,13 +320,9 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
         );
         TextureView texView = RF.CreateTextureView(tex);
 
-        ResourceSet set = RF.CreateResourceSet(
-            new ResourceSetDescription(layout, infoBuffer, orthoBuffer)
-        );
-        ResourceSet set2 = RF.CreateResourceSet(
-            new ResourceSetDescription(layout2, infoBuffer, texView)
-        );
-        ResourceSet set3 = RF.CreateResourceSet(new ResourceSetDescription(layout3, infoBuffer));
+        ResourceSet set = RF.CreateResourceSet(new(layout, infoBuffer, orthoBuffer));
+        ResourceSet set2 = RF.CreateResourceSet(new(layout2, infoBuffer, texView));
+        ResourceSet set3 = RF.CreateResourceSet(new(layout3, infoBuffer));
 
         GraphicsPipelineDescription gpd = new(
             BlendStateDescription.SingleOverrideBlend,
@@ -354,10 +331,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
             PrimitiveTopology.PointList,
             shaderSet,
             layout,
-            new OutputDescription(
-                null,
-                new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm)
-            )
+            new(null, new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm))
         );
 
         Pipeline pipeline = RF.CreateGraphicsPipeline(gpd);

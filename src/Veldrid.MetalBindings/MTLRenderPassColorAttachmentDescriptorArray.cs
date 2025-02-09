@@ -18,7 +18,7 @@ public struct MTLRenderPassColorAttachmentDescriptorArray
                 Selectors.objectAtIndexedSubscript,
                 (UIntPtr)index
             );
-            return new MTLRenderPassColorAttachmentDescriptor(value);
+            return new(value);
         }
         set
         {

@@ -38,7 +38,7 @@ public class ConstructedMesh16 : ConstructedMesh
     public override DeviceBuffer CreateIndexBuffer(ResourceFactory factory, CommandList cl)
     {
         DeviceBuffer ib = factory.CreateBuffer(
-            new BufferDescription((uint)Indices.Length * sizeof(ushort), BufferUsage.IndexBuffer)
+            new((uint)Indices.Length * sizeof(ushort), BufferUsage.IndexBuffer)
         );
         cl.UpdateBuffer(ib, 0, Indices);
         return ib;
@@ -75,7 +75,7 @@ public class ConstructedMesh16 : ConstructedMesh
 
     public RayEnumerator RayCast(Ray ray)
     {
-        return new RayEnumerator(this, ray);
+        return new(this, ray);
     }
 
     public struct RayEnumerator(ConstructedMesh16 mesh, Ray ray) : IEnumerator<float>

@@ -11,12 +11,12 @@ internal abstract class VkFramebufferBase : Framebuffer, IResourceRefCountTarget
     )
         : base(depthTexture, colorTextures)
     {
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
     }
 
     public VkFramebufferBase()
     {
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
     }
 
     public ResourceRefCount RefCount { get; }

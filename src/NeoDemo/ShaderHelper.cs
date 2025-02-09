@@ -20,8 +20,8 @@ public static class ShaderHelper
         debug = true;
 #endif
         Shader[] shaders = factory.CreateFromSpirv(
-            new ShaderDescription(ShaderStages.Vertex, vsBytes, "main", debug),
-            new ShaderDescription(ShaderStages.Fragment, fsBytes, "main", debug),
+            new(ShaderStages.Vertex, vsBytes, "main", debug),
+            new(ShaderStages.Fragment, fsBytes, "main", debug),
             GetOptions(gd)
         );
 
@@ -43,7 +43,7 @@ public static class ShaderHelper
             && !gd.IsDepthRangeZeroToOne;
         bool invertY = false;
 
-        return new CrossCompileOptions(fixClipZ, invertY, specializations);
+        return new(fixClipZ, invertY, specializations);
     }
 
     public static SpecializationConstant[] GetSpecializations(GraphicsDevice gd)
@@ -53,9 +53,9 @@ public static class ShaderHelper
 
         List<SpecializationConstant> specializations =
         [
-            new SpecializationConstant(100, gd.IsClipSpaceYInverted),
-            new SpecializationConstant(101, glOrGles), // TextureCoordinatesInvertedY
-            new SpecializationConstant(102, gd.IsDepthRangeZeroToOne),
+            new(100, gd.IsClipSpaceYInverted),
+            new(101, glOrGles), // TextureCoordinatesInvertedY
+            new(102, gd.IsDepthRangeZeroToOne),
         ];
 
         PixelFormat swapchainFormat = gd.MainSwapchain
@@ -66,7 +66,7 @@ public static class ShaderHelper
         bool swapchainIsSrgb =
             swapchainFormat == PixelFormat.B8_G8_R8_A8_UNorm_SRgb
             || swapchainFormat == PixelFormat.R8_G8_B8_A8_UNorm_SRgb;
-        specializations.Add(new SpecializationConstant(103, swapchainIsSrgb));
+        specializations.Add(new(103, swapchainIsSrgb));
 
         return specializations.ToArray();
     }

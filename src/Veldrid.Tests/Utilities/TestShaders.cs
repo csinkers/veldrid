@@ -16,7 +16,7 @@ internal static class TestShaders
     )
     {
         string path = ShaderProvider.GetPath($"{name}.{stage.ToString().ToLowerInvariant()[..4]}");
-        return new ShaderDescription(stage, ShaderProvider.ReadAllBytes(path), "main");
+        return new(stage, ShaderProvider.ReadAllBytes(path), "main");
     }
 
     public static Shader[] LoadVertexFragment(ResourceFactory factory, string setName)
@@ -24,11 +24,7 @@ internal static class TestShaders
         return factory.CreateFromSpirv(
             GetShaderDescription(ShaderStages.Vertex, setName),
             GetShaderDescription(ShaderStages.Fragment, setName),
-            new CrossCompileOptions(
-                false,
-                false,
-                new SpecializationConstant[] { new SpecializationConstant(100, false) }
-            )
+            new(false, false, new SpecializationConstant[] { new(100, false) })
         );
     }
 
@@ -36,11 +32,7 @@ internal static class TestShaders
     {
         return factory.CreateFromSpirv(
             GetShaderDescription(ShaderStages.Compute, setName),
-            new CrossCompileOptions(
-                false,
-                false,
-                new SpecializationConstant[] { new SpecializationConstant(100, false) }
-            )
+            new CrossCompileOptions(false, false, new SpecializationConstant[] { new(100, false) })
         );
     }
 }

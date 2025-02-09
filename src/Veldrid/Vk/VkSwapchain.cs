@@ -92,10 +92,10 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         vkGetDeviceQueue(_gd.Device, _presentQueueIndex, 0, &presentQueue);
         _presentQueue = presentQueue;
 
-        RefCount = new ResourceRefCount(this);
-        PresentLock = new object();
+        RefCount = new(this);
+        PresentLock = new();
 
-        _framebuffer = new VkSwapchainFramebuffer(gd, this, _surface, description);
+        _framebuffer = new(gd, this, _surface, description);
 
         CreateSwapchain(description.Width, description.Height);
 
@@ -321,7 +321,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             presentMode = presentMode,
             imageFormat = surfaceFormat.format,
             imageColorSpace = surfaceFormat.colorSpace,
-            imageExtent = new VkExtent2D() { width = clampedWidth, height = clampedHeight },
+            imageExtent = new() { width = clampedWidth, height = clampedHeight },
             minImageCount = imageCount,
             imageArrayLayers = 1,
             imageUsage =

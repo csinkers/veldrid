@@ -34,7 +34,7 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
     public DeviceBuffer CreateVertexBuffer(ResourceFactory factory, CommandList cl)
     {
         DeviceBuffer vb = factory.CreateBuffer(
-            new BufferDescription(
+            new(
                 (uint)Vertices.Length * (uint)Unsafe.SizeOf<VertexPositionNormalTexture>(),
                 BufferUsage.VertexBuffer
             )

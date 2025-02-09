@@ -1118,7 +1118,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int x = 0; x < tex3D.Width; x++)
         {
             int index = (int)(z * tex3D.Width * tex3D.Height + y * tex3D.Height + x);
-            data[index] = new RgbaByte((byte)x, (byte)y, (byte)z, 1);
+            data[index] = new((byte)x, (byte)y, (byte)z, 1);
         }
 
         fixed (RgbaByte* dataPtr = data)
@@ -1143,7 +1143,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < tex3D.Height; y++)
         for (int x = 0; x < tex3D.Width; x++)
         {
-            Assert.Equal(new RgbaByte((byte)x, (byte)y, (byte)z, 1), view[x, y, z]);
+            Assert.Equal(new((byte)x, (byte)y, (byte)z, 1), view[x, y, z]);
         }
         GD.Unmap(tex3D);
     }
@@ -1167,7 +1167,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < tex3D.Height; y++)
         for (int x = 0; x < tex3D.Width; x++)
         {
-            writeView[x, y, z] = new RgbaByte((byte)x, (byte)y, (byte)z, 1);
+            writeView[x, y, z] = new((byte)x, (byte)y, (byte)z, 1);
         }
         GD.Unmap(tex3D);
 
@@ -1176,7 +1176,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < tex3D.Height; y++)
         for (int x = 0; x < tex3D.Width; x++)
         {
-            Assert.Equal(new RgbaByte((byte)x, (byte)y, (byte)z, 1), readView[x, y, z]);
+            Assert.Equal(new((byte)x, (byte)y, (byte)z, 1), readView[x, y, z]);
         }
         GD.Unmap(tex3D);
     }
@@ -1297,7 +1297,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             MappedResourceView<RgbaByte> writeView = GD.Map<RgbaByte>(tex1D, MapMode.Write, level);
             for (int i = 0; i < writeView.Count; i++)
             {
-                writeView[i] = new RgbaByte((byte)i, (byte)(i * 2), (byte)level, 1);
+                writeView[i] = new((byte)i, (byte)(i * 2), (byte)level, 1);
             }
             GD.Unmap(tex1D, level);
         }
@@ -1307,7 +1307,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             MappedResourceView<RgbaByte> readView = GD.Map<RgbaByte>(tex1D, MapMode.Read, level);
             for (int i = 0; i < readView.Count; i++)
             {
-                Assert.Equal(new RgbaByte((byte)i, (byte)(i * 2), (byte)level, 1), readView[i]);
+                Assert.Equal(new((byte)i, (byte)(i * 2), (byte)level, 1), readView[i]);
             }
             GD.Unmap(tex1D, level);
         }
@@ -1367,7 +1367,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < src.Height; y++)
         for (int x = 0; x < src.Width; x++)
         {
-            srcData[y * src.Width + x] = new RgbaByte((byte)x, (byte)y, 0, 1);
+            srcData[y * src.Width + x] = new((byte)x, (byte)y, 0, 1);
         }
 
         GD.UpdateTexture(src, srcData, 0, 0, 0, src.Width, src.Height, 1, 0, 0);
@@ -1384,7 +1384,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 10; y < 60; y++)
         for (int x = 10; x < 60; x++)
         {
-            Assert.Equal(new RgbaByte((byte)(x + 40), (byte)(y + 40), 0, 1), readView[x, y]);
+            Assert.Equal(new((byte)(x + 40), (byte)(y + 40), 0, 1), readView[x, y]);
         }
         GD.Unmap(readback);
     }
@@ -1417,7 +1417,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < src.Height; y++)
         for (int x = 0; x < src.Width; x++)
         {
-            writeView[x, y] = new RgbaByte((byte)x, (byte)y, 0, 1);
+            writeView[x, y] = new((byte)x, (byte)y, 0, 1);
         }
         GD.Unmap(src, 5);
 
@@ -1432,7 +1432,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < dst.Height; y++)
         for (int x = 0; x < dst.Width; x++)
         {
-            Assert.Equal(new RgbaByte((byte)x, (byte)y, 0, 1), readView[x, y]);
+            Assert.Equal(new((byte)x, (byte)y, 0, 1), readView[x, y]);
         }
         GD.Unmap(dst);
     }
@@ -1457,7 +1457,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             for (int y = 0; y < src.Height; y++)
             for (int x = 0; x < src.Width; x++)
             {
-                writeView[x, y] = new RgbaByte((byte)x, (byte)y, (byte)layer, 1);
+                writeView[x, y] = new((byte)x, (byte)y, (byte)layer, 1);
             }
             GD.Unmap(src, layer);
         }
@@ -1468,7 +1468,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             for (int y = 0; y < src.Height; y++)
             for (int x = 0; x < src.Width; x++)
             {
-                Assert.Equal(new RgbaByte((byte)x, (byte)y, (byte)layer, 1), readView[x, y]);
+                Assert.Equal(new((byte)x, (byte)y, (byte)layer, 1), readView[x, y]);
             }
             GD.Unmap(src, layer);
         }
@@ -1492,7 +1492,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (uint y = 0; y < 30; y++)
         for (uint x = 0; x < 50; x++)
         {
-            data[y * 50 + x] = new RgbaByte((byte)x, (byte)y, 0, 1);
+            data[y * 50 + x] = new((byte)x, (byte)y, 0, 1);
         }
 
         fixed (RgbaByte* dataPtr = &data[0])
@@ -1516,7 +1516,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < 30; y++)
         for (int x = 0; x < 50; x++)
         {
-            Assert.Equal(new RgbaByte((byte)x, (byte)y, 0, 1), readView[x + 50, y + 70]);
+            Assert.Equal(new((byte)x, (byte)y, 0, 1), readView[x + 50, y + 70]);
         }
     }
 
@@ -1569,7 +1569,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < 10; y++)
         for (int x = 0; x < 10; x++)
         {
-            writeView[x, y, z] = new RgbaByte((byte)x, (byte)y, (byte)z, 1);
+            writeView[x, y, z] = new((byte)x, (byte)y, (byte)z, 1);
         }
         GD.Unmap(tex3D, 2);
 
@@ -1578,7 +1578,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < 10; y++)
         for (int x = 0; x < 10; x++)
         {
-            Assert.Equal(new RgbaByte((byte)x, (byte)y, (byte)z, 1), readView[x, y, z]);
+            Assert.Equal(new((byte)x, (byte)y, (byte)z, 1), readView[x, y, z]);
         }
         GD.Unmap(tex3D, 2);
     }
@@ -1602,7 +1602,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int x = 0; x < 16; x++)
         {
             int index = (int)(z * tex3D.Width * tex3D.Height + y * tex3D.Height + x);
-            data[index] = new RgbaByte((byte)x, (byte)y, (byte)z, 1);
+            data[index] = new((byte)x, (byte)y, (byte)z, 1);
         }
 
         fixed (RgbaByte* dataPtr = data)
@@ -1645,7 +1645,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         for (int y = 0; y < tex3D.Height; y++)
         for (int x = 0; x < tex3D.Width; x++)
         {
-            Assert.Equal(new RgbaByte((byte)x, (byte)y, (byte)z, 1), view[x, y, z]);
+            Assert.Equal(new((byte)x, (byte)y, (byte)z, 1), view[x, y, z]);
         }
         GD.Unmap(staging);
     }
@@ -1750,7 +1750,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.IfNot(GD.GetPixelFormatSupport(format, srcType, TextureUsage.Staging));
 
         Texture srcTex = RF.CreateTexture(
-            new TextureDescription(
+            new(
                 srcWidth,
                 srcHeight,
                 srcDepth,
@@ -1797,7 +1797,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         }
 
         Texture dstTex = RF.CreateTexture(
-            new TextureDescription(
+            new(
                 dstWidth,
                 dstHeight,
                 dstDepth,
@@ -2017,46 +2017,46 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
     static readonly FormatProps[] s_allFormatProps =
     [
-        new FormatProps(PixelFormat.R8_UNorm, 8, 0, 0, 0),
-        new FormatProps(PixelFormat.R8_SNorm, 8, 0, 0, 0),
-        new FormatProps(PixelFormat.R8_UInt, 8, 0, 0, 0),
-        new FormatProps(PixelFormat.R8_SInt, 8, 0, 0, 0),
-        new FormatProps(PixelFormat.R16_UNorm, 16, 0, 0, 0),
-        new FormatProps(PixelFormat.R16_SNorm, 16, 0, 0, 0),
-        new FormatProps(PixelFormat.R16_UInt, 16, 0, 0, 0),
-        new FormatProps(PixelFormat.R16_SInt, 16, 0, 0, 0),
-        new FormatProps(PixelFormat.R16_Float, 16, 0, 0, 0),
-        new FormatProps(PixelFormat.R32_UInt, 32, 0, 0, 0),
-        new FormatProps(PixelFormat.R32_SInt, 32, 0, 0, 0),
-        new FormatProps(PixelFormat.R32_Float, 32, 0, 0, 0),
-        new FormatProps(PixelFormat.R8_G8_UNorm, 8, 8, 0, 0),
-        new FormatProps(PixelFormat.R8_G8_SNorm, 8, 8, 0, 0),
-        new FormatProps(PixelFormat.R8_G8_UInt, 8, 8, 0, 0),
-        new FormatProps(PixelFormat.R8_G8_SInt, 8, 8, 0, 0),
-        new FormatProps(PixelFormat.R16_G16_UNorm, 16, 16, 0, 0),
-        new FormatProps(PixelFormat.R16_G16_SNorm, 16, 16, 0, 0),
-        new FormatProps(PixelFormat.R16_G16_UInt, 16, 16, 0, 0),
-        new FormatProps(PixelFormat.R16_G16_SInt, 16, 16, 0, 0),
-        new FormatProps(PixelFormat.R16_G16_Float, 16, 16, 0, 0),
-        new FormatProps(PixelFormat.R32_G32_UInt, 32, 32, 0, 0),
-        new FormatProps(PixelFormat.R32_G32_SInt, 32, 32, 0, 0),
-        new FormatProps(PixelFormat.R32_G32_Float, 32, 32, 0, 0),
-        new FormatProps(PixelFormat.B8_G8_R8_A8_UNorm, 8, 8, 8, 8),
-        new FormatProps(PixelFormat.R8_G8_B8_A8_UNorm, 8, 8, 8, 8),
-        new FormatProps(PixelFormat.R8_G8_B8_A8_SNorm, 8, 8, 8, 8),
-        new FormatProps(PixelFormat.R8_G8_B8_A8_UInt, 8, 8, 8, 8),
-        new FormatProps(PixelFormat.R8_G8_B8_A8_SInt, 8, 8, 8, 8),
-        new FormatProps(PixelFormat.R16_G16_B16_A16_UNorm, 16, 16, 16, 16),
-        new FormatProps(PixelFormat.R16_G16_B16_A16_SNorm, 16, 16, 16, 16),
-        new FormatProps(PixelFormat.R16_G16_B16_A16_UInt, 16, 16, 16, 16),
-        new FormatProps(PixelFormat.R16_G16_B16_A16_SInt, 16, 16, 16, 16),
-        new FormatProps(PixelFormat.R16_G16_B16_A16_Float, 16, 16, 16, 16),
-        new FormatProps(PixelFormat.R32_G32_B32_A32_UInt, 32, 32, 32, 32),
-        new FormatProps(PixelFormat.R32_G32_B32_A32_SInt, 32, 32, 32, 32),
-        new FormatProps(PixelFormat.R32_G32_B32_A32_Float, 32, 32, 32, 32),
-        new FormatProps(PixelFormat.R10_G10_B10_A2_UInt, 10, 10, 10, 2),
-        new FormatProps(PixelFormat.R10_G10_B10_A2_UNorm, 10, 10, 10, 2),
-        new FormatProps(PixelFormat.R11_G11_B10_Float, 11, 11, 10, 0),
+        new(PixelFormat.R8_UNorm, 8, 0, 0, 0),
+        new(PixelFormat.R8_SNorm, 8, 0, 0, 0),
+        new(PixelFormat.R8_UInt, 8, 0, 0, 0),
+        new(PixelFormat.R8_SInt, 8, 0, 0, 0),
+        new(PixelFormat.R16_UNorm, 16, 0, 0, 0),
+        new(PixelFormat.R16_SNorm, 16, 0, 0, 0),
+        new(PixelFormat.R16_UInt, 16, 0, 0, 0),
+        new(PixelFormat.R16_SInt, 16, 0, 0, 0),
+        new(PixelFormat.R16_Float, 16, 0, 0, 0),
+        new(PixelFormat.R32_UInt, 32, 0, 0, 0),
+        new(PixelFormat.R32_SInt, 32, 0, 0, 0),
+        new(PixelFormat.R32_Float, 32, 0, 0, 0),
+        new(PixelFormat.R8_G8_UNorm, 8, 8, 0, 0),
+        new(PixelFormat.R8_G8_SNorm, 8, 8, 0, 0),
+        new(PixelFormat.R8_G8_UInt, 8, 8, 0, 0),
+        new(PixelFormat.R8_G8_SInt, 8, 8, 0, 0),
+        new(PixelFormat.R16_G16_UNorm, 16, 16, 0, 0),
+        new(PixelFormat.R16_G16_SNorm, 16, 16, 0, 0),
+        new(PixelFormat.R16_G16_UInt, 16, 16, 0, 0),
+        new(PixelFormat.R16_G16_SInt, 16, 16, 0, 0),
+        new(PixelFormat.R16_G16_Float, 16, 16, 0, 0),
+        new(PixelFormat.R32_G32_UInt, 32, 32, 0, 0),
+        new(PixelFormat.R32_G32_SInt, 32, 32, 0, 0),
+        new(PixelFormat.R32_G32_Float, 32, 32, 0, 0),
+        new(PixelFormat.B8_G8_R8_A8_UNorm, 8, 8, 8, 8),
+        new(PixelFormat.R8_G8_B8_A8_UNorm, 8, 8, 8, 8),
+        new(PixelFormat.R8_G8_B8_A8_SNorm, 8, 8, 8, 8),
+        new(PixelFormat.R8_G8_B8_A8_UInt, 8, 8, 8, 8),
+        new(PixelFormat.R8_G8_B8_A8_SInt, 8, 8, 8, 8),
+        new(PixelFormat.R16_G16_B16_A16_UNorm, 16, 16, 16, 16),
+        new(PixelFormat.R16_G16_B16_A16_SNorm, 16, 16, 16, 16),
+        new(PixelFormat.R16_G16_B16_A16_UInt, 16, 16, 16, 16),
+        new(PixelFormat.R16_G16_B16_A16_SInt, 16, 16, 16, 16),
+        new(PixelFormat.R16_G16_B16_A16_Float, 16, 16, 16, 16),
+        new(PixelFormat.R32_G32_B32_A32_UInt, 32, 32, 32, 32),
+        new(PixelFormat.R32_G32_B32_A32_SInt, 32, 32, 32, 32),
+        new(PixelFormat.R32_G32_B32_A32_Float, 32, 32, 32, 32),
+        new(PixelFormat.R10_G10_B10_A2_UInt, 10, 10, 10, 2),
+        new(PixelFormat.R10_G10_B10_A2_UNorm, 10, 10, 10, 2),
+        new(PixelFormat.R11_G11_B10_Float, 11, 11, 10, 0),
     ];
 
     struct FormatProps(PixelFormat format, int redBits, int blueBits, int greenBits, int alphaBits)

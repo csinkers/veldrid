@@ -97,7 +97,7 @@ internal unsafe class OculusContext : VRContext
         _session = session;
         _luid = luid;
 
-        _mirrorTexture = new OculusMirrorTexture(this);
+        _mirrorTexture = new(this);
     }
 
     public override void Initialize(GraphicsDevice gd)
@@ -139,7 +139,7 @@ internal unsafe class OculusContext : VRContext
                 _hmdDesc.DefaultEyeFov[eye],
                 1.0f
             );
-            _eyeSwapchains[eye] = new OculusSwapchain(
+            _eyeSwapchains[eye] = new(
                 _gd,
                 _session,
                 idealSize.w,
@@ -273,7 +273,7 @@ internal unsafe class OculusContext : VRContext
             _projections[eye] = Matrix4x4.Transpose(proj);
         }
 
-        return new HmdPoseState(
+        return new(
             _projections[0],
             _projections[1],
             _positions[0],
@@ -425,7 +425,7 @@ internal unsafe class OculusSwapchain
         for (int i = 0; i < Framebuffers.Length; i++)
         {
             Framebuffers[i] = gd.ResourceFactory.CreateFramebuffer(
-                new FramebufferDescription(depthTextures?[i], colorTextures[i])
+                new(depthTextures?[i], colorTextures[i])
             );
         }
 

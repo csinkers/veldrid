@@ -16,7 +16,7 @@ public struct MTLVertexAttributeDescriptorArray
                 Selectors.objectAtIndexedSubscript,
                 index
             );
-            return new MTLVertexAttributeDescriptor(value);
+            return new(value);
         }
         set =>
             objc_msgSend(NativePtr, Selectors.setObjectAtIndexedSubscript, value.NativePtr, index);

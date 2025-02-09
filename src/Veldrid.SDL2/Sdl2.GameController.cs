@@ -182,9 +182,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_IsGameController_t(int joystick_index);
 
-    static readonly SDL_IsGameController_t s_sdl_isGameController = LoadFunction<SDL_IsGameController_t>(
-        "SDL_IsGameController"
-    );
+    static readonly SDL_IsGameController_t s_sdl_isGameController =
+        LoadFunction<SDL_IsGameController_t>("SDL_IsGameController");
 
     /// <summary>
     /// Is the joystick on this index supported by the game controller interface?

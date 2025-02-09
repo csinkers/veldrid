@@ -8,7 +8,7 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Dispose_Buffer()
     {
-        DeviceBuffer b = RF.CreateBuffer(new BufferDescription(256, BufferUsage.VertexBuffer));
+        DeviceBuffer b = RF.CreateBuffer(new(256, BufferUsage.VertexBuffer));
         b.Dispose();
         Assert.True(b.IsDisposed);
     }
@@ -47,7 +47,7 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
                 TextureUsage.RenderTarget
             )
         );
-        Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, t));
+        Framebuffer fb = RF.CreateFramebuffer(new(null, t));
         fb.Dispose();
         Assert.True(fb.IsDisposed);
         Assert.False(t.IsDisposed);
@@ -77,7 +77,7 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
         Shader[] shaders = TestShaders.LoadVertexFragment(RF, "UIntVertexAttribs");
         ShaderSetDescription shaderSet = new(
             [
-                new VertexLayoutDescription(
+                new(
                     new VertexElementDescription(
                         "Position",
                         VertexElementSemantic.TextureCoordinate,
@@ -94,7 +94,7 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
         );
 
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "InfoBuffer",
                     ResourceKind.UniformBuffer,
@@ -115,10 +115,7 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
             PrimitiveTopology.PointList,
             shaderSet,
             layout,
-            new OutputDescription(
-                null,
-                new OutputAttachmentDescription(PixelFormat.R32_G32_B32_A32_Float)
-            )
+            new(null, new OutputAttachmentDescription(PixelFormat.R32_G32_B32_A32_Float))
         );
         Pipeline pipeline = RF.CreateGraphicsPipeline(gpd);
         pipeline.Dispose();
@@ -140,7 +137,7 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
     public void Dispose_ResourceSet()
     {
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "InfoBuffer",
                     ResourceKind.UniformBuffer,
@@ -154,10 +151,10 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
             )
         );
 
-        DeviceBuffer ub0 = RF.CreateBuffer(new BufferDescription(256, BufferUsage.UniformBuffer));
-        DeviceBuffer ub1 = RF.CreateBuffer(new BufferDescription(256, BufferUsage.UniformBuffer));
+        DeviceBuffer ub0 = RF.CreateBuffer(new(256, BufferUsage.UniformBuffer));
+        DeviceBuffer ub1 = RF.CreateBuffer(new(256, BufferUsage.UniformBuffer));
 
-        ResourceSet rs = RF.CreateResourceSet(new ResourceSetDescription(layout, ub0, ub1));
+        ResourceSet rs = RF.CreateResourceSet(new(layout, ub0, ub1));
         rs.Dispose();
         Assert.True(rs.IsDisposed);
         Assert.False(ub0.IsDisposed);

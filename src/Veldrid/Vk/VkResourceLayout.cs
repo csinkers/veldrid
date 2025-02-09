@@ -80,7 +80,7 @@ internal sealed unsafe class VkResourceLayout : ResourceLayout, IResourceRefCoun
             }
         }
 
-        DescriptorResourceCounts = new DescriptorResourceCounts(
+        DescriptorResourceCounts = new(
             uniformBufferCount,
             uniformBufferDynamicCount,
             sampledImageCount,
@@ -102,7 +102,7 @@ internal sealed unsafe class VkResourceLayout : ResourceLayout, IResourceRefCoun
         CheckResult(result);
         _dsl = dsl;
 
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
     }
 
     public override string? Name

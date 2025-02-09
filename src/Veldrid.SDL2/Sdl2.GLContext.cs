@@ -10,9 +10,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate IntPtr SDL_GL_CreateContext_t(SDL_Window SDL2Window);
 
-    static readonly SDL_GL_CreateContext_t s_gl_createContext = LoadFunction<SDL_GL_CreateContext_t>(
-        "SDL_GL_CreateContext"
-    );
+    static readonly SDL_GL_CreateContext_t s_gl_createContext =
+        LoadFunction<SDL_GL_CreateContext_t>("SDL_GL_CreateContext");
 
     public static IntPtr SDL_GL_CreateContext(SDL_Window Sdl2Window) =>
         s_gl_createContext(Sdl2Window);
@@ -20,9 +19,8 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate IntPtr SDL_GL_GetProcAddress_t(string proc);
 
-    static readonly SDL_GL_GetProcAddress_t s_getProcAddress = LoadFunction<SDL_GL_GetProcAddress_t>(
-        "SDL_GL_GetProcAddress"
-    );
+    static readonly SDL_GL_GetProcAddress_t s_getProcAddress =
+        LoadFunction<SDL_GL_GetProcAddress_t>("SDL_GL_GetProcAddress");
 
     public static IntPtr SDL_GL_GetProcAddress(string proc)
     {
@@ -83,18 +81,16 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GL_SetSwapInterval_t(int interval);
 
-    static readonly SDL_GL_SetSwapInterval_t s_gl_setSwapInterval = LoadFunction<SDL_GL_SetSwapInterval_t>(
-        "SDL_GL_SetSwapInterval"
-    );
+    static readonly SDL_GL_SetSwapInterval_t s_gl_setSwapInterval =
+        LoadFunction<SDL_GL_SetSwapInterval_t>("SDL_GL_SetSwapInterval");
 
     public static int SDL_GL_SetSwapInterval(int interval) => s_gl_setSwapInterval(interval);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate void SDL_GL_DeleteContext_t(IntPtr context);
 
-    static readonly SDL_GL_DeleteContext_t s_gl_deleteContext = LoadFunction<SDL_GL_DeleteContext_t>(
-        "SDL_GL_DeleteContext"
-    );
+    static readonly SDL_GL_DeleteContext_t s_gl_deleteContext =
+        LoadFunction<SDL_GL_DeleteContext_t>("SDL_GL_DeleteContext");
 
     public static void SDL_GL_DeleteContext(IntPtr context) => s_gl_deleteContext(context);
 }

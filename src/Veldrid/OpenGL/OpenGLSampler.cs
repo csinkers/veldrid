@@ -221,9 +221,9 @@ internal sealed unsafe class OpenGLSampler(
         {
             return borderColor switch
             {
-                SamplerBorderColor.TransparentBlack => new RgbaFloat(0, 0, 0, 0),
-                SamplerBorderColor.OpaqueBlack => new RgbaFloat(0, 0, 0, 1),
-                SamplerBorderColor.OpaqueWhite => new RgbaFloat(1, 1, 1, 1),
+                SamplerBorderColor.TransparentBlack => new(0, 0, 0, 0),
+                SamplerBorderColor.OpaqueBlack => new(0, 0, 0, 1),
+                SamplerBorderColor.OpaqueWhite => new(1, 1, 1, 1),
                 _ => Illegal.Value<SamplerBorderColor, RgbaFloat>(),
             };
         }

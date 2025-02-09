@@ -37,7 +37,7 @@ internal sealed unsafe class VkShader : Shader, IResourceRefCountTarget
             _shaderModule = shaderModule;
         }
 
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
     }
 
     public override string? Name

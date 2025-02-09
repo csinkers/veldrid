@@ -405,7 +405,7 @@ public abstract class ResourceFactory
     /// <returns>A new <see cref="CommandList"/>.</returns>
     public CommandList CreateCommandList()
     {
-        return CreateCommandList(new CommandListDescription());
+        return CreateCommandList(new());
     }
 
     /// <summary>

@@ -18,7 +18,7 @@ internal class FullScreenQuad : Renderable
         _disposeCollector = factory.DisposeCollector;
 
         ResourceLayout resourceLayout = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "SourceTexture",
                     ResourceKind.TextureReadOnly,
@@ -39,19 +39,13 @@ internal class FullScreenQuad : Renderable
         );
 
         GraphicsPipelineDescription pd = new(
-            new BlendStateDescription(RgbaFloat.Black, BlendAttachmentDescription.OverrideBlend),
+            new(RgbaFloat.Black, BlendAttachmentDescription.OverrideBlend),
             DepthStencilStateDescription.Disabled,
-            new RasterizerStateDescription(
-                FaceCullMode.Back,
-                PolygonFillMode.Solid,
-                FrontFace.Clockwise,
-                true,
-                false
-            ),
+            new(FaceCullMode.Back, PolygonFillMode.Solid, FrontFace.Clockwise, true, false),
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(
+            new(
                 [
-                    new VertexLayoutDescription(
+                    new(
                         new VertexElementDescription(
                             "Position",
                             VertexElementSemantic.TextureCoordinate,
@@ -74,14 +68,10 @@ internal class FullScreenQuad : Renderable
 
         float[] verts = Util.GetFullScreenQuadVerts(gd);
 
-        _vb = factory.CreateBuffer(
-            new BufferDescription(verts.SizeInBytes(), BufferUsage.VertexBuffer)
-        );
+        _vb = factory.CreateBuffer(new(verts.SizeInBytes(), BufferUsage.VertexBuffer));
         cl.UpdateBuffer(_vb, 0, verts);
 
-        _ib = factory.CreateBuffer(
-            new BufferDescription(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer)
-        );
+        _ib = factory.CreateBuffer(new(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer));
         cl.UpdateBuffer(_ib, 0, s_quadIndices);
     }
 
@@ -92,7 +82,7 @@ internal class FullScreenQuad : Renderable
 
     public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
     {
-        return new RenderOrderKey();
+        return new();
     }
 
     public override void Render(

@@ -16,7 +16,7 @@ internal sealed class D3D11ResourceFactory : ResourceFactory, IDisposable
     {
         _gd = gd;
         _device = gd.Device;
-        _cache = new D3D11ResourceCache(_device);
+        _cache = new(_device);
     }
 
     public override CommandList CreateCommandList(in CommandListDescription description)

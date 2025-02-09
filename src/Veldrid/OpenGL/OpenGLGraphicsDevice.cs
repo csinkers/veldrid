@@ -147,7 +147,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         )
         {
             // This mismatch should never be hit in valid OpenGL implementations.
-            ApiVersion = new GraphicsApiVersion(majorVersion, minorVersion, 0, 0);
+            ApiVersion = new(majorVersion, minorVersion, 0, 0);
         }
 
         int extensionCount;
@@ -167,10 +167,10 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         }
 
         _selfHandle = GCHandle.Alloc(this, GCHandleType.Weak);
-        _extensions = new OpenGLExtensions(extensions, BackendType, majorVersion, minorVersion);
+        _extensions = new(extensions, BackendType, majorVersion, minorVersion);
 
         bool drawIndirect = _extensions.DrawIndirect || _extensions.MultiDrawIndirect;
-        Features = new GraphicsDeviceFeatures(
+        Features = new(
             computeShader: _extensions.ComputeShaders,
             geometryShader: _extensions.GeometryShader,
             tessellationShaders: _extensions.TessellationShader,
@@ -228,7 +228,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             swapchainFormat = PixelFormat.B8_G8_R8_A8_UNorm;
         }
 
-        _swapchainFramebuffer = new OpenGLSwapchainFramebuffer(
+        _swapchainFramebuffer = new(
             width,
             height,
             swapchainFormat,
@@ -243,8 +243,8 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             CheckLastError();
         }
 
-        _textureSamplerManager = new OpenGLTextureSamplerManager(_extensions);
-        _commandExecutor = new OpenGLCommandExecutor(this, platformInfo.SetSwapchainFramebuffer);
+        _textureSamplerManager = new(_extensions);
+        _commandExecutor = new(this, platformInfo.SetSwapchainFramebuffer);
 
         int maxColorTextureSamples;
         if (BackendType == GraphicsBackend.OpenGL)
@@ -316,17 +316,11 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             platformInfo.ResizeSwapchain
         );
 
-        _workItems = new ConcurrentQueue<ExecutionThreadWorkItem>();
-        _workResetEvent = new AutoResetEvent(false);
+        _workItems = new();
+        _workResetEvent = new(false);
         _clearCurrentContext();
-        _executionThread = new ExecutionThread(
-            this,
-            _workItems,
-            _workResetEvent,
-            _makeCurrent,
-            _glContext
-        );
-        _openglInfo = new BackendInfoOpenGL(this);
+        _executionThread = new(this, _workItems, _workResetEvent, _makeCurrent, _glContext);
+        _openglInfo = new(this);
 
         PostDeviceCreated();
     }
@@ -1038,7 +1032,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             sampleCounts |= (uint)(1 << i);
         }
 
-        properties = new PixelFormatProperties(
+        properties = new(
             _maxTextureSize,
             type == TextureType.Texture1D ? 1 : _maxTextureSize,
             type != TextureType.Texture3D ? 1 : _maxTexDepth,
@@ -1074,7 +1068,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
     {
         lock (_mappedResourceLock)
         {
-            if (_mappedResources.ContainsKey(new MappedResourceCacheKey(resource, subresource)))
+            if (_mappedResources.ContainsKey(new(resource, subresource)))
             {
                 ThrowMappedException(resource, subresource);
             }
@@ -1384,7 +1378,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             _makeCurrent = makeCurrent;
             _context = context;
 
-            _thread = new Thread(Run) { IsBackground = true, Name = "OpenGL Worker" };
+            _thread = new(Run) { IsBackground = true, Name = "OpenGL Worker" };
             _thread.Start();
         }
 
@@ -1435,7 +1429,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
                     return ev;
                 }
             }
-            return new ManualResetEvent(false);
+            return new(false);
         }
 
         void ReturnResetEvent(ManualResetEvent mre)
@@ -1708,7 +1702,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
                     }
                     CheckLastError();
 
-                    info.MappedResource = new MappedResource(
+                    info.MappedResource = new(
                         resource,
                         mode,
                         (IntPtr)mappedPtr,
@@ -1956,7 +1950,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
                         texture.Format
                     );
 
-                    info.MappedResource = new MappedResource(
+                    info.MappedResource = new(
                         resource,
                         mode,
                         (IntPtr)block.Data,
@@ -2123,7 +2117,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
 
             CheckExceptions();
 
-            return new MappedResource(
+            return new(
                 resource,
                 mode,
                 mrp.Data,

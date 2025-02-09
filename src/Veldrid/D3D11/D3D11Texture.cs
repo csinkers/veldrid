@@ -104,10 +104,7 @@ internal sealed class D3D11Texture : Texture
                 BindFlags = bindFlags,
                 CPUAccessFlags = cpuFlags,
                 Usage = resourceUsage,
-                SampleDescription = new Vortice.DXGI.SampleDescription(
-                    (int)FormatHelpers.GetSampleCountUInt32(SampleCount),
-                    0
-                ),
+                SampleDescription = new((int)FormatHelpers.GetSampleCountUInt32(SampleCount), 0),
                 MiscFlags = optionFlags,
             };
 

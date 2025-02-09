@@ -52,7 +52,7 @@ internal sealed class MTLResourceLayout : ResourceLayout
                 _ => Illegal.Value<ResourceKind, uint>(),
             };
 
-            _bindingInfosByVdIndex[i] = new ResourceBindingInfo(
+            _bindingInfosByVdIndex[i] = new(
                 slot,
                 elements[i].Stages,
                 elements[i].Kind,

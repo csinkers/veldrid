@@ -54,16 +54,16 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         IsDebug = options.Debug;
         _device = MTLDevice.MTLCreateSystemDefaultDevice();
         DeviceName = _device.name;
-        MetalFeatures = new MTLFeatureSupport(_device);
+        MetalFeatures = new(_device);
 
         UniformBufferMinOffsetAlignment = MetalFeatures.IsMacOS ? 16u : 256u;
         StructuredBufferMinOffsetAlignment = 16u;
 
         int major = (int)MetalFeatures.MaxFeatureSet / 10000;
         int minor = (int)MetalFeatures.MaxFeatureSet % 10000;
-        ApiVersion = new GraphicsApiVersion(major, minor, 0, 0);
+        ApiVersion = new(major, minor, 0, 0);
 
-        Features = new GraphicsDeviceFeatures(
+        Features = new(
             computeShader: true,
             geometryShader: false,
             tessellationShaders: false,
@@ -127,7 +127,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
             MainSwapchain = new MTLSwapchain(this, desc);
         }
 
-        _metalInfo = new BackendInfoMetal(this);
+        _metalInfo = new(this);
 
         PostDeviceCreated();
     }
@@ -255,14 +255,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
             return Illegal.Value<TextureType, bool>();
         }
 
-        properties = new PixelFormatProperties(
-            maxWidth,
-            maxHeight,
-            maxDepth,
-            uint.MaxValue,
-            maxArrayLayer,
-            sampleCounts
-        );
+        properties = new(maxWidth, maxHeight, maxDepth, uint.MaxValue, maxArrayLayer, sampleCounts);
         return true;
     }
 
@@ -314,16 +307,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         if (mtlTex.StagingBuffer.IsNull)
         {
             Texture stagingTex = ResourceFactory.CreateTexture(
-                new TextureDescription(
-                    width,
-                    height,
-                    depth,
-                    1,
-                    1,
-                    texture.Format,
-                    TextureUsage.Staging,
-                    texture.Type
-                )
+                new(width, height, depth, 1, 1, texture.Format, TextureUsage.Staging, texture.Type)
             );
             UpdateTexture(stagingTex, source, sizeInBytes, 0, 0, 0, width, height, depth, 0, 0);
             CommandList cl = ResourceFactory.CreateCommandList();
@@ -423,7 +407,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
     MappedResource MapBuffer(MTLBuffer buffer, uint offsetInBytes, uint sizeInBytes, MapMode mode)
     {
         byte* data = (byte*)buffer.DeviceBuffer.contents() + offsetInBytes;
-        return new MappedResource(buffer, mode, (IntPtr)data, offsetInBytes, sizeInBytes, 0, 0, 0);
+        return new(buffer, mode, (IntPtr)data, offsetInBytes, sizeInBytes, 0, 0, 0);
     }
 
     MappedResource MapTexture(
@@ -440,7 +424,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         texture.GetSubresourceLayout(mipLevel, arrayLayer, out uint rowPitch, out uint depthPitch);
         ulong offset = Util.ComputeSubresourceOffset(texture, mipLevel, arrayLayer);
         byte* offsetPtr = data + offset;
-        return new MappedResource(
+        return new(
             texture,
             mode,
             (IntPtr)offsetPtr,
@@ -613,16 +597,14 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
                 {
                     if (resourceStream == null)
                     {
-                        throw new Exception(
-                            $"Missing required shader manifest resource \"{name}\"."
-                        );
+                        throw new($"Missing required shader manifest resource \"{name}\".");
                     }
 
                     byte[] data = new byte[resourceStream.Length];
                     using MemoryStream ms = new(data);
                     resourceStream.CopyTo(ms);
                     ShaderDescription shaderDesc = new(ShaderStages.Compute, data, "copy_bytes");
-                    _unalignedBufferCopyShader = new MTLShader(shaderDesc, this);
+                    _unalignedBufferCopyShader = new(shaderDesc, this);
                 }
 
                 descriptor.computeFunction = _unalignedBufferCopyShader.Function;

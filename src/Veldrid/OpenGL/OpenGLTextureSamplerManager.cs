@@ -77,7 +77,7 @@ internal sealed unsafe class OpenGLTextureSamplerManager
             glBindSampler(textureUnit, samplerID);
             CheckLastError();
 
-            _textureUnitSamplers[textureUnit] = new BoundSamplerStateInfo(sampler, mipmapped);
+            _textureUnitSamplers[textureUnit] = new(sampler, mipmapped);
         }
         else if (texBinding != null)
         {

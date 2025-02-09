@@ -25,8 +25,8 @@ internal class TextureBlitter : IDisposable
     {
         SpecializationConstant[] specConstants =
         [
-            new SpecializationConstant(0, srgbOutput),
-            new SpecializationConstant(
+            new(0, srgbOutput),
+            new(
                 1,
                 gd.BackendType == GraphicsBackend.OpenGL
                     || gd.BackendType == GraphicsBackend.OpenGLES
@@ -34,17 +34,13 @@ internal class TextureBlitter : IDisposable
         ];
 
         Shader[] shaders = factory.CreateFromSpirv(
-            new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
-            new ShaderDescription(
-                ShaderStages.Fragment,
-                Encoding.ASCII.GetBytes(fragmentGlsl),
-                "main"
-            ),
-            new CrossCompileOptions(false, false, specConstants)
+            new(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
+            new(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"),
+            new(false, false, specConstants)
         );
 
         _rl = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "Input",
                     ResourceKind.TextureReadOnly,
@@ -59,7 +55,7 @@ internal class TextureBlitter : IDisposable
         );
 
         _sampleRegionLayout = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "SampleRegionInfo",
                     ResourceKind.UniformBuffer,
@@ -69,25 +65,21 @@ internal class TextureBlitter : IDisposable
         );
 
         _pipeline = factory.CreateGraphicsPipeline(
-            new GraphicsPipelineDescription(
+            new(
                 BlendStateDescription.SingleOverrideBlend,
                 DepthStencilStateDescription.Disabled,
                 RasterizerStateDescription.CullNone,
                 PrimitiveTopology.TriangleStrip,
-                new ShaderSetDescription([], [shaders[0], shaders[1]], specConstants),
+                new([], [shaders[0], shaders[1]], specConstants),
                 [_rl, _sampleRegionLayout],
                 outputDesc
             )
         );
 
-        _sampleRegionUB = factory.CreateBuffer(
-            new BufferDescription(16, BufferUsage.UniformBuffer)
-        );
-        _sampleRegionSet = factory.CreateResourceSet(
-            new ResourceSetDescription(_sampleRegionLayout, _sampleRegionUB)
-        );
+        _sampleRegionUB = factory.CreateBuffer(new(16, BufferUsage.UniformBuffer));
+        _sampleRegionSet = factory.CreateResourceSet(new(_sampleRegionLayout, _sampleRegionUB));
 
-        _lastMinMaxUV = new Vector4(0, 0, 1, 1);
+        _lastMinMaxUV = new(0, 0, 1, 1);
         gd.UpdateBuffer(_sampleRegionUB, 0, _lastMinMaxUV);
     }
 

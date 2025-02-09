@@ -24,7 +24,7 @@ internal sealed class MTLPipeline : Pipeline
     public MTLDepthClipMode DepthClipMode { get; }
     public override bool IsComputePipeline { get; }
     public bool ScissorTestEnabled { get; }
-    public MTLSize ThreadsPerThreadgroup { get; } = new MTLSize(1, 1, 1);
+    public MTLSize ThreadsPerThreadgroup { get; } = new(1, 1, 1);
     public bool HasStencil { get; }
     public override string? Name { get; set; }
     public uint StencilReference { get; }
@@ -281,7 +281,7 @@ internal sealed class MTLPipeline : Pipeline
             );
         }
 
-        ThreadsPerThreadgroup = new MTLSize(
+        ThreadsPerThreadgroup = new(
             description.ThreadGroupSizeX,
             description.ThreadGroupSizeY,
             description.ThreadGroupSizeZ

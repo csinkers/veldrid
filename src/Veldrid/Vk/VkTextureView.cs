@@ -38,7 +38,7 @@ internal sealed unsafe class VkTextureView : TextureView, IResourceRefCountTarge
             sType = VkStructureType.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             image = tex.OptimalDeviceImage,
             format = VkFormats.VdToVkPixelFormat(Format, tex.Usage),
-            subresourceRange = new VkImageSubresourceRange()
+            subresourceRange = new()
             {
                 aspectMask = aspectFlags,
                 baseMipLevel = description.BaseMipLevel,
@@ -81,7 +81,7 @@ internal sealed unsafe class VkTextureView : TextureView, IResourceRefCountTarge
         VkImageView imageView;
         vkCreateImageView(_gd.Device, &imageViewCI, null, &imageView);
         _imageView = imageView;
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
     }
 
     public override string? Name

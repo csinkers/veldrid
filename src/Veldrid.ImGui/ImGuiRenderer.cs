@@ -137,16 +137,16 @@ public class ImGuiRenderer : IDisposable
         _colorSpaceHandling = colorSpaceHandling;
         ResourceFactory factory = gd.ResourceFactory;
         _vertexBuffer = factory.CreateBuffer(
-            new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.DynamicWrite)
+            new(10000, BufferUsage.VertexBuffer | BufferUsage.DynamicWrite)
         );
         _vertexBuffer.Name = "ImGui.NET Vertex Buffer";
         _indexBuffer = factory.CreateBuffer(
-            new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.DynamicWrite)
+            new(2000, BufferUsage.IndexBuffer | BufferUsage.DynamicWrite)
         );
         _indexBuffer.Name = "ImGui.NET Index Buffer";
 
         _projMatrixBuffer = factory.CreateBuffer(
-            new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+            new(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
         );
         _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
 
@@ -163,7 +163,7 @@ public class ImGuiRenderer : IDisposable
             _colorSpaceHandling
         );
         _vertexShader = factory.CreateShader(
-            new ShaderDescription(
+            new(
                 ShaderStages.Vertex,
                 vertexShaderBytes,
                 _gd.BackendType == GraphicsBackend.Vulkan ? "main" : "VS"
@@ -171,7 +171,7 @@ public class ImGuiRenderer : IDisposable
         );
         _vertexShader.Name = "ImGui.NET Vertex Shader";
         _fragmentShader = factory.CreateShader(
-            new ShaderDescription(
+            new(
                 ShaderStages.Fragment,
                 fragmentShaderBytes,
                 _gd.BackendType == GraphicsBackend.Vulkan ? "main" : "FS"
@@ -181,7 +181,7 @@ public class ImGuiRenderer : IDisposable
 
         VertexLayoutDescription[] vertexLayouts =
         [
-            new VertexLayoutDescription(
+            new(
                 new VertexElementDescription(
                     "in_position",
                     VertexElementSemantic.Position,
@@ -201,7 +201,7 @@ public class ImGuiRenderer : IDisposable
         ];
 
         _layout = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "ProjectionMatrixBuffer",
                     ResourceKind.UniformBuffer,
@@ -217,7 +217,7 @@ public class ImGuiRenderer : IDisposable
         _layout.Name = "ImGui.NET Resource Layout";
 
         _textureLayout = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "FontTexture",
                     ResourceKind.TextureReadOnly,
@@ -229,21 +229,15 @@ public class ImGuiRenderer : IDisposable
 
         GraphicsPipelineDescription pd = new(
             BlendStateDescription.SingleAlphaBlend,
-            new DepthStencilStateDescription(false, false, ComparisonKind.Always),
-            new RasterizerStateDescription(
-                FaceCullMode.None,
-                PolygonFillMode.Solid,
-                FrontFace.Clockwise,
-                true,
-                true
-            ),
+            new(false, false, ComparisonKind.Always),
+            new(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, true, true),
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(
+            new(
                 vertexLayouts,
                 [_vertexShader, _fragmentShader],
                 [
-                    new SpecializationConstant(0, gd.IsClipSpaceYInverted),
-                    new SpecializationConstant(1, _colorSpaceHandling == ColorSpaceHandling.Legacy),
+                    new(0, gd.IsClipSpaceYInverted),
+                    new(1, _colorSpaceHandling == ColorSpaceHandling.Legacy),
                 ]
             ),
             [_layout, _textureLayout],
@@ -254,7 +248,7 @@ public class ImGuiRenderer : IDisposable
         _pipeline.Name = "ImGui.NET Pipeline";
 
         _mainResourceSet = factory.CreateResourceSet(
-            new ResourceSetDescription(_layout, _projMatrixBuffer, gd.PointSampler)
+            new(_layout, _projMatrixBuffer, gd.PointSampler)
         );
         _mainResourceSet.Name = "ImGui.NET Main Resource Set";
 
@@ -269,11 +263,9 @@ public class ImGuiRenderer : IDisposable
     {
         if (!_setsByView.TryGetValue(textureView, out ResourceSetInfo rsi))
         {
-            ResourceSet resourceSet = factory.CreateResourceSet(
-                new ResourceSetDescription(_textureLayout, textureView)
-            );
+            ResourceSet resourceSet = factory.CreateResourceSet(new(_textureLayout, textureView));
             resourceSet.Name = $"ImGui.NET {textureView.Name} Resource Set";
-            rsi = new ResourceSetInfo(GetNextImGuiBindingID(), resourceSet);
+            rsi = new(GetNextImGuiBindingID(), resourceSet);
 
             _setsByView.Add(textureView, rsi);
             _viewsById.Add(rsi.ImGuiBinding, rsi);
@@ -470,7 +462,7 @@ public class ImGuiRenderer : IDisposable
 
         _fontTextureResourceSet?.Dispose();
         _fontTextureResourceSet = gd.ResourceFactory.CreateResourceSet(
-            new ResourceSetDescription(_textureLayout, _fontTexture)
+            new(_textureLayout, _fontTexture)
         );
         _fontTextureResourceSet.Name = "ImGui.NET Font Texture Resource Set";
 
@@ -531,7 +523,7 @@ public class ImGuiRenderer : IDisposable
     unsafe void SetPerFrameImGuiData(float deltaSeconds)
     {
         ImGuiIOPtr io = ImGui.GetIO();
-        io.DisplaySize = new Vector2(_windowWidth / _scaleFactor.X, _windowHeight / _scaleFactor.Y);
+        io.DisplaySize = new(_windowWidth / _scaleFactor.X, _windowHeight / _scaleFactor.Y);
         io.DisplayFramebufferScale = _scaleFactor;
         io.DeltaTime = deltaSeconds; // DeltaTime is in seconds.
     }
@@ -751,10 +743,7 @@ public class ImGuiRenderer : IDisposable
             string? name = _vertexBuffer.Name;
             _vertexBuffer.Dispose();
             _vertexBuffer = gd.ResourceFactory.CreateBuffer(
-                new BufferDescription(
-                    (uint)(totalVBSize * 1.5f),
-                    BufferUsage.VertexBuffer | BufferUsage.DynamicWrite
-                )
+                new((uint)(totalVBSize * 1.5f), BufferUsage.VertexBuffer | BufferUsage.DynamicWrite)
             );
             _vertexBuffer.Name = name;
         }
@@ -765,10 +754,7 @@ public class ImGuiRenderer : IDisposable
             string? name = _indexBuffer.Name;
             _indexBuffer.Dispose();
             _indexBuffer = gd.ResourceFactory.CreateBuffer(
-                new BufferDescription(
-                    (uint)(totalIBSize * 1.5f),
-                    BufferUsage.IndexBuffer | BufferUsage.DynamicWrite
-                )
+                new((uint)(totalIBSize * 1.5f), BufferUsage.IndexBuffer | BufferUsage.DynamicWrite)
             );
             _indexBuffer.Name = name;
         }

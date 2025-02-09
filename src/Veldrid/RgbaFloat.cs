@@ -40,7 +40,7 @@ public readonly struct RgbaFloat : IEquatable<RgbaFloat>
     /// <param name="a">The alpha component.</param>
     public RgbaFloat(float r, float g, float b, float a)
     {
-        _channels = new Vector4(r, g, b, a);
+        _channels = new(r, g, b, a);
     }
 
     /// <summary>

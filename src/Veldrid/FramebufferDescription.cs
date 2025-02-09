@@ -42,7 +42,7 @@ public struct FramebufferDescription : IEquatable<FramebufferDescription>
             ColorTargets = new FramebufferAttachmentDescription[colorTargets.Length];
             for (int i = 0; i < colorTargets.Length; i++)
             {
-                ColorTargets[i] = new FramebufferAttachmentDescription(colorTargets[i], 0);
+                ColorTargets[i] = new(colorTargets[i], 0);
             }
         }
         else

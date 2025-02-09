@@ -17,7 +17,7 @@ public static class VeldridStartup
     ) =>
         CreateWindowAndGraphicsDevice(
             windowCI,
-            new GraphicsDeviceOptions(),
+            new(),
             GetPlatformDefaultBackend(),
             out window,
             out gd
@@ -100,7 +100,7 @@ public static class VeldridStartup
     }
 
     public static GraphicsDevice CreateGraphicsDevice(Sdl2Window window) =>
-        CreateGraphicsDevice(window, new GraphicsDeviceOptions(), GetPlatformDefaultBackend());
+        CreateGraphicsDevice(window, new(), GetPlatformDefaultBackend());
 
     public static GraphicsDevice CreateGraphicsDevice(
         Sdl2Window window,
@@ -110,7 +110,7 @@ public static class VeldridStartup
     public static GraphicsDevice CreateGraphicsDevice(
         Sdl2Window window,
         GraphicsBackend preferredBackend
-    ) => CreateGraphicsDevice(window, new GraphicsDeviceOptions(), preferredBackend);
+    ) => CreateGraphicsDevice(window, new(), preferredBackend);
 
     [SuppressMessage(
         "Style",
@@ -331,7 +331,7 @@ public static class VeldridStartup
             Sdl2Native.SDL_GL_GetProcAddress,
             context => Sdl2Native.SDL_GL_MakeCurrent(sdlHandle, context),
             () => Sdl2Native.SDL_GL_GetCurrentContext(),
-            () => Sdl2Native.SDL_GL_MakeCurrent(new SDL_Window(IntPtr.Zero), IntPtr.Zero),
+            () => Sdl2Native.SDL_GL_MakeCurrent(new(IntPtr.Zero), IntPtr.Zero),
             Sdl2Native.SDL_GL_DeleteContext,
             () => Sdl2Native.SDL_GL_SwapWindow(sdlHandle),
             sync => Sdl2Native.SDL_GL_SetSwapInterval(sync ? 1 : 0)

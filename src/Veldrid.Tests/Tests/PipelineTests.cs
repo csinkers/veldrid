@@ -18,11 +18,11 @@ public abstract class PipelineTests<T> : GraphicsDeviceTestBase<T>
                 TextureUsage.RenderTarget
             )
         );
-        Framebuffer framebuffer = RF.CreateFramebuffer(new FramebufferDescription(null, colorTex));
+        Framebuffer framebuffer = RF.CreateFramebuffer(new(null, colorTex));
 
         ShaderSetDescription shaderSet = new(
             [
-                new VertexLayoutDescription(
+                new(
                     24,
                     0,
                     new VertexElementDescription(
@@ -41,7 +41,7 @@ public abstract class PipelineTests<T> : GraphicsDeviceTestBase<T>
         );
 
         ResourceLayout layout = RF.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "InfoBuffer",
                     ResourceKind.UniformBuffer,

@@ -497,7 +497,7 @@ public abstract class GraphicsDevice : IDisposable
             mode,
             subresource
         );
-        return new MappedResourceView<T>(mappedResource);
+        return new(mappedResource);
     }
 
     /// <summary>
@@ -513,7 +513,7 @@ public abstract class GraphicsDevice : IDisposable
         where T : unmanaged
     {
         MappedResource mappedResource = Map(resource, mode, subresource);
-        return new MappedResourceView<T>(mappedResource);
+        return new(mappedResource);
     }
 
     /// <summary>
@@ -1408,7 +1408,7 @@ public abstract class GraphicsDevice : IDisposable
     /// <returns>A new <see cref="GraphicsDevice"/> using the Direct3D 11 API.</returns>
     public static GraphicsDevice CreateD3D11(GraphicsDeviceOptions options)
     {
-        return new D3D11.D3D11GraphicsDevice(options, new D3D11DeviceOptions(), null);
+        return new D3D11.D3D11GraphicsDevice(options, new(), null);
     }
 
     /// <summary>
@@ -1422,11 +1422,7 @@ public abstract class GraphicsDevice : IDisposable
         SwapchainDescription swapchainDescription
     )
     {
-        return new D3D11.D3D11GraphicsDevice(
-            options,
-            new D3D11DeviceOptions(),
-            swapchainDescription
-        );
+        return new D3D11.D3D11GraphicsDevice(options, new(), swapchainDescription);
     }
 
     /// <summary>
@@ -1483,11 +1479,7 @@ public abstract class GraphicsDevice : IDisposable
             options.SwapchainSrgbFormat
         );
 
-        return new D3D11.D3D11GraphicsDevice(
-            options,
-            new D3D11DeviceOptions(),
-            swapchainDescription
-        );
+        return new D3D11.D3D11GraphicsDevice(options, new(), swapchainDescription);
     }
 
     /// <summary>
@@ -1518,11 +1510,7 @@ public abstract class GraphicsDevice : IDisposable
             options.SwapchainSrgbFormat
         );
 
-        return new D3D11.D3D11GraphicsDevice(
-            options,
-            new D3D11DeviceOptions(),
-            swapchainDescription
-        );
+        return new D3D11.D3D11GraphicsDevice(options, new(), swapchainDescription);
     }
 #endif
 

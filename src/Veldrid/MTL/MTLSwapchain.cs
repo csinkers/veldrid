@@ -76,7 +76,7 @@ internal sealed class MTLSwapchain : Swapchain
             UIScreen mainScreen = UIScreen.mainScreen;
             CGFloat nativeScale = mainScreen.nativeScale;
 
-            _uiView = new UIView(uiViewSource.UIView);
+            _uiView = new(uiViewSource.UIView);
             CGSize viewSize = _uiView.frame.size;
             width = (uint)(viewSize.width * nativeScale);
             height = (uint)(viewSize.height * nativeScale);
@@ -103,20 +103,13 @@ internal sealed class MTLSwapchain : Swapchain
         _metalLayer.device = _gd.Device;
         _metalLayer.pixelFormat = MTLFormats.VdToMTLPixelFormat(format, default);
         _metalLayer.framebufferOnly = true;
-        _metalLayer.drawableSize = new CGSize(width, height);
+        _metalLayer.drawableSize = new(width, height);
 
         SetSyncToVerticalBlank(_syncToVerticalBlank);
 
         GetNextDrawable();
 
-        _framebuffer = new MTLSwapchainFramebuffer(
-            gd,
-            this,
-            width,
-            height,
-            description.DepthFormat,
-            format
-        );
+        _framebuffer = new(gd, this, width, height, description.DepthFormat, format);
     }
 
     public void GetNextDrawable()
@@ -146,7 +139,7 @@ internal sealed class MTLSwapchain : Swapchain
         }
 
         _framebuffer.Resize(width, height);
-        _metalLayer.drawableSize = new CGSize(width, height);
+        _metalLayer.drawableSize = new(width, height);
         if (_uiView.NativePtr != IntPtr.Zero)
         {
             _metalLayer.frame = _uiView.frame;

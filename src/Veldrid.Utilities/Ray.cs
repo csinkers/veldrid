@@ -49,7 +49,7 @@ public struct Ray(Vector3 origin, Vector3 direction)
 
     public static Ray Transform(Ray ray, Matrix4x4 mat)
     {
-        return new Ray(
+        return new(
             Vector3.Transform(ray.Origin, mat),
             Vector3.Normalize(Vector3.TransformNormal(ray.Direction, mat))
         );

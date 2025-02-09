@@ -10,22 +10,15 @@ public static class CommonMaterials
 
     static CommonMaterials()
     {
-        Brick = new MaterialPropsAndBuffer(
-            new MaterialProperties { SpecularIntensity = new Vector3(0.2f), SpecularPower = 10f }
-        )
+        Brick = new(new() { SpecularIntensity = new(0.2f), SpecularPower = 10f })
         {
             Name = "Brick",
         };
-        Vase = new MaterialPropsAndBuffer(
-            new MaterialProperties { SpecularIntensity = new Vector3(1.0f), SpecularPower = 10f }
-        )
-        {
-            Name = "Vase",
-        };
-        Reflective = new MaterialPropsAndBuffer(
-            new MaterialProperties
+        Vase = new(new() { SpecularIntensity = new(1.0f), SpecularPower = 10f }) { Name = "Vase" };
+        Reflective = new(
+            new()
             {
-                SpecularIntensity = new Vector3(0.2f),
+                SpecularIntensity = new(0.2f),
                 SpecularPower = 10f,
                 Reflectivity = 0.3f,
             }

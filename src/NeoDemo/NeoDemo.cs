@@ -85,11 +85,11 @@ public class NeoDemo
         Sdl2Native.SDL_Init(SDLInitFlags.GameController);
         Sdl2ControllerTracker.CreateDefault(out _controllerTracker);
 
-        _scene = new Scene(_gd, _window, _controllerTracker);
+        _scene = new(_gd, _window, _controllerTracker);
 
         _sc.SetCurrentScene(_scene);
 
-        _igRenderable = new ImGuiRenderable(_window.Width, _window.Height);
+        _igRenderable = new(_window.Width, _window.Height);
         _resizeHandled += (w, h) => _igRenderable.WindowResized(w, h);
         _scene.AddRenderable(_igRenderable);
         _scene.AddUpdateable(_igRenderable);
@@ -98,34 +98,34 @@ public class NeoDemo
         _scene.AddRenderable(skybox);
 
         AddSponzaAtriumObjects();
-        _sc.Camera.Position = new Vector3(-80, 25, -4.3f);
+        _sc.Camera.Position = new(-80, 25, -4.3f);
         _sc.Camera.Yaw = -MathF.PI / 2;
         _sc.Camera.Pitch = -MathF.PI / 9;
 
         ShadowmapDrawer texDrawIndexeder = new(() => _window, () => _sc.NearShadowMapView);
         _resizeHandled += (w, h) => texDrawIndexeder.OnWindowResized();
-        texDrawIndexeder.Position = new Vector2(10, 25);
+        texDrawIndexeder.Position = new(10, 25);
         _scene.AddRenderable(texDrawIndexeder);
 
         ShadowmapDrawer texDrawIndexeder2 = new(() => _window, () => _sc.MidShadowMapView);
         _resizeHandled += (w, h) => texDrawIndexeder2.OnWindowResized();
-        texDrawIndexeder2.Position = new Vector2(20 + texDrawIndexeder2.Size.X, 25);
+        texDrawIndexeder2.Position = new(20 + texDrawIndexeder2.Size.X, 25);
         _scene.AddRenderable(texDrawIndexeder2);
 
         ShadowmapDrawer texDrawIndexeder3 = new(() => _window, () => _sc.FarShadowMapView);
         _resizeHandled += (w, h) => texDrawIndexeder3.OnWindowResized();
-        texDrawIndexeder3.Position = new Vector2(30 + (texDrawIndexeder3.Size.X * 2), 25);
+        texDrawIndexeder3.Position = new(30 + (texDrawIndexeder3.Size.X * 2), 25);
         _scene.AddRenderable(texDrawIndexeder3);
 
         ShadowmapDrawer reflectionTexDrawer = new(() => _window, () => _sc.ReflectionColorView);
         _resizeHandled += (w, h) => reflectionTexDrawer.OnWindowResized();
-        reflectionTexDrawer.Position = new Vector2(40 + (reflectionTexDrawer.Size.X * 3), 25);
+        reflectionTexDrawer.Position = new(40 + (reflectionTexDrawer.Size.X * 3), 25);
         _scene.AddRenderable(reflectionTexDrawer);
 
         ScreenDuplicator duplicator = new();
         _scene.AddRenderable(duplicator);
 
-        _fsq = new FullScreenQuad();
+        _fsq = new();
         _scene.AddRenderable(_fsq);
 
         CreateAllObjects();
@@ -230,7 +230,7 @@ public class NeoDemo
     {
         if (!_textures.TryGetValue(texturePath, out ImageSharpTexture? tex))
         {
-            tex = new ImageSharpTexture(texturePath, mipmap, true);
+            tex = new(texturePath, mipmap, true);
             _textures.Add(texturePath, tex);
         }
 
@@ -719,7 +719,7 @@ public class NeoDemo
             )
         )
         {
-            props.SpecularIntensity = new Vector3(props.SpecularIntensity.X);
+            props.SpecularIntensity = new(props.SpecularIntensity.X);
             propsAndBuffer.Properties = props;
         }
     }

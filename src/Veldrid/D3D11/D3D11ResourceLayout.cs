@@ -35,7 +35,7 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
                 _ => Illegal.Value<ResourceKind, int>(),
             };
 
-            _bindingInfosByVdIndex[i] = new ResourceBindingInfo(
+            _bindingInfosByVdIndex[i] = new(
                 slot,
                 elements[i].Stages,
                 elements[i].Kind,

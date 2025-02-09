@@ -33,7 +33,7 @@ internal class AssimpMesh : IDisposable
         ResourceFactory factory = gd.ResourceFactory;
 
         Shader[] shaders = factory.CreateFromSpirv(
-            new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
+            new(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
             new ShaderDescription(
                 ShaderStages.Fragment,
                 Encoding.ASCII.GetBytes(fragmentGlsl),
@@ -44,7 +44,7 @@ internal class AssimpMesh : IDisposable
         _disposables.Add(shaders[1]);
 
         ResourceLayout rl = factory.CreateResourceLayout(
-            new ResourceLayoutDescription(
+            new(
                 new ResourceLayoutElementDescription(
                     "WVP",
                     ResourceKind.UniformBuffer,
@@ -67,7 +67,7 @@ internal class AssimpMesh : IDisposable
         VertexLayoutDescription positionLayoutDesc = new(
             new VertexElementDescription[]
             {
-                new VertexElementDescription(
+                new(
                     "Position",
                     VertexElementSemantic.TextureCoordinate,
                     VertexElementFormat.Float3
@@ -78,24 +78,17 @@ internal class AssimpMesh : IDisposable
         VertexLayoutDescription texCoordLayoutDesc = new(
             new VertexElementDescription[]
             {
-                new VertexElementDescription(
-                    "UV",
-                    VertexElementSemantic.TextureCoordinate,
-                    VertexElementFormat.Float2
-                ),
+                new("UV", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
             }
         );
 
         _pipeline = factory.CreateGraphicsPipeline(
-            new GraphicsPipelineDescription(
+            new(
                 BlendStateDescription.SingleOverrideBlend,
                 DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerStateDescription.CullNone,
                 PrimitiveTopology.TriangleList,
-                new ShaderSetDescription(
-                    [positionLayoutDesc, texCoordLayoutDesc],
-                    [shaders[0], shaders[1]]
-                ),
+                new([positionLayoutDesc, texCoordLayoutDesc], [shaders[0], shaders[1]]),
                 rl,
                 outputs
             )
@@ -103,7 +96,7 @@ internal class AssimpMesh : IDisposable
         _disposables.Add(_pipeline);
 
         _wvpBuffer = factory.CreateBuffer(
-            new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+            new(64 * 3, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
         );
         _disposables.Add(_wvpBuffer);
 
@@ -112,9 +105,7 @@ internal class AssimpMesh : IDisposable
         _disposables.Add(_texture);
         _disposables.Add(_view);
 
-        _rs = factory.CreateResourceSet(
-            new ResourceSetDescription(rl, _wvpBuffer, _view, gd.Aniso4xSampler)
-        );
+        _rs = factory.CreateResourceSet(new(rl, _wvpBuffer, _view, gd.Aniso4xSampler));
         _disposables.Add(_rs);
 
         AssimpContext ac = new();
@@ -132,7 +123,7 @@ internal class AssimpMesh : IDisposable
                 BufferUsage.IndexBuffer
             );
 
-            _meshPieces.Add(new MeshPiece(positions, texCoords, indices));
+            _meshPieces.Add(new(positions, texCoords, indices));
         }
     }
 
@@ -140,7 +131,7 @@ internal class AssimpMesh : IDisposable
         where T : unmanaged
     {
         DeviceBuffer buffer = _gd.ResourceFactory.CreateBuffer(
-            new BufferDescription((uint)(Unsafe.SizeOf<T>() * list.Count), usage)
+            new((uint)(Unsafe.SizeOf<T>() * list.Count), usage)
         );
         _disposables.Add(buffer);
         _gd.UpdateBuffer(buffer, 0, list.ToArray());

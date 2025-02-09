@@ -60,7 +60,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                 mipLevels = MipLevels,
                 arrayLayers = _actualImageArrayLayers,
                 imageType = VkFormats.VdToVkTextureType(Type),
-                extent = new VkExtent3D()
+                extent = new()
                 {
                     width = Width,
                     height = Height,
@@ -252,7 +252,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
             _imageLayouts = [];
         }
 
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
         ClearIfRenderTarget();
         TransitionIfSampled();
     }
@@ -292,7 +292,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         _isSwapchainTexture = isSwapchainTexture;
         _leaveOpen = leaveOpen;
 
-        RefCount = new ResourceRefCount(this);
+        RefCount = new(this);
         ClearIfRenderTarget();
     }
 
@@ -302,13 +302,13 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         if ((Usage & TextureUsage.RenderTarget) != 0)
         {
             VkCommandList cl = _gd.GetAndBeginCommandList();
-            cl.ClearColorTexture(this, new VkClearColorValue());
+            cl.ClearColorTexture(this, new());
             _gd.EndAndSubmitCommands(cl);
         }
         else if ((Usage & TextureUsage.DepthStencil) != 0)
         {
             VkCommandList cl = _gd.GetAndBeginCommandList();
-            cl.ClearDepthTexture(this, new VkClearDepthStencilValue());
+            cl.ClearDepthTexture(this, new());
             _gd.EndAndSubmitCommands(cl);
         }
     }

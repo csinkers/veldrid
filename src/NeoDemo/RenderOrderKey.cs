@@ -16,7 +16,7 @@ public struct RenderOrderKey(ulong value) : IComparable<RenderOrderKey>
     {
         uint cameraDistanceInt = (uint)Math.Min(uint.MaxValue, (cameraDistance * 1000f));
 
-        return new RenderOrderKey(((ulong)materialID << 32) + cameraDistanceInt);
+        return new(((ulong)materialID << 32) + cameraDistanceInt);
     }
 
     public int CompareTo(RenderOrderKey other)

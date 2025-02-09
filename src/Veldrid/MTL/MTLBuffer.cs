@@ -14,7 +14,7 @@ internal sealed class MTLBuffer : DeviceBuffer
         set
         {
             NSString nameNSS = NSString.New(value);
-            DeviceBuffer.addDebugMarker(nameNSS, new NSRange(0, SizeInBytes));
+            DeviceBuffer.addDebugMarker(nameNSS, new(0, SizeInBytes));
             ObjectiveCRuntime.release(nameNSS.NativePtr);
             _name = value;
         }

@@ -16,7 +16,7 @@ public struct MTLPipelineBufferDescriptorArray
                 Selectors.objectAtIndexedSubscript,
                 (UIntPtr)index
             );
-            return new MTLPipelineBufferDescriptor(value);
+            return new(value);
         }
         set
         {

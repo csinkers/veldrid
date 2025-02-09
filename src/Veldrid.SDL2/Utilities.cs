@@ -19,7 +19,7 @@ internal static class Utilities
         {
             byteCount = UTF8.GetByteCount(text) + 1;
             heapPtr = Marshal.AllocHGlobal(byteCount);
-            utf8Buffer = new Span<byte>((void*)heapPtr, byteCount);
+            utf8Buffer = new((void*)heapPtr, byteCount);
         }
 
         int bytesWritten = UTF8.GetBytes(text, utf8Buffer);

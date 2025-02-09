@@ -27,7 +27,7 @@ public struct PointLightsInfo
 
     public Blittable GetBlittable()
     {
-        return new Blittable
+        return new()
         {
             NumActiveLights = NumActiveLights,
             PointLights0 = PointLights[0],

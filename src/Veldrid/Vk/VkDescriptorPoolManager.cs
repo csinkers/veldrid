@@ -154,10 +154,8 @@ internal sealed class VkDescriptorPoolManager
                 StorageImageCount -= counts.StorageImageCount;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         internal unsafe void Free(

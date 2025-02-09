@@ -7,15 +7,11 @@ internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice)
 {
     public override GraphicsBackend BackendType => GraphicsBackend.Vulkan;
 
-    public override CommandList CreateCommandList(in CommandListDescription description)
-    {
-        return new VkCommandList(vkGraphicsDevice, description);
-    }
+    public override CommandList CreateCommandList(in CommandListDescription description) =>
+        new VkCommandList(vkGraphicsDevice, description);
 
-    public override Framebuffer CreateFramebuffer(in FramebufferDescription description)
-    {
-        return new VkFramebuffer(vkGraphicsDevice, description, false);
-    }
+    public override Framebuffer CreateFramebuffer(in FramebufferDescription description) =>
+        new VkFramebuffer(vkGraphicsDevice, description, false);
 
     public override Pipeline CreateGraphicsPipeline(in GraphicsPipelineDescription description)
     {
@@ -23,15 +19,11 @@ internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice)
         return new VkPipeline(vkGraphicsDevice, description);
     }
 
-    public override Pipeline CreateComputePipeline(in ComputePipelineDescription description)
-    {
-        return new VkPipeline(vkGraphicsDevice, description);
-    }
+    public override Pipeline CreateComputePipeline(in ComputePipelineDescription description) =>
+        new VkPipeline(vkGraphicsDevice, description);
 
-    public override ResourceLayout CreateResourceLayout(in ResourceLayoutDescription description)
-    {
-        return new VkResourceLayout(vkGraphicsDevice, description);
-    }
+    public override ResourceLayout CreateResourceLayout(in ResourceLayoutDescription description) =>
+        new VkResourceLayout(vkGraphicsDevice, description);
 
     public override ResourceSet CreateResourceSet(in ResourceSetDescription description)
     {
@@ -57,9 +49,8 @@ internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice)
         return new VkTexture(vkGraphicsDevice, description);
     }
 
-    public override Texture CreateTexture(ulong nativeTexture, in TextureDescription description)
-    {
-        return new VkTexture(
+    public override Texture CreateTexture(ulong nativeTexture, in TextureDescription description) =>
+        new VkTexture(
             vkGraphicsDevice,
             description.Width,
             description.Height,
@@ -72,7 +63,6 @@ internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice)
             false,
             true
         );
-    }
 
     public override TextureView CreateTextureView(in TextureViewDescription description)
     {
@@ -86,13 +76,8 @@ internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice)
         return new VkBuffer(vkGraphicsDevice, description);
     }
 
-    public override Fence CreateFence(bool signaled)
-    {
-        return new VkFence(vkGraphicsDevice, signaled);
-    }
+    public override Fence CreateFence(bool signaled) => new VkFence(vkGraphicsDevice, signaled);
 
-    public override Swapchain CreateSwapchain(in SwapchainDescription description)
-    {
-        return new VkSwapchain(vkGraphicsDevice, description);
-    }
+    public override Swapchain CreateSwapchain(in SwapchainDescription description) =>
+        new VkSwapchain(vkGraphicsDevice, description);
 }

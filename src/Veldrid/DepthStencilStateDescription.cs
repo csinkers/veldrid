@@ -193,7 +193,7 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     /// Element-wise equality.
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
-    /// <returns>True if all elements are equal; false otherswise.</returns>
+    /// <returns>True if all elements are equal; false otherwise.</returns>
     public bool Equals(DepthStencilStateDescription other)
     {
         return DepthTestEnabled.Equals(other.DepthTestEnabled)

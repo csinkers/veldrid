@@ -16,12 +16,13 @@ public class Skybox(
 ) : Renderable
 {
     // Context objects
-    DeviceBuffer _vb;
-    DeviceBuffer _ib;
-    Pipeline _pipeline;
-    Pipeline _reflectionPipeline;
-    ResourceSet _resourceSet;
     readonly DisposeCollector _disposeCollector = new();
+    DeviceBuffer? _vb;
+    DeviceBuffer? _ib;
+    Pipeline? _pipeline;
+    Pipeline? _reflectionPipeline;
+    ResourceSet? _resourceSet;
+    ResourceLayout? _layout;
 
     public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
@@ -156,14 +157,18 @@ public class Skybox(
         RenderPasses renderPass
     )
     {
-        cl.SetVertexBuffer(0, _vb);
-        cl.SetIndexBuffer(_ib, IndexFormat.UInt16);
-        cl.SetPipeline(renderPass == RenderPasses.ReflectionMap ? _reflectionPipeline : _pipeline);
-        cl.SetGraphicsResourceSet(0, _resourceSet);
+        cl.SetVertexBuffer(0, _vb!);
+        cl.SetIndexBuffer(_ib!, IndexFormat.UInt16);
+        cl.SetPipeline(
+            renderPass == RenderPasses.ReflectionMap ? _reflectionPipeline! : _pipeline!
+        );
+        cl.SetGraphicsResourceSet(0, _resourceSet!);
+
         Texture texture =
             renderPass == RenderPasses.ReflectionMap
                 ? sc.ReflectionColorTexture
                 : sc.MainSceneColorTexture;
+
         float depth = gd.IsDepthRangeZeroToOne ? 0 : 1;
         cl.SetViewport(0, new(0, 0, texture.Width, texture.Height, depth, depth));
         cl.DrawIndexed((uint)s_indices.Length, 1, 0, 0, 0);
@@ -172,10 +177,7 @@ public class Skybox(
 
     public override RenderPasses RenderPasses => RenderPasses.Standard | RenderPasses.ReflectionMap;
 
-    public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
-    {
-        return new(ulong.MaxValue);
-    }
+    public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition) => new(ulong.MaxValue);
 
     static readonly VertexPosition[] s_vertices =
     [
@@ -250,6 +252,4 @@ public class Skybox(
         22,
         23,
     ];
-
-    ResourceLayout _layout;
 }

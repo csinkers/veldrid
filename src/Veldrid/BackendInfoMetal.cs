@@ -14,16 +14,21 @@ namespace Veldrid;
 public class BackendInfoMetal
 {
     readonly MTLGraphicsDevice _gd;
-    readonly ReadOnlyCollection<MTLFeatureSet> _featureSet;
 
     internal BackendInfoMetal(MTLGraphicsDevice gd)
     {
         _gd = gd;
-        _featureSet = new(_gd.MetalFeatures.ToArray());
+        FeatureSet = new(_gd.MetalFeatures.ToArray());
     }
 
-    public ReadOnlyCollection<MTLFeatureSet> FeatureSet => _featureSet;
+    /// <summary>
+    /// The list of all feature sets supported by the Metal device.
+    /// </summary>
+    public ReadOnlyCollection<MTLFeatureSet> FeatureSet { get; }
 
+    /// <summary>
+    /// The maximum feature set supported by the Metal device.
+    /// </summary>
     public MTLFeatureSet MaxFeatureSet => _gd.MetalFeatures.MaxFeatureSet;
 }
 #endif

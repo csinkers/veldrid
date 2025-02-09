@@ -714,25 +714,17 @@ internal readonly struct SetBindingsInfo(
     public uint UniformBufferCount { get; } = (uint)uniformBindings.Count;
     public uint ShaderStorageBufferCount { get; } = (uint)storageBufferBindings.Count;
 
-    public bool GetTextureBindingInfo(uint slot, out OpenGLTextureBindingSlotInfo binding)
-    {
-        return textureBindings.TryGetValue(slot, out binding);
-    }
+    public bool GetTextureBindingInfo(uint slot, out OpenGLTextureBindingSlotInfo binding) =>
+        textureBindings.TryGetValue(slot, out binding);
 
-    public bool GetSamplerBindingInfo(uint slot, out OpenGLSamplerBindingSlotInfo binding)
-    {
-        return samplerBindings.TryGetValue(slot, out binding);
-    }
+    public bool GetSamplerBindingInfo(uint slot, out OpenGLSamplerBindingSlotInfo binding) =>
+        samplerBindings.TryGetValue(slot, out binding);
 
-    public bool GetUniformBindingForSlot(uint slot, out OpenGLUniformBinding binding)
-    {
-        return uniformBindings.TryGetValue(slot, out binding);
-    }
+    public bool GetUniformBindingForSlot(uint slot, out OpenGLUniformBinding binding) =>
+        uniformBindings.TryGetValue(slot, out binding);
 
-    public bool GetStorageBufferBindingForSlot(uint slot, out OpenGLShaderStorageBinding binding)
-    {
-        return storageBufferBindings.TryGetValue(slot, out binding);
-    }
+    public bool GetStorageBufferBindingForSlot(uint slot, out OpenGLShaderStorageBinding binding) =>
+        storageBufferBindings.TryGetValue(slot, out binding);
 }
 
 internal struct OpenGLTextureBindingSlotInfo

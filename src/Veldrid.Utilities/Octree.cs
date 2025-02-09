@@ -307,10 +307,7 @@ public class OctreeNode<T>
             return false;
         }
 
-        if (container.Parent != null)
-        {
-            container.Parent.ConsiderConsolidation();
-        }
+        container.Parent?.ConsiderConsolidation();
 
         _nodeCache.AddOctreeItem(octreeItem);
         return true;

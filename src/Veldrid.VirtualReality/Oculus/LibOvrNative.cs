@@ -178,45 +178,45 @@ internal static unsafe class LibOvrNative
 
     delegate ovrResult ovr_Initialize_t(ovrInitParams* @params);
 
-    static ovr_Initialize_t p_ovr_Initialize;
+    static ovr_Initialize_t p_ovr_Initialize = null!;
 
     public static ovrResult ovr_Initialize(ovrInitParams* @params) => p_ovr_Initialize(@params);
 
     delegate void ovr_Shutdown_t();
 
-    static ovr_Shutdown_t p_ovr_Shutdown;
+    static ovr_Shutdown_t p_ovr_Shutdown = null!;
 
     public static void ovr_Shutdown() => p_ovr_Shutdown();
 
     delegate void ovr_GetLastErrorInfo_t(out ovrErrorInfo errorInfo);
 
-    static ovr_GetLastErrorInfo_t p_ovr_GetLastErrorInfo;
+    static ovr_GetLastErrorInfo_t p_ovr_GetLastErrorInfo = null!;
 
     public static void ovr_GetLastErrorInfo(out ovrErrorInfo errorInfo) =>
         p_ovr_GetLastErrorInfo(out errorInfo);
 
     delegate ovrResult ovr_Create_t(ovrSession* pSession, ovrGraphicsLuid* pLuid);
 
-    static ovr_Create_t p_ovr_Create;
+    static ovr_Create_t p_ovr_Create = null!;
 
     public static ovrResult ovr_Create(ovrSession* pSession, ovrGraphicsLuid* pLuid) =>
         p_ovr_Create(pSession, pLuid);
 
     delegate void ovr_Destroy_t(ovrSession session);
 
-    static ovr_Destroy_t p_ovr_Destroy;
+    static ovr_Destroy_t p_ovr_Destroy = null!;
 
     public static void ovr_Destroy(ovrSession session) => p_ovr_Destroy(session);
 
     delegate ovrHmdDesc ovr_GetHmdDesc_t(ovrSession session);
 
-    static ovr_GetHmdDesc_t p_ovr_GetHmdDesc;
+    static ovr_GetHmdDesc_t p_ovr_GetHmdDesc = null!;
 
     public static ovrHmdDesc ovr_GetHmdDesc(ovrSession session) => p_ovr_GetHmdDesc(session);
 
     delegate uint ovr_GetTrackerCount_t(ovrSession session);
 
-    static ovr_GetTrackerCount_t p_ovr_GetTrackerCount;
+    static ovr_GetTrackerCount_t p_ovr_GetTrackerCount = null!;
 
     public static uint ovr_GetTrackerCount(ovrSession session) => p_ovr_GetTrackerCount(session);
 
@@ -227,7 +227,7 @@ internal static unsafe class LibOvrNative
         float pixelsPerDisplayPixel
     );
 
-    static ovr_GetFovTextureSize_t p_ovr_GetFovTextureSize;
+    static ovr_GetFovTextureSize_t p_ovr_GetFovTextureSize = null!;
 
     public static ovrSizei ovr_GetFovTextureSize(
         ovrSession session,
@@ -243,7 +243,7 @@ internal static unsafe class LibOvrNative
         ovrTextureSwapChain* outTextureSet
     );
 
-    static ovr_CreateTextureSwapChainDX_t p_ovr_CreateTextureSwapChainDX;
+    static ovr_CreateTextureSwapChainDX_t p_ovr_CreateTextureSwapChainDX = null!;
 
     public static ovrResult ovr_CreateTextureSwapChainDX(
         ovrSession session,
@@ -258,7 +258,7 @@ internal static unsafe class LibOvrNative
         int* length
     );
 
-    static ovr_GetTextureSwapChainLength_t p_ovr_GetTextureSwapChainLength;
+    static ovr_GetTextureSwapChainLength_t p_ovr_GetTextureSwapChainLength = null!;
 
     public static ovrResult ovr_GetTextureSwapChainLength(
         ovrSession session,
@@ -274,7 +274,7 @@ internal static unsafe class LibOvrNative
         IntPtr* ppObject
     );
 
-    static ovr_GetTextureSwapChainBufferDX_t p_ovr_GetTextureSwapChainBufferDX;
+    static ovr_GetTextureSwapChainBufferDX_t p_ovr_GetTextureSwapChainBufferDX = null!;
 
     public static ovrResult ovr_GetTextureSwapChainBufferDX(
         ovrSession session,
@@ -290,7 +290,7 @@ internal static unsafe class LibOvrNative
         int* currentIndex
     );
 
-    static ovr_GetTextureSwapChainCurrentIndex_t p_ovr_GetTextureSwapChainCurrentIndex;
+    static ovr_GetTextureSwapChainCurrentIndex_t p_ovr_GetTextureSwapChainCurrentIndex = null!;
 
     public static ovrResult ovr_GetTextureSwapChainCurrentIndex(
         ovrSession session,
@@ -300,14 +300,14 @@ internal static unsafe class LibOvrNative
 
     delegate void ovr_DestroyTextureSwapChain_t(ovrSession session, ovrTextureSwapChain chain);
 
-    static ovr_DestroyTextureSwapChain_t p_ovr_DestroyTextureSwapChain;
+    static ovr_DestroyTextureSwapChain_t p_ovr_DestroyTextureSwapChain = null!;
 
     public static void ovr_DestroyTextureSwapChain(ovrSession session, ovrTextureSwapChain chain) =>
         p_ovr_DestroyTextureSwapChain(session, chain);
 
     delegate ovrResult ovr_CommitTextureSwapChain_t(ovrSession session, ovrTextureSwapChain chain);
 
-    static ovr_CommitTextureSwapChain_t p_ovr_CommitTextureSwapChain;
+    static ovr_CommitTextureSwapChain_t p_ovr_CommitTextureSwapChain = null!;
 
     public static ovrResult ovr_CommitTextureSwapChain(
         ovrSession session,
@@ -320,7 +320,7 @@ internal static unsafe class LibOvrNative
         ovrFovPort fov
     );
 
-    static ovr_GetRenderDesc2_t p_ovr_GetRenderDesc2;
+    static ovr_GetRenderDesc2_t p_ovr_GetRenderDesc2 = null!;
 
     public static ovrEyeRenderDesc ovr_GetRenderDesc2(
         ovrSession session,
@@ -334,7 +334,7 @@ internal static unsafe class LibOvrNative
         ovrPosef* outEyePoses
     );
 
-    static ovr_CalcEyePoses_t p_ovr_CalcEyePoses;
+    static ovr_CalcEyePoses_t p_ovr_CalcEyePoses = null!;
 
     public static void ovr_CalcEyePoses(
         ovrPosef headPose,
@@ -344,7 +344,7 @@ internal static unsafe class LibOvrNative
 
     delegate double ovr_GetPredictedDisplayTime_t(ovrSession session, long frameIndex);
 
-    static ovr_GetPredictedDisplayTime_t p_ovr_GetPredictedDisplayTime;
+    static ovr_GetPredictedDisplayTime_t p_ovr_GetPredictedDisplayTime = null!;
 
     public static double ovr_GetPredictedDisplayTime(ovrSession session, long frameIndex) =>
         p_ovr_GetPredictedDisplayTime(session, frameIndex);
@@ -355,7 +355,7 @@ internal static unsafe class LibOvrNative
         ovrBool latencyMarker
     );
 
-    static ovr_GetTrackingState_t p_ovr_GetTrackingState;
+    static ovr_GetTrackingState_t p_ovr_GetTrackingState = null!;
 
     public static ovrTrackingState ovr_GetTrackingState(
         ovrSession session,
@@ -370,7 +370,7 @@ internal static unsafe class LibOvrNative
         ovrMirrorTexture* outMirrorTexture
     );
 
-    static ovr_CreateMirrorTextureWithOptionsDX_t p_ovr_CreateMirrorTextureWithOptionsDX;
+    static ovr_CreateMirrorTextureWithOptionsDX_t p_ovr_CreateMirrorTextureWithOptionsDX = null!;
 
     public static ovrResult ovr_CreateMirrorTextureWithOptionsDX(
         ovrSession session,
@@ -381,7 +381,7 @@ internal static unsafe class LibOvrNative
 
     delegate ovrResult ovr_SetTrackingOriginType_t(ovrSession session, ovrTrackingOrigin origin);
 
-    static ovr_SetTrackingOriginType_t p_ovr_SetTrackingOriginType;
+    static ovr_SetTrackingOriginType_t p_ovr_SetTrackingOriginType = null!;
 
     public static ovrResult ovr_SetTrackingOriginType(
         ovrSession session,
@@ -390,7 +390,7 @@ internal static unsafe class LibOvrNative
 
     delegate ovrResult ovr_GetSessionStatus_t(ovrSession session, ovrSessionStatus* sessionStatus);
 
-    static ovr_GetSessionStatus_t p_ovr_GetSessionStatus;
+    static ovr_GetSessionStatus_t p_ovr_GetSessionStatus = null!;
 
     public static ovrResult ovr_GetSessionStatus(
         ovrSession session,
@@ -399,7 +399,7 @@ internal static unsafe class LibOvrNative
 
     delegate ovrResult ovr_RecenterTrackingOrigin_t(ovrSession session);
 
-    static ovr_RecenterTrackingOrigin_t p_ovr_RecenterTrackingOrigin;
+    static ovr_RecenterTrackingOrigin_t p_ovr_RecenterTrackingOrigin = null!;
 
     public static ovrResult ovr_RecenterTrackingOrigin(ovrSession session) =>
         p_ovr_RecenterTrackingOrigin(session);
@@ -409,7 +409,8 @@ internal static unsafe class LibOvrNative
         ovrProjectionModifier projectionModFlags
     );
 
-    static ovrTimewarpProjectionDesc_FromProjection_t p_ovrTimewarpProjectionDesc_FromProjection;
+    static ovrTimewarpProjectionDesc_FromProjection_t p_ovrTimewarpProjectionDesc_FromProjection =
+        null!;
 
     public static ovrTimewarpProjectionDesc ovrTimewarpProjectionDesc_FromProjection(
         Matrix4x4 Projection,
@@ -425,7 +426,7 @@ internal static unsafe class LibOvrNative
         double* outSensorSampleTime
     );
 
-    static ovr_GetEyePoses_t p_ovr_GetEyePoses;
+    static ovr_GetEyePoses_t p_ovr_GetEyePoses = null!;
 
     public static void ovr_GetEyePoses(
         ovrSession session,
@@ -452,7 +453,7 @@ internal static unsafe class LibOvrNative
         uint layerCount
     );
 
-    static ovr_SubmitFrame_t p_ovr_SubmitFrame;
+    static ovr_SubmitFrame_t p_ovr_SubmitFrame = null!;
 
     public static ovrResult ovr_SubmitFrame(
         ovrSession session,
@@ -469,7 +470,7 @@ internal static unsafe class LibOvrNative
         IntPtr* ppObject
     );
 
-    static ovr_GetMirrorTextureBufferDX_t p_ovr_GetMirrorTextureBufferDX;
+    static ovr_GetMirrorTextureBufferDX_t p_ovr_GetMirrorTextureBufferDX = null!;
 
     public static ovrResult ovr_GetMirrorTextureBufferDX(
         ovrSession session,
@@ -485,7 +486,7 @@ internal static unsafe class LibOvrNative
         ovrProjectionModifier projectionModFlags
     );
 
-    static ovrMatrix4f_Projection_t p_ovrMatrix4f_Projection;
+    static ovrMatrix4f_Projection_t p_ovrMatrix4f_Projection = null!;
 
     public static Matrix4x4 ovrMatrix4f_Projection(
         ovrFovPort fov,
@@ -496,7 +497,7 @@ internal static unsafe class LibOvrNative
 
     delegate double ovr_GetTimeInSeconds_t();
 
-    static ovr_GetTimeInSeconds_t p_ovr_GetTimeInSeconds;
+    static ovr_GetTimeInSeconds_t p_ovr_GetTimeInSeconds = null!;
 
     public static double ovr_GetTimeInSeconds() => p_ovr_GetTimeInSeconds();
 
@@ -506,7 +507,7 @@ internal static unsafe class LibOvrNative
         ovrTextureSwapChain* out_TextureSwapChain
     );
 
-    static ovr_CreateTextureSwapChainGL_t p_ovr_CreateTextureSwapChainGL;
+    static ovr_CreateTextureSwapChainGL_t p_ovr_CreateTextureSwapChainGL = null!;
 
     public static ovrResult ovr_CreateTextureSwapChainGL(
         ovrSession session,
@@ -521,7 +522,7 @@ internal static unsafe class LibOvrNative
         uint* out_TexId
     );
 
-    static ovr_GetTextureSwapChainBufferGL_t p_ovr_GetTextureSwapChainBufferGL;
+    static ovr_GetTextureSwapChainBufferGL_t p_ovr_GetTextureSwapChainBufferGL = null!;
 
     public static ovrResult ovr_GetTextureSwapChainBufferGL(
         ovrSession session,
@@ -536,7 +537,7 @@ internal static unsafe class LibOvrNative
         ovrMirrorTexture* out_MirrorTexture
     );
 
-    static ovr_CreateMirrorTextureWithOptionsGL_t p_ovr_CreateMirrorTextureWithOptionsGL;
+    static ovr_CreateMirrorTextureWithOptionsGL_t p_ovr_CreateMirrorTextureWithOptionsGL = null!;
 
     public static ovrResult ovr_CreateMirrorTextureWithOptionsGL(
         ovrSession session,
@@ -550,7 +551,7 @@ internal static unsafe class LibOvrNative
         uint* out_TexId
     );
 
-    static ovr_GetMirrorTextureBufferGL_t p_ovr_GetMirrorTextureBufferGL;
+    static ovr_GetMirrorTextureBufferGL_t p_ovr_GetMirrorTextureBufferGL = null!;
 
     public static ovrResult ovr_GetMirrorTextureBufferGL(
         ovrSession session,
@@ -564,7 +565,7 @@ internal static unsafe class LibOvrNative
         uint* inoutExtensionNamesSize
     );
 
-    static ovr_GetInstanceExtensionsVk_t p_ovr_GetInstanceExtensionsVk;
+    static ovr_GetInstanceExtensionsVk_t p_ovr_GetInstanceExtensionsVk = null!;
 
     public static ovrResult ovr_GetInstanceExtensionsVk(
         ovrGraphicsLuid luid,
@@ -578,7 +579,7 @@ internal static unsafe class LibOvrNative
         uint* inoutExtensionNamesSize
     );
 
-    static ovr_GetDeviceExtensionsVk_t p_ovr_GetDeviceExtensionsVk;
+    static ovr_GetDeviceExtensionsVk_t p_ovr_GetDeviceExtensionsVk = null!;
 
     public static ovrResult ovr_GetDeviceExtensionsVk(
         ovrGraphicsLuid luid,
@@ -593,7 +594,7 @@ internal static unsafe class LibOvrNative
         IntPtr* out_physicalDevice
     );
 
-    static ovr_GetSessionPhysicalDeviceVk_t p_ovr_GetSessionPhysicalDeviceVk;
+    static ovr_GetSessionPhysicalDeviceVk_t p_ovr_GetSessionPhysicalDeviceVk = null!;
 
     public static ovrResult ovr_GetSessionPhysicalDeviceVk(
         ovrSession session,
@@ -604,7 +605,7 @@ internal static unsafe class LibOvrNative
 
     delegate ovrResult ovr_SetSynchonizationQueueVk_t(ovrSession session, IntPtr queue);
 
-    static ovr_SetSynchonizationQueueVk_t p_ovr_SetSynchonizationQueueVk;
+    static ovr_SetSynchonizationQueueVk_t p_ovr_SetSynchonizationQueueVk = null!;
 
     public static ovrResult ovr_SetSynchonizationQueueVk(ovrSession session, IntPtr queue) =>
         p_ovr_SetSynchonizationQueueVk(session, queue);
@@ -616,7 +617,7 @@ internal static unsafe class LibOvrNative
         ovrTextureSwapChain* out_TextureSwapChain
     );
 
-    static ovr_CreateTextureSwapChainVk_t p_ovr_CreateTextureSwapChainVk;
+    static ovr_CreateTextureSwapChainVk_t p_ovr_CreateTextureSwapChainVk = null!;
 
     public static ovrResult ovr_CreateTextureSwapChainVk(
         ovrSession session,
@@ -632,7 +633,7 @@ internal static unsafe class LibOvrNative
         ulong* out_Image
     );
 
-    static ovr_GetTextureSwapChainBufferVk_t p_ovr_GetTextureSwapChainBufferVk;
+    static ovr_GetTextureSwapChainBufferVk_t p_ovr_GetTextureSwapChainBufferVk = null!;
 
     public static ovrResult ovr_GetTextureSwapChainBufferVk(
         ovrSession session,
@@ -648,7 +649,7 @@ internal static unsafe class LibOvrNative
         ovrMirrorTexture* out_MirrorTexture
     );
 
-    static ovr_CreateMirrorTextureWithOptionsVk_t p_ovr_CreateMirrorTextureWithOptionsVk;
+    static ovr_CreateMirrorTextureWithOptionsVk_t p_ovr_CreateMirrorTextureWithOptionsVk = null!;
 
     public static ovrResult ovr_CreateMirrorTextureWithOptionsVk(
         ovrSession session,
@@ -663,7 +664,7 @@ internal static unsafe class LibOvrNative
         ulong* out_Image
     );
 
-    static ovr_GetMirrorTextureBufferVk_t p_ovr_GetMirrorTextureBufferVk;
+    static ovr_GetMirrorTextureBufferVk_t p_ovr_GetMirrorTextureBufferVk = null!;
 
     public static ovrResult ovr_GetMirrorTextureBufferVk(
         ovrSession session,
@@ -673,7 +674,7 @@ internal static unsafe class LibOvrNative
 
     delegate void ovr_DestroyMirrorTexture_t(ovrSession session, ovrMirrorTexture mirrorTexture);
 
-    static ovr_DestroyMirrorTexture_t p_ovr_DestroyMirrorTexture;
+    static ovr_DestroyMirrorTexture_t p_ovr_DestroyMirrorTexture = null!;
 
     public static void ovr_DestroyMirrorTexture(
         ovrSession session,
@@ -1197,7 +1198,7 @@ internal struct ovrPosef
 }
 
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe struct ovrTrackingState
+internal struct ovrTrackingState
 {
     /// <summary>
     /// Predicted head pose (and derivatives) at the requested absolute time.

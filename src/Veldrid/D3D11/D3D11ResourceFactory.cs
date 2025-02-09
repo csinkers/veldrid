@@ -19,15 +19,11 @@ internal sealed class D3D11ResourceFactory : ResourceFactory, IDisposable
         _cache = new(_device);
     }
 
-    public override CommandList CreateCommandList(in CommandListDescription description)
-    {
-        return new D3D11CommandList(_gd, description);
-    }
+    public override CommandList CreateCommandList(in CommandListDescription description) =>
+        new D3D11CommandList(_gd, description);
 
-    public override Framebuffer CreateFramebuffer(in FramebufferDescription description)
-    {
-        return new D3D11Framebuffer(_device, description);
-    }
+    public override Framebuffer CreateFramebuffer(in FramebufferDescription description) =>
+        new D3D11Framebuffer(_device, description);
 
     public override Pipeline CreateGraphicsPipeline(in GraphicsPipelineDescription description)
     {
@@ -35,15 +31,11 @@ internal sealed class D3D11ResourceFactory : ResourceFactory, IDisposable
         return new D3D11Pipeline(_cache, description);
     }
 
-    public override Pipeline CreateComputePipeline(in ComputePipelineDescription description)
-    {
-        return new D3D11Pipeline(_cache, description);
-    }
+    public override Pipeline CreateComputePipeline(in ComputePipelineDescription description) =>
+        new D3D11Pipeline(_cache, description);
 
-    public override ResourceLayout CreateResourceLayout(in ResourceLayoutDescription description)
-    {
-        return new D3D11ResourceLayout(description);
-    }
+    public override ResourceLayout CreateResourceLayout(in ResourceLayoutDescription description) =>
+        new D3D11ResourceLayout(description);
 
     public override ResourceSet CreateResourceSet(in ResourceSetDescription description)
     {
@@ -87,18 +79,10 @@ internal sealed class D3D11ResourceFactory : ResourceFactory, IDisposable
         return new D3D11Buffer(_device, description);
     }
 
-    public override Fence CreateFence(bool signaled)
-    {
-        return new D3D11Fence(signaled);
-    }
+    public override Fence CreateFence(bool signaled) => new D3D11Fence(signaled);
 
-    public override Swapchain CreateSwapchain(in SwapchainDescription description)
-    {
-        return new D3D11Swapchain(_gd, description);
-    }
+    public override Swapchain CreateSwapchain(in SwapchainDescription description) =>
+        new D3D11Swapchain(_gd, description);
 
-    public void Dispose()
-    {
-        _cache.Dispose();
-    }
+    public void Dispose() => _cache.Dispose();
 }

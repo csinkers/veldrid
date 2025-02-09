@@ -4,20 +4,14 @@ using System.Numerics;
 
 namespace Veldrid.VirtualReality.OpenVR;
 
-internal class OpenVRMirrorTexture : IDisposable
+internal class OpenVRMirrorTexture(OpenVRContext context) : IDisposable
 {
     readonly List<IDisposable> _disposables = new();
 
     readonly Dictionary<OutputDescription, TextureBlitter> _blitters = new();
 
-    readonly OpenVRContext _context;
-    ResourceSet _leftSet;
-    ResourceSet _rightSet;
-
-    public OpenVRMirrorTexture(OpenVRContext context)
-    {
-        _context = context;
-    }
+    ResourceSet? _leftSet;
+    ResourceSet? _rightSet;
 
     public void Render(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
     {
@@ -47,7 +41,7 @@ internal class OpenVRMirrorTexture : IDisposable
     void BlitLeftEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
     {
         GetSampleRatio(
-            _context.LeftEyeFramebuffer,
+            context.LeftEyeFramebuffer,
             viewportAspect,
             out Vector2 minUV,
             out Vector2 maxUV
@@ -59,7 +53,7 @@ internal class OpenVRMirrorTexture : IDisposable
     void BlitRightEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
     {
         GetSampleRatio(
-            _context.RightEyeFramebuffer,
+            context.RightEyeFramebuffer,
             viewportAspect,
             out Vector2 minUV,
             out Vector2 maxUV
@@ -94,7 +88,7 @@ internal class OpenVRMirrorTexture : IDisposable
         float sampleUVWidth = (float)sampleWidth / eyeWidth;
         float sampleUVHeight = (float)sampleHeight / eyeHeight;
 
-        float max = Math.Max(sampleUVWidth, sampleUVHeight);
+        float max = (float)Math.Max(sampleUVWidth, sampleUVHeight);
         sampleUVWidth /= max;
         sampleUVHeight /= max;
 
@@ -102,34 +96,20 @@ internal class OpenVRMirrorTexture : IDisposable
         maxUV = new(0.5f + sampleUVWidth / 2f, 0.5f + sampleUVHeight / 2f);
     }
 
-    ResourceSet GetLeftEyeSet(ResourceLayout rl)
-    {
-        if (_leftSet == null)
-        {
-            _leftSet = CreateColorTargetSet(rl, _context.LeftEyeFramebuffer);
-        }
+    ResourceSet GetLeftEyeSet(ResourceLayout rl) =>
+        _leftSet ??= CreateColorTargetSet(rl, context.LeftEyeFramebuffer);
 
-        return _leftSet;
-    }
-
-    ResourceSet GetRightEyeSet(ResourceLayout rl)
-    {
-        if (_rightSet == null)
-        {
-            _rightSet = CreateColorTargetSet(rl, _context.RightEyeFramebuffer);
-        }
-
-        return _rightSet;
-    }
+    ResourceSet GetRightEyeSet(ResourceLayout rl) =>
+        _rightSet ??= CreateColorTargetSet(rl, context.RightEyeFramebuffer);
 
     ResourceSet CreateColorTargetSet(ResourceLayout rl, Framebuffer fb)
     {
-        ResourceFactory factory = _context.GraphicsDevice.ResourceFactory;
+        ResourceFactory factory = context.GraphicsDevice.ResourceFactory;
         Texture target = fb.ColorTargets[0].Target;
         TextureView view = factory.CreateTextureView(target);
         _disposables.Add(view);
         ResourceSet rs = factory.CreateResourceSet(
-            new(rl, view, _context.GraphicsDevice.PointSampler)
+            new(rl, view, context.GraphicsDevice.PointSampler)
         );
         _disposables.Add(rs);
 
@@ -138,11 +118,11 @@ internal class OpenVRMirrorTexture : IDisposable
 
     TextureBlitter GetBlitter(OutputDescription outputDescription)
     {
-        if (!_blitters.TryGetValue(outputDescription, out TextureBlitter ret))
+        if (!_blitters.TryGetValue(outputDescription, out TextureBlitter? ret))
         {
             ret = new(
-                _context.GraphicsDevice,
-                _context.GraphicsDevice.ResourceFactory,
+                context.GraphicsDevice,
+                context.GraphicsDevice.ResourceFactory,
                 outputDescription,
                 srgbOutput: false
             );
@@ -156,13 +136,10 @@ internal class OpenVRMirrorTexture : IDisposable
     public void Dispose()
     {
         foreach (IDisposable disposable in _disposables)
-        {
             disposable.Dispose();
-        }
+
         foreach (KeyValuePair<OutputDescription, TextureBlitter> kvp in _blitters)
-        {
             kvp.Value.Dispose();
-        }
 
         _leftSet?.Dispose();
         _rightSet?.Dispose();

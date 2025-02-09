@@ -204,10 +204,7 @@ internal sealed class D3D11CommandList : CommandList
     public override void End()
     {
         if (_commandList != null)
-        {
-            static void Throw() => throw new VeldridException("Invalid use of End().");
-            Throw();
-        }
+            throw new VeldridException("Invalid use of End().");
 
         _context.FinishCommandList(false, out _commandList).CheckError();
         _commandList.DebugName = _name!;
@@ -378,7 +375,7 @@ internal sealed class D3D11CommandList : CommandList
         }
     }
 
-    protected override void SetGraphicsResourceSetCore(
+    private protected override void SetGraphicsResourceSetCore(
         uint slot,
         ResourceSet rs,
         ReadOnlySpan<uint> dynamicOffsets
@@ -532,29 +529,21 @@ internal sealed class D3D11CommandList : CommandList
 
     void UnbindSRVTexture(Texture target)
     {
-        if (_boundSRVs.Remove(target, out List<BoundTextureInfo>? btis))
+        if (!_boundSRVs.Remove(target, out List<BoundTextureInfo>? btis))
+            return;
+
+        foreach (BoundTextureInfo bti in btis)
         {
-            void Unbind()
-            {
-                foreach (BoundTextureInfo bti in btis)
-                {
-                    BindTextureView(null, bti.Slot, bti.Stages, 0);
+            BindTextureView(null, bti.Slot, bti.Stages, 0);
 
-                    if ((bti.Stages & ShaderStages.Compute) == ShaderStages.Compute)
-                    {
-                        _invalidatedComputeResourceSets[bti.ResourceSet] = true;
-                    }
-                    else
-                    {
-                        _invalidatedGraphicsResourceSets[bti.ResourceSet] = true;
-                    }
-                }
-
-                btis.Clear();
-                PoolBoundTextureList(btis);
-            }
-            Unbind();
+            if ((bti.Stages & ShaderStages.Compute) != 0)
+                _invalidatedComputeResourceSets[bti.ResourceSet] = true;
+            else
+                _invalidatedGraphicsResourceSets[bti.ResourceSet] = true;
         }
+
+        btis.Clear();
+        PoolBoundTextureList(btis);
     }
 
     void PoolBoundTextureList(List<BoundTextureInfo> btis)
@@ -564,35 +553,26 @@ internal sealed class D3D11CommandList : CommandList
 
     void UnbindUAVTexture(Texture target)
     {
-        if (_boundUAVs.Remove(target, out List<BoundTextureInfo>? btis))
+        if (!_boundUAVs.Remove(target, out List<BoundTextureInfo>? btis))
         {
-            void Unbind()
-            {
-                foreach (BoundTextureInfo bti in btis)
-                {
-                    BindUnorderedAccessView(
-                        null,
-                        null,
-                        null,
-                        bti.Slot,
-                        bti.Stages,
-                        bti.ResourceSet
-                    );
-                    if ((bti.Stages & ShaderStages.Compute) == ShaderStages.Compute)
-                    {
-                        _invalidatedComputeResourceSets[bti.ResourceSet] = true;
-                    }
-                    else
-                    {
-                        _invalidatedGraphicsResourceSets[bti.ResourceSet] = true;
-                    }
-                }
-
-                btis.Clear();
-                PoolBoundTextureList(btis);
-            }
-            Unbind();
+            return;
         }
+
+        foreach (BoundTextureInfo bti in btis)
+        {
+            BindUnorderedAccessView(null, null, null, bti.Slot, bti.Stages, bti.ResourceSet);
+            if ((bti.Stages & ShaderStages.Compute) == ShaderStages.Compute)
+            {
+                _invalidatedComputeResourceSets[bti.ResourceSet] = true;
+            }
+            else
+            {
+                _invalidatedGraphicsResourceSets[bti.ResourceSet] = true;
+            }
+        }
+
+        btis.Clear();
+        PoolBoundTextureList(btis);
     }
 
     private protected override void SetVertexBufferCore(
@@ -602,14 +582,14 @@ internal sealed class D3D11CommandList : CommandList
     )
     {
         D3D11Buffer d3d11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(buffer);
-        if (_vertexBindings[index] != d3d11Buffer.Buffer || _vertexOffsets[index] != offset)
-        {
-            _vertexBindingsChanged = true;
-            UnbindUAVBuffer(buffer);
-            _vertexBindings[index] = d3d11Buffer.Buffer;
-            _vertexOffsets[index] = (int)offset;
-            _numVertexBindings = Math.Max((index + 1), _numVertexBindings);
-        }
+        if (_vertexBindings[index] == d3d11Buffer.Buffer && _vertexOffsets[index] == offset)
+            return;
+
+        _vertexBindingsChanged = true;
+        UnbindUAVBuffer(buffer);
+        _vertexBindings[index] = d3d11Buffer.Buffer;
+        _vertexOffsets[index] = (int)offset;
+        _numVertexBindings = Math.Max((index + 1), _numVertexBindings);
     }
 
     private protected override void DrawCore(
@@ -724,6 +704,7 @@ internal sealed class D3D11CommandList : CommandList
             0,
             graphicsResourceCount
         );
+
         Span<BoundResourceSetInfo> sets = _graphicsResourceSets.AsSpan(0, graphicsResourceCount);
         for (int i = 0; i < graphicsResourceCount; i++)
         {
@@ -738,11 +719,10 @@ internal sealed class D3D11CommandList : CommandList
     public override void Dispatch(uint groupCountX, uint groupCountY, uint groupCountZ)
     {
         PreDispatchCommand();
-
         _context.Dispatch((int)groupCountX, (int)groupCountY, (int)groupCountZ);
     }
 
-    protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
+    private protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
     {
         PreDispatchCommand();
         D3D11Buffer d3d11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(indirectBuffer);
@@ -756,6 +736,7 @@ internal sealed class D3D11CommandList : CommandList
             0,
             computeResourceCount
         );
+
         Span<BoundResourceSetInfo> sets = _computeResourceSets.AsSpan(0, computeResourceCount);
         for (int i = 0; i < computeResourceCount; i++)
         {
@@ -855,18 +836,16 @@ internal sealed class D3D11CommandList : CommandList
                 _context.VSSetShaderResource(slot, srv!);
             }
         }
+
         if ((stages & ShaderStages.Geometry) == ShaderStages.Geometry)
-        {
             _context.GSSetShaderResource(slot, srv!);
-        }
+
         if ((stages & ShaderStages.TessellationControl) == ShaderStages.TessellationControl)
-        {
             _context.HSSetShaderResource(slot, srv!);
-        }
+
         if ((stages & ShaderStages.TessellationEvaluation) == ShaderStages.TessellationEvaluation)
-        {
             _context.DSSetShaderResource(slot, srv!);
-        }
+
         if ((stages & ShaderStages.Fragment) == ShaderStages.Fragment)
         {
             bool bind = false;
@@ -882,28 +861,24 @@ internal sealed class D3D11CommandList : CommandList
             {
                 bind = true;
             }
+
             if (bind)
-            {
                 _context.PSSetShaderResource(slot, srv!);
-            }
         }
+
         if ((stages & ShaderStages.Compute) == ShaderStages.Compute)
-        {
             _context.CSSetShaderResource(slot, srv!);
-        }
     }
 
     List<BoundTextureInfo> GetNewOrCachedBoundTextureInfoList()
     {
-        if (_boundTextureInfoPool.Count > 0)
-        {
-            int index = _boundTextureInfoPool.Count - 1;
-            List<BoundTextureInfo> ret = _boundTextureInfoPool[index];
-            _boundTextureInfoPool.RemoveAt(index);
-            return ret;
-        }
+        if (_boundTextureInfoPool.Count <= 0)
+            return [];
 
-        return [];
+        int index = _boundTextureInfoPool.Count - 1;
+        List<BoundTextureInfo> ret = _boundTextureInfoPool[index];
+        _boundTextureInfoPool.RemoveAt(index);
+        return ret;
     }
 
     void BindStorageBufferView(D3D11BufferRange range, int slot, ShaderStages stages)
@@ -914,29 +889,22 @@ internal sealed class D3D11CommandList : CommandList
         ID3D11ShaderResourceView srv = range.Buffer.GetShaderResourceView(range.Offset, range.Size);
 
         if ((stages & ShaderStages.Vertex) == ShaderStages.Vertex)
-        {
             _context.VSSetShaderResource(slot, srv);
-        }
+
         if ((stages & ShaderStages.Geometry) == ShaderStages.Geometry)
-        {
             _context.GSSetShaderResource(slot, srv);
-        }
+
         if ((stages & ShaderStages.TessellationControl) == ShaderStages.TessellationControl)
-        {
             _context.HSSetShaderResource(slot, srv);
-        }
+
         if ((stages & ShaderStages.TessellationEvaluation) == ShaderStages.TessellationEvaluation)
-        {
             _context.DSSetShaderResource(slot, srv);
-        }
+
         if ((stages & ShaderStages.Fragment) == ShaderStages.Fragment)
-        {
             _context.PSSetShaderResource(slot, srv);
-        }
+
         if (compute)
-        {
             _context.CSSetShaderResource(slot, srv);
-        }
     }
 
     void BindUniformBuffer(D3D11BufferRange range, int slot, ShaderStages stages)
@@ -945,14 +913,10 @@ internal sealed class D3D11CommandList : CommandList
         ID3D11DeviceContext1? context1 = _context1;
         if (!fullRange && context1 == null)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The range of the uniform buffer in slot {slot} ({range.Buffer}) does not "
-                        + $"meet the requirements of this device."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The range of the uniform buffer in slot {slot} ({range.Buffer}) does not "
+                    + $"meet the requirements of this device."
+            );
         }
         Debug.Assert(context1 != null);
 
@@ -1125,25 +1089,18 @@ internal sealed class D3D11CommandList : CommandList
         }
 
         int baseSlot = 0;
-        if (!compute && _fragmentBoundSamplers != null)
-        {
+        if (!compute)
             baseSlot = _framebuffer!.ColorTargets.Length;
-        }
+
         int actualSlot = baseSlot + slot;
 
         if (buffer != null)
-        {
             TrackBoundUAVBuffer(buffer, actualSlot, compute);
-        }
 
         if (compute)
-        {
             _context.CSSetUnorderedAccessView(actualSlot, uav!);
-        }
         else
-        {
             _context.OMSetUnorderedAccessView(actualSlot, uav!);
-        }
     }
 
     void TrackBoundUAVBuffer(DeviceBuffer buffer, int slot, bool compute)
@@ -1167,13 +1124,9 @@ internal sealed class D3D11CommandList : CommandList
             {
                 int slot = list[i].Item2;
                 if (compute)
-                {
                     _context.CSUnsetUnorderedAccessView(slot);
-                }
                 else
-                {
                     _context.OMUnsetUnorderedAccessView(slot);
-                }
 
                 list.RemoveAt(i);
                 i -= 1;
@@ -1198,23 +1151,20 @@ internal sealed class D3D11CommandList : CommandList
             {
                 bind = true;
             }
+
             if (bind)
-            {
                 _context.VSSetSampler(slot, sampler.DeviceSampler);
-            }
         }
+
         if ((stages & ShaderStages.Geometry) == ShaderStages.Geometry)
-        {
             _context.GSSetSampler(slot, sampler.DeviceSampler);
-        }
+
         if ((stages & ShaderStages.TessellationControl) == ShaderStages.TessellationControl)
-        {
             _context.HSSetSampler(slot, sampler.DeviceSampler);
-        }
+
         if ((stages & ShaderStages.TessellationEvaluation) == ShaderStages.TessellationEvaluation)
-        {
             _context.DSSetSampler(slot, sampler.DeviceSampler);
-        }
+
         if ((stages & ShaderStages.Fragment) == ShaderStages.Fragment)
         {
             bool bind = false;
@@ -1230,15 +1180,13 @@ internal sealed class D3D11CommandList : CommandList
             {
                 bind = true;
             }
+
             if (bind)
-            {
                 _context.PSSetSampler(slot, sampler.DeviceSampler);
-            }
         }
+
         if ((stages & ShaderStages.Compute) == ShaderStages.Compute)
-        {
             _context.CSSetSampler(slot, sampler.DeviceSampler);
-        }
     }
 
     protected override void SetFramebufferCore(Framebuffer fb)
@@ -1251,9 +1199,7 @@ internal sealed class D3D11CommandList : CommandList
         }
 
         foreach (ref readonly FramebufferAttachment colorTarget in fb.ColorTargets)
-        {
             UnbindSRVTexture(colorTarget.Target);
-        }
 
         _context.OMSetRenderTargets(d3dFB.RenderTargetViews, d3dFB.DepthStencilView);
 
@@ -1314,27 +1260,21 @@ internal sealed class D3D11CommandList : CommandList
                 1,
                 1
             );
+
             if (isUniformBuffer)
-            {
                 subregion = null;
-            }
 
             if (bufferOffsetInBytes == 0)
-            {
                 _context.UpdateSubresource(d3dBuffer.Buffer, 0, subregion, source, 0, 0);
-            }
             else
-            {
                 UpdateSubresource_Workaround(d3dBuffer.Buffer, 0, subregion!.Value, source);
-            }
         }
         else if (useMap && isFullBuffer) // Can only update full buffer with WriteDiscard.
         {
             MappedSubresource msb = _context.Map(
                 d3dBuffer.Buffer,
                 0,
-                D3D11Formats.VdToD3D11MapMode(isDynamic, MapMode.Write),
-                MapFlags.None
+                D3D11Formats.VdToD3D11MapMode(isDynamic, MapMode.Write)
             );
 
             Unsafe.CopyBlock(msb.DataPointer.ToPointer(), source.ToPointer(), sizeInBytes);
@@ -1386,7 +1326,7 @@ internal sealed class D3D11CommandList : CommandList
         return Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(staging);
     }
 
-    protected override void CopyBufferCore(
+    private protected override void CopyBufferCore(
         DeviceBuffer source,
         DeviceBuffer destination,
         ReadOnlySpan<BufferCopyCommand> commands
@@ -1424,7 +1364,7 @@ internal sealed class D3D11CommandList : CommandList
         }
     }
 
-    protected override void CopyTextureCore(
+    private protected override void CopyTextureCore(
         Texture source,
         uint srcX,
         uint srcY,
@@ -1520,60 +1460,44 @@ internal sealed class D3D11CommandList : CommandList
         _commandList = null;
 
         foreach (D3D11Swapchain sc in _referencedSwapchains)
-        {
             sc.RemoveCommandListReference(this);
-        }
-        _referencedSwapchains.Clear();
 
         foreach (D3D11Buffer buffer in _submittedStagingBuffers)
-        {
             _availableStagingBuffers.Add(buffer);
-        }
 
+        _referencedSwapchains.Clear();
         _submittedStagingBuffers.Clear();
     }
 
-    private protected override void PushDebugGroupCore(ReadOnlySpan<char> name)
-    {
+    private protected override void PushDebugGroupCore(ReadOnlySpan<char> name) =>
         _uda?.BeginEvent(name.ToString());
-    }
 
-    private protected override void PopDebugGroupCore()
-    {
-        _uda?.EndEvent();
-    }
+    private protected override void PopDebugGroupCore() => _uda?.EndEvent();
 
-    private protected override void InsertDebugMarkerCore(ReadOnlySpan<char> name)
-    {
+    private protected override void InsertDebugMarkerCore(ReadOnlySpan<char> name) =>
         _uda?.SetMarker(name.ToString());
-    }
 
     public override void Dispose()
     {
-        if (!_disposed)
-        {
-            _uda?.Dispose();
-            DeviceCommandList?.Dispose();
-            _context1?.Dispose();
-            _context.Dispose();
+        if (_disposed)
+            return;
 
-            foreach (ref BoundResourceSetInfo boundGraphicsSet in _graphicsResourceSets.AsSpan())
-            {
-                boundGraphicsSet.Offsets.Dispose();
-            }
-            foreach (ref BoundResourceSetInfo boundComputeSet in _computeResourceSets.AsSpan())
-            {
-                boundComputeSet.Offsets.Dispose();
-            }
+        _uda?.Dispose();
+        DeviceCommandList?.Dispose();
+        _context1?.Dispose();
+        _context.Dispose();
 
-            foreach (D3D11Buffer buffer in _availableStagingBuffers)
-            {
-                buffer.Dispose();
-            }
-            _availableStagingBuffers.Clear();
+        foreach (ref BoundResourceSetInfo boundGraphicsSet in _graphicsResourceSets.AsSpan())
+            boundGraphicsSet.Offsets.Dispose();
 
-            _disposed = true;
-        }
+        foreach (ref BoundResourceSetInfo boundComputeSet in _computeResourceSets.AsSpan())
+            boundComputeSet.Offsets.Dispose();
+
+        foreach (D3D11Buffer buffer in _availableStagingBuffers)
+            buffer.Dispose();
+
+        _availableStagingBuffers.Clear();
+        _disposed = true;
     }
 
     struct BoundTextureInfo
@@ -1592,9 +1516,7 @@ internal sealed class D3D11CommandList : CommandList
 
         public bool IsFullRange => Offset == 0 && Size == Buffer.SizeInBytes;
 
-        public bool Equals(D3D11BufferRange other)
-        {
-            return Buffer == other.Buffer && Offset.Equals(other.Offset) && Size.Equals(other.Size);
-        }
+        public bool Equals(D3D11BufferRange other) =>
+            Buffer == other.Buffer && Offset.Equals(other.Offset) && Size.Equals(other.Size);
     }
 }

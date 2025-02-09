@@ -16,6 +16,7 @@ internal sealed class OpenGLSwapchain(
         get => gd.SyncToVerticalBlank;
         set => gd.SyncToVerticalBlank = value;
     }
+
     public override string? Name { get; set; } = "OpenGL Context Swapchain";
     public override bool IsDisposed => _disposed;
 
@@ -25,8 +26,5 @@ internal sealed class OpenGLSwapchain(
         resizeAction?.Invoke(width, height);
     }
 
-    public override void Dispose()
-    {
-        _disposed = true;
-    }
+    public override void Dispose() => _disposed = true;
 }

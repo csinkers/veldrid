@@ -1,12 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Veldrid.Tests.Android.Sinks
-{
-    public interface IResultChannel : ITestListener
-    {
-        Task<bool> OpenChannelAsync(CancellationToken cancellationToken, string? message = null);
+namespace Veldrid.Tests.Android.Sinks;
 
-        Task CloseChannelAsync();
-    }
+public interface IResultChannel : ITestListener
+{
+    Task<bool> OpenChannelAsync(CancellationToken cancellationToken, string? message = null);
+
+    Task CloseChannelAsync();
 }

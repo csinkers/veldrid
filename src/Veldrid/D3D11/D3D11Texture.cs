@@ -34,21 +34,17 @@ internal sealed class D3D11Texture : Texture
         ResourceOptionFlags optionFlags = ResourceOptionFlags.None;
 
         if ((description.Usage & TextureUsage.RenderTarget) == TextureUsage.RenderTarget)
-        {
             bindFlags |= BindFlags.RenderTarget;
-        }
+
         if ((description.Usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil)
-        {
             bindFlags |= BindFlags.DepthStencil;
-        }
+
         if ((description.Usage & TextureUsage.Sampled) == TextureUsage.Sampled)
-        {
             bindFlags |= BindFlags.ShaderResource;
-        }
+
         if ((description.Usage & TextureUsage.Storage) == TextureUsage.Storage)
-        {
             bindFlags |= BindFlags.UnorderedAccess | BindFlags.ShaderResource;
-        }
+
         if ((description.Usage & TextureUsage.Staging) == TextureUsage.Staging)
         {
             cpuFlags = CpuAccessFlags.Read | CpuAccessFlags.Write;

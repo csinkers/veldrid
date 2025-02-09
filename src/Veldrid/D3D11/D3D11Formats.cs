@@ -153,9 +153,7 @@ internal static class D3D11Formats
             case PixelFormat.ETC2_R8_G8_B8_UNorm:
             case PixelFormat.ETC2_R8_G8_B8_A1_UNorm:
             case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
-                static Format Throw() =>
-                    throw new VeldridException("ETC2 formats are not supported on Direct3D 11.");
-                return Throw();
+                throw new VeldridException("ETC2 formats are not supported on Direct3D 11.");
 
             default:
                 return Illegal.Value<PixelFormat, Format>();
@@ -280,31 +278,25 @@ internal static class D3D11Formats
     {
         BindFlags flags = BindFlags.None;
         if ((usage & BufferUsage.VertexBuffer) == BufferUsage.VertexBuffer)
-        {
             flags |= BindFlags.VertexBuffer;
-        }
+
         if ((usage & BufferUsage.IndexBuffer) == BufferUsage.IndexBuffer)
-        {
             flags |= BindFlags.IndexBuffer;
-        }
+
         if ((usage & BufferUsage.UniformBuffer) == BufferUsage.UniformBuffer)
-        {
             flags |= BindFlags.ConstantBuffer;
-        }
+
         if (
             (usage & BufferUsage.StructuredBufferReadOnly) == BufferUsage.StructuredBufferReadOnly
             || (usage & BufferUsage.StructuredBufferReadWrite)
                 == BufferUsage.StructuredBufferReadWrite
         )
-        {
             flags |= BindFlags.ShaderResource;
-        }
+
         if (
             (usage & BufferUsage.StructuredBufferReadWrite) == BufferUsage.StructuredBufferReadWrite
         )
-        {
             flags |= BindFlags.UnorderedAccess;
-        }
 
         return flags;
     }
@@ -317,44 +309,34 @@ internal static class D3D11Formats
     {
         TextureUsage usage = 0;
         if ((bindFlags & BindFlags.RenderTarget) != 0)
-        {
             usage |= TextureUsage.RenderTarget;
-        }
+
         if ((bindFlags & BindFlags.DepthStencil) != 0)
-        {
             usage |= TextureUsage.DepthStencil;
-        }
+
         if ((bindFlags & BindFlags.ShaderResource) != 0)
-        {
             usage |= TextureUsage.Sampled;
-        }
+
         if ((bindFlags & BindFlags.UnorderedAccess) != 0)
-        {
             usage |= TextureUsage.Storage;
-        }
 
         if ((optionFlags & ResourceOptionFlags.TextureCube) != 0)
-        {
             usage |= TextureUsage.Cubemap;
-        }
+
         if ((optionFlags & ResourceOptionFlags.GenerateMips) != 0)
-        {
             usage |= TextureUsage.GenerateMipmaps;
-        }
 
         return usage;
     }
 
-    internal static bool IsUnsupportedFormat(PixelFormat format)
-    {
-        return format == PixelFormat.ETC2_R8_G8_B8_UNorm
-            || format == PixelFormat.ETC2_R8_G8_B8_A1_UNorm
-            || format == PixelFormat.ETC2_R8_G8_B8_A8_UNorm;
-    }
+    internal static bool IsUnsupportedFormat(PixelFormat format) =>
+        format
+            is PixelFormat.ETC2_R8_G8_B8_UNorm
+                or PixelFormat.ETC2_R8_G8_B8_A1_UNorm
+                or PixelFormat.ETC2_R8_G8_B8_A8_UNorm;
 
-    internal static Format GetViewFormat(Format format)
-    {
-        return format switch
+    internal static Format GetViewFormat(Format format) =>
+        format switch
         {
             Format.R16_Typeless => Format.R16_UNorm,
             Format.R32_Typeless => Format.R32_Float,
@@ -362,11 +344,9 @@ internal static class D3D11Formats
             Format.R24G8_Typeless => Format.R24_UNorm_X8_Typeless,
             _ => format,
         };
-    }
 
-    internal static Blend VdToD3D11Blend(BlendFactor factor)
-    {
-        return factor switch
+    internal static Blend VdToD3D11Blend(BlendFactor factor) =>
+        factor switch
         {
             BlendFactor.Zero => Blend.Zero,
             BlendFactor.One => Blend.One,
@@ -382,21 +362,17 @@ internal static class D3D11Formats
             BlendFactor.InverseBlendFactor => Blend.InverseBlendFactor,
             _ => Illegal.Value<BlendFactor, Blend>(),
         };
-    }
 
-    internal static Format ToDxgiFormat(IndexFormat format)
-    {
-        return format switch
+    internal static Format ToDxgiFormat(IndexFormat format) =>
+        format switch
         {
             IndexFormat.UInt16 => Format.R16_UInt,
             IndexFormat.UInt32 => Format.R32_UInt,
             _ => Illegal.Value<IndexFormat, Format>(),
         };
-    }
 
-    internal static DXStencilOperation VdToD3D11StencilOperation(StencilOperation op)
-    {
-        return op switch
+    internal static DXStencilOperation VdToD3D11StencilOperation(StencilOperation op) =>
+        op switch
         {
             StencilOperation.Keep => DXStencilOperation.Keep,
             StencilOperation.Zero => DXStencilOperation.Zero,
@@ -408,11 +384,9 @@ internal static class D3D11Formats
             StencilOperation.DecrementAndWrap => DXStencilOperation.Decrement,
             _ => Illegal.Value<StencilOperation, DXStencilOperation>(),
         };
-    }
 
-    internal static PixelFormat ToVdFormat(Format format)
-    {
-        return format switch
+    internal static PixelFormat ToVdFormat(Format format) =>
+        format switch
         {
             Format.R8_UNorm => PixelFormat.R8_UNorm,
             Format.R8_SNorm => PixelFormat.R8_SNorm,
@@ -470,11 +444,9 @@ internal static class D3D11Formats
             Format.R11G11B10_Float => PixelFormat.R11_G11_B10_Float,
             _ => Illegal.Value<Format, PixelFormat>(),
         };
-    }
 
-    internal static BlendOperation VdToD3D11BlendOperation(BlendFunction function)
-    {
-        return function switch
+    internal static BlendOperation VdToD3D11BlendOperation(BlendFunction function) =>
+        function switch
         {
             BlendFunction.Add => BlendOperation.Add,
             BlendFunction.Subtract => BlendOperation.Subtract,
@@ -483,7 +455,6 @@ internal static class D3D11Formats
             BlendFunction.Maximum => BlendOperation.Max,
             _ => Illegal.Value<BlendFunction, BlendOperation>(),
         };
-    }
 
     internal static ColorWriteEnable VdToD3D11ColorWriteEnable(ColorWriteMask mask)
     {
@@ -491,10 +462,13 @@ internal static class D3D11Formats
 
         if ((mask & ColorWriteMask.Red) == ColorWriteMask.Red)
             enable |= ColorWriteEnable.Red;
+
         if ((mask & ColorWriteMask.Green) == ColorWriteMask.Green)
             enable |= ColorWriteEnable.Green;
+
         if ((mask & ColorWriteMask.Blue) == ColorWriteMask.Blue)
             enable |= ColorWriteEnable.Blue;
+
         if ((mask & ColorWriteMask.Alpha) == ColorWriteMask.Alpha)
             enable |= ColorWriteEnable.Alpha;
 
@@ -521,40 +495,35 @@ internal static class D3D11Formats
                 _ => Illegal.Value<SamplerFilter, Filter>(),
             };
         }
-        else
+
+        return filter switch
         {
-            return filter switch
-            {
-                SamplerFilter.MinPoint_MagPoint_MipPoint => Filter.MinMagMipPoint,
-                SamplerFilter.MinPoint_MagPoint_MipLinear => Filter.MinMagPointMipLinear,
-                SamplerFilter.MinPoint_MagLinear_MipPoint => Filter.MinPointMagLinearMipPoint,
-                SamplerFilter.MinPoint_MagLinear_MipLinear => Filter.MinPointMagMipLinear,
-                SamplerFilter.MinLinear_MagPoint_MipPoint => Filter.MinLinearMagMipPoint,
-                SamplerFilter.MinLinear_MagPoint_MipLinear => Filter.MinLinearMagPointMipLinear,
-                SamplerFilter.MinLinear_MagLinear_MipPoint => Filter.MinMagLinearMipPoint,
-                SamplerFilter.MinLinear_MagLinear_MipLinear => Filter.MinMagMipLinear,
-                SamplerFilter.Anisotropic => Filter.Anisotropic,
-                _ => Illegal.Value<SamplerFilter, Filter>(),
-            };
-        }
+            SamplerFilter.MinPoint_MagPoint_MipPoint => Filter.MinMagMipPoint,
+            SamplerFilter.MinPoint_MagPoint_MipLinear => Filter.MinMagPointMipLinear,
+            SamplerFilter.MinPoint_MagLinear_MipPoint => Filter.MinPointMagLinearMipPoint,
+            SamplerFilter.MinPoint_MagLinear_MipLinear => Filter.MinPointMagMipLinear,
+            SamplerFilter.MinLinear_MagPoint_MipPoint => Filter.MinLinearMagMipPoint,
+            SamplerFilter.MinLinear_MagPoint_MipLinear => Filter.MinLinearMagPointMipLinear,
+            SamplerFilter.MinLinear_MagLinear_MipPoint => Filter.MinMagLinearMipPoint,
+            SamplerFilter.MinLinear_MagLinear_MipLinear => Filter.MinMagMipLinear,
+            SamplerFilter.Anisotropic => Filter.Anisotropic,
+            _ => Illegal.Value<SamplerFilter, Filter>(),
+        };
     }
 
-    internal static Vortice.Direct3D11.MapMode VdToD3D11MapMode(bool isDynamic, MapMode mode)
-    {
-        return mode switch
+    internal static Vortice.Direct3D11.MapMode VdToD3D11MapMode(bool isDynamic, MapMode mode) =>
+        mode switch
         {
             MapMode.Read => DXMapMode.Read,
             MapMode.Write => isDynamic ? DXMapMode.WriteDiscard : DXMapMode.Write,
             MapMode.ReadWrite => DXMapMode.ReadWrite,
             _ => Illegal.Value<MapMode, DXMapMode>(),
         };
-    }
 
     internal static Vortice.Direct3D.PrimitiveTopology VdToD3D11PrimitiveTopology(
         PrimitiveTopology primitiveTopology
-    )
-    {
-        return primitiveTopology switch
+    ) =>
+        primitiveTopology switch
         {
             PrimitiveTopology.TriangleList => DXPrimitiveTopology.TriangleList,
             PrimitiveTopology.TriangleStrip => DXPrimitiveTopology.TriangleStrip,
@@ -563,32 +532,26 @@ internal static class D3D11Formats
             PrimitiveTopology.PointList => DXPrimitiveTopology.PointList,
             _ => Illegal.Value<PrimitiveTopology, DXPrimitiveTopology>(),
         };
-    }
 
-    internal static FillMode VdToD3D11FillMode(PolygonFillMode fillMode)
-    {
-        return fillMode switch
+    internal static FillMode VdToD3D11FillMode(PolygonFillMode fillMode) =>
+        fillMode switch
         {
             PolygonFillMode.Solid => FillMode.Solid,
             PolygonFillMode.Wireframe => FillMode.Wireframe,
             _ => Illegal.Value<PolygonFillMode, FillMode>(),
         };
-    }
 
-    internal static CullMode VdToD3D11CullMode(FaceCullMode cullingMode)
-    {
-        return cullingMode switch
+    internal static CullMode VdToD3D11CullMode(FaceCullMode cullingMode) =>
+        cullingMode switch
         {
             FaceCullMode.Back => CullMode.Back,
             FaceCullMode.Front => CullMode.Front,
             FaceCullMode.None => CullMode.None,
             _ => Illegal.Value<FaceCullMode, CullMode>(),
         };
-    }
 
-    internal static Format ToDxgiFormat(VertexElementFormat format)
-    {
-        return format switch
+    internal static Format ToDxgiFormat(VertexElementFormat format) =>
+        format switch
         {
             VertexElementFormat.Float1 => Format.R32_Float,
             VertexElementFormat.Float2 => Format.R32G32_Float,
@@ -623,11 +586,9 @@ internal static class D3D11Formats
             VertexElementFormat.Half4 => Format.R16G16B16A16_Float,
             _ => Illegal.Value<VertexElementFormat, Format>(),
         };
-    }
 
-    internal static ComparisonFunction VdToD3D11ComparisonFunc(ComparisonKind comparisonKind)
-    {
-        return comparisonKind switch
+    internal static ComparisonFunction VdToD3D11ComparisonFunc(ComparisonKind comparisonKind) =>
+        comparisonKind switch
         {
             ComparisonKind.Never => ComparisonFunction.Never,
             ComparisonKind.Less => ComparisonFunction.Less,
@@ -639,11 +600,9 @@ internal static class D3D11Formats
             ComparisonKind.Always => ComparisonFunction.Always,
             _ => Illegal.Value<ComparisonKind, ComparisonFunction>(),
         };
-    }
 
-    internal static TextureAddressMode VdToD3D11AddressMode(SamplerAddressMode mode)
-    {
-        return mode switch
+    internal static TextureAddressMode VdToD3D11AddressMode(SamplerAddressMode mode) =>
+        mode switch
         {
             SamplerAddressMode.Wrap => TextureAddressMode.Wrap,
             SamplerAddressMode.Mirror => TextureAddressMode.Mirror,
@@ -651,22 +610,14 @@ internal static class D3D11Formats
             SamplerAddressMode.Border => TextureAddressMode.Border,
             _ => Illegal.Value<SamplerAddressMode, TextureAddressMode>(),
         };
-    }
 
-    internal static Format GetDepthFormat(PixelFormat format)
-    {
-        return format switch
+    internal static Format GetDepthFormat(PixelFormat format) =>
+        format switch
         {
             PixelFormat.R32_Float or PixelFormat.D32_Float => Format.D32_Float,
             PixelFormat.R16_UNorm or PixelFormat.D16_UNorm => Format.D16_UNorm,
             PixelFormat.D24_UNorm_S8_UInt => Format.D24_UNorm_S8_UInt,
             PixelFormat.D32_Float_S8_UInt => Format.D32_Float_S8X24_UInt,
-            _ => Throw(),
+            _ => throw new VeldridException("Invalid depth texture format: " + format),
         };
-
-        Format Throw()
-        {
-            throw new VeldridException("Invalid depth texture format: " + format);
-        }
-    }
 }

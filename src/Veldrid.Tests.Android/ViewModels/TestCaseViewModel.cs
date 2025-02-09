@@ -5,140 +5,139 @@ using Veldrid.Tests.Android.Forms;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Veldrid.Tests.Android.ViewModels
+namespace Veldrid.Tests.Android.ViewModels;
+
+public class TestCaseViewModel : ViewModelBase
 {
-    public class TestCaseViewModel : ViewModelBase
+    readonly Navigator _navigator;
+    readonly DeviceRunner _runner;
+
+    TestState result;
+    RunStatus runStatus;
+    string stackTrace;
+
+    string message;
+    string output;
+
+    ITestCase testCase;
+    TestResultViewModel testResult;
+
+    internal TestCaseViewModel(
+        Assembly assembly,
+        ITestCase testCase,
+        Navigator navigator,
+        DeviceRunner runner
+    )
     {
-        private readonly Navigator _navigator;
-        private readonly DeviceRunner _runner;
+        _navigator = navigator;
+        _runner = runner;
 
-        private TestState result;
-        private RunStatus runStatus;
-        private string stackTrace;
+        Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+        this.testCase = testCase ?? throw new ArgumentNullException(nameof(testCase));
 
-        private string message;
-        private string output;
+        result = TestState.NotRun;
+        runStatus = RunStatus.NotRun;
+        stackTrace = "";
+        message = "🔷 not run";
+        output = "";
 
-        private ITestCase testCase;
-        private TestResultViewModel testResult;
+        // Create an initial result representing not run
+        testResult = new TestResultViewModel(this, null);
+    }
 
-        internal TestCaseViewModel(
-            Assembly assembly,
-            ITestCase testCase,
-            Navigator navigator,
-            DeviceRunner runner
-        )
+    public Assembly Assembly { get; }
+
+    public string DisplayName => TestCase.DisplayName;
+
+    // This should be raised on a UI thread as listeners will likely be UI elements
+
+    public string Message
+    {
+        get { return message; }
+        private set { Set(ref message, value); }
+    }
+
+    public string Output
+    {
+        get { return output; }
+        private set { Set(ref output, value); }
+    }
+
+    public TestState Result
+    {
+        get { return result; }
+        private set { Set(ref result, value); }
+    }
+
+    public RunStatus RunStatus
+    {
+        get { return runStatus; }
+        set { Set(ref runStatus, value); }
+    }
+
+    public string StackTrace
+    {
+        get { return stackTrace; }
+        private set { Set(ref stackTrace, value); }
+    }
+
+    public ITestCase TestCase
+    {
+        get { return testCase; }
+        private set
         {
-            _navigator = navigator;
-            _runner = runner;
-
-            Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
-            this.testCase = testCase ?? throw new ArgumentNullException(nameof(testCase));
-
-            result = TestState.NotRun;
-            runStatus = RunStatus.NotRun;
-            stackTrace = "";
-            message = "🔷 not run";
-            output = "";
-
-            // Create an initial result representing not run
-            testResult = new TestResultViewModel(this, null);
-        }
-
-        public Assembly Assembly { get; }
-
-        public string DisplayName => TestCase.DisplayName;
-
-        // This should be raised on a UI thread as listeners will likely be UI elements
-
-        public string Message
-        {
-            get { return message; }
-            private set { Set(ref message, value); }
-        }
-
-        public string Output
-        {
-            get { return output; }
-            private set { Set(ref output, value); }
-        }
-
-        public TestState Result
-        {
-            get { return result; }
-            private set { Set(ref result, value); }
-        }
-
-        public RunStatus RunStatus
-        {
-            get { return runStatus; }
-            set { Set(ref runStatus, value); }
-        }
-
-        public string StackTrace
-        {
-            get { return stackTrace; }
-            private set { Set(ref stackTrace, value); }
-        }
-
-        public ITestCase TestCase
-        {
-            get { return testCase; }
-            private set
+            if (Set(ref testCase, value))
             {
-                if (Set(ref testCase, value))
-                {
-                    RaisePropertyChanged(nameof(DisplayName));
-                }
+                RaisePropertyChanged(nameof(DisplayName));
             }
         }
+    }
 
-        public TestResultViewModel TestResult
+    public TestResultViewModel TestResult
+    {
+        get { return testResult; }
+        private set { Set(ref testResult, value); }
+    }
+
+    internal void UpdateTestState(TestResultViewModel message)
+    {
+        TestResult = message;
+
+        Output = message.TestResultMessage?.Output ?? string.Empty;
+
+        string msg = string.Empty;
+        string stackTrace = string.Empty;
+        RunStatus rs = RunStatus.NotRun;
+
+        if (message.TestResultMessage is ITestPassed)
         {
-            get { return testResult; }
-            private set { Set(ref testResult, value); }
+            Result = TestState.Passed;
+            msg = $"✔ Success! {TestResult.Duration.TotalMilliseconds} ms";
+            rs = RunStatus.Ok;
+        }
+        if (message.TestResultMessage is ITestFailed failedMessage)
+        {
+            Result = TestState.Failed;
+            msg = $"⛔ {ExceptionUtility.CombineMessages(failedMessage)}";
+            stackTrace = ExceptionUtility.CombineStackTraces(failedMessage);
+            rs = RunStatus.Failed;
+        }
+        if (message.TestResultMessage is ITestSkipped skipped)
+        {
+            Result = TestState.Skipped;
+            msg = $"⚠ {skipped.Reason}";
+            rs = RunStatus.Skipped;
         }
 
-        internal void UpdateTestState(TestResultViewModel message)
-        {
-            TestResult = message;
+        Message = msg;
+        StackTrace = stackTrace;
+        RunStatus = rs;
+    }
 
-            Output = message.TestResultMessage?.Output ?? string.Empty;
+    public async Task NavigateToResultsPageAsync()
+    {
+        await _runner.RunAsync(this);
 
-            string msg = string.Empty;
-            string stackTrace = string.Empty;
-            RunStatus rs = RunStatus.NotRun;
-
-            if (message.TestResultMessage is ITestPassed)
-            {
-                Result = TestState.Passed;
-                msg = $"✔ Success! {TestResult.Duration.TotalMilliseconds} ms";
-                rs = RunStatus.Ok;
-            }
-            if (message.TestResultMessage is ITestFailed failedMessage)
-            {
-                Result = TestState.Failed;
-                msg = $"⛔ {ExceptionUtility.CombineMessages(failedMessage)}";
-                stackTrace = ExceptionUtility.CombineStackTraces(failedMessage);
-                rs = RunStatus.Failed;
-            }
-            if (message.TestResultMessage is ITestSkipped skipped)
-            {
-                Result = TestState.Skipped;
-                msg = $"⚠ {skipped.Reason}";
-                rs = RunStatus.Skipped;
-            }
-
-            Message = msg;
-            StackTrace = stackTrace;
-            RunStatus = rs;
-        }
-
-        public async Task NavigateToResultsPageAsync()
-        {
-            await _runner.RunAsync(this);
-
-            await _navigator.NavigateToAsync(NavigationPage.TestResult, TestResult);
-        }
+        await _navigator.NavigateToAsync(NavigationPage.TestResult, TestResult);
     }
 }

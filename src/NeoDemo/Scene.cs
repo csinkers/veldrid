@@ -17,6 +17,7 @@ public class Scene
 
     readonly List<Renderable> _freeRenderables = [];
     readonly List<IUpdateable> _updateables = [];
+    CommandList? _resourceUpdateCL;
 
     readonly ConcurrentDictionary<RenderPasses, Func<CullRenderable, bool>> _filters = new(
         new RenderPassesComparer()
@@ -90,6 +91,9 @@ public class Scene
 
     void RenderAllSingleThread(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
+        if (sc.Camera == null)
+            return;
+
         float depthClear = gd.IsDepthRangeZeroToOne ? 0f : 1f;
         Matrix4x4 cameraProj = Camera.ProjectionMatrix;
         Vector4 nearLimitCS = Vector4.Transform(new Vector3(0, 0, -_nearCascadeLimit), cameraProj);
@@ -329,8 +333,8 @@ public class Scene
         cl.PopDebugGroup();
 
         cl.PushDebugGroup("Swapchain Pass");
-        cl.SetFramebuffer(gd.SwapchainFramebuffer);
-        fbWidth = gd.SwapchainFramebuffer.Width;
+        cl.SetFramebuffer(gd.SwapchainFramebuffer!);
+        fbWidth = gd.SwapchainFramebuffer!.Width;
         fbHeight = gd.SwapchainFramebuffer.Height;
         cl.SetFullViewports();
         Render(
@@ -350,7 +354,7 @@ public class Scene
 
         cl.End();
 
-        _resourceUpdateCL.Begin();
+        _resourceUpdateCL!.Begin();
         foreach (Renderable renderable in _allPerFrameRenderablesSet)
         {
             renderable.UpdatePerFrameResources(gd, _resourceUpdateCL, sc);
@@ -371,7 +375,7 @@ public class Scene
         Vector3 lightPos =
             sc.DirectionalLight.Transform.Position - sc.DirectionalLight.Direction * 1000f;
 
-        _resourceUpdateCL.Begin();
+        _resourceUpdateCL!.Begin();
         CommandList[] cls = new CommandList[5];
         for (int i = 0; i < cls.Length; i++)
         {
@@ -503,6 +507,9 @@ public class Scene
 
         _tasks[3] = Task.Run(() =>
         {
+            if (sc.Camera == null)
+                return;
+
             // Reflections
             cls[4].SetFramebuffer(sc.ReflectionFramebuffer);
             float scWidth = sc.ReflectionFramebuffer.Width;
@@ -642,9 +649,10 @@ public class Scene
             false
         );
 
-        cl.SetFramebuffer(gd.SwapchainFramebuffer);
-        fbWidth = gd.SwapchainFramebuffer.Width;
-        fbHeight = gd.SwapchainFramebuffer.Height;
+        Framebuffer fb = gd.SwapchainFramebuffer!;
+        cl.SetFramebuffer(fb);
+        fbWidth = fb.Width;
+        fbHeight = fb.Height;
         cl.SetViewport(0, new(0, 0, fbWidth, fbHeight, 0, 1));
         cl.SetScissorRect(0, 0, 0, fbWidth, fbHeight);
         Render(
@@ -675,7 +683,7 @@ public class Scene
     )
     {
         Vector3 lightDir = sc.DirectionalLight.Direction;
-        Vector3 viewDir = sc.Camera.LookDirection;
+        Vector3 viewDir = sc.Camera!.LookDirection;
         Vector3 viewPos = sc.Camera.Position;
         Vector3 unitY = Vector3.UnitY;
         FrustumCorners cameraCorners;
@@ -848,17 +856,12 @@ public class Scene
     void CollectFreeObjects(RenderPasses renderPass, List<Renderable> renderables)
     {
         foreach (Renderable r in _freeRenderables)
-        {
             if ((r.RenderPasses & renderPass) != 0)
-            {
                 renderables.Add(r);
-            }
-        }
     }
 
     static readonly Func<RenderPasses, Func<CullRenderable, bool>> s_createFilterFunc = rp =>
         CreateFilter(rp);
-    CommandList _resourceUpdateCL;
 
     Func<CullRenderable, bool> GetFilter(RenderPasses passes)
     {
@@ -885,7 +888,7 @@ public class Scene
             r.DestroyDeviceObjects();
         }
 
-        _resourceUpdateCL.Dispose();
+        _resourceUpdateCL?.Dispose();
     }
 
     internal void CreateAllDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)

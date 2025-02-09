@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Veldrid.Tests;
 
@@ -67,6 +68,9 @@ public abstract class PipelineTests<T> : GraphicsDeviceTestBase<T>
 
         _ = RF.CreateGraphicsPipeline(gpd);
         _ = RF.CreateGraphicsPipeline(gpd);
+
+        if (gpd.ShaderSet.VertexLayouts == null || gpd.ShaderSet.VertexLayouts.Length == 0)
+            throw new InvalidOperationException("VertexLayouts not set");
 
         gpd.ShaderSet.VertexLayouts[0].InstanceStepRate = 4;
         _ = RF.CreateGraphicsPipeline(gpd);

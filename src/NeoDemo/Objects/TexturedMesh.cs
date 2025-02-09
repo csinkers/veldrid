@@ -19,24 +19,24 @@ public class TexturedMesh : CullRenderable
     readonly Transform _transform = new();
 
     readonly BoundingBox _centeredBounds;
-    DeviceBuffer _vb;
-    DeviceBuffer _ib;
+    DeviceBuffer? _vb;
+    DeviceBuffer? _ib;
     int _indexCount;
-    Texture _texture;
-    Texture _alphamapTexture;
-    TextureView _alphaMapView;
+    Texture? _texture;
+    Texture? _alphamapTexture;
+    TextureView? _alphaMapView;
 
-    Pipeline _pipeline;
-    Pipeline _pipelineFrontCull;
-    ResourceSet _mainProjViewRS;
-    ResourceSet _mainSharedRS;
-    ResourceSet _mainPerObjectRS;
-    ResourceSet _reflectionRS;
-    ResourceSet _noReflectionRS;
-    Pipeline _shadowMapPipeline;
-    ResourceSet[] _shadowMapResourceSets;
+    Pipeline? _pipeline;
+    Pipeline? _pipelineFrontCull;
+    ResourceSet? _mainProjViewRS;
+    ResourceSet? _mainSharedRS;
+    ResourceSet? _mainPerObjectRS;
+    ResourceSet? _reflectionRS;
+    ResourceSet? _noReflectionRS;
+    Pipeline? _shadowMapPipeline;
+    ResourceSet[] _shadowMapResourceSets = [];
 
-    DeviceBuffer _worldAndInverseBuffer;
+    DeviceBuffer? _worldAndInverseBuffer;
 
     readonly DisposeCollector _disposeCollector = new();
 
@@ -72,20 +72,16 @@ public class TexturedMesh : CullRenderable
     public override BoundingBox BoundingBox =>
         BoundingBox.Transform(_centeredBounds, _transform.GetTransformMatrix());
 
-    public override unsafe void CreateDeviceObjects(
-        GraphicsDevice gd,
-        CommandList cl,
-        SceneContext sc
-    )
+    public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
         if (s_useUniformOffset)
-        {
             _uniformOffset = gd.UniformBufferMinOffsetAlignment;
-        }
+
         ResourceFactory disposeFactory = new DisposeCollectorResourceFactory(
             gd.ResourceFactory,
             _disposeCollector
         );
+
         _vb = _meshData.CreateVertexBuffer(disposeFactory, cl);
         _vb.Name = _name + "_VB";
         _ib = _meshData.CreateIndexBuffer(disposeFactory, cl);
@@ -94,55 +90,47 @@ public class TexturedMesh : CullRenderable
 
         uint bufferSize = 128;
         if (s_useUniformOffset)
-        {
             bufferSize += _uniformOffset * 2;
-        }
 
         _worldAndInverseBuffer = disposeFactory.CreateBuffer(
             new(bufferSize, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
         );
+
         if (_materialPropsOwned)
-        {
             _materialProps.CreateDeviceObjects(gd, cl, sc);
-        }
 
-        if (_textureData != null)
-        {
-            _texture = StaticResourceCache.GetTexture2D(gd, gd.ResourceFactory, _textureData);
-        }
-        else
-        {
-            _texture = StaticResourceCache.GetPinkTexture(gd, gd.ResourceFactory);
-        }
+        _texture =
+            _textureData != null
+                ? StaticResourceCache.GetTexture2D(gd, gd.ResourceFactory, _textureData)
+                : StaticResourceCache.GetPinkTexture(gd, gd.ResourceFactory);
 
-        if (_alphaTextureData != null)
-        {
-            _alphamapTexture = _alphaTextureData.CreateDeviceTexture(gd, disposeFactory);
-        }
-        else
-        {
-            _alphamapTexture = StaticResourceCache.GetPinkTexture(gd, gd.ResourceFactory);
-        }
+        _alphamapTexture =
+            _alphaTextureData != null
+                ? _alphaTextureData.CreateDeviceTexture(gd, disposeFactory)
+                : StaticResourceCache.GetPinkTexture(gd, gd.ResourceFactory);
+
         _alphaMapView = StaticResourceCache.GetTextureView(gd.ResourceFactory, _alphamapTexture);
 
         VertexLayoutDescription[] shadowDepthVertexLayouts =
         [
             new(
-                new VertexElementDescription(
-                    "Position",
-                    VertexElementSemantic.TextureCoordinate,
-                    VertexElementFormat.Float3
-                ),
-                new VertexElementDescription(
-                    "Normal",
-                    VertexElementSemantic.TextureCoordinate,
-                    VertexElementFormat.Float3
-                ),
-                new VertexElementDescription(
-                    "TexCoord",
-                    VertexElementSemantic.TextureCoordinate,
-                    VertexElementFormat.Float2
-                )
+                [
+                    new(
+                        "Position",
+                        VertexElementSemantic.TextureCoordinate,
+                        VertexElementFormat.Float3
+                    ),
+                    new(
+                        "Normal",
+                        VertexElementSemantic.TextureCoordinate,
+                        VertexElementFormat.Float3
+                    ),
+                    new(
+                        "TexCoord",
+                        VertexElementSemantic.TextureCoordinate,
+                        VertexElementFormat.Float2
+                    ),
+                ]
             ),
         ];
 
@@ -453,7 +441,10 @@ public class TexturedMesh : CullRenderable
                 new(projViewLayout, viewProjBuffer)
             );
             ResourceSet worldRS = disposeFactory.CreateResourceSet(
-                new(worldLayout, new DeviceBufferRange(_worldAndInverseBuffer, _uniformOffset, 128))
+                new(
+                    worldLayout,
+                    new DeviceBufferRange(_worldAndInverseBuffer!, _uniformOffset, 128)
+                )
             );
             ret[i * 2 + 1] = worldRS;
         }
@@ -474,7 +465,7 @@ public class TexturedMesh : CullRenderable
     public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
     {
         return RenderOrderKey.Create(
-            _pipeline.GetHashCode(),
+            _pipeline!.GetHashCode(),
             Vector3.Distance(
                 (_objectCenter * _transform.Scale) + _transform.Position,
                 cameraPosition
@@ -538,14 +529,14 @@ public class TexturedMesh : CullRenderable
 
         Matrix4x4.Invert(wai.World, out Matrix4x4 invertedWorld);
         wai.InverseWorld = Matrix4x4.Transpose(invertedWorld);
-        gd.UpdateBuffer(_worldAndInverseBuffer, _uniformOffset * 2, ref wai);
+        gd.UpdateBuffer(_worldAndInverseBuffer!, _uniformOffset * 2, ref wai);
     }
 
     void RenderShadowMap(CommandList cl, SceneContext sc, int shadowMapIndex)
     {
-        cl.SetVertexBuffer(0, _vb);
-        cl.SetIndexBuffer(_ib, _meshData.IndexFormat);
-        cl.SetPipeline(_shadowMapPipeline);
+        cl.SetVertexBuffer(0, _vb!);
+        cl.SetIndexBuffer(_ib!, _meshData.IndexFormat);
+        cl.SetPipeline(_shadowMapPipeline!);
         cl.SetGraphicsResourceSet(0, _shadowMapResourceSets[shadowMapIndex * 2]);
         ReadOnlySpan<uint> offsets = MemoryMarshal.CreateReadOnlySpan(ref _uniformOffset, 1);
         cl.SetGraphicsResourceSet(1, _shadowMapResourceSets[shadowMapIndex * 2 + 1], offsets);
@@ -554,14 +545,14 @@ public class TexturedMesh : CullRenderable
 
     void RenderStandard(CommandList cl, SceneContext sc, bool reflectionPass)
     {
-        cl.SetVertexBuffer(0, _vb);
-        cl.SetIndexBuffer(_ib, _meshData.IndexFormat);
-        cl.SetPipeline(reflectionPass ? _pipelineFrontCull : _pipeline);
-        cl.SetGraphicsResourceSet(0, _mainProjViewRS);
-        cl.SetGraphicsResourceSet(1, _mainSharedRS);
+        cl.SetVertexBuffer(0, _vb!);
+        cl.SetIndexBuffer(_ib!, _meshData.IndexFormat);
+        cl.SetPipeline(reflectionPass ? _pipelineFrontCull! : _pipeline!);
+        cl.SetGraphicsResourceSet(0, _mainProjViewRS!);
+        cl.SetGraphicsResourceSet(1, _mainSharedRS!);
         ReadOnlySpan<uint> offsets = MemoryMarshal.CreateReadOnlySpan(ref _uniformOffset, 1);
-        cl.SetGraphicsResourceSet(2, _mainPerObjectRS, offsets);
-        cl.SetGraphicsResourceSet(3, reflectionPass ? _reflectionRS : _noReflectionRS);
+        cl.SetGraphicsResourceSet(2, _mainPerObjectRS!, offsets);
+        cl.SetGraphicsResourceSet(3, reflectionPass ? _reflectionRS! : _noReflectionRS!);
         cl.DrawIndexed((uint)_indexCount, 1, 0, 0, 0);
     }
 }

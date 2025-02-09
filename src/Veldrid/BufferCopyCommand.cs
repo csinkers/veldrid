@@ -23,13 +23,11 @@ public struct BufferCopyCommand(ulong readOffset, ulong writeOffset, ulong lengt
     /// </summary>
     public readonly ulong Length = length;
 
-    public override readonly string ToString()
-    {
-        return $"Copy {Length} from {ReadOffset} to {WriteOffset}";
-    }
+    /// <summary>
+    /// Returns a string representation of the command.
+    /// </summary>
+    public readonly override string ToString() =>
+        $"Copy {Length} from {ReadOffset} to {WriteOffset}";
 
-    readonly string GetDebuggerDisplay()
-    {
-        return ToString();
-    }
+    readonly string GetDebuggerDisplay() => ToString();
 }

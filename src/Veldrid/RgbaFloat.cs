@@ -141,7 +141,7 @@ public readonly struct RgbaFloat : IEquatable<RgbaFloat>
     /// Element-wise equality.
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
-    /// <returns>True if all elements are equal; false otherswise.</returns>
+    /// <returns>True if all elements are equal; false otherwise.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(RgbaFloat other)
     {

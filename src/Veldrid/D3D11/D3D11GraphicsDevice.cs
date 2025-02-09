@@ -30,13 +30,9 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
     readonly List<D3D11Buffer> _availableStagingBuffers = [];
 
     public ID3D11Device Device => _device;
-
     public IDXGIAdapter Adapter => _dxgiAdapter;
-
     public bool SupportsConcurrentResources => _supportsConcurrentResources;
-
     public bool SupportsCommandLists => _supportsCommandLists;
-
     public int DeviceId => _deviceId;
 
     public D3D11GraphicsDevice(
@@ -247,36 +243,28 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         );
 
         if (CheckFormatMultisample(dxgiFormat, 64))
-        {
             return TextureSampleCount.Count64;
-        }
-        else if (CheckFormatMultisample(dxgiFormat, 32))
-        {
+
+        if (CheckFormatMultisample(dxgiFormat, 32))
             return TextureSampleCount.Count32;
-        }
-        else if (CheckFormatMultisample(dxgiFormat, 16))
-        {
+
+        if (CheckFormatMultisample(dxgiFormat, 16))
             return TextureSampleCount.Count16;
-        }
-        else if (CheckFormatMultisample(dxgiFormat, 8))
-        {
+
+        if (CheckFormatMultisample(dxgiFormat, 8))
             return TextureSampleCount.Count8;
-        }
-        else if (CheckFormatMultisample(dxgiFormat, 4))
-        {
+
+        if (CheckFormatMultisample(dxgiFormat, 4))
             return TextureSampleCount.Count4;
-        }
-        else if (CheckFormatMultisample(dxgiFormat, 2))
-        {
+
+        if (CheckFormatMultisample(dxgiFormat, 2))
             return TextureSampleCount.Count2;
-        }
+
         return TextureSampleCount.Count1;
     }
 
-    bool CheckFormatMultisample(Format format, int sampleCount)
-    {
-        return _device.CheckMultisampleQualityLevels(format, sampleCount) != 0;
-    }
+    bool CheckFormatMultisample(Format format, int sampleCount) =>
+        _device.CheckMultisampleQualityLevels(format, sampleCount) != 0;
 
     private protected override bool GetPixelFormatSupportCore(
         PixelFormat format,
@@ -307,8 +295,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             return false;
         }
 
-        const uint MaxTextureDimension = 16384;
-        const uint MaxVolumeExtent = 2048;
+        const uint maxTextureDimension = 16384;
+        const uint maxVolumeExtent = 2048;
 
         uint sampleCounts = 0;
         if (CheckFormatMultisample(dxgiFormat, 1))
@@ -337,11 +325,11 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         }
 
         properties = new(
-            MaxTextureDimension,
-            type == TextureType.Texture1D ? 1 : MaxTextureDimension,
-            type != TextureType.Texture3D ? 1 : MaxVolumeExtent,
+            maxTextureDimension,
+            type == TextureType.Texture1D ? 1 : maxTextureDimension,
+            type != TextureType.Texture3D ? 1 : maxVolumeExtent,
             uint.MaxValue,
-            type == TextureType.Texture3D ? 1 : MaxVolumeExtent,
+            type == TextureType.Texture3D ? 1 : maxVolumeExtent,
             sampleCounts
         );
         return true;
@@ -376,8 +364,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                         D3D11Formats.VdToD3D11MapMode(
                             (buffer.Usage & BufferUsage.DynamicReadWrite) != 0,
                             mode
-                        ),
-                        Vortice.Direct3D11.MapFlags.None
+                        )
                     );
 
                     mappedResource = new(
@@ -406,7 +393,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                         (int)arrayLayer,
                         D3D11Formats.VdToD3D11MapMode(false, mode),
                         Vortice.Direct3D11.MapFlags.None,
-                        out int mipSize,
+                        out int _,
                         out MappedSubresource msr
                     );
 
@@ -638,21 +625,15 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
 
     public override bool WaitForFences(Fence[] fences, bool waitAll, ulong nanosecondTimeout)
     {
-        int msTimeout;
-        if (nanosecondTimeout == ulong.MaxValue)
-        {
-            msTimeout = -1;
-        }
-        else
-        {
-            msTimeout = (int)Math.Min(nanosecondTimeout / 1_000_000, int.MaxValue);
-        }
+        int msTimeout =
+            nanosecondTimeout == ulong.MaxValue
+                ? -1
+                : (int)Math.Min(nanosecondTimeout / 1_000_000, int.MaxValue);
 
         ManualResetEvent[] events = GetResetEventArray(fences.Length);
         for (int i = 0; i < fences.Length; i++)
-        {
             events[i] = Util.AssertSubtype<Fence, D3D11Fence>(fences[i]).ResetEvent;
-        }
+
         bool result;
         if (waitAll)
         {
@@ -665,7 +646,6 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         }
 
         ReturnResetEventArray(events);
-
         return result;
     }
 
@@ -709,15 +689,21 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         base.Dispose(disposing);
 
         // Dispose staging buffers
-        foreach (DeviceBuffer buffer in _availableStagingBuffers)
+        lock (_stagingResourcesLock)
         {
-            buffer.Dispose();
+            foreach (D3D11Buffer buffer in _availableStagingBuffers)
+                buffer.Dispose();
+
+            _availableStagingBuffers.Clear();
         }
-        _availableStagingBuffers.Clear();
 
         ((D3D11ResourceFactory)ResourceFactory).Dispose();
         MainSwapchain?.Dispose();
-        _immediateContext.Dispose();
+
+        lock (_immediateContextLock)
+        {
+            _immediateContext.Dispose();
+        }
 
         if (IsDriverDebug)
         {

@@ -5,9 +5,16 @@ namespace Veldrid.NeoDemo;
 
 public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
 {
-    ImGuiRenderer _imguiRenderer;
+    ImGuiRenderer? _imguiRenderer;
+    int _width = width;
+    int _height = height;
 
-    public void WindowResized(int width, int height) => _imguiRenderer.WindowResized(width, height);
+    public void WindowResized(int width, int height)
+    {
+        _width = width;
+        _height = height;
+        _imguiRenderer?.WindowResized(_width, _height);
+    }
 
     public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
@@ -16,8 +23,8 @@ public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
             _imguiRenderer = new(
                 gd,
                 sc.MainSceneFramebuffer.OutputDescription,
-                width,
-                height,
+                _width,
+                _height,
                 ColorSpaceHandling.Linear
             );
         }
@@ -31,15 +38,9 @@ public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
         }
     }
 
-    public override void DestroyDeviceObjects()
-    {
-        _imguiRenderer.DestroyDeviceObjects();
-    }
+    public override void DestroyDeviceObjects() => _imguiRenderer?.DestroyDeviceObjects();
 
-    public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
-    {
-        return new(ulong.MaxValue);
-    }
+    public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition) => new(ulong.MaxValue);
 
     public override void Render(
         GraphicsDevice gd,
@@ -49,7 +50,7 @@ public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
     )
     {
         Debug.Assert(renderPass == RenderPasses.Overlay);
-        _imguiRenderer.Render(gd, cl);
+        _imguiRenderer?.Render(gd, cl);
     }
 
     public override void UpdatePerFrameResources(
@@ -62,6 +63,7 @@ public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
 
     public void Update(float deltaSeconds)
     {
-        _imguiRenderer.Update(deltaSeconds, InputTracker.FrameSnapshot);
+        if (InputTracker.FrameSnapshot != null)
+            _imguiRenderer?.Update(deltaSeconds, InputTracker.FrameSnapshot);
     }
 }

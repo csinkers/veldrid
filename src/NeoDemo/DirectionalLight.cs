@@ -11,7 +11,7 @@ public class DirectionalLight
 
     public Vector3 Direction => Transform.Forward;
 
-    public event Action<RgbaFloat> ColorChanged;
+    public event Action<RgbaFloat>? ColorChanged;
 
     public RgbaFloat Color
     {

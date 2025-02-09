@@ -2,31 +2,30 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Veldrid.Tests.Android.ViewModels
+namespace Veldrid.Tests.Android.ViewModels;
+
+public abstract class ViewModelBase : INotifyPropertyChanged
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 
-        protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
+    protected bool Set<T>(
+        ref T destination,
+        T value,
+        [CallerMemberName] string? propertyName = null
+    )
+    {
+        if (!EqualityComparer<T>.Default.Equals(destination, value))
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            destination = value;
 
-        protected bool Set<T>(
-            ref T destination,
-            T value,
-            [CallerMemberName] string? propertyName = null
-        )
-        {
-            if (!EqualityComparer<T>.Default.Equals(destination, value))
-            {
-                destination = value;
-
-                RaisePropertyChanged(propertyName);
-                return true;
-            }
-            return false;
+            RaisePropertyChanged(propertyName);
+            return true;
         }
+        return false;
     }
 }

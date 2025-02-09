@@ -14,15 +14,13 @@ namespace Veldrid;
 public unsafe class BackendInfoVulkan
 {
     readonly VkGraphicsDevice _gd;
-    readonly ReadOnlyCollection<string> _instanceLayers;
-    readonly ReadOnlyCollection<string> _instanceExtensions;
     readonly Lazy<ReadOnlyCollection<ExtensionProperties>> _deviceExtensions;
 
     internal BackendInfoVulkan(VkGraphicsDevice gd)
     {
         _gd = gd;
-        _instanceLayers = new(VulkanUtil.EnumerateInstanceLayers());
-        _instanceExtensions = new(VulkanUtil.EnumerateInstanceExtensions());
+        AvailableInstanceLayers = new(VulkanUtil.EnumerateInstanceLayers());
+        AvailableInstanceExtensions = new(VulkanUtil.EnumerateInstanceExtensions());
         _deviceExtensions = new(EnumerateDeviceExtensions);
     }
 
@@ -61,10 +59,19 @@ public unsafe class BackendInfoVulkan
     /// </summary>
     public string? DriverInfo => _gd.DriverInfo;
 
-    public ReadOnlyCollection<string> AvailableInstanceLayers => _instanceLayers;
+    /// <summary>
+    /// Instance layers which are available on the current system.
+    /// </summary>
+    public ReadOnlyCollection<string> AvailableInstanceLayers { get; }
 
-    public ReadOnlyCollection<string> AvailableInstanceExtensions => _instanceExtensions;
+    /// <summary>
+    /// Instance extensions which are available on the current system.
+    /// </summary>
+    public ReadOnlyCollection<string> AvailableInstanceExtensions { get; }
 
+    /// <summary>
+    /// Device extensions which are available on the current system.
+    /// </summary>
     public ReadOnlyCollection<ExtensionProperties> AvailableDeviceExtensions =>
         _deviceExtensions.Value;
 
@@ -133,13 +140,18 @@ public unsafe class BackendInfoVulkan
         _gd.EndAndSubmitCommands(cl);
     }
 
+    /// <summary>
+    /// Gets the pixel format used by the underlying Vulkan texture.
+    /// </summary>
+    /// <param name="texture"></param>
+    /// <returns></returns>
     public VkFormat GetVkFormat(Texture texture)
     {
         VkTexture vkTexture = Util.AssertSubtype<Texture, VkTexture>(texture);
         return vkTexture.VkFormat;
     }
 
-    unsafe ReadOnlyCollection<ExtensionProperties> EnumerateDeviceExtensions()
+    ReadOnlyCollection<ExtensionProperties> EnumerateDeviceExtensions()
     {
         VkExtensionProperties[] vkProps = _gd.GetDeviceExtensionProperties();
         ExtensionProperties[] veldridProps = new ExtensionProperties[vkProps.Length];
@@ -153,15 +165,28 @@ public unsafe class BackendInfoVulkan
         return new(veldridProps);
     }
 
+    /// <summary>
+    /// Represents the properties of a Vulkan extension.
+    /// </summary>
+    /// <param name="name">The name of the extension.</param>
+    /// <param name="specVersion">The specification version of the extension.</param>
     public readonly struct ExtensionProperties(string name, uint specVersion)
     {
+        /// <summary>
+        /// The name of the extension.
+        /// </summary>
         public readonly string Name = name ?? throw new ArgumentNullException(nameof(name));
+
+        /// <summary>
+        /// The specification version of the extension.
+        /// </summary>
         public readonly uint SpecVersion = specVersion;
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        /// <summary>
+        /// Returns the name of the extension.
+        /// </summary>
+        /// <returns>The name of the extension.</returns>
+        public override string ToString() => Name;
     }
 }
 #endif

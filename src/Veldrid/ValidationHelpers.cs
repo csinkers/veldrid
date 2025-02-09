@@ -16,12 +16,10 @@ internal static class ValidationHelpers
 
         if (elements.Length != resources.Length)
         {
-            static void Throw(int resourcesLength, int elementsLength) =>
-                throw new VeldridException(
-                    $"The number of resources specified ({resourcesLength}) must be equal to the number of resources in "
-                        + $"the {nameof(ResourceLayout)} ({elementsLength})."
-                );
-            Throw(resources.Length, elements.Length);
+            throw new VeldridException(
+                $"The number of resources specified ({resources.Length}) must be equal to the number of resources in "
+                    + $"the {nameof(ResourceLayout)} ({elements.Length})."
+            );
         }
 
         for (uint i = 0; i < elements.Length; i++)
@@ -45,12 +43,10 @@ internal static class ValidationHelpers
                     && (range.Offset != 0 || range.SizeInBytes != range.Buffer.SizeInBytes)
                 )
                 {
-                    void Throw() =>
-                        throw new VeldridException(
-                            $"The {nameof(DeviceBufferRange)} in slot {i} uses a non-zero offset or less-than-full size, "
-                                + $"which requires {nameof(GraphicsDeviceFeatures)}.{nameof(GraphicsDeviceFeatures.BufferRangeBinding)}."
-                        );
-                    Throw();
+                    throw new VeldridException(
+                        $"The {nameof(DeviceBufferRange)} in slot {i} uses a non-zero offset or less-than-full size, "
+                            + $"which requires {nameof(GraphicsDeviceFeatures)}.{nameof(GraphicsDeviceFeatures.BufferRangeBinding)}."
+                    );
                 }
 
                 uint alignment =
@@ -60,12 +56,10 @@ internal static class ValidationHelpers
 
                 if ((range.Offset % alignment) != 0)
                 {
-                    void Throw() =>
-                        throw new VeldridException(
-                            $"The {nameof(DeviceBufferRange)} in slot {i} has an invalid offset: {range.Offset}. "
-                                + $"The offset for this buffer must be a multiple of {alignment}."
-                        );
-                    Throw();
+                    throw new VeldridException(
+                        $"The {nameof(DeviceBufferRange)} in slot {i} has an invalid offset: {range.Offset}. "
+                            + $"The offset for this buffer must be a multiple of {alignment}."
+                    );
                 }
             }
         }
@@ -84,13 +78,11 @@ internal static class ValidationHelpers
                     || (b.Usage & BufferUsage.UniformBuffer) == 0
                 )
                 {
-                    void Throw() =>
-                        throw new VeldridException(
-                            $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in the {nameof(ResourceLayout)}. "
-                                + $"It must be a {nameof(DeviceBuffer)} or {nameof(DeviceBufferRange)} with "
-                                + $"{nameof(BufferUsage)}.{nameof(BufferUsage.UniformBuffer)}."
-                        );
-                    Throw();
+                    throw new VeldridException(
+                        $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in the {nameof(ResourceLayout)}. "
+                            + $"It must be a {nameof(DeviceBuffer)} or {nameof(DeviceBufferRange)} with "
+                            + $"{nameof(BufferUsage)}.{nameof(BufferUsage.UniformBuffer)}."
+                    );
                 }
                 break;
             }
@@ -108,13 +100,11 @@ internal static class ValidationHelpers
                     ) == 0
                 )
                 {
-                    void Throw() =>
-                        throw new VeldridException(
-                            $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in "
-                                + $"the {nameof(ResourceLayout)}. It must be a {nameof(DeviceBuffer)} with "
-                                + $"{nameof(BufferUsage)}.{nameof(BufferUsage.StructuredBufferReadOnly)}."
-                        );
-                    Throw();
+                    throw new VeldridException(
+                        $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in "
+                            + $"the {nameof(ResourceLayout)}. It must be a {nameof(DeviceBuffer)} with "
+                            + $"{nameof(BufferUsage)}.{nameof(BufferUsage.StructuredBufferReadOnly)}."
+                    );
                 }
                 break;
             }
@@ -126,12 +116,10 @@ internal static class ValidationHelpers
                     || (b.Usage & BufferUsage.StructuredBufferReadWrite) == 0
                 )
                 {
-                    void Throw() =>
-                        throw new VeldridException(
-                            $"Resource in slot {slot} does not match {nameof(ResourceKind)} specified in the {nameof(ResourceLayout)}. "
-                                + $"It must be a {nameof(DeviceBuffer)} with {nameof(BufferUsage)}.{nameof(BufferUsage.StructuredBufferReadWrite)}."
-                        );
-                    Throw();
+                    throw new VeldridException(
+                        $"Resource in slot {slot} does not match {nameof(ResourceKind)} specified in the {nameof(ResourceLayout)}. "
+                            + $"It must be a {nameof(DeviceBuffer)} with {nameof(BufferUsage)}.{nameof(BufferUsage.StructuredBufferReadWrite)}."
+                    );
                 }
                 break;
             }
@@ -149,13 +137,11 @@ internal static class ValidationHelpers
                     )
                 )
                 {
-                    void Throw() =>
-                        throw new VeldridException(
-                            $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in the "
-                                + $"{nameof(ResourceLayout)}. It must be a {nameof(Texture)} or {nameof(TextureView)} whose target "
-                                + $"has {nameof(TextureUsage)}.{nameof(TextureUsage.Sampled)}."
-                        );
-                    Throw();
+                    throw new VeldridException(
+                        $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in the "
+                            + $"{nameof(ResourceLayout)}. It must be a {nameof(Texture)} or {nameof(TextureView)} whose target "
+                            + $"has {nameof(TextureUsage)}.{nameof(TextureUsage.Sampled)}."
+                    );
                 }
                 break;
             }
@@ -173,13 +159,11 @@ internal static class ValidationHelpers
                     )
                 )
                 {
-                    void Throw() =>
-                        throw new VeldridException(
-                            $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in the "
-                                + $"{nameof(ResourceLayout)}. It must be a {nameof(Texture)} or {nameof(TextureView)} whose target "
-                                + $"has {nameof(TextureUsage)}.{nameof(TextureUsage.Storage)}."
-                        );
-                    Throw();
+                    throw new VeldridException(
+                        $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in the "
+                            + $"{nameof(ResourceLayout)}. It must be a {nameof(Texture)} or {nameof(TextureView)} whose target "
+                            + $"has {nameof(TextureUsage)}.{nameof(TextureUsage.Storage)}."
+                    );
                 }
                 break;
             }
@@ -188,12 +172,10 @@ internal static class ValidationHelpers
             {
                 if (resource.Kind != BindableResourceKind.Sampler)
                 {
-                    void Throw(BindableResourceKind resourceKind) =>
-                        throw new VeldridException(
-                            $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in the {nameof(ResourceLayout)}. "
-                                + $"It must be a {nameof(Sampler)} but was {resourceKind}."
-                        );
-                    Throw(resource.Kind);
+                    throw new VeldridException(
+                        $"Resource in slot {slot} does not match {nameof(ResourceKind)}.{kind} specified in the {nameof(ResourceLayout)}. "
+                            + $"It must be a {nameof(Sampler)} but was {resource.Kind}."
+                    );
                 }
                 break;
             }

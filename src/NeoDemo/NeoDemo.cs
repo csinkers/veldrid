@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Numerics;
 using ImGuiNET;
@@ -98,9 +99,12 @@ public class NeoDemo
         _scene.AddRenderable(skybox);
 
         AddSponzaAtriumObjects();
-        _sc.Camera.Position = new(-80, 25, -4.3f);
-        _sc.Camera.Yaw = -MathF.PI / 2;
-        _sc.Camera.Pitch = -MathF.PI / 9;
+        if (_sc.Camera != null)
+        {
+            _sc.Camera.Position = new(-80, 25, -4.3f);
+            _sc.Camera.Yaw = -MathF.PI / 2;
+            _sc.Camera.Pitch = -MathF.PI / 9;
+        }
 
         ShadowmapDrawer texDrawIndexeder = new(() => _window, () => _sc.NearShadowMapView);
         _resizeHandled += (w, h) => texDrawIndexeder.OnWindowResized();
@@ -168,38 +172,46 @@ public class NeoDemo
 
             Vector3 scale = new(0.1f);
             ConstructedMesh mesh = atriumFile.GetMesh16(group);
-            MaterialDefinition materialDef = atriumMtls.Definitions[mesh.MaterialName];
+            MaterialDefinition? materialDef =
+                mesh.MaterialName != null ? atriumMtls.Definitions[mesh.MaterialName] : null;
             ImageSharpTexture? overrideTextureData = null;
             ImageSharpTexture? alphaTexture = null;
             MaterialPropsAndBuffer materialProps = CommonMaterials.Brick;
-            if (materialDef.DiffuseTexture != null)
+
+            if (materialDef != null)
             {
-                string texturePath = AssetHelper.GetPath(
-                    "Models/SponzaAtrium/" + materialDef.DiffuseTexture
-                );
-                if (!_textures.ContainsKey(texturePath))
+                if (materialDef.DiffuseTexture != null)
                 {
-                    Console.WriteLine("Loading diffuse: " + materialDef.DiffuseTexture);
-                    loadedDiffuses++;
+                    string texturePath = AssetHelper.GetPath(
+                        "Models/SponzaAtrium/" + materialDef.DiffuseTexture
+                    );
+                    if (!_textures.ContainsKey(texturePath))
+                    {
+                        Console.WriteLine("Loading diffuse: " + materialDef.DiffuseTexture);
+                        loadedDiffuses++;
+                    }
+                    overrideTextureData = LoadTexture(texturePath, true);
                 }
-                overrideTextureData = LoadTexture(texturePath, true);
-            }
-            if (materialDef.AlphaMap != null)
-            {
-                string texturePath = AssetHelper.GetPath(
-                    "Models/SponzaAtrium/" + materialDef.AlphaMap
-                );
-                if (!_textures.ContainsKey(texturePath))
+
+                if (materialDef.AlphaMap != null)
                 {
-                    Console.WriteLine("Loading alpha map: " + materialDef.AlphaMap);
-                    loadedAlphaMaps++;
+                    string texturePath = AssetHelper.GetPath(
+                        "Models/SponzaAtrium/" + materialDef.AlphaMap
+                    );
+                    if (!_textures.ContainsKey(texturePath))
+                    {
+                        Console.WriteLine("Loading alpha map: " + materialDef.AlphaMap);
+                        loadedAlphaMaps++;
+                    }
+                    alphaTexture = LoadTexture(texturePath, false);
                 }
-                alphaTexture = LoadTexture(texturePath, false);
+
+                if (materialDef.Name.Contains("vase"))
+                {
+                    materialProps = CommonMaterials.Vase;
+                }
             }
-            if (materialDef.Name.Contains("vase"))
-            {
-                materialProps = CommonMaterials.Vase;
-            }
+
             if (group.Name == "sponza_117")
             {
                 MirrorMesh.Plane = Plane.CreateFromVertices(
@@ -831,6 +843,7 @@ public class NeoDemo
         _gd.WaitForIdle();
     }
 
+    [MemberNotNull(nameof(_frameCommands))]
     void CreateAllObjects()
     {
         _frameCommands = _gd.ResourceFactory.CreateCommandList();

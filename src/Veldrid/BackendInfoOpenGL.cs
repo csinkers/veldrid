@@ -7,6 +7,9 @@ using Veldrid.OpenGLBinding;
 
 namespace Veldrid;
 
+/// <summary>
+/// Delegate type for OpenGL debugger logging callbacks
+/// </summary>
 public unsafe delegate void OpenGLDebugMessageCallback(
     uint source,
     uint type,
@@ -107,10 +110,8 @@ public class BackendInfoOpenGL
     /// Gets the name of the OpenGL texture object wrapped by the given Veldrid Texture.
     /// </summary>
     /// <returns>The Veldrid Texture's underlying OpenGL texture name.</returns>
-    public uint GetTextureName(Texture texture)
-    {
-        return Util.AssertSubtype<Texture, OpenGLTexture>(texture).Texture;
-    }
+    public uint GetTextureName(Texture texture) =>
+        Util.AssertSubtype<Texture, OpenGLTexture>(texture).Texture;
 
     /// <summary>
     /// Sets the texture target of the OpenGL texture object wrapped by the given Veldrid Texture to to a custom value.
@@ -137,6 +138,7 @@ public class BackendInfoOpenGL
             debugProc.Invoke((uint)source, (uint)type, id, (uint)severity, length, message);
             return true;
         }
+
         return false;
     }
 }

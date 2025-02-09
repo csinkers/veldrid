@@ -199,12 +199,12 @@ public static class VeldridStartup
     }
 
 #if !EXCLUDE_METAL_BACKEND
-    static unsafe GraphicsDevice CreateMetalGraphicsDevice(
+    static GraphicsDevice CreateMetalGraphicsDevice(
         GraphicsDeviceOptions options,
         Sdl2Window window
     ) => CreateMetalGraphicsDevice(options, window, options.SwapchainSrgbFormat);
 
-    static unsafe GraphicsDevice CreateMetalGraphicsDevice(
+    static GraphicsDevice CreateMetalGraphicsDevice(
         GraphicsDeviceOptions options,
         Sdl2Window window,
         bool colorSrgb
@@ -242,12 +242,12 @@ public static class VeldridStartup
     }
 
 #if !EXCLUDE_VULKAN_BACKEND
-    public static unsafe GraphicsDevice CreateVulkanGraphicsDevice(
+    public static GraphicsDevice CreateVulkanGraphicsDevice(
         GraphicsDeviceOptions options,
         Sdl2Window window
     ) => CreateVulkanGraphicsDevice(options, window, false);
 
-    public static unsafe GraphicsDevice CreateVulkanGraphicsDevice(
+    public static GraphicsDevice CreateVulkanGraphicsDevice(
         GraphicsDeviceOptions options,
         Sdl2Window window,
         bool colorSrgb
@@ -345,7 +345,7 @@ public static class VeldridStartup
         );
     }
 
-    public static unsafe void SetSDLGLContextAttributes(
+    public static void SetSDLGLContextAttributes(
         GraphicsDeviceOptions options,
         GraphicsBackend backend
     )

@@ -206,26 +206,23 @@ public struct BlendAttachmentDescription : IEquatable<BlendAttachmentDescription
     /// Element-wise equality.
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
-    /// <returns>True if all elements and all array elements are equal; false otherswise.</returns>
-    public bool Equals(BlendAttachmentDescription other)
-    {
-        return BlendEnabled.Equals(other.BlendEnabled)
-            && ColorWriteMask.Equals(other.ColorWriteMask)
-            && SourceColorFactor == other.SourceColorFactor
-            && DestinationColorFactor == other.DestinationColorFactor
-            && ColorFunction == other.ColorFunction
-            && SourceAlphaFactor == other.SourceAlphaFactor
-            && DestinationAlphaFactor == other.DestinationAlphaFactor
-            && AlphaFunction == other.AlphaFunction;
-    }
+    /// <returns>True if all elements and all array elements are equal; false otherwise.</returns>
+    public bool Equals(BlendAttachmentDescription other) =>
+        BlendEnabled.Equals(other.BlendEnabled)
+        && ColorWriteMask.Equals(other.ColorWriteMask)
+        && SourceColorFactor == other.SourceColorFactor
+        && DestinationColorFactor == other.DestinationColorFactor
+        && ColorFunction == other.ColorFunction
+        && SourceAlphaFactor == other.SourceAlphaFactor
+        && DestinationAlphaFactor == other.DestinationAlphaFactor
+        && AlphaFunction == other.AlphaFunction;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-    public override int GetHashCode()
-    {
-        return HashHelper.Combine(
+    public override int GetHashCode() =>
+        HashHelper.Combine(
             BlendEnabled.GetHashCode(),
             ColorWriteMask.GetHashCode(),
             (int)SourceColorFactor,
@@ -235,5 +232,4 @@ public struct BlendAttachmentDescription : IEquatable<BlendAttachmentDescription
             (int)DestinationAlphaFactor,
             (int)AlphaFunction
         );
-    }
 }

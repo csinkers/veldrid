@@ -7,8 +7,8 @@ public class MaterialPropsAndBuffer(MaterialProperties mp)
     MaterialProperties _properties = mp;
     bool _newProperties;
 
-    public string Name { get; set; }
-    public DeviceBuffer UniformBuffer { get; private set; }
+    public string? Name { get; set; }
+    public DeviceBuffer? UniformBuffer { get; private set; }
 
     public MaterialProperties Properties
     {
@@ -30,12 +30,12 @@ public class MaterialPropsAndBuffer(MaterialProperties mp)
 
     public void DestroyDeviceObjects()
     {
-        UniformBuffer.Dispose();
+        UniformBuffer?.Dispose();
     }
 
     public void FlushChanges(CommandList cl)
     {
-        if (_newProperties)
+        if (_newProperties && UniformBuffer != null)
         {
             _newProperties = false;
             cl.UpdateBuffer(UniformBuffer, 0, ref _properties);

@@ -7,42 +7,41 @@ using Veldrid.Tests.Android.Sinks;
 using Veldrid.Tests.Android.Utilities;
 using Xamarin.Forms.Platform.Android;
 
-namespace Veldrid.Tests.Android
+namespace Veldrid.Tests.Android;
+
+public abstract class RunnerActivity : FormsApplicationActivity
 {
-    public abstract class RunnerActivity : FormsApplicationActivity
+    readonly List<Assembly> testAssemblies = new();
+
+    FormsRunner? runner;
+
+    protected bool Initialized { get; private set; }
+
+    protected IResultChannel? ResultChannel { get; set; }
+
+    protected override void OnCreate(Bundle bundle)
     {
-        readonly List<Assembly> testAssemblies = new();
+        base.OnCreate(bundle);
 
-        FormsRunner? runner;
+        PlatformHelpers.Assets = Assets;
 
-        protected bool Initialized { get; private set; }
+        Xamarin.Forms.Forms.Init(this, bundle, typeof(RunnerActivity).Assembly);
 
-        protected IResultChannel? ResultChannel { get; set; }
+        runner = new FormsRunner(testAssemblies, ResultChannel ?? new NullResultChannel());
 
-        protected override void OnCreate(Bundle bundle)
+        Initialized = true;
+
+        LoadApplication(runner);
+    }
+
+    protected void AddTestAssembly(Assembly assembly)
+    {
+        if (assembly == null)
+            throw new ArgumentNullException(nameof(assembly));
+
+        if (!Initialized)
         {
-            base.OnCreate(bundle);
-
-            PlatformHelpers.Assets = Assets;
-
-            Xamarin.Forms.Forms.Init(this, bundle, typeof(RunnerActivity).Assembly);
-
-            runner = new FormsRunner(testAssemblies, ResultChannel ?? new NullResultChannel());
-
-            Initialized = true;
-
-            LoadApplication(runner);
-        }
-
-        protected void AddTestAssembly(Assembly assembly)
-        {
-            if (assembly == null)
-                throw new ArgumentNullException(nameof(assembly));
-
-            if (!Initialized)
-            {
-                testAssemblies.Add(assembly);
-            }
+            testAssemblies.Add(assembly);
         }
     }
 }

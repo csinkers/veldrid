@@ -375,13 +375,15 @@ public abstract class ResourceFactory
     protected virtual void ValidateShader(in ShaderDescription description)
     {
         if (!Features.ComputeShader && (description.Stage & ShaderStages.Compute) != 0)
-        {
-            Throw(description.Stage);
-        }
+            throw new VeldridException(
+                $"GraphicsDevice does not support ShaderStages: {description.Stage}."
+            );
+
         if (!Features.GeometryShader && (description.Stage & ShaderStages.Geometry) != 0)
-        {
-            Throw(description.Stage);
-        }
+            throw new VeldridException(
+                $"GraphicsDevice does not support ShaderStages: {description.Stage}."
+            );
+
         if (
             !Features.TessellationShaders
             && (
@@ -390,12 +392,9 @@ public abstract class ResourceFactory
             ) != 0
         )
         {
-            Throw(description.Stage);
-        }
-
-        static void Throw(ShaderStages stages)
-        {
-            throw new VeldridException($"GraphicsDevice does not support ShaderStages: {stages}.");
+            throw new VeldridException(
+                $"GraphicsDevice does not support ShaderStages: {description.Stage}."
+            );
         }
     }
 

@@ -21,7 +21,7 @@ internal sealed class D3D11Buffer : DeviceBuffer
 
     public ID3D11Buffer Buffer => _buffer;
 
-    public unsafe D3D11Buffer(ID3D11Device device, in BufferDescription desc)
+    public D3D11Buffer(ID3D11Device device, in BufferDescription desc)
         : base(desc)
     {
         _device = device;
@@ -75,14 +75,10 @@ internal sealed class D3D11Buffer : DeviceBuffer
                 bd.CPUAccessFlags |= CpuAccessFlags.Read;
         }
 
-        if (desc.InitialData == IntPtr.Zero)
-        {
-            _buffer = device.CreateBuffer(bd);
-        }
-        else
-        {
-            _buffer = device.CreateBuffer(bd, desc.InitialData);
-        }
+        _buffer =
+            desc.InitialData == IntPtr.Zero
+                ? device.CreateBuffer(bd)
+                : device.CreateBuffer(bd, desc.InitialData);
     }
 
     public override string? Name
@@ -93,26 +89,21 @@ internal sealed class D3D11Buffer : DeviceBuffer
             _name = value;
             Buffer.DebugName = value!;
             foreach (KeyValuePair<OffsetSizePair, ID3D11ShaderResourceView> kvp in _srvs)
-            {
                 kvp.Value.DebugName = value + "_SRV";
-            }
+
             foreach (KeyValuePair<OffsetSizePair, ID3D11UnorderedAccessView> kvp in _uavs)
-            {
                 kvp.Value.DebugName = value + "_UAV";
-            }
         }
     }
 
     public override void Dispose()
     {
         foreach (KeyValuePair<OffsetSizePair, ID3D11ShaderResourceView> kvp in _srvs)
-        {
             kvp.Value.Dispose();
-        }
+
         foreach (KeyValuePair<OffsetSizePair, ID3D11UnorderedAccessView> kvp in _uavs)
-        {
             kvp.Value.Dispose();
-        }
+
         _buffer.Dispose();
     }
 
@@ -199,7 +190,7 @@ internal sealed class D3D11Buffer : DeviceBuffer
         }
     }
 
-    struct OffsetSizePair(uint offset, uint size) : IEquatable<OffsetSizePair>
+    readonly struct OffsetSizePair(uint offset, uint size) : IEquatable<OffsetSizePair>
     {
         public readonly uint Offset = offset;
         public readonly uint Size = size;

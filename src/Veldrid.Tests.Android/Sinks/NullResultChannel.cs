@@ -2,33 +2,29 @@
 using System.Threading.Tasks;
 using Veldrid.Tests.Android.ViewModels;
 
-namespace Veldrid.Tests.Android.Sinks
+namespace Veldrid.Tests.Android.Sinks;
+
+public class NullResultChannel : IResultChannel
 {
-    public class NullResultChannel : IResultChannel
+    public Task CloseChannelAsync()
     {
-        public Task CloseChannelAsync()
-        {
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
+    }
 
-        public Task<bool> OpenChannelAsync(
-            CancellationToken cancellationToken,
-            string? message = null
-        )
+    public Task<bool> OpenChannelAsync(CancellationToken cancellationToken, string? message = null)
+    {
+        if (cancellationToken.IsCancellationRequested)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return Task.FromCanceled<bool>(cancellationToken);
-            }
-            return Task.FromResult(true);
+            return Task.FromCanceled<bool>(cancellationToken);
         }
+        return Task.FromResult(true);
+    }
 
-        public ValueTask RecordResultAsync(
-            TestResultViewModel result,
-            CancellationToken cancellationToken
-        )
-        {
-            return ValueTask.CompletedTask;
-        }
+    public ValueTask RecordResultAsync(
+        TestResultViewModel result,
+        CancellationToken cancellationToken
+    )
+    {
+        return ValueTask.CompletedTask;
     }
 }

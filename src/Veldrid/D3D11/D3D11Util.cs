@@ -4,10 +4,8 @@ namespace Veldrid.D3D11;
 
 internal static class D3D11Util
 {
-    public static int ComputeSubresource(uint mipLevel, uint mipLevelCount, uint arrayLayer)
-    {
-        return (int)((arrayLayer * mipLevelCount) + mipLevel);
-    }
+    public static int ComputeSubresource(uint mipLevel, uint mipLevelCount, uint arrayLayer) =>
+        (int)(arrayLayer * mipLevelCount + mipLevel);
 
     internal static ShaderResourceViewDescription GetSrvDesc(
         D3D11Texture tex,
@@ -37,6 +35,7 @@ internal static class D3D11Util
                     .Direct3D
                     .ShaderResourceViewDimension
                     .TextureCubeArray;
+
                 srvDesc.TextureCubeArray.MostDetailedMip = (int)baseMipLevel;
                 srvDesc.TextureCubeArray.MipLevels = (int)levelCount;
                 srvDesc.TextureCubeArray.First2DArrayFace = (int)baseArrayLayer;
@@ -65,6 +64,7 @@ internal static class D3D11Util
                             .Direct3D
                             .ShaderResourceViewDimension
                             .Texture2DMultisampled;
+
                     srvDesc.Texture2D.MostDetailedMip = (int)baseMipLevel;
                     srvDesc.Texture2D.MipLevels = (int)levelCount;
                 }
@@ -77,6 +77,7 @@ internal static class D3D11Util
                         .Direct3D
                         .ShaderResourceViewDimension
                         .Texture1DArray;
+
                     srvDesc.Texture1DArray.MostDetailedMip = (int)baseMipLevel;
                     srvDesc.Texture1DArray.MipLevels = (int)levelCount;
                     srvDesc.Texture1DArray.FirstArraySlice = (int)baseArrayLayer;
@@ -88,6 +89,7 @@ internal static class D3D11Util
                         .Direct3D
                         .ShaderResourceViewDimension
                         .Texture2DArray;
+
                     srvDesc.Texture2DArray.MostDetailedMip = (int)baseMipLevel;
                     srvDesc.Texture2DArray.MipLevels = (int)levelCount;
                     srvDesc.Texture2DArray.FirstArraySlice = (int)baseArrayLayer;
@@ -105,8 +107,5 @@ internal static class D3D11Util
         return srvDesc;
     }
 
-    internal static int GetSyncInterval(bool syncToVBlank)
-    {
-        return syncToVBlank ? 1 : 0;
-    }
+    internal static int GetSyncInterval(bool syncToVBlank) => syncToVBlank ? 1 : 0;
 }

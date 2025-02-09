@@ -454,7 +454,7 @@ public unsafe class Sdl2Window
         ProcessEvents(eventHandler);
     }
 
-    unsafe void HandleEvent(ref SDL_Event ev)
+    void HandleEvent(ref SDL_Event ev)
     {
         switch (ev.type)
         {

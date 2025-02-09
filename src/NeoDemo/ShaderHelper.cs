@@ -48,8 +48,7 @@ public static class ShaderHelper
 
     public static SpecializationConstant[] GetSpecializations(GraphicsDevice gd)
     {
-        bool glOrGles =
-            gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES;
+        bool glOrGles = gd.BackendType is GraphicsBackend.OpenGL or GraphicsBackend.OpenGLES;
 
         List<SpecializationConstant> specializations =
         [
@@ -58,15 +57,20 @@ public static class ShaderHelper
             new(102, gd.IsDepthRangeZeroToOne),
         ];
 
-        PixelFormat swapchainFormat = gd.MainSwapchain
-            .Framebuffer
-            .OutputDescription
-            .ColorAttachments[0]
-            .Format;
-        bool swapchainIsSrgb =
-            swapchainFormat == PixelFormat.B8_G8_R8_A8_UNorm_SRgb
-            || swapchainFormat == PixelFormat.R8_G8_B8_A8_UNorm_SRgb;
-        specializations.Add(new(103, swapchainIsSrgb));
+        if (gd.MainSwapchain?.Framebuffer.OutputDescription.ColorAttachments != null)
+        {
+            PixelFormat swapchainFormat = gd.MainSwapchain
+                .Framebuffer
+                .OutputDescription
+                .ColorAttachments[0]
+                .Format;
+
+            bool swapchainIsSrgb =
+                swapchainFormat
+                    is PixelFormat.B8_G8_R8_A8_UNorm_SRgb
+                        or PixelFormat.R8_G8_B8_A8_UNorm_SRgb;
+            specializations.Add(new(103, swapchainIsSrgb));
+        }
 
         return specializations.ToArray();
     }

@@ -3,7 +3,6 @@
 internal sealed class D3D11ResourceLayout : ResourceLayout
 {
     readonly ResourceBindingInfo[] _bindingInfosByVdIndex;
-    string? _name;
     bool _disposed;
 
     public int UniformBufferCount { get; }
@@ -53,30 +52,18 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
     {
         if (resourceLayoutIndex >= _bindingInfosByVdIndex.Length)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"Invalid resource index: {resourceLayoutIndex}. Maximum is: {_bindingInfosByVdIndex.Length - 1}."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"Invalid resource index: {resourceLayoutIndex}. Maximum is: {_bindingInfosByVdIndex.Length - 1}."
+            );
         }
 
         return _bindingInfosByVdIndex[resourceLayoutIndex];
     }
 
-    public override string? Name
-    {
-        get => _name;
-        set => _name = value;
-    }
-
+    public override string? Name { get; set; }
     public override bool IsDisposed => _disposed;
 
-    public override void Dispose()
-    {
-        _disposed = true;
-    }
+    public override void Dispose() => _disposed = true;
 
     internal readonly struct ResourceBindingInfo(
         int slot,

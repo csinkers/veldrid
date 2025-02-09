@@ -37,7 +37,7 @@ public enum SDL_SystemCursor
     Hand,
 }
 
-public static unsafe partial class Sdl2Native
+public static partial class Sdl2Native
 {
     public const int SDL_QUERY = -1;
     public const int SDL_DISABLE = 0;

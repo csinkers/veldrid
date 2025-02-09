@@ -1,20 +1,44 @@
 ﻿namespace Veldrid;
 
+/// <summary>
+/// Represents a graphics API version.
+/// </summary>
 public readonly struct GraphicsApiVersion(int major, int minor, int subminor, int patch)
 {
+    /// <summary>
+    /// A version representing an unknown graphics API version.
+    /// </summary>
     public static GraphicsApiVersion Unknown => default;
 
+    /// <summary>
+    /// The major version number.
+    /// </summary>
     public int Major { get; } = major;
+
+    /// <summary>
+    /// The minor version number.
+    /// </summary>
     public int Minor { get; } = minor;
+
+    /// <summary>
+    /// The sub-minor version number
+    /// </summary>
     public int Subminor { get; } = subminor;
+
+    /// <summary>
+    /// The patch version number.
+    /// </summary>
     public int Patch { get; } = patch;
 
+    /// <summary>
+    /// Whether the version is known.
+    /// </summary>
     public bool IsKnown => Major != 0 && Minor != 0 && Subminor != 0 && Patch != 0;
 
-    public override string ToString()
-    {
-        return $"{Major}.{Minor}.{Subminor}.{Patch}";
-    }
+    /// <summary>
+    /// Returns a string representation of the version.
+    /// </summary>
+    public override string ToString() => $"{Major}.{Minor}.{Subminor}.{Patch}";
 
     /// <summary>
     /// Parses OpenGL version strings with either of following formats:

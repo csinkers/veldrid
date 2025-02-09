@@ -30,7 +30,7 @@ internal static class Sdl2WindowRegistry
         }
     }
 
-    static unsafe void ProcessWindowEvent(ref SDL_Event ev)
+    static void ProcessWindowEvent(ref SDL_Event ev)
     {
         bool handled;
         uint windowID = 0;

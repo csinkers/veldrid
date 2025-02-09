@@ -115,13 +115,13 @@ internal unsafe struct Size2048Bytes
     public fixed byte Data[2048];
 }
 #pragma warning disable 0649 // Fields are not assigned directly -- expected.
-internal unsafe struct Size2IntPtr
+internal struct Size2IntPtr
 {
     public IntPtr First;
     public IntPtr Second;
 }
 
-internal unsafe struct Size6IntPtr
+internal struct Size6IntPtr
 {
     public IntPtr First;
     public IntPtr Second;

@@ -5,35 +5,31 @@ using Veldrid.Tests.Android.Sinks;
 using Veldrid.Tests.Android.ViewModels;
 using Xamarin.Forms;
 
-namespace Veldrid.Tests.Android.Forms
+namespace Veldrid.Tests.Android.Forms;
+
+internal class FormsRunner : Application
 {
-    class FormsRunner : Application
+    readonly IReadOnlyCollection<Assembly> testAssemblies;
+    readonly IResultChannel resultChannel;
+
+    public FormsRunner(IReadOnlyCollection<Assembly> testAssemblies, IResultChannel resultChannel)
     {
-        readonly IReadOnlyCollection<Assembly> testAssemblies;
-        readonly IResultChannel resultChannel;
+        this.testAssemblies = testAssemblies;
+        this.resultChannel = resultChannel;
 
-        public FormsRunner(
-            IReadOnlyCollection<Assembly> testAssemblies,
-            IResultChannel resultChannel
-        )
-        {
-            this.testAssemblies = testAssemblies;
-            this.resultChannel = resultChannel;
+        MainPage = GetMainPage();
+    }
 
-            MainPage = GetMainPage();
-        }
+    Page GetMainPage()
+    {
+        HomePage hp = new();
+        Navigator nav = new(hp.Navigation);
 
-        Page GetMainPage()
-        {
-            HomePage hp = new();
-            Navigator nav = new(hp.Navigation);
+        DeviceRunner runner = new(testAssemblies, nav, resultChannel);
+        HomeViewModel vm = new(nav, runner);
 
-            DeviceRunner runner = new(testAssemblies, nav, resultChannel);
-            HomeViewModel vm = new(nav, runner);
+        hp.BindingContext = vm;
 
-            hp.BindingContext = vm;
-
-            return new Xamarin.Forms.NavigationPage(hp);
-        }
+        return new Xamarin.Forms.NavigationPage(hp);
     }
 }

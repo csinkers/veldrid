@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Threading;
 using Veldrid.Vulkan;
 
 namespace Veldrid;
@@ -14,7 +15,7 @@ namespace Veldrid;
 /// </summary>
 public abstract class GraphicsDevice : IDisposable
 {
-    readonly object _deferredDisposalLock = new();
+    readonly Lock _deferredDisposalLock = new();
     readonly List<IDisposable> _disposables = [];
     Sampler? _aniso4xSampler;
     bool _disposed;
@@ -198,7 +199,7 @@ public abstract class GraphicsDevice : IDisposable
     /// Blocks the calling thread until one or all of the given <see cref="Fence"/> instances have become signaled.
     /// </summary>
     /// <param name="fences">An array of <see cref="Fence"/> objects to wait on.</param>
-    /// <param name="waitAll">If true, then this method blocks until all of the given Fences become signaled.
+    /// <param name="waitAll">If true, then this method blocks until all the given Fences become signaled.
     /// If false, then this method only waits until one of the Fences become signaled.</param>
     public void WaitForFences(Fence[] fences, bool waitAll)
     {
@@ -215,7 +216,7 @@ public abstract class GraphicsDevice : IDisposable
     /// or until the given timeout has been reached.
     /// </summary>
     /// <param name="fences">An array of <see cref="Fence"/> objects to wait on.</param>
-    /// <param name="waitAll">If true, then this method blocks until all of the given Fences become signaled.
+    /// <param name="waitAll">If true, then this method blocks until all the given Fences become signaled.
     /// If false, then this method only waits until one of the Fences become signaled.</param>
     /// <param name="timeout">A TimeSpan indicating the maximum time to wait on the Fences.</param>
     /// <returns>True if the Fence was signaled. False if the timeout was reached instead.</returns>
@@ -227,7 +228,7 @@ public abstract class GraphicsDevice : IDisposable
     /// or until the given timeout has been reached.
     /// </summary>
     /// <param name="fences">An array of <see cref="Fence"/> objects to wait on.</param>
-    /// <param name="waitAll">If true, then this method blocks until all of the given Fences become signaled.
+    /// <param name="waitAll">If true, then this method blocks until all the given Fences become signaled.
     /// If false, then this method only waits until one of the Fences become signaled.</param>
     /// <param name="nanosecondTimeout">
     /// A value in nanoseconds, indicating the maximum time to wait on the Fence.
@@ -1033,7 +1034,7 @@ public abstract class GraphicsDevice : IDisposable
     );
 
     /// <summary>
-    /// Gets whether or not the given <see cref="PixelFormat"/>, <see cref="TextureType"/>, and <see cref="TextureUsage"/>
+    /// Gets whether the given <see cref="PixelFormat"/>, <see cref="TextureType"/>, and <see cref="TextureUsage"/>
     /// combination is supported by this instance.
     /// </summary>
     /// <param name="format">The PixelFormat to query.</param>
@@ -1046,7 +1047,7 @@ public abstract class GraphicsDevice : IDisposable
     }
 
     /// <summary>
-    /// Gets whether or not the given <see cref="PixelFormat"/>, <see cref="TextureType"/>, and <see cref="TextureUsage"/>
+    /// Gets whether the given <see cref="PixelFormat"/>, <see cref="TextureType"/>, and <see cref="TextureUsage"/>
     /// combination is supported by this instance, and also gets the device-specific properties supported by this instance.
     /// </summary>
     /// <param name="format">The PixelFormat to query.</param>
@@ -1116,37 +1117,41 @@ public abstract class GraphicsDevice : IDisposable
         }
     }
 
+    /// <summary>
+    /// Throws a <see cref="VeldridMappedResourceException"/> for a resource that is already mapped.
+    /// </summary>
     [DoesNotReturn]
-    protected static void ThrowMappedException(MappableResource resource, uint subresource)
-    {
+    protected static void ThrowMappedException(MappableResource resource, uint subresource) =>
         throw new VeldridMappedResourceException(
             $"The resource ({resource}@{subresource}) is mapped."
         );
-    }
 
+    /// <summary>
+    /// Throws a <see cref="VeldridMappedResourceException"/> for an unmapped resource.
+    /// </summary>
     [DoesNotReturn]
-    protected static void ThrowNotMappedException(MappableResource resource, uint subresource)
-    {
+    protected static void ThrowNotMappedException(MappableResource resource, uint subresource) =>
         throw new VeldridMappedResourceException(
             $"The resource ({resource}@{subresource}) is not mapped."
         );
-    }
 
+    /// <summary>
+    /// Throws a <see cref="VeldridMappedResourceException"/> for a corrupt resource.
+    /// </summary>
     [DoesNotReturn]
-    protected static void ThrowCorruptMapException(MappableResource resource, uint subresource)
-    {
+    protected static void ThrowCorruptMapException(MappableResource resource, uint subresource) =>
         throw new VeldridMappedResourceException(
             $"The mapped resource ({resource}@{subresource}) is corrupted."
         );
-    }
 
+    /// <summary>
+    /// Throws a <see cref="VeldridMappedResourceException"/> for a mapping failure.
+    /// </summary>
     [DoesNotReturn]
-    protected static void ThrowMapFailedException(MappableResource resource, uint subresource)
-    {
+    protected static void ThrowMapFailedException(MappableResource resource, uint subresource) =>
         throw new VeldridMappedResourceException(
             $"Failed to map the resource ({resource}@{subresource})."
         );
-    }
 
     /// <summary>
     /// Gets a simple point-filtered <see cref="Sampler"/> object owned by this instance.
@@ -1190,18 +1195,18 @@ public abstract class GraphicsDevice : IDisposable
     /// </remarks>
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                WaitForIdle();
-                PointSampler.Dispose();
-                LinearSampler.Dispose();
-                _aniso4xSampler?.Dispose();
-            }
+        if (_disposed)
+            return;
 
-            _disposed = true;
+        if (disposing)
+        {
+            WaitForIdle();
+            PointSampler.Dispose();
+            LinearSampler.Dispose();
+            _aniso4xSampler?.Dispose();
         }
+
+        _disposed = true;
     }
 
     /// <summary>
@@ -1321,7 +1326,7 @@ public abstract class GraphicsDevice : IDisposable
     /// This method will only succeed if this is a Metal <see cref="GraphicsDevice"/>.
     /// </summary>
     /// <param name="info">If successful, this will contain the <see cref="BackendInfoOpenGL"/> for this instance.</param>
-    /// <returns>True if this is an Metal <see cref="GraphicsDevice"/> and the operation was successful. False otherwise.</returns>
+    /// <returns>True if this is a Metal <see cref="GraphicsDevice"/> and the operation was successful. False otherwise.</returns>
     public virtual bool GetMetalInfo([MaybeNullWhen(false)] out BackendInfoMetal info)
     {
         info = null;

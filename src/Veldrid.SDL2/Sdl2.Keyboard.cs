@@ -2,7 +2,7 @@
 
 namespace Veldrid.Sdl2;
 
-public static unsafe partial class Sdl2Native
+public static partial class Sdl2Native
 {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate SDL_Keymod SDL_GetModState_t();

@@ -11,12 +11,12 @@ public class ShadowmapDrawer : Renderable
     readonly Func<Sdl2Window> _windowGetter;
     readonly DisposeCollector _disposeCollector = new();
 
-    DeviceBuffer _vb;
-    DeviceBuffer _ib;
-    DeviceBuffer _orthographicBuffer;
-    DeviceBuffer _sizeInfoBuffer;
-    Pipeline _pipeline;
-    ResourceSet _resourceSet;
+    DeviceBuffer? _vb;
+    DeviceBuffer? _ib;
+    DeviceBuffer? _orthographicBuffer;
+    DeviceBuffer? _sizeInfoBuffer;
+    Pipeline? _pipeline;
+    ResourceSet? _resourceSet;
 
     Vector2 _position;
     Vector2 _size = new(100, 100);
@@ -163,15 +163,10 @@ public class ShadowmapDrawer : Renderable
         );
     }
 
-    public override void DestroyDeviceObjects()
-    {
-        _disposeCollector.DisposeAll();
-    }
+    public override void DestroyDeviceObjects() => _disposeCollector.DisposeAll();
 
-    public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
-    {
-        return RenderOrderKey.Create(_pipeline.GetHashCode(), 0);
-    }
+    public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition) =>
+        RenderOrderKey.Create(_pipeline?.GetHashCode() ?? 0, 0);
 
     public override RenderPasses RenderPasses => RenderPasses.Overlay;
 
@@ -179,13 +174,13 @@ public class ShadowmapDrawer : Renderable
     {
         if (_si.HasValue)
         {
-            cl.UpdateBuffer(_sizeInfoBuffer, 0, _si.Value);
+            cl.UpdateBuffer(_sizeInfoBuffer!, 0, _si.Value);
             _si = null;
         }
 
         if (_ortho.HasValue)
         {
-            cl.UpdateBuffer(_orthographicBuffer, 0, _ortho.Value);
+            cl.UpdateBuffer(_orthographicBuffer!, 0, _ortho.Value);
             _ortho = null;
         }
     }
@@ -197,10 +192,10 @@ public class ShadowmapDrawer : Renderable
         RenderPasses renderPass
     )
     {
-        cl.SetVertexBuffer(0, _vb);
-        cl.SetIndexBuffer(_ib, IndexFormat.UInt16);
-        cl.SetPipeline(_pipeline);
-        cl.SetGraphicsResourceSet(0, _resourceSet);
+        cl.SetVertexBuffer(0, _vb!);
+        cl.SetIndexBuffer(_ib!, IndexFormat.UInt16);
+        cl.SetPipeline(_pipeline!);
+        cl.SetGraphicsResourceSet(0, _resourceSet!);
         cl.DrawIndexed((uint)s_quadIndices.Length, 1, 0, 0, 0);
     }
 

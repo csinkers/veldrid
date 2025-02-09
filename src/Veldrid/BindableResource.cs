@@ -14,8 +14,14 @@ namespace Veldrid;
 /// </remarks>
 public readonly struct BindableResource : IEquatable<BindableResource>
 {
+    /// <summary>
+    /// The kind of resource this instance represents.
+    /// </summary>
     public BindableResourceKind Kind { get; }
 
+    /// <summary>
+    /// The resource object.
+    /// </summary>
     public object? Resource { get; }
 
     BindableResource(BindableResourceKind kind, object? resource)
@@ -43,30 +49,32 @@ public readonly struct BindableResource : IEquatable<BindableResource>
         }
     }
 
+    /// <summary>Casts the underlying object to a <see cref="Texture"/>.</summary>
     public Texture GetTexture() => As<Texture>(BindableResourceKind.Texture);
 
+    /// <summary>Casts the underlying object to a <see cref="TextureView"/>.</summary>
     public TextureView GetTextureView() => As<TextureView>(BindableResourceKind.TextureView);
 
+    /// <summary>Casts the underlying object to a <see cref="DeviceBuffer"/>.</summary>
     public DeviceBuffer GetDeviceBuffer() => As<DeviceBuffer>(BindableResourceKind.DeviceBuffer);
 
+    /// <summary>Casts the underlying object to a <see cref="DeviceBufferRange"/>.</summary>
     public DeviceBufferRange GetDeviceBufferRange() =>
         Unbox<DeviceBufferRange>(BindableResourceKind.DeviceBufferRange);
 
+    /// <summary>Casts the underlying object to a <see cref="Sampler"/>.</summary>
     public Sampler GetSampler() => As<Sampler>(BindableResourceKind.Sampler);
 
-    public bool Equals(BindableResource other)
-    {
-        // We can check Kind as a fast path,
-        // which also saves us from doing actual null checks.
-        return Kind == other.Kind && (IsNotNull && Resource.Equals(other.Resource));
-    }
+    /// <summary>
+    /// Determines whether the specified <see cref="BindableResource"/> is equal to the current <see cref="BindableResource"/>.
+    /// </summary>
+    public bool Equals(BindableResource other) => // We can check Kind as a fast path, which also saves us from doing actual null checks.
+        Kind == other.Kind && IsNotNull && Resource.Equals(other.Resource);
 
-    public override int GetHashCode()
-    {
-        // Including the Kind in the hash is pointless
-        // since Resource must be of the right kind.
-        return Resource?.GetHashCode() ?? 0;
-    }
+    /// <summary>
+    /// Gets the hash code for this instance.
+    /// </summary>
+    public override int GetHashCode() => Resource?.GetHashCode() ?? 0; // Including the Kind in the hash is pointless since Resource must be of the right kind.
 
     T As<T>(BindableResourceKind kind)
         where T : class
@@ -76,8 +84,9 @@ public readonly struct BindableResource : IEquatable<BindableResource>
             Debug.Assert(Resource is T, "Resource is not of the correct Kind.");
             return Unsafe.As<T>(Resource)!;
         }
+
         ThrowMismatch(kind, Kind);
-        return default!;
+        return null!;
     }
 
     T Unbox<T>(BindableResourceKind kind)
@@ -88,29 +97,43 @@ public readonly struct BindableResource : IEquatable<BindableResource>
             Debug.Assert(Resource is T, "Resource is not of the correct Kind.");
             return Unsafe.Unbox<T>(Resource!);
         }
+
         ThrowMismatch(kind, Kind);
         return default!;
     }
 
+    /// <summary>
+    /// Converts the specified <see cref="Texture"/> to a <see cref="BindableResource"/>.
+    /// </summary>
     public static implicit operator BindableResource(Texture? texture) =>
         new(BindableResourceKind.Texture, texture);
 
+    /// <summary>
+    /// Converts the specified <see cref="TextureView"/> to a <see cref="BindableResource"/>.
+    /// </summary>
     public static implicit operator BindableResource(TextureView? textureView) =>
         new(BindableResourceKind.TextureView, textureView);
 
+    /// <summary>
+    /// Converts the specified <see cref="DeviceBuffer"/> to a <see cref="BindableResource"/>.
+    /// </summary>
     public static implicit operator BindableResource(DeviceBuffer? deviceBuffer) =>
         new(BindableResourceKind.DeviceBuffer, deviceBuffer);
 
+    /// <summary>
+    /// Converts the specified <see cref="DeviceBufferRange"/> to a <see cref="BindableResource"/>.
+    /// </summary>
     public static implicit operator BindableResource(DeviceBufferRange deviceBufferRange) =>
         new(BindableResourceKind.DeviceBufferRange, deviceBufferRange);
 
+    /// <summary>
+    /// Converts the specified <see cref="Sampler"/> to a <see cref="BindableResource"/>.
+    /// </summary>
     public static implicit operator BindableResource(Sampler? sampler) =>
         new(BindableResourceKind.Sampler, sampler);
 
-    static void ThrowMismatch(BindableResourceKind expected, BindableResourceKind actual)
-    {
+    static void ThrowMismatch(BindableResourceKind expected, BindableResourceKind actual) =>
         throw new VeldridException(
             $"Resource type mismatch. Expected {expected} but got {actual}."
         );
-    }
 }

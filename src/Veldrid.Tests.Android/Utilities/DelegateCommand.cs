@@ -2,103 +2,102 @@ using System;
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace Veldrid.Tests.Android.Utilities
+namespace Veldrid.Tests.Android.Utilities;
+
+internal class DelegateCommand : ICommand
 {
-    class DelegateCommand : ICommand
+    readonly Func<bool>? canExecute;
+    readonly Action execute;
+
+    public DelegateCommand(Action execute, Func<bool>? canExecute = null)
     {
-        readonly Func<bool>? canExecute;
-        readonly Action execute;
+        this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+        this.canExecute = canExecute;
+    }
 
-        public DelegateCommand(Action execute, Func<bool>? canExecute = null)
+    public event EventHandler? CanExecuteChanged;
+
+    [DebuggerStepThrough]
+    public bool CanExecute(object? p)
+    {
+        if (canExecute == null)
         {
-            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            this.canExecute = canExecute;
+            return true;
         }
-
-        public event EventHandler? CanExecuteChanged;
-
-        [DebuggerStepThrough]
-        public bool CanExecute(object? p)
+        try
         {
-            if (canExecute == null)
-            {
-                return true;
-            }
-            try
-            {
-                return canExecute();
-            }
-            catch
-            {
-                return false;
-            }
+            return canExecute();
         }
-
-        public void Execute(object? p)
+        catch
         {
-            if (!CanExecute(p))
-            {
-                return;
-            }
-            execute();
-        }
-
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            return false;
         }
     }
 
-    class DelegateCommand<T> : ICommand
+    public void Execute(object? p)
     {
-        readonly Func<T, bool>? canExecute;
-        readonly Action<T> execute;
-
-        public DelegateCommand(Action<T> execute, Func<T, bool>? canExecute = null)
+        if (!CanExecute(p))
         {
-            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            this.canExecute = canExecute;
+            return;
         }
+        execute();
+    }
 
-        public event EventHandler? CanExecuteChanged;
+    public void RaiseCanExecuteChanged()
+    {
+        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+    }
+}
 
-        [DebuggerStepThrough]
-        public bool CanExecute(object? p)
+internal class DelegateCommand<T> : ICommand
+{
+    readonly Func<T, bool>? canExecute;
+    readonly Action<T> execute;
+
+    public DelegateCommand(Action<T> execute, Func<T, bool>? canExecute = null)
+    {
+        this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+        this.canExecute = canExecute;
+    }
+
+    public event EventHandler? CanExecuteChanged;
+
+    [DebuggerStepThrough]
+    public bool CanExecute(object? p)
+    {
+        if (canExecute == null)
         {
-            if (canExecute == null)
-            {
-                return true;
-            }
-            try
-            {
-                if (p != null && p is not T)
-                {
-                    p = (T)Convert.ChangeType(p, typeof(T));
-                }
-                return canExecute.Invoke((T)p!);
-            }
-            catch
-            {
-                return false;
-            }
+            return true;
         }
-
-        public void Execute(object? p)
+        try
         {
-            if (!CanExecute(p))
-            {
-                return;
-            }
             if (p != null && p is not T)
             {
                 p = (T)Convert.ChangeType(p, typeof(T));
             }
-            execute((T)p!);
+            return canExecute.Invoke((T)p!);
         }
-
-        public void RaiseCanExecuteChanged()
+        catch
         {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            return false;
         }
+    }
+
+    public void Execute(object? p)
+    {
+        if (!CanExecute(p))
+        {
+            return;
+        }
+        if (p != null && p is not T)
+        {
+            p = (T)Convert.ChangeType(p, typeof(T));
+        }
+        execute((T)p!);
+    }
+
+    public void RaiseCanExecuteChanged()
+    {
+        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

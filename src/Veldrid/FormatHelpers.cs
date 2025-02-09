@@ -278,9 +278,8 @@ internal static class FormatHelpers
         return width * height * depth * blockSizeInBytes;
     }
 
-    internal static TextureSampleCount GetSampleCount(uint samples)
-    {
-        return samples switch
+    internal static TextureSampleCount GetSampleCount(uint samples) =>
+        samples switch
         {
             1 => TextureSampleCount.Count1,
             2 => TextureSampleCount.Count2,
@@ -289,14 +288,8 @@ internal static class FormatHelpers
             16 => TextureSampleCount.Count16,
             32 => TextureSampleCount.Count32,
             64 => TextureSampleCount.Count64,
-            _ => Throw(),
+            _ => throw new VeldridException("Unsupported multisample count: " + samples),
         };
-
-        TextureSampleCount Throw()
-        {
-            throw new VeldridException("Unsupported multisample count: " + samples);
-        }
-    }
 
     [SuppressMessage(
         "Style",

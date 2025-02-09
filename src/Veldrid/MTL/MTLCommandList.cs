@@ -24,28 +24,28 @@ internal sealed unsafe class MTLCommandList(
     MTLComputeCommandEncoder _cce;
     RgbaFloat?[] _clearColors = [];
     (float depth, byte stencil)? _clearDepth;
-    MTLBuffer _indexBuffer;
+    MTLBuffer? _indexBuffer;
     uint _ibOffset;
     MTLIndexType _indexType;
-    new MTLPipeline _graphicsPipeline;
+    new MTLPipeline? _graphicsPipeline;
     bool _graphicsPipelineChanged;
-    new MTLPipeline _computePipeline;
+    new MTLPipeline? _computePipeline;
     bool _computePipelineChanged;
     MTLViewport[] _viewports = [];
     bool _viewportsChanged;
     MTLScissorRect[] _scissorRects = [];
     bool _scissorRectsChanged;
     uint _graphicsResourceSetCount;
-    BoundResourceSetInfo[] _graphicsResourceSets;
-    bool[] _graphicsResourceSetsActive;
+    BoundResourceSetInfo[] _graphicsResourceSets = [];
+    bool[] _graphicsResourceSetsActive = [];
     uint _computeResourceSetCount;
-    BoundResourceSetInfo[] _computeResourceSets;
-    bool[] _computeResourceSetsActive;
+    BoundResourceSetInfo[] _computeResourceSets = [];
+    bool[] _computeResourceSetsActive = [];
     uint _vertexBufferCount;
     uint _nonVertexBufferCount;
-    MTLBuffer[] _vertexBuffers;
-    uint[] _vbOffsets;
-    bool[] _vertexBuffersActive;
+    MTLBuffer[] _vertexBuffers = [];
+    uint[] _vbOffsets = [];
+    bool[] _vertexBuffersActive = [];
     bool _disposed;
 
     public MTLCommandBuffer CommandBuffer => _cb;
@@ -95,7 +95,7 @@ internal sealed unsafe class MTLCommandList(
         PreComputeCommand();
         _cce.dispatchThreadGroups(
             new(groupCountX, groupCountY, groupCountZ),
-            _computePipeline.ThreadsPerThreadgroup
+            _computePipeline!.ThreadsPerThreadgroup
         );
     }
 
@@ -106,27 +106,27 @@ internal sealed unsafe class MTLCommandList(
         uint instanceStart
     )
     {
-        if (PreDrawCommand())
+        if (!PreDrawCommand())
+            return;
+
+        if (instanceStart == 0)
         {
-            if (instanceStart == 0)
-            {
-                _rce.drawPrimitives(
-                    _graphicsPipeline.PrimitiveType,
-                    vertexStart,
-                    vertexCount,
-                    instanceCount
-                );
-            }
-            else
-            {
-                _rce.drawPrimitives(
-                    _graphicsPipeline.PrimitiveType,
-                    vertexStart,
-                    vertexCount,
-                    instanceCount,
-                    instanceStart
-                );
-            }
+            _rce.drawPrimitives(
+                _graphicsPipeline!.PrimitiveType,
+                vertexStart,
+                vertexCount,
+                instanceCount
+            );
+        }
+        else
+        {
+            _rce.drawPrimitives(
+                _graphicsPipeline!.PrimitiveType,
+                vertexStart,
+                vertexCount,
+                instanceCount,
+                instanceStart
+            );
         }
     }
 
@@ -138,98 +138,97 @@ internal sealed unsafe class MTLCommandList(
         uint instanceStart
     )
     {
-        if (PreDrawCommand())
-        {
-            uint indexSize = _indexType == MTLIndexType.UInt16 ? 2u : 4u;
-            uint indexBufferOffset = (indexSize * indexStart) + _ibOffset;
+        if (!PreDrawCommand())
+            return;
 
-            if (vertexOffset == 0 && instanceStart == 0)
-            {
-                _rce.drawIndexedPrimitives(
-                    _graphicsPipeline.PrimitiveType,
-                    indexCount,
-                    _indexType,
-                    _indexBuffer.DeviceBuffer,
-                    indexBufferOffset,
-                    instanceCount
-                );
-            }
-            else
-            {
-                _rce.drawIndexedPrimitives(
-                    _graphicsPipeline.PrimitiveType,
-                    indexCount,
-                    _indexType,
-                    _indexBuffer.DeviceBuffer,
-                    indexBufferOffset,
-                    instanceCount,
-                    vertexOffset,
-                    instanceStart
-                );
-            }
+        uint indexSize = _indexType == MTLIndexType.UInt16 ? 2u : 4u;
+        uint indexBufferOffset = (indexSize * indexStart) + _ibOffset;
+
+        if (vertexOffset == 0 && instanceStart == 0)
+        {
+            _rce.drawIndexedPrimitives(
+                _graphicsPipeline!.PrimitiveType,
+                indexCount,
+                _indexType,
+                _indexBuffer!.DeviceBuffer,
+                indexBufferOffset,
+                instanceCount
+            );
+        }
+        else
+        {
+            _rce.drawIndexedPrimitives(
+                _graphicsPipeline!.PrimitiveType,
+                indexCount,
+                _indexType,
+                _indexBuffer!.DeviceBuffer,
+                indexBufferOffset,
+                instanceCount,
+                vertexOffset,
+                instanceStart
+            );
         }
     }
 
     bool PreDrawCommand()
     {
-        if (EnsureRenderPass())
+        if (!EnsureRenderPass())
+            return false;
+
+        if (_viewportsChanged)
         {
-            if (_viewportsChanged)
-            {
-                FlushViewports();
-                _viewportsChanged = false;
-            }
-            if (_scissorRectsChanged && _graphicsPipeline.ScissorTestEnabled)
-            {
-                FlushScissorRects();
-                _scissorRectsChanged = false;
-            }
-            if (_graphicsPipelineChanged)
-            {
-                Debug.Assert(_graphicsPipeline != null);
-                _rce.setRenderPipelineState(_graphicsPipeline.RenderPipelineState);
-                _rce.setCullMode(_graphicsPipeline.CullMode);
-                _rce.setFrontFacing(_graphicsPipeline.FrontFace);
-                _rce.setTriangleFillMode(_graphicsPipeline.FillMode);
-                RgbaFloat blendColor = _graphicsPipeline.BlendColor;
-                _rce.setBlendColor(blendColor.R, blendColor.G, blendColor.B, blendColor.A);
-                if (_framebuffer!.DepthTarget != null)
-                {
-                    _rce.setDepthStencilState(_graphicsPipeline.DepthStencilState);
-                    _rce.setDepthClipMode(_graphicsPipeline.DepthClipMode);
-                    _rce.setStencilReferenceValue(_graphicsPipeline.StencilReference);
-                }
-            }
-
-            int graphicsSetCount = (int)_graphicsResourceSetCount;
-            Span<BoundResourceSetInfo> graphicsSets = _graphicsResourceSets.AsSpan(
-                0,
-                graphicsSetCount
-            );
-            Span<bool> graphicsSetsActive = _graphicsResourceSetsActive.AsSpan(0, graphicsSetCount);
-            for (int i = 0; i < graphicsSetCount; i++)
-            {
-                if (!graphicsSetsActive[i])
-                {
-                    ActivateGraphicsResourceSet((uint)i, ref graphicsSets[i]);
-                    graphicsSetsActive[i] = true;
-                }
-            }
-
-            for (uint i = 0; i < _vertexBufferCount; i++)
-            {
-                if (!_vertexBuffersActive[i])
-                {
-                    UIntPtr index =
-                        _graphicsPipeline.ResourceBindingModel == ResourceBindingModel.Improved
-                            ? _nonVertexBufferCount + i
-                            : i;
-                    _rce.setVertexBuffer(_vertexBuffers[i].DeviceBuffer, _vbOffsets[i], index);
-                }
-            }
-            return true;
+            FlushViewports();
+            _viewportsChanged = false;
         }
-        return false;
+
+        if (_scissorRectsChanged && _graphicsPipeline!.ScissorTestEnabled)
+        {
+            FlushScissorRects();
+            _scissorRectsChanged = false;
+        }
+
+        if (_graphicsPipelineChanged)
+        {
+            Debug.Assert(_graphicsPipeline != null);
+            _rce.setRenderPipelineState(_graphicsPipeline.RenderPipelineState);
+            _rce.setCullMode(_graphicsPipeline.CullMode);
+            _rce.setFrontFacing(_graphicsPipeline.FrontFace);
+            _rce.setTriangleFillMode(_graphicsPipeline.FillMode);
+            RgbaFloat blendColor = _graphicsPipeline.BlendColor;
+            _rce.setBlendColor(blendColor.R, blendColor.G, blendColor.B, blendColor.A);
+            if (_framebuffer!.DepthTarget != null)
+            {
+                _rce.setDepthStencilState(_graphicsPipeline.DepthStencilState);
+                _rce.setDepthClipMode(_graphicsPipeline.DepthClipMode);
+                _rce.setStencilReferenceValue(_graphicsPipeline.StencilReference);
+            }
+        }
+
+        int graphicsSetCount = (int)_graphicsResourceSetCount;
+        Span<BoundResourceSetInfo> graphicsSets = _graphicsResourceSets.AsSpan(0, graphicsSetCount);
+        Span<bool> graphicsSetsActive = _graphicsResourceSetsActive.AsSpan(0, graphicsSetCount);
+        for (int i = 0; i < graphicsSetCount; i++)
+        {
+            if (!graphicsSetsActive[i])
+            {
+                ActivateGraphicsResourceSet((uint)i, ref graphicsSets[i]);
+                graphicsSetsActive[i] = true;
+            }
+        }
+
+        for (uint i = 0; i < _vertexBufferCount; i++)
+        {
+            if (!_vertexBuffersActive[i])
+            {
+                UIntPtr index =
+                    _graphicsPipeline!.ResourceBindingModel == ResourceBindingModel.Improved
+                        ? _nonVertexBufferCount + i
+                        : i;
+                _rce.setVertexBuffer(_vertexBuffers[i].DeviceBuffer, _vbOffsets[i], index);
+            }
+        }
+
+        return true;
     }
 
     void FlushViewports()
@@ -267,7 +266,7 @@ internal sealed unsafe class MTLCommandList(
         EnsureComputeEncoder();
         if (_computePipelineChanged)
         {
-            _cce.setComputePipelineState(_computePipeline.ComputePipelineState);
+            _cce.setComputePipelineState(_computePipeline!.ComputePipelineState);
         }
 
         int computeSetCount = (int)_computeResourceSetCount;
@@ -360,7 +359,7 @@ internal sealed unsafe class MTLCommandList(
                 && sizeInBytes != buffer.SizeInBytes
             );
 
-        MTLBuffer dstMTLBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(buffer);
+        MTLBuffer dstMtlBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(buffer);
 
         // TODO: Cache these, and rely on the command buffer's completion callback to add them back to a shared pool.
         using MTLBuffer copySrc = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(
@@ -372,7 +371,7 @@ internal sealed unsafe class MTLCommandList(
         if (useComputeCopy)
         {
             BufferCopyCommand command = new(0, bufferOffsetInBytes, sizeInBytes);
-            CopyBufferUnaligned(copySrc, dstMTLBuffer, [command]);
+            CopyBufferUnaligned(copySrc, dstMtlBuffer, [command]);
         }
         else
         {
@@ -382,14 +381,14 @@ internal sealed unsafe class MTLCommandList(
             _bce.copy(
                 copySrc.DeviceBuffer,
                 UIntPtr.Zero,
-                dstMTLBuffer.DeviceBuffer,
+                dstMtlBuffer.DeviceBuffer,
                 bufferOffsetInBytes,
                 sizeInBytes + sizeRoundFactor
             );
         }
     }
 
-    protected override void CopyBufferCore(
+    private protected override void CopyBufferCore(
         DeviceBuffer source,
         DeviceBuffer destination,
         ReadOnlySpan<BufferCopyCommand> commands
@@ -468,7 +467,7 @@ internal sealed unsafe class MTLCommandList(
         }
     }
 
-    protected override void CopyTextureCore(
+    private protected override void CopyTextureCore(
         Texture source,
         uint srcX,
         uint srcY,
@@ -488,19 +487,19 @@ internal sealed unsafe class MTLCommandList(
     )
     {
         EnsureBlitEncoder();
-        MTLTexture srcMTLTexture = Util.AssertSubtype<Texture, MTLTexture>(source);
-        MTLTexture dstMTLTexture = Util.AssertSubtype<Texture, MTLTexture>(destination);
+        MTLTexture srcMtlTexture = Util.AssertSubtype<Texture, MTLTexture>(source);
+        MTLTexture dstMtlTexture = Util.AssertSubtype<Texture, MTLTexture>(destination);
 
         bool srcIsStaging = (source.Usage & TextureUsage.Staging) != 0;
         bool dstIsStaging = (destination.Usage & TextureUsage.Staging) != 0;
         if (srcIsStaging && !dstIsStaging)
         {
             // Staging -> Normal
-            MetalBindings.MTLBuffer srcBuffer = srcMTLTexture.StagingBuffer;
-            MetalBindings.MTLTexture dstTexture = dstMTLTexture.DeviceTexture;
+            MetalBindings.MTLBuffer srcBuffer = srcMtlTexture.StagingBuffer;
+            MetalBindings.MTLTexture dstTexture = dstMtlTexture.DeviceTexture;
 
             Util.GetMipDimensions(
-                srcMTLTexture,
+                srcMtlTexture,
                 srcMipLevel,
                 out uint mipWidth,
                 out uint mipHeight,
@@ -508,20 +507,20 @@ internal sealed unsafe class MTLCommandList(
             );
             for (uint layer = 0; layer < layerCount; layer++)
             {
-                uint blockSize = FormatHelpers.IsCompressedFormat(srcMTLTexture.Format) ? 4u : 1u;
+                uint blockSize = FormatHelpers.IsCompressedFormat(srcMtlTexture.Format) ? 4u : 1u;
                 uint compressedSrcX = srcX / blockSize;
                 uint compressedSrcY = srcY / blockSize;
                 uint blockSizeInBytes =
                     blockSize == 1
-                        ? FormatSizeHelpers.GetSizeInBytes(srcMTLTexture.Format)
-                        : FormatHelpers.GetBlockSizeInBytes(srcMTLTexture.Format);
+                        ? FormatSizeHelpers.GetSizeInBytes(srcMtlTexture.Format)
+                        : FormatHelpers.GetBlockSizeInBytes(srcMtlTexture.Format);
 
                 ulong srcSubresourceBase = Util.ComputeSubresourceOffset(
-                    srcMTLTexture,
+                    srcMtlTexture,
                     srcMipLevel,
                     layer + srcBaseArrayLayer
                 );
-                srcMTLTexture.GetSubresourceLayout(
+                srcMtlTexture.GetSubresourceLayout(
                     srcMipLevel,
                     srcBaseArrayLayer + layer,
                     out uint srcRowPitch,
@@ -538,7 +537,7 @@ internal sealed unsafe class MTLCommandList(
                 uint copyHeight = height > mipHeight && height <= blockSize ? mipHeight : height;
 
                 MTLSize sourceSize = new(copyWidth, copyHeight, depth);
-                if (dstMTLTexture.Type != TextureType.Texture3D)
+                if (dstMtlTexture.Type != TextureType.Texture3D)
                 {
                     srcDepthPitch = 0;
                 }
@@ -561,11 +560,11 @@ internal sealed unsafe class MTLCommandList(
             {
                 // Staging -> Staging
                 ulong srcSubresourceBase = Util.ComputeSubresourceOffset(
-                    srcMTLTexture,
+                    srcMtlTexture,
                     srcMipLevel,
                     layer + srcBaseArrayLayer
                 );
-                srcMTLTexture.GetSubresourceLayout(
+                srcMtlTexture.GetSubresourceLayout(
                     srcMipLevel,
                     srcBaseArrayLayer + layer,
                     out uint srcRowPitch,
@@ -573,21 +572,21 @@ internal sealed unsafe class MTLCommandList(
                 );
 
                 ulong dstSubresourceBase = Util.ComputeSubresourceOffset(
-                    dstMTLTexture,
+                    dstMtlTexture,
                     dstMipLevel,
                     layer + dstBaseArrayLayer
                 );
-                dstMTLTexture.GetSubresourceLayout(
+                dstMtlTexture.GetSubresourceLayout(
                     dstMipLevel,
                     dstBaseArrayLayer + layer,
                     out uint dstRowPitch,
                     out uint dstDepthPitch
                 );
 
-                uint blockSize = FormatHelpers.IsCompressedFormat(dstMTLTexture.Format) ? 4u : 1u;
+                uint blockSize = FormatHelpers.IsCompressedFormat(dstMtlTexture.Format) ? 4u : 1u;
                 if (blockSize == 1)
                 {
-                    uint pixelSize = FormatSizeHelpers.GetSizeInBytes(dstMTLTexture.Format);
+                    uint pixelSize = FormatSizeHelpers.GetSizeInBytes(dstMtlTexture.Format);
                     uint copySize = width * pixelSize;
                     for (uint zz = 0; zz < depth; zz++)
                     for (uint yy = 0; yy < height; yy++)
@@ -603,9 +602,9 @@ internal sealed unsafe class MTLCommandList(
                             + dstRowPitch * (yy + dstY)
                             + pixelSize * dstX;
                         _bce.copy(
-                            srcMTLTexture.StagingBuffer,
+                            srcMtlTexture.StagingBuffer,
                             (UIntPtr)srcRowOffset,
-                            dstMTLTexture.StagingBuffer,
+                            dstMtlTexture.StagingBuffer,
                             (UIntPtr)dstRowOffset,
                             copySize
                         );
@@ -615,14 +614,14 @@ internal sealed unsafe class MTLCommandList(
                 {
                     uint paddedWidth = Math.Max(blockSize, width);
                     uint paddedHeight = Math.Max(blockSize, height);
-                    uint numRows = FormatHelpers.GetNumRows(paddedHeight, srcMTLTexture.Format);
-                    uint rowPitch = FormatHelpers.GetRowPitch(paddedWidth, srcMTLTexture.Format);
+                    uint numRows = FormatHelpers.GetNumRows(paddedHeight, srcMtlTexture.Format);
+                    uint rowPitch = FormatHelpers.GetRowPitch(paddedWidth, srcMtlTexture.Format);
 
                     uint compressedSrcX = srcX / 4;
                     uint compressedSrcY = srcY / 4;
                     uint compressedDstX = dstX / 4;
                     uint compressedDstY = dstY / 4;
-                    uint blockSizeInBytes = FormatHelpers.GetBlockSizeInBytes(srcMTLTexture.Format);
+                    uint blockSizeInBytes = FormatHelpers.GetBlockSizeInBytes(srcMtlTexture.Format);
 
                     for (uint zz = 0; zz < depth; zz++)
                     for (uint row = 0; row < numRows; row++)
@@ -638,9 +637,9 @@ internal sealed unsafe class MTLCommandList(
                             + dstRowPitch * (row + compressedDstY)
                             + blockSizeInBytes * compressedDstX;
                         _bce.copy(
-                            srcMTLTexture.StagingBuffer,
+                            srcMtlTexture.StagingBuffer,
                             (UIntPtr)srcRowOffset,
-                            dstMTLTexture.StagingBuffer,
+                            dstMtlTexture.StagingBuffer,
                             (UIntPtr)dstRowOffset,
                             rowPitch
                         );
@@ -655,7 +654,7 @@ internal sealed unsafe class MTLCommandList(
             MTLSize srcSize = new(width, height, depth);
             for (uint layer = 0; layer < layerCount; layer++)
             {
-                dstMTLTexture.GetSubresourceLayout(
+                dstMtlTexture.GetSubresourceLayout(
                     dstMipLevel,
                     dstBaseArrayLayer + layer,
                     out uint dstBytesPerRow,
@@ -663,31 +662,31 @@ internal sealed unsafe class MTLCommandList(
                 );
 
                 Util.GetMipDimensions(
-                    srcMTLTexture,
+                    srcMtlTexture,
                     dstMipLevel,
                     out uint mipWidth,
                     out uint mipHeight,
                     out _
                 );
-                uint blockSize = FormatHelpers.IsCompressedFormat(srcMTLTexture.Format) ? 4u : 1u;
+                uint blockSize = FormatHelpers.IsCompressedFormat(srcMtlTexture.Format) ? 4u : 1u;
                 uint bufferRowLength = Math.Max(mipWidth, blockSize);
                 uint bufferImageHeight = Math.Max(mipHeight, blockSize);
                 uint compressedDstX = dstX / blockSize;
                 uint compressedDstY = dstY / blockSize;
                 uint blockSizeInBytes =
                     blockSize == 1
-                        ? FormatSizeHelpers.GetSizeInBytes(srcMTLTexture.Format)
-                        : FormatHelpers.GetBlockSizeInBytes(srcMTLTexture.Format);
-                uint rowPitch = FormatHelpers.GetRowPitch(bufferRowLength, srcMTLTexture.Format);
+                        ? FormatSizeHelpers.GetSizeInBytes(srcMtlTexture.Format)
+                        : FormatHelpers.GetBlockSizeInBytes(srcMtlTexture.Format);
+                uint rowPitch = FormatHelpers.GetRowPitch(bufferRowLength, srcMtlTexture.Format);
                 uint depthPitch = FormatHelpers.GetDepthPitch(
                     rowPitch,
                     bufferImageHeight,
-                    srcMTLTexture.Format
+                    srcMtlTexture.Format
                 );
 
                 ulong dstOffset =
                     Util.ComputeSubresourceOffset(
-                        dstMTLTexture,
+                        dstMtlTexture,
                         dstMipLevel,
                         dstBaseArrayLayer + layer
                     )
@@ -696,12 +695,12 @@ internal sealed unsafe class MTLCommandList(
                     + (compressedDstX * blockSizeInBytes);
 
                 _bce.copyTextureToBuffer(
-                    srcMTLTexture.DeviceTexture,
+                    srcMtlTexture.DeviceTexture,
                     srcBaseArrayLayer + layer,
                     srcMipLevel,
                     srcOrigin,
                     srcSize,
-                    dstMTLTexture.StagingBuffer,
+                    dstMtlTexture.StagingBuffer,
                     (UIntPtr)dstOffset,
                     dstBytesPerRow,
                     dstBytesPerImage
@@ -714,12 +713,12 @@ internal sealed unsafe class MTLCommandList(
             for (uint layer = 0; layer < layerCount; layer++)
             {
                 _bce.copyFromTexture(
-                    srcMTLTexture.DeviceTexture,
+                    srcMtlTexture.DeviceTexture,
                     srcBaseArrayLayer + layer,
                     srcMipLevel,
                     new(srcX, srcY, srcZ),
                     new(width, height, depth),
-                    dstMTLTexture.DeviceTexture,
+                    dstMtlTexture.DeviceTexture,
                     dstBaseArrayLayer + layer,
                     dstMipLevel,
                     new(dstX, dstY, dstZ)
@@ -736,14 +735,14 @@ internal sealed unsafe class MTLCommandList(
         _bce.generateMipmapsForTexture(mtlTex.DeviceTexture);
     }
 
-    protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
+    private protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
     {
         MTLBuffer mtlBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(indirectBuffer);
         PreComputeCommand();
         _cce.dispatchThreadgroupsWithIndirectBuffer(
             mtlBuffer.DeviceBuffer,
             offset,
-            _computePipeline.ThreadsPerThreadgroup
+            _computePipeline!.ThreadsPerThreadgroup
         );
     }
 
@@ -754,21 +753,21 @@ internal sealed unsafe class MTLCommandList(
         uint stride
     )
     {
-        if (PreDrawCommand())
+        if (!PreDrawCommand())
+            return;
+
+        MTLBuffer mtlBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(indirectBuffer);
+        for (uint i = 0; i < drawCount; i++)
         {
-            MTLBuffer mtlBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(indirectBuffer);
-            for (uint i = 0; i < drawCount; i++)
-            {
-                uint currentOffset = i * stride + offset;
-                _rce.drawIndexedPrimitives(
-                    _graphicsPipeline.PrimitiveType,
-                    _indexType,
-                    _indexBuffer.DeviceBuffer,
-                    _ibOffset,
-                    mtlBuffer.DeviceBuffer,
-                    currentOffset
-                );
-            }
+            uint currentOffset = i * stride + offset;
+            _rce.drawIndexedPrimitives(
+                _graphicsPipeline!.PrimitiveType,
+                _indexType,
+                _indexBuffer!.DeviceBuffer,
+                _ibOffset,
+                mtlBuffer.DeviceBuffer,
+                currentOffset
+            );
         }
     }
 
@@ -779,18 +778,18 @@ internal sealed unsafe class MTLCommandList(
         uint stride
     )
     {
-        if (PreDrawCommand())
+        if (!PreDrawCommand())
+            return;
+
+        MTLBuffer mtlBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(indirectBuffer);
+        for (uint i = 0; i < drawCount; i++)
         {
-            MTLBuffer mtlBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(indirectBuffer);
-            for (uint i = 0; i < drawCount; i++)
-            {
-                uint currentOffset = i * stride + offset;
-                _rce.drawPrimitives(
-                    _graphicsPipeline.PrimitiveType,
-                    mtlBuffer.DeviceBuffer,
-                    currentOffset
-                );
-            }
+            uint currentOffset = i * stride + offset;
+            _rce.drawPrimitives(
+                _graphicsPipeline!.PrimitiveType,
+                mtlBuffer.DeviceBuffer,
+                currentOffset
+            );
         }
     }
 
@@ -857,7 +856,7 @@ internal sealed unsafe class MTLCommandList(
         _currentFramebufferEverActive = false;
     }
 
-    protected override void SetGraphicsResourceSetCore(
+    private protected override void SetGraphicsResourceSetCore(
         uint slot,
         ResourceSet rs,
         ReadOnlySpan<uint> dynamicOffsets
@@ -1014,7 +1013,7 @@ internal sealed unsafe class MTLCommandList(
             if ((stages & ShaderStages.Vertex) == ShaderStages.Vertex)
             {
                 UIntPtr index =
-                    _graphicsPipeline.ResourceBindingModel == ResourceBindingModel.Improved
+                    _graphicsPipeline!.ResourceBindingModel == ResourceBindingModel.Improved
                         ? slot + baseBuffer
                         : slot + _vertexBufferCount + baseBuffer;
                 _rce.setVertexBuffer(mtlBuffer.DeviceBuffer, range.Offset, index);
@@ -1063,8 +1062,8 @@ internal sealed unsafe class MTLCommandList(
     uint GetBufferBase(uint set, bool graphics)
     {
         MTLResourceLayout[] layouts = graphics
-            ? _graphicsPipeline.ResourceLayouts
-            : _computePipeline.ResourceLayouts;
+            ? _graphicsPipeline!.ResourceLayouts
+            : _computePipeline!.ResourceLayouts;
         uint ret = 0;
         for (int i = 0; i < set; i++)
         {
@@ -1078,8 +1077,8 @@ internal sealed unsafe class MTLCommandList(
     uint GetTextureBase(uint set, bool graphics)
     {
         MTLResourceLayout[] layouts = graphics
-            ? _graphicsPipeline.ResourceLayouts
-            : _computePipeline.ResourceLayouts;
+            ? _graphicsPipeline!.ResourceLayouts
+            : _computePipeline!.ResourceLayouts;
         uint ret = 0;
         for (int i = 0; i < set; i++)
         {
@@ -1093,8 +1092,8 @@ internal sealed unsafe class MTLCommandList(
     uint GetSamplerBase(uint set, bool graphics)
     {
         MTLResourceLayout[] layouts = graphics
-            ? _graphicsPipeline.ResourceLayouts
-            : _computePipeline.ResourceLayouts;
+            ? _graphicsPipeline!.ResourceLayouts
+            : _computePipeline!.ResourceLayouts;
         uint ret = 0;
         for (int i = 0; i < set; i++)
         {
@@ -1272,6 +1271,7 @@ internal sealed unsafe class MTLCommandList(
         Util.EnsureArrayMinimumSize(ref _vertexBuffers, index + 1);
         Util.EnsureArrayMinimumSize(ref _vbOffsets, index + 1);
         Util.EnsureArrayMinimumSize(ref _vertexBuffersActive, index + 1);
+
         if (_vertexBuffers[index] != buffer || _vbOffsets[index] != offset)
         {
             MTLBuffer mtlBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(buffer);

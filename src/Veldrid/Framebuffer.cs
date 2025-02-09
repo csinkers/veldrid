@@ -9,7 +9,14 @@ namespace Veldrid;
 /// </summary>
 public abstract class Framebuffer : DeviceResource, IDisposable
 {
+    /// <summary>
+    /// The depth attachment associated with this instance. May be null if no depth texture is used.
+    /// </summary>
     protected FramebufferAttachment? _depthTarget;
+
+    /// <summary>
+    /// The collection of color attachments associated with this instance. May be empty.
+    /// </summary>
     protected FramebufferAttachment[] _colorTargets = [];
 
     /// <summary>

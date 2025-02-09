@@ -214,18 +214,18 @@ internal enum RENDERDOC_CaptureOption
 //
 // Returns 1 if the option and value are valid
 // Returns 0 if either is invalid and the option is unchanged
-internal unsafe delegate int pRENDERDOC_SetCaptureOptionU32(RENDERDOC_CaptureOption opt, uint val);
-internal unsafe delegate int pRENDERDOC_SetCaptureOptionF32(RENDERDOC_CaptureOption opt, float val);
+internal delegate int pRENDERDOC_SetCaptureOptionU32(RENDERDOC_CaptureOption opt, uint val);
+internal delegate int pRENDERDOC_SetCaptureOptionF32(RENDERDOC_CaptureOption opt, float val);
 
 // Gets the current value of an option as a uint
 //
 // If the option is invalid, 0xffffffff is returned
-internal unsafe delegate uint pRENDERDOC_GetCaptureOptionU32(RENDERDOC_CaptureOption opt);
+internal delegate uint pRENDERDOC_GetCaptureOptionU32(RENDERDOC_CaptureOption opt);
 
 // Gets the current value of an option as a float
 //
 // If the option is invalid, -FLT_MAX is returned
-internal unsafe delegate float pRENDERDOC_GetCaptureOptionF32(RENDERDOC_CaptureOption opt);
+internal delegate float pRENDERDOC_GetCaptureOptionF32(RENDERDOC_CaptureOption opt);
 
 internal enum RENDERDOC_InputButton
 {
@@ -341,10 +341,10 @@ internal enum RENDERDOC_OverlayBits : uint
 }
 
 // returns the overlay bits that have been set
-internal unsafe delegate uint pRENDERDOC_GetOverlayBits();
+internal delegate uint pRENDERDOC_GetOverlayBits();
 
 // sets the overlay bits with an and & or mask
-internal unsafe delegate void pRENDERDOC_MaskOverlayBits(uint And, uint Or);
+internal delegate void pRENDERDOC_MaskOverlayBits(uint And, uint Or);
 
 // this function will attempt to shut down RenderDoc.
 //
@@ -352,14 +352,14 @@ internal unsafe delegate void pRENDERDOC_MaskOverlayBits(uint And, uint Or);
 // the dll is loaded, before any API work happens. RenderDoc will remove its
 // injected hooks and shut down. Behaviour is undefined if this is called
 // after any API functions have been called.
-internal unsafe delegate void pRENDERDOC_Shutdown();
+internal delegate void pRENDERDOC_Shutdown();
 
 // This function will unload RenderDoc's crash handler.
 //
 // If you use your own crash handler and don't want RenderDoc's handler to
 // intercede, you can call this function to unload it and any unhandled
 // exceptions will pass to the next handler.
-internal unsafe delegate void pRENDERDOC_UnloadCrashHandler();
+internal delegate void pRENDERDOC_UnloadCrashHandler();
 
 // Sets the capture file path template
 //
@@ -384,7 +384,7 @@ internal unsafe delegate void pRENDERDOC_SetCaptureFilePathTemplate(byte* pathte
 internal unsafe delegate byte* pRENDERDOC_GetCaptureFilePathTemplate();
 
 // returns the number of captures that have been made
-internal unsafe delegate uint pRENDERDOC_GetNumCaptures();
+internal delegate uint pRENDERDOC_GetNumCaptures();
 
 // This function returns the details of a capture, by index. New captures are added
 // to the end of the list.
@@ -418,7 +418,7 @@ internal unsafe delegate uint pRENDERDOC_GetCapture(
 internal unsafe delegate void pRENDERDOC_SetCaptureFileComments(byte* filePath, byte* comments);
 
 // returns 1 if the RenderDoc UI is connected to this application, 0 otherwise
-internal unsafe delegate uint pRENDERDOC_IsTargetControlConnected();
+internal delegate uint pRENDERDOC_IsTargetControlConnected();
 
 // This function will launch the Replay UI associated with the RenderDoc library injected
 // into the running application.
@@ -440,10 +440,10 @@ internal unsafe delegate uint pRENDERDOC_LaunchReplayUI(uint connectTargetContro
 internal unsafe delegate void pRENDERDOC_SetActiveWindow(void* device, void* wndHandle);
 
 // capture the next frame on whichever window and API is currently considered active
-internal unsafe delegate void pRENDERDOC_TriggerCapture();
+internal delegate void pRENDERDOC_TriggerCapture();
 
 // capture the next N frames on whichever window and API is currently considered active
-internal unsafe delegate void pRENDERDOC_TriggerMultiFrameCapture(uint numFrames);
+internal delegate void pRENDERDOC_TriggerMultiFrameCapture(uint numFrames);
 
 // When choosing either a device pointer or a window handle to capture, you can pass NULL.
 // Passing NULL specifies a 'wildcard' match against anything. This allows you to specify
@@ -468,7 +468,7 @@ internal unsafe delegate void pRENDERDOC_StartFrameCapture(void* device, void* w
 // Returns whether or not a frame capture is currently ongoing anywhere.
 //
 // This will return 1 if a capture is ongoing, and 0 if there is no capture running
-internal unsafe delegate uint pRENDERDOC_IsFrameCapturing();
+internal delegate uint pRENDERDOC_IsFrameCapturing();
 
 // Ends capturing immediately.
 //

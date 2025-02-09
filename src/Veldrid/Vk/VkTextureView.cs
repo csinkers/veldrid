@@ -6,15 +6,11 @@ namespace Veldrid.Vulkan;
 internal sealed unsafe class VkTextureView : TextureView, IResourceRefCountTarget
 {
     readonly VkGraphicsDevice _gd;
-    readonly VkImageView _imageView;
     string? _name;
 
-    public VkImageView ImageView => _imageView;
-
+    public VkImageView ImageView { get; }
     public new VkTexture Target => (VkTexture)base.Target;
-
     public ResourceRefCount RefCount { get; }
-
     public override bool IsDisposed => RefCount.IsDisposed;
 
     public VkTextureView(VkGraphicsDevice gd, in TextureViewDescription description)
@@ -24,14 +20,10 @@ internal sealed unsafe class VkTextureView : TextureView, IResourceRefCountTarge
         VkTexture tex = Util.AssertSubtype<Texture, VkTexture>(description.Target);
 
         VkImageAspectFlags aspectFlags;
-        if ((description.Target.Usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil)
-        {
-            aspectFlags = VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
-        }
-        else
-        {
-            aspectFlags = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
-        }
+        aspectFlags =
+            (description.Target.Usage & TextureUsage.DepthStencil) != 0
+                ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                : VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
 
         VkImageViewCreateInfo imageViewCI = new()
         {
@@ -80,7 +72,7 @@ internal sealed unsafe class VkTextureView : TextureView, IResourceRefCountTarge
 
         VkImageView imageView;
         vkCreateImageView(_gd.Device, &imageViewCI, null, &imageView);
-        _imageView = imageView;
+        ImageView = imageView;
         RefCount = new(this);
     }
 

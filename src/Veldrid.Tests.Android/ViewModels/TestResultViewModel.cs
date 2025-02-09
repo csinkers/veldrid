@@ -1,64 +1,63 @@
 using System;
 using Xunit.Abstractions;
 
-namespace Veldrid.Tests.Android.ViewModels
+namespace Veldrid.Tests.Android.ViewModels;
+
+public class TestResultViewModel : ViewModelBase
 {
-    public class TestResultViewModel : ViewModelBase
+    TestCaseViewModel _testCase;
+    ITestResultMessage? _testResult;
+
+    TimeSpan duration;
+    string errorMessage = string.Empty;
+    string errorStackTrace = string.Empty;
+
+    public TestResultViewModel(TestCaseViewModel testCase, ITestResultMessage? testResult)
     {
-        private TestCaseViewModel _testCase;
-        private ITestResultMessage? _testResult;
+        _testCase = testCase ?? throw new ArgumentNullException(nameof(testCase));
+        _testResult = testResult;
 
-        private TimeSpan duration;
-        private string errorMessage = string.Empty;
-        private string errorStackTrace = string.Empty;
+        if (_testResult != null)
+            _testCase.UpdateTestState(this);
+    }
 
-        public TestResultViewModel(TestCaseViewModel testCase, ITestResultMessage? testResult)
+    public TimeSpan Duration
+    {
+        get { return duration; }
+        set
         {
-            _testCase = testCase ?? throw new ArgumentNullException(nameof(testCase));
-            _testResult = testResult;
-
-            if (_testResult != null)
-                _testCase.UpdateTestState(this);
-        }
-
-        public TimeSpan Duration
-        {
-            get { return duration; }
-            set
+            if (Set(ref duration, value))
             {
-                if (Set(ref duration, value))
-                {
-                    _testCase?.UpdateTestState(this);
-                }
+                _testCase?.UpdateTestState(this);
             }
         }
-
-        public string ErrorMessage
-        {
-            get { return errorMessage; }
-            set { Set(ref errorMessage, value); }
-        }
-
-        public string ErrorStackTrace
-        {
-            get { return errorStackTrace; }
-            set { Set(ref errorStackTrace, value); }
-        }
-
-        public TestCaseViewModel TestCase
-        {
-            get { return _testCase; }
-            private set { Set(ref _testCase, value); }
-        }
-
-        public ITestResultMessage? TestResultMessage
-        {
-            get { return _testResult; }
-            private set { Set(ref _testResult, value); }
-        }
-
-        public string Output => TestResultMessage?.Output ?? string.Empty;
-
-        public bool HasOutput => !string.IsNullOrWhiteSpace(Output);
     }
+
+    public string ErrorMessage
+    {
+        get { return errorMessage; }
+        set { Set(ref errorMessage, value); }
+    }
+
+    public string ErrorStackTrace
+    {
+        get { return errorStackTrace; }
+        set { Set(ref errorStackTrace, value); }
+    }
+
+    public TestCaseViewModel TestCase
+    {
+        get { return _testCase; }
+        private set { Set(ref _testCase, value); }
+    }
+
+    public ITestResultMessage? TestResultMessage
+    {
+        get { return _testResult; }
+        private set { Set(ref _testResult, value); }
+    }
+
+    public string Output => TestResultMessage?.Output ?? string.Empty;
+
+    public bool HasOutput => !string.IsNullOrWhiteSpace(Output);
 }

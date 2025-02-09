@@ -1,11 +1,10 @@
-namespace Veldrid.Tests.Android.ViewModels
+namespace Veldrid.Tests.Android.ViewModels;
+
+public enum RunStatus
 {
-    public enum RunStatus
-    {
-        Ok,
-        Failed,
-        NoTests,
-        Skipped,
-        NotRun,
-    }
+    Ok,
+    Failed,
+    NoTests,
+    Skipped,
+    NotRun,
 }

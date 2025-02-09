@@ -118,7 +118,7 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
         return device.CreateDepthStencilState(dssDesc);
     }
 
-    DepthStencilOperationDescription ToD3D11StencilOpDesc(StencilBehaviorDescription sbd)
+    static DepthStencilOperationDescription ToD3D11StencilOpDesc(StencilBehaviorDescription sbd)
     {
         return new()
         {
@@ -328,15 +328,11 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
         public RasterizerStateDescription VeldridDescription = veldridDescription;
         public readonly bool Multisampled = multisampled;
 
-        public bool Equals(D3D11RasterizerStateCacheKey other)
-        {
-            return VeldridDescription.Equals(other.VeldridDescription)
-                && Multisampled.Equals(other.Multisampled);
-        }
+        public bool Equals(D3D11RasterizerStateCacheKey other) =>
+            VeldridDescription.Equals(other.VeldridDescription)
+            && Multisampled.Equals(other.Multisampled);
 
-        public override int GetHashCode()
-        {
-            return HashHelper.Combine(VeldridDescription.GetHashCode(), Multisampled.GetHashCode());
-        }
+        public override int GetHashCode() =>
+            HashHelper.Combine(VeldridDescription.GetHashCode(), Multisampled.GetHashCode());
     }
 }

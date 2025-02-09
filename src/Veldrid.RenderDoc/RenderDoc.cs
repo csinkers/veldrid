@@ -16,7 +16,7 @@ public unsafe class RenderDoc
     readonly RENDERDOC_API_1_4_0 _api;
     readonly IntPtr _nativeLib;
 
-    unsafe RenderDoc(IntPtr lib)
+    RenderDoc(IntPtr lib)
     {
         _nativeLib = lib;
         IntPtr getApiExport = NativeLibrary.GetExport(_nativeLib, "RENDERDOC_GetAPI");

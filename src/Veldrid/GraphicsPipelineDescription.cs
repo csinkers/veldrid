@@ -161,7 +161,7 @@ public struct GraphicsPipelineDescription : IEquatable<GraphicsPipelineDescripti
     /// Element-wise equality.
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
-    /// <returns>True if all elements and all array elements are equal; false otherswise.</returns>
+    /// <returns>True if all elements and all array elements are equal; false otherwise.</returns>
     public bool Equals(GraphicsPipelineDescription other)
     {
         return BlendState.Equals(other.BlendState)

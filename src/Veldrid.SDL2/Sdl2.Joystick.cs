@@ -18,7 +18,7 @@ public struct SDL_Joystick(IntPtr pointer)
     public static implicit operator SDL_Joystick(IntPtr pointer) => new(pointer);
 }
 
-public static unsafe partial class Sdl2Native
+public static partial class Sdl2Native
 {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_NumJoysticks_t();

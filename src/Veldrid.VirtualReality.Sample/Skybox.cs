@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Text;
 using SixLabors.ImageSharp;
@@ -19,14 +20,22 @@ internal class Skybox(
 )
 {
     // Context objects
-    ResourceLayout _layout;
-    DeviceBuffer _vb;
-    DeviceBuffer _ib;
-    Pipeline _pipeline;
-    DeviceBuffer _ubo;
-    ResourceSet _resourceSet;
+    ResourceLayout? _layout;
+    DeviceBuffer? _vb;
+    DeviceBuffer? _ib;
+    Pipeline? _pipeline;
+    DeviceBuffer? _ubo;
+    ResourceSet? _resourceSet;
     readonly List<IDisposable> _disposables = [];
 
+    [MemberNotNull(
+        nameof(_layout),
+        nameof(_vb),
+        nameof(_ib),
+        nameof(_pipeline),
+        nameof(_ubo),
+        nameof(_resourceSet)
+    )]
     public void CreateDeviceObjects(GraphicsDevice gd, OutputDescription outputs)
     {
         ResourceFactory factory = gd.ResourceFactory;
@@ -115,11 +124,11 @@ internal class Skybox(
 
     public void Render(CommandList cl, Framebuffer fb, Matrix4x4 proj, Matrix4x4 view)
     {
-        cl.UpdateBuffer(_ubo, 0, new UBO(proj, view, Matrix4x4.Identity));
-        cl.SetVertexBuffer(0, _vb);
-        cl.SetIndexBuffer(_ib, IndexFormat.UInt16);
-        cl.SetPipeline(_pipeline);
-        cl.SetGraphicsResourceSet(0, _resourceSet);
+        cl.UpdateBuffer(_ubo!, 0, new UBO(proj, view, Matrix4x4.Identity));
+        cl.SetVertexBuffer(0, _vb!);
+        cl.SetIndexBuffer(_ib!, IndexFormat.UInt16);
+        cl.SetPipeline(_pipeline!);
+        cl.SetGraphicsResourceSet(0, _resourceSet!);
         float depth = 1;
         cl.SetViewport(0, new(0, 0, fb.Width, fb.Height, depth, depth));
         cl.DrawIndexed((uint)s_indices.Length, 1, 0, 0, 0);

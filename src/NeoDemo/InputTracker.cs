@@ -15,27 +15,17 @@ public static class InputTracker
 
     public static Vector2 MousePosition;
     public static Vector2 MouseDelta;
-    public static InputSnapshot FrameSnapshot { get; private set; }
+    public static InputSnapshot? FrameSnapshot { get; private set; }
 
-    public static Key(Key key)
-    {
-        return _currentlyPressedKeys.Contains(key);
-    }
+    public static bool GetKey(Key key) => _currentlyPressedKeys.Contains(key);
 
-    public static bool GetKeyDown(Key key)
-    {
-        return _newKeysThisFrame.Contains(key);
-    }
+    public static bool GetKeyDown(Key key) => _newKeysThisFrame.Contains(key);
 
-    public static bool GetMouseButton(MouseButton button)
-    {
-        return _currentlyPressedMouseButtons.Contains(button);
-    }
+    public static bool GetMouseButton(MouseButton button) =>
+        _currentlyPressedMouseButtons.Contains(button);
 
-    public static bool GetMouseButtonDown(MouseButton button)
-    {
-        return _newMouseButtonsThisFrame.Contains(button);
-    }
+    public static bool GetMouseButtonDown(MouseButton button) =>
+        _newMouseButtonsThisFrame.Contains(button);
 
     public static void UpdateFrameInput(InputSnapshot snapshot, Sdl2Window window)
     {
@@ -51,13 +41,9 @@ public static class InputTracker
         {
             KeyEvent ke = keyEvents[i];
             if (ke.Down)
-            {
                 KeyDown(ke.Physical);
-            }
             else
-            {
                 KeyUp(ke.Physical);
-            }
         }
 
         ReadOnlySpan<MouseButtonEvent> mouseEvents = snapshot.MouseEvents;
@@ -65,13 +51,9 @@ public static class InputTracker
         {
             MouseButtonEvent me = mouseEvents[i];
             if (me.Down)
-            {
                 MouseDown(me.MouseButton);
-            }
             else
-            {
                 MouseUp(me.MouseButton);
-            }
         }
     }
 
@@ -84,9 +66,7 @@ public static class InputTracker
     static void MouseDown(MouseButton mouseButton)
     {
         if (_currentlyPressedMouseButtons.Add(mouseButton))
-        {
             _newMouseButtonsThisFrame.Add(mouseButton);
-        }
     }
 
     static void KeyUp(Key key)
@@ -98,8 +78,6 @@ public static class InputTracker
     static void KeyDown(Key key)
     {
         if (_currentlyPressedKeys.Add(key))
-        {
             _newKeysThisFrame.Add(key);
-        }
     }
 }

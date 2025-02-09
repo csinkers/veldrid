@@ -31,8 +31,8 @@ public class Camera : IUpdateable
     Sdl2Window _window;
     Sdl2ControllerTracker? _controller;
 
-    public event Action<Matrix4x4> ProjectionChanged;
-    public event Action<Matrix4x4> ViewChanged;
+    public event Action<Matrix4x4>? ProjectionChanged;
+    public event Action<Matrix4x4>? ViewChanged;
 
     public Camera(GraphicsDevice gd, Sdl2Window window, Sdl2ControllerTracker? controller)
     {
@@ -108,31 +108,25 @@ public class Camera : IUpdateable
             InputTracker.GetKey(Key.LeftControl) ? 0.1f
             : InputTracker.GetKey(Key.LeftShift) ? 2.5f
             : 1f;
+
         Vector3 motionDir = Vector3.Zero;
         if (InputTracker.GetKey(Key.A))
-        {
             motionDir += -Vector3.UnitX;
-        }
+
         if (InputTracker.GetKey(Key.D))
-        {
             motionDir += Vector3.UnitX;
-        }
+
         if (InputTracker.GetKey(Key.W))
-        {
             motionDir += -Vector3.UnitZ;
-        }
+
         if (InputTracker.GetKey(Key.S))
-        {
             motionDir += Vector3.UnitZ;
-        }
+
         if (InputTracker.GetKey(Key.Q))
-        {
             motionDir += -Vector3.UnitY;
-        }
+
         if (InputTracker.GetKey(Key.E))
-        {
             motionDir += Vector3.UnitY;
-        }
 
         if (_controller != null)
         {
@@ -142,22 +136,18 @@ public class Camera : IUpdateable
             float controllerTriggerR = _controller.GetAxis(SDL_GameControllerAxis.TriggerRight);
 
             if (MathF.Abs(controllerLeftX) > 0.2f)
-            {
                 motionDir += controllerLeftX * Vector3.UnitX;
-            }
+
             if (MathF.Abs(controllerLeftY) > 0.2f)
-            {
                 motionDir += controllerLeftY * Vector3.UnitZ;
-            }
+
             if (controllerTriggerL > 0f)
-            {
                 motionDir += controllerTriggerL * -Vector3.UnitY;
-            }
+
             if (controllerTriggerR > 0f)
-            {
                 motionDir += controllerTriggerR * Vector3.UnitY;
-            }
         }
+
         if (motionDir != Vector3.Zero)
         {
             Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
@@ -237,6 +227,7 @@ public class Camera : IUpdateable
             _near,
             _far
         );
+
         ProjectionChanged?.Invoke(_projectionMatrix);
     }
 

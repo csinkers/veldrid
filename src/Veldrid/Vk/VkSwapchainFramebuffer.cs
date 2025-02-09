@@ -75,10 +75,10 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
         uint scImageCount = 0;
         VkResult result = vkGetSwapchainImagesKHR(_gd.Device, deviceSwapchain, &scImageCount, null);
         CheckResult(result);
+
         if (_scImages.Length < scImageCount)
-        {
             _scImages = new VkImage[(int)scImageCount];
-        }
+
         fixed (VkImage* scImagesPtr = _scImages)
         {
             result = vkGetSwapchainImagesKHR(
@@ -101,47 +101,47 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
     void DestroySwapchainFramebuffers()
     {
         _depthTarget?.Target.Dispose();
-        _depthTarget = default;
+        _depthTarget = null;
 
         foreach (ref VkFramebuffer fb in _scFramebuffers.AsSpan())
         {
-            if (fb != null)
+            if (fb == null!)
+                continue;
+
+            foreach (FramebufferAttachment attachment in fb.ColorTargets)
             {
-                foreach (FramebufferAttachment attachment in fb.ColorTargets)
-                {
-                    attachment.Target.Dispose();
-                }
-                fb.Dispose();
-                fb = null!;
+                attachment.Target.Dispose();
             }
+            fb.Dispose();
+            fb = null!;
         }
     }
 
     void CreateDepthTexture()
     {
-        if (_depthFormat.HasValue)
-        {
-            Debug.Assert(!_depthTarget.HasValue);
+        if (!_depthFormat.HasValue)
+            return;
 
-            VkTexture depthTexture = (VkTexture)
-                _gd.ResourceFactory.CreateTexture(
-                    TextureDescription.Texture2D(
-                        Math.Max(1, _scExtent.width),
-                        Math.Max(1, _scExtent.height),
-                        1,
-                        1,
-                        _depthFormat.Value,
-                        TextureUsage.DepthStencil
-                    )
-                );
-            _depthTarget = new FramebufferAttachment(depthTexture, 0);
-        }
+        Debug.Assert(!_depthTarget.HasValue);
+
+        VkTexture depthTexture = (VkTexture)
+            _gd.ResourceFactory.CreateTexture(
+                TextureDescription.Texture2D(
+                    Math.Max(1, _scExtent.width),
+                    Math.Max(1, _scExtent.height),
+                    1,
+                    1,
+                    _depthFormat.Value,
+                    TextureUsage.DepthStencil
+                )
+            );
+
+        _depthTarget = new FramebufferAttachment(depthTexture, 0);
     }
 
     void CreateFramebuffers()
     {
         DestroySwapchainFramebuffers();
-
         CreateDepthTexture();
 
         Util.EnsureArrayMinimumSize(ref _scFramebuffers, (uint)_scImages.Length);

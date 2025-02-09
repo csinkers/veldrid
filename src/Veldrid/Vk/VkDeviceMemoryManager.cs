@@ -597,14 +597,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
         }
 #endif
 
-        public bool IsFullFreeBlock()
-        {
-            if (_freeBlocks.Count == 1)
-            {
-                return IsFirstFullFreeBlock();
-            }
-            return false;
-        }
+        public bool IsFullFreeBlock() => _freeBlocks.Count == 1 && IsFirstFullFreeBlock();
 
         bool IsFirstFullFreeBlock()
         {
@@ -640,7 +633,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 internal unsafe struct VkMemoryBlock : IEquatable<VkMemoryBlock>
 {
-    readonly uint MemoryType;
+    readonly uint _memoryType;
+
     public readonly VkDeviceMemory DeviceMemory;
     public readonly void* BaseMappedPointer;
 
@@ -650,8 +644,8 @@ internal unsafe struct VkMemoryBlock : IEquatable<VkMemoryBlock>
     public readonly void* BlockMappedPointer => ((byte*)BaseMappedPointer) + Offset;
     public readonly bool IsPersistentMapped => BaseMappedPointer != null;
     public readonly ulong End => Offset + Size;
-    public readonly uint MemoryTypeIndex => MemoryType & 31;
-    public readonly bool DedicatedAllocation => ((MemoryType >> 5) & 1) != 0;
+    public readonly uint MemoryTypeIndex => _memoryType & 31;
+    public readonly bool DedicatedAllocation => ((_memoryType >> 5) & 1) != 0;
 
     public VkMemoryBlock(
         VkDeviceMemory memory,
@@ -665,11 +659,11 @@ internal unsafe struct VkMemoryBlock : IEquatable<VkMemoryBlock>
         DeviceMemory = memory;
         Offset = offset;
         Size = size;
-        MemoryType = memoryTypeIndex;
+        _memoryType = memoryTypeIndex;
         BaseMappedPointer = mappedPtr;
 
         if (dedicatedAllocation)
-            MemoryType |= 1u << 5;
+            _memoryType |= 1u << 5;
     }
 
     public readonly bool Equals(VkMemoryBlock other)

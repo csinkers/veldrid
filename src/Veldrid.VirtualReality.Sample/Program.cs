@@ -360,7 +360,7 @@ internal class Program
         else
         {
             GraphicsDevice gd = VeldridStartup.CreateGraphicsDevice(window, gdo, backend);
-            Swapchain sc = gd.MainSwapchain;
+            Swapchain sc = gd.MainSwapchain!;
             return (gd, sc);
         }
     }

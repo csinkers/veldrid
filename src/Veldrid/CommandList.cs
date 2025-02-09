@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -112,10 +111,8 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// </summary>
     /// <param name="index">The buffer slot.</param>
     /// <param name="buffer">The new <see cref="DeviceBuffer"/>.</param>
-    public void SetVertexBuffer(uint index, DeviceBuffer buffer)
-    {
+    public void SetVertexBuffer(uint index, DeviceBuffer buffer) =>
         SetVertexBuffer(index, buffer, 0);
-    }
 
     /// <summary>
     /// Sets the active <see cref="DeviceBuffer"/> for the given index.
@@ -132,15 +129,11 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if ((buffer.Usage & BufferUsage.VertexBuffer) == 0)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(buffer)} ({buffer}) cannot be bound as an vertex buffer. "
-                        + $"It must have been created with the "
-                        + $"{nameof(BufferUsage)}.{nameof(BufferUsage.VertexBuffer)} flag."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(buffer)} ({buffer}) cannot be bound as an vertex buffer. "
+                    + $"It must have been created with the "
+                    + $"{nameof(BufferUsage)}.{nameof(BufferUsage.VertexBuffer)} flag."
+            );
         }
 #endif
         SetVertexBufferCore(index, buffer, offset);
@@ -176,15 +169,11 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if ((buffer.Usage & BufferUsage.IndexBuffer) == 0)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(buffer)} ({buffer}) cannot be bound as an index buffer. "
-                        + $"It must have been created with the "
-                        + $"{nameof(BufferUsage)}.{nameof(BufferUsage.IndexBuffer)} flag."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(buffer)} ({buffer}) cannot be bound as an index buffer. "
+                    + $"It must have been created with the "
+                    + $"{nameof(BufferUsage)}.{nameof(BufferUsage.IndexBuffer)} flag."
+            );
         }
         _indexBuffer = buffer;
         _indexFormat = format;
@@ -204,7 +193,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// </summary>
     /// <param name="slot">The resource slot.</param>
     /// <param name="rs">The new <see cref="ResourceSet"/>.</param>
-    public unsafe void SetGraphicsResourceSet(uint slot, ResourceSet rs)
+    public void SetGraphicsResourceSet(uint slot, ResourceSet rs)
     {
         SetGraphicsResourceSet(slot, rs, ReadOnlySpan<uint>.Empty);
     }
@@ -227,27 +216,18 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if (_graphicsPipeline == null)
         {
-            [DoesNotReturn]
-            static void Throw()
-            {
-                throw new VeldridException(
-                    $"A graphics {nameof(Pipeline)} must be active before {nameof(SetGraphicsResourceSet)} can be called."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"A graphics {nameof(Pipeline)} must be active before {nameof(SetGraphicsResourceSet)} can be called."
+            );
         }
 
         int layoutsCount = _graphicsPipeline.ResourceLayouts.Length;
         if (layoutsCount <= slot)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"Failed to bind {nameof(ResourceSet)} to slot {slot}. "
-                        + $"The active graphics {nameof(Pipeline)} only contains {layoutsCount} ResourceLayouts."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"Failed to bind {nameof(ResourceSet)} to slot {slot}. "
+                    + $"The active graphics {nameof(Pipeline)} only contains {layoutsCount} ResourceLayouts."
+            );
         }
 
         ResourceLayout layout = _graphicsPipeline.ResourceLayouts[slot];
@@ -257,15 +237,11 @@ public abstract class CommandList : DeviceResource, IDisposable
 
         if (pipelineElements.Length != setElements.Length)
         {
-            void Throw(int setLength, int pipelineLength)
-            {
-                throw new VeldridException(
-                    $"Failed to bind {nameof(ResourceSet)} to slot {slot}. "
-                        + $"The number of resources in the {nameof(ResourceSet)} ({setLength}) does not "
-                        + $"match the number expected by the active {nameof(Pipeline)} ({pipelineLength})."
-                );
-            }
-            Throw(setElements.Length, pipelineElements.Length);
+            throw new VeldridException(
+                $"Failed to bind {nameof(ResourceSet)} to slot {slot}. "
+                    + $"The number of resources in the {nameof(ResourceSet)} ({setElements.Length}) does not "
+                    + $"match the number expected by the active {nameof(Pipeline)} ({pipelineElements.Length})."
+            );
         }
 
         for (int i = 0; i < pipelineElements.Length; i++)
@@ -274,29 +250,21 @@ public abstract class CommandList : DeviceResource, IDisposable
             ResourceKind setKind = setElements[i].Kind;
             if (pipelineKind != setKind)
             {
-                void Throw()
-                {
-                    throw new VeldridException(
-                        $"Failed to bind {nameof(ResourceSet)} to slot {slot}. "
-                            + $"Resource element in slot {i} was of the incorrect type. "
-                            + $"The bound {nameof(Pipeline)} expects {pipelineKind}, but the {nameof(ResourceSet)} contained {setKind}."
-                    );
-                }
-                Throw();
+                throw new VeldridException(
+                    $"Failed to bind {nameof(ResourceSet)} to slot {slot}. "
+                        + $"Resource element in slot {i} was of the incorrect type. "
+                        + $"The bound {nameof(Pipeline)} expects {pipelineKind}, but the {nameof(ResourceSet)} contained {setKind}."
+                );
             }
         }
 
         if (rs.Layout.DynamicBufferCount != dynamicOffsets.Length)
         {
-            void Throw(int length)
-            {
-                throw new VeldridException(
-                    $"A dynamic offset must be provided for each resource that specifies "
-                        + $"{nameof(ResourceLayoutElementOptions)}.{nameof(ResourceLayoutElementOptions.DynamicBinding)}. "
-                        + $"{rs.Layout.DynamicBufferCount} offsets were expected, but only {length} were provided."
-                );
-            }
-            Throw(dynamicOffsets.Length);
+            throw new VeldridException(
+                $"A dynamic offset must be provided for each resource that specifies "
+                    + $"{nameof(ResourceLayoutElementOptions)}.{nameof(ResourceLayoutElementOptions.DynamicBinding)}. "
+                    + $"{rs.Layout.DynamicBufferCount} offsets were expected, but only {dynamicOffsets.Length} were provided."
+            );
         }
 
         int dynamicOffsetIndex = 0;
@@ -315,15 +283,11 @@ public abstract class CommandList : DeviceResource, IDisposable
 
                 if ((range.Offset % requiredAlignment) != 0)
                 {
-                    void Throw()
-                    {
-                        throw new VeldridException(
-                            $"The effective offset of the buffer in slot {i} ({range.Buffer}) does not "
-                                + $"meet the alignment requirements of this device. "
-                                + $"The offset must be a multiple of {requiredAlignment}, but it is {range.Offset}"
-                        );
-                    }
-                    Throw();
+                    throw new VeldridException(
+                        $"The effective offset of the buffer in slot {i} ({range.Buffer}) does not "
+                            + $"meet the alignment requirements of this device. "
+                            + $"The offset must be a multiple of {requiredAlignment}, but it is {range.Offset}"
+                    );
                 }
             }
         }
@@ -332,8 +296,7 @@ public abstract class CommandList : DeviceResource, IDisposable
         SetGraphicsResourceSetCore(slot, rs, dynamicOffsets);
     }
 
-    // TODO: private protected
-    protected abstract void SetGraphicsResourceSetCore(
+    private protected abstract void SetGraphicsResourceSetCore(
         uint slot,
         ResourceSet rs,
         ReadOnlySpan<uint> dynamicOffsets
@@ -345,10 +308,8 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// </summary>
     /// <param name="slot">The resource slot.</param>
     /// <param name="rs">The new <see cref="ResourceSet"/>.</param>
-    public void SetComputeResourceSet(uint slot, ResourceSet rs)
-    {
+    public void SetComputeResourceSet(uint slot, ResourceSet rs) =>
         SetComputeResourceSet(slot, rs, ReadOnlySpan<uint>.Empty);
-    }
 
     /// <summary>
     /// Sets the active <see cref="ResourceSet"/> for the given index. This ResourceSet is only active for the compute
@@ -370,27 +331,18 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if (_computePipeline == null)
         {
-            [DoesNotReturn]
-            static void Throw()
-            {
-                throw new VeldridException(
-                    $"A compute Pipeline must be active before {nameof(SetComputeResourceSet)} can be called."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"A compute Pipeline must be active before {nameof(SetComputeResourceSet)} can be called."
+            );
         }
 
         int layoutsCount = _computePipeline.ResourceLayouts.Length;
         if (layoutsCount <= slot)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"Failed to bind ResourceSet to slot {slot}. "
-                        + $"The active compute Pipeline only contains {layoutsCount} ResourceLayouts."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"Failed to bind ResourceSet to slot {slot}. "
+                    + $"The active compute Pipeline only contains {layoutsCount} ResourceLayouts."
+            );
         }
 
         ResourceLayout layout = _computePipeline.ResourceLayouts[slot];
@@ -398,15 +350,11 @@ public abstract class CommandList : DeviceResource, IDisposable
         int setLength = rs.Layout.Description.Elements.Length;
         if (pipelineLength != setLength)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"Failed to bind ResourceSet to slot {slot}. "
-                        + $"The number of resources in the ResourceSet ({setLength}) does not "
-                        + $"match the number expected by the active Pipeline ({pipelineLength})."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"Failed to bind ResourceSet to slot {slot}. "
+                    + $"The number of resources in the ResourceSet ({setLength}) does not "
+                    + $"match the number expected by the active Pipeline ({pipelineLength})."
+            );
         }
 
         for (int i = 0; i < pipelineLength; i++)
@@ -415,14 +363,10 @@ public abstract class CommandList : DeviceResource, IDisposable
             ResourceKind setKind = rs.Layout.Description.Elements[i].Kind;
             if (pipelineKind != setKind)
             {
-                void Throw()
-                {
-                    throw new VeldridException(
-                        $"Failed to bind ResourceSet to slot {slot}. Resource element {i} was of the incorrect type. "
-                            + $"The bound Pipeline expects {pipelineKind}, but the ResourceSet contained {setKind}."
-                    );
-                }
-                Throw();
+                throw new VeldridException(
+                    $"Failed to bind ResourceSet to slot {slot}. Resource element {i} was of the incorrect type. "
+                        + $"The bound Pipeline expects {pipelineKind}, but the ResourceSet contained {setKind}."
+                );
             }
         }
 #endif
@@ -449,13 +393,13 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// <param name="fb">The new <see cref="Framebuffer"/>.</param>
     public void SetFramebuffer(Framebuffer fb)
     {
-        if (_framebuffer != fb)
-        {
-            _framebuffer = fb;
-            SetFramebufferCore(fb);
-            SetFullViewports();
-            SetFullScissorRects();
-        }
+        if (_framebuffer == fb)
+            return;
+
+        _framebuffer = fb;
+        SetFramebufferCore(fb);
+        SetFullViewports();
+        SetFullScissorRects();
     }
 
     /// <summary>
@@ -475,25 +419,16 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if (_framebuffer == null)
         {
-            [DoesNotReturn]
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "Cannot use ClearColorTarget. There is no Framebuffer bound."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                "Cannot use ClearColorTarget. There is no Framebuffer bound."
+            );
         }
 
         if (_framebuffer.ColorTargets.Length <= index)
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "ClearColorTarget index must be less than the current Framebuffer's color target count."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                "ClearColorTarget index must be less than the current Framebuffer's color target count."
+            );
         }
 #endif
         ClearColorTargetCore(index, clearColor);
@@ -523,25 +458,16 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if (_framebuffer == null)
         {
-            [DoesNotReturn]
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "Cannot use ClearDepthStencil. There is no Framebuffer bound."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                "Cannot use ClearDepthStencil. There is no Framebuffer bound."
+            );
         }
 
         if (_framebuffer.DepthTarget == null)
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "The current Framebuffer has no depth target, so ClearDepthStencil cannot be used."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                "The current Framebuffer has no depth target, so ClearDepthStencil cannot be used."
+            );
         }
 #endif
 
@@ -671,25 +597,14 @@ public abstract class CommandList : DeviceResource, IDisposable
 
 #if VALIDATE_USAGE
         if (!_features.DrawBaseVertex && vertexOffset != 0)
-        {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "Drawing with a non-zero base vertex is not supported on this device."
-                );
-            }
-            Throw();
-        }
+            throw new VeldridException(
+                "Drawing with a non-zero base vertex is not supported on this device."
+            );
+
         if (!_features.DrawBaseInstance && instanceStart != 0)
-        {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "Drawing with a non-zero base instance is not supported on this device."
-                );
-            }
-            Throw();
-        }
+            throw new VeldridException(
+                "Drawing with a non-zero base instance is not supported on this device."
+            );
 #endif
 
         DrawIndexedCore(indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
@@ -720,12 +635,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// The stride, in bytes, between consecutive draw commands in the indirect buffer. This value must
     /// be a multiple of four, and must be larger than the size of <see cref="IndirectDrawArguments"/>.
     /// </param>
-    public unsafe void DrawIndirect(
-        DeviceBuffer indirectBuffer,
-        uint offset,
-        uint drawCount,
-        uint stride
-    )
+    public void DrawIndirect(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
     {
         ValidateDrawIndirectSupport();
         ValidateIndirectBuffer(indirectBuffer);
@@ -767,7 +677,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// The stride, in bytes, between consecutive draw commands in the indirect buffer. This value must
     /// be a multiple of four, and must be larger than the size of <see cref="IndirectDrawIndexedArguments"/>.
     /// </param>
-    public unsafe void DrawIndexedIndirect(
+    public void DrawIndexedIndirect(
         DeviceBuffer indirectBuffer,
         uint offset,
         uint drawCount,
@@ -803,15 +713,9 @@ public abstract class CommandList : DeviceResource, IDisposable
         [CallerArgumentExpression("offset")] string? argExpression = null
     )
     {
-        if ((offset % 4) != 0)
+        if (offset % 4 != 0)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {argExpression} ({offset}) must be a multiple of 4."
-                );
-            }
-            Throw();
+            throw new VeldridException($"The {argExpression} ({offset}) must be a multiple of 4.");
         }
     }
 
@@ -819,13 +723,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     void ValidateDrawIndirectSupport()
     {
         if (!_features.DrawIndirect)
-        {
-            static void Throw()
-            {
-                throw new VeldridException("Indirect drawing is not supported by this device.");
-            }
-            Throw();
-        }
+            throw new VeldridException("Indirect drawing is not supported by this device.");
     }
 
     [Conditional("VALIDATE_USAGE")]
@@ -836,14 +734,10 @@ public abstract class CommandList : DeviceResource, IDisposable
     {
         if ((indirectBuffer.Usage & BufferUsage.IndirectBuffer) != BufferUsage.IndirectBuffer)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {argExpression} ({indirectBuffer}) must have been created with the "
-                        + $"{nameof(BufferUsage)}.{nameof(BufferUsage.IndirectBuffer)} flag. "
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {argExpression} ({indirectBuffer}) must have been created with the "
+                    + $"{nameof(BufferUsage)}.{nameof(BufferUsage.IndirectBuffer)} flag. "
+            );
         }
     }
 
@@ -854,16 +748,12 @@ public abstract class CommandList : DeviceResource, IDisposable
     )
         where T : unmanaged
     {
-        if (stride < Unsafe.SizeOf<T>() || ((stride % 4) != 0))
+        if (stride < Unsafe.SizeOf<T>() || (stride % 4) != 0)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {argExpression} ({stride}) must be a multiple of 4, "
-                        + $"and must be larger than the size of the {typeof(T)} structure."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {argExpression} ({stride}) must be a multiple of 4, "
+                    + $"and must be larger than the size of the {typeof(T)} structure."
+            );
         }
     }
 
@@ -880,7 +770,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// <see cref="DeviceBuffer"/>.
     /// </summary>
     /// <remarks>
-    /// The information stored in the indirect guffer should conform to the structure of
+    /// The information stored in the indirect buffer should conform to the structure of
     /// <see cref="IndirectDispatchArguments"/>.
     /// </remarks>
     /// <param name="indirectBuffer">
@@ -899,8 +789,7 @@ public abstract class CommandList : DeviceResource, IDisposable
         DispatchIndirectCore(indirectBuffer, offset);
     }
 
-    // TODO: private protected
-    protected abstract void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset);
+    private protected abstract void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset);
 
     /// <summary>
     /// Resolves a multisampled source <see cref="Texture"/> into a non-multisampled destination <see cref="Texture"/>.
@@ -918,25 +807,17 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if (source.SampleCount == TextureSampleCount.Count1)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(source)} ({source}) must be a multisample texture."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(source)} ({source}) must be a multisample texture."
+            );
         }
 
         if (destination.SampleCount != TextureSampleCount.Count1)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(destination)} ({destination}) must be a non-multisample texture. "
-                        + $"Instead, it is a texture with {FormatHelpers.GetSampleCountUInt32(source.SampleCount)} samples."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(destination)} ({destination}) must be a non-multisample texture. "
+                    + $"Instead, it is a texture with {FormatHelpers.GetSampleCountUInt32(source.SampleCount)} samples."
+            );
         }
 #endif
 
@@ -1046,7 +927,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// An offset, in bytes, from the beginning of the <see cref="DeviceBuffer"/>'s storage, at
     /// which new data will be uploaded.
     /// </param>
-    /// <param name="source">An readonly span containing the data to upload.</param>
+    /// <param name="source">A readonly span containing the data to upload.</param>
     public unsafe void UpdateBuffer<T>(
         DeviceBuffer buffer,
         uint bufferOffsetInBytes,
@@ -1075,7 +956,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// An offset, in bytes, from the beginning of the <see cref="DeviceBuffer"/>'s storage, at
     /// which new data will be uploaded.
     /// </param>
-    /// <param name="source">An span containing the data to upload.</param>
+    /// <param name="source">A span containing the data to upload.</param>
     public void UpdateBuffer<T>(DeviceBuffer buffer, uint bufferOffsetInBytes, Span<T> source)
         where T : unmanaged
     {
@@ -1102,14 +983,10 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if (bufferOffsetInBytes + sizeInBytes > buffer.SizeInBytes)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(buffer)} ({buffer}) is not large enough to store the amount of "
-                        + $"data specified ({sizeInBytes}) at the given offset ({bufferOffsetInBytes})."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(buffer)} ({buffer}) is not large enough to store the amount of "
+                    + $"data specified ({sizeInBytes}) at the given offset ({bufferOffsetInBytes})."
+            );
         }
 #endif
         if (sizeInBytes == 0)
@@ -1167,35 +1044,25 @@ public abstract class CommandList : DeviceResource, IDisposable
     )
     {
         if (commands.Length == 0)
-        {
             return;
-        }
 
 #if VALIDATE_USAGE
         foreach (ref readonly BufferCopyCommand command in commands)
         {
             if (command.ReadOffset + command.Length > source.SizeInBytes)
             {
-                void Throw(ulong length, ulong readOffset)
-                {
-                    throw new VeldridException(
-                        $"The {nameof(source)} ({source}) is not large enough to read the amount of "
-                            + $"data specified ({length}) at the given offset ({readOffset})."
-                    );
-                }
-                Throw(command.Length, command.ReadOffset);
+                throw new VeldridException(
+                    $"The {nameof(source)} ({source}) is not large enough to read the amount of "
+                        + $"data specified ({command.Length}) at the given offset ({command.ReadOffset})."
+                );
             }
 
             if (command.WriteOffset + command.Length > destination.SizeInBytes)
             {
-                void Throw(ulong length)
-                {
-                    throw new VeldridException(
-                        $"The {nameof(destination)} ({destination}) is not large enough to write the amount of "
-                            + $"data specified ({length}) at the given offset ({destination})."
-                    );
-                }
-                Throw(command.Length);
+                throw new VeldridException(
+                    $"The {nameof(destination)} ({destination}) is not large enough to write the amount of "
+                        + $"data specified ({command.Length}) at the given offset ({destination})."
+                );
             }
 
             // TODO: check if length exceeds maximum backend length
@@ -1205,7 +1072,7 @@ public abstract class CommandList : DeviceResource, IDisposable
         CopyBufferCore(source, destination, commands);
     }
 
-    protected abstract void CopyBufferCore(
+    private protected abstract void CopyBufferCore(
         DeviceBuffer source,
         DeviceBuffer destination,
         ReadOnlySpan<BufferCopyCommand> commands
@@ -1238,14 +1105,10 @@ public abstract class CommandList : DeviceResource, IDisposable
             || source.Format != destination.Format
         )
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(source)} ({source}) and {nameof(destination)} ({destination}) "
-                        + $"textures are not compatible to be copied."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(source)} ({source}) and {nameof(destination)} ({destination}) "
+                    + $"textures are not compatible to be copied."
+            );
         }
 #endif
 
@@ -1306,14 +1169,10 @@ public abstract class CommandList : DeviceResource, IDisposable
             || source.Format != destination.Format
         )
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(source)} ({source}) and {nameof(destination)} ({destination}) "
-                        + $"textures are not compatible to be copied."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(source)} ({source}) and {nameof(destination)} ({destination}) "
+                    + $"textures are not compatible to be copied."
+            );
         }
 
         if (
@@ -1323,14 +1182,10 @@ public abstract class CommandList : DeviceResource, IDisposable
             || arrayLayer >= effectiveDstArrayLayers
         )
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(mipLevel)} ({mipLevel}) and {nameof(arrayLayer)} ({arrayLayer}) "
-                        + $"must be less than the given textures' mip level count and array layer count."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(mipLevel)} ({mipLevel}) and {nameof(arrayLayer)} ({arrayLayer}) "
+                    + $"must be less than the given textures' mip level count and array layer count."
+            );
         }
 #endif
 
@@ -1396,20 +1251,12 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if (width == 0 || height == 0 || depth == 0)
         {
-            static void Throw()
-            {
-                throw new VeldridException("The given copy region is empty.");
-            }
-            Throw();
+            throw new VeldridException("The given copy region is empty.");
         }
 
         if (layerCount == 0)
         {
-            static void Throw()
-            {
-                throw new VeldridException($"{nameof(layerCount)} must be greater than 0.");
-            }
-            Throw();
+            throw new VeldridException($"{nameof(layerCount)} must be greater than 0.");
         }
 
         Util.GetMipDimensions(
@@ -1428,13 +1275,9 @@ public abstract class CommandList : DeviceResource, IDisposable
             || srcZ + depth > srcDepth
         )
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "The given copy region is not valid for the source Texture."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                "The given copy region is not valid for the source Texture."
+            );
         }
 
         Util.GetMipDimensions(
@@ -1453,24 +1296,16 @@ public abstract class CommandList : DeviceResource, IDisposable
             || dstZ + depth > dstDepth
         )
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "The given copy region is not valid for the destination Texture."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                "The given copy region is not valid for the destination Texture."
+            );
         }
 
         if (srcMipLevel >= source.MipLevels)
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    $"{nameof(srcMipLevel)} must be less than the number of mip levels in the source Texture."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"{nameof(srcMipLevel)} must be less than the number of mip levels in the source Texture."
+            );
         }
 
         uint effectiveSrcArrayLayers =
@@ -1479,24 +1314,14 @@ public abstract class CommandList : DeviceResource, IDisposable
                 : source.ArrayLayers;
         if (srcBaseArrayLayer + layerCount > effectiveSrcArrayLayers)
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "An invalid mip range was given for the source Texture."
-                );
-            }
-            Throw();
+            throw new VeldridException("An invalid mip range was given for the source Texture.");
         }
 
         if (dstMipLevel >= destination.MipLevels)
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    $"{nameof(dstMipLevel)} must be less than the number of mip levels in the destination Texture."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"{nameof(dstMipLevel)} must be less than the number of mip levels in the destination Texture."
+            );
         }
 
         uint effectiveDstArrayLayers =
@@ -1505,13 +1330,9 @@ public abstract class CommandList : DeviceResource, IDisposable
                 : destination.ArrayLayers;
         if (dstBaseArrayLayer + layerCount > effectiveDstArrayLayers)
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    "An invalid mip range was given for the destination Texture."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                "An invalid mip range was given for the destination Texture."
+            );
         }
 #endif
         CopyTextureCore(
@@ -1534,7 +1355,7 @@ public abstract class CommandList : DeviceResource, IDisposable
         );
     }
 
-    protected abstract void CopyTextureCore(
+    private protected abstract void CopyTextureCore(
         Texture source,
         uint srcX,
         uint srcY,
@@ -1564,14 +1385,10 @@ public abstract class CommandList : DeviceResource, IDisposable
     {
         if ((texture.Usage & TextureUsage.GenerateMipmaps) == 0)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(texture)} ({texture}) must have been created with the "
-                        + $"{nameof(TextureUsage)}.{nameof(TextureUsage.GenerateMipmaps)} flag."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(texture)} ({texture}) must have been created with the "
+                    + $"{nameof(TextureUsage)}.{nameof(TextureUsage.GenerateMipmaps)} flag."
+            );
         }
 
         if (texture.MipLevels > 1)
@@ -1723,28 +1540,19 @@ public abstract class CommandList : DeviceResource, IDisposable
 #if VALIDATE_USAGE
         if (_indexBuffer == null)
         {
-            [DoesNotReturn]
-            static void Throw()
-            {
-                throw new VeldridException(
-                    $"An index buffer must be bound before {nameof(CommandList)}.{nameof(DrawIndexed)} can be called."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"An index buffer must be bound before {nameof(CommandList)}.{nameof(DrawIndexed)} can be called."
+            );
         }
 
         uint indexFormatSize = _indexFormat == IndexFormat.UInt16 ? 2u : 4u;
         uint bytesNeeded = indexCount * indexFormatSize;
         if (_indexBuffer.SizeInBytes < bytesNeeded)
         {
-            void Throw()
-            {
-                throw new VeldridException(
-                    $"The active index buffer does not contain enough data to satisfy the given draw command. "
-                        + $"{bytesNeeded} bytes are needed, but the buffer ({_indexBuffer}) only contains {_indexBuffer.SizeInBytes}."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The active index buffer does not contain enough data to satisfy the given draw command. "
+                    + $"{bytesNeeded} bytes are needed, but the buffer ({_indexBuffer}) only contains {_indexBuffer.SizeInBytes}."
+            );
         }
 #endif
     }
@@ -1754,39 +1562,25 @@ public abstract class CommandList : DeviceResource, IDisposable
     {
         if (_graphicsPipeline == null)
         {
-            [DoesNotReturn]
-            static void Throw()
-            {
-                throw new VeldridException(
-                    $"A graphics {nameof(Pipeline)} must be set in order to issue draw commands."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"A graphics {nameof(Pipeline)} must be set in order to issue draw commands."
+            );
         }
 
         if (_framebuffer == null)
         {
-            [DoesNotReturn]
-            static void Throw()
-            {
-                throw new VeldridException(
-                    $"A {nameof(Framebuffer)} must be set in order to issue draw commands."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"A {nameof(Framebuffer)} must be set in order to issue draw commands."
+            );
         }
 
 #if VALIDATE_USAGE
         if (!_graphicsPipeline.GraphicsOutputDescription.Equals(_framebuffer.OutputDescription))
         {
-            static void Throw()
-            {
-                throw new VeldridException(
-                    $"The {nameof(OutputDescription)} of the current graphics {nameof(Pipeline)} "
-                        + $"is not compatible with the current {nameof(Framebuffer)}."
-                );
-            }
-            Throw();
+            throw new VeldridException(
+                $"The {nameof(OutputDescription)} of the current graphics {nameof(Pipeline)} "
+                    + $"is not compatible with the current {nameof(Framebuffer)}."
+            );
         }
 #endif
     }
@@ -1796,7 +1590,7 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// conditionally build interpolated strings for debug markers when they are supported.
     /// </summary>
     [InterpolatedStringHandler]
-    public unsafe ref struct DebugMarkerInterpolatedStringHandler
+    public ref struct DebugMarkerInterpolatedStringHandler
     {
         StringBuilder.AppendInterpolatedStringHandler _innerHandler;
 

@@ -105,36 +105,30 @@ internal static partial class VkFormats
         VkImageUsageFlags vkUsage =
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
         bool isDepthStencil = (vdUsage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil;
+
         if ((vdUsage & TextureUsage.Sampled) == TextureUsage.Sampled)
-        {
             vkUsage |= VK_IMAGE_USAGE_SAMPLED_BIT;
-        }
+
         if (isDepthStencil)
-        {
             vkUsage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-        }
+
         if ((vdUsage & TextureUsage.RenderTarget) == TextureUsage.RenderTarget)
-        {
             vkUsage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-        }
+
         if ((vdUsage & TextureUsage.Storage) == TextureUsage.Storage)
-        {
             vkUsage |= VK_IMAGE_USAGE_STORAGE_BIT;
-        }
 
         return vkUsage;
     }
 
-    internal static VkImageType VdToVkTextureType(TextureType type)
-    {
-        return type switch
+    internal static VkImageType VdToVkTextureType(TextureType type) =>
+        type switch
         {
             TextureType.Texture1D => VK_IMAGE_TYPE_1D,
             TextureType.Texture2D => VK_IMAGE_TYPE_2D,
             TextureType.Texture3D => VK_IMAGE_TYPE_3D,
             _ => Illegal.Value<TextureType, VkImageType>(),
         };
-    }
 
     [SuppressMessage(
         "Style",
@@ -147,31 +141,26 @@ internal static partial class VkFormats
     )
     {
         bool dynamicBinding = (options & ResourceLayoutElementOptions.DynamicBinding) != 0;
-        switch (kind)
+        return kind switch
         {
-            case ResourceKind.UniformBuffer:
-                return dynamicBinding
-                    ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
-                    : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            case ResourceKind.StructuredBufferReadWrite:
-            case ResourceKind.StructuredBufferReadOnly:
-                return dynamicBinding
+            ResourceKind.UniformBuffer => dynamicBinding
+                ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+                : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+
+            ResourceKind.StructuredBufferReadWrite or ResourceKind.StructuredBufferReadOnly =>
+                dynamicBinding
                     ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
-                    : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-            case ResourceKind.TextureReadOnly:
-                return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-            case ResourceKind.TextureReadWrite:
-                return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-            case ResourceKind.Sampler:
-                return VK_DESCRIPTOR_TYPE_SAMPLER;
-            default:
-                return Illegal.Value<ResourceKind, VkDescriptorType>();
-        }
+                    : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+
+            ResourceKind.TextureReadOnly => VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+            ResourceKind.TextureReadWrite => VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+            ResourceKind.Sampler => VK_DESCRIPTOR_TYPE_SAMPLER,
+            _ => Illegal.Value<ResourceKind, VkDescriptorType>(),
+        };
     }
 
-    internal static VkSampleCountFlags VdToVkSampleCount(TextureSampleCount sampleCount)
-    {
-        return sampleCount switch
+    internal static VkSampleCountFlags VdToVkSampleCount(TextureSampleCount sampleCount) =>
+        sampleCount switch
         {
             TextureSampleCount.Count1 => VK_SAMPLE_COUNT_1_BIT,
             TextureSampleCount.Count2 => VK_SAMPLE_COUNT_2_BIT,
@@ -182,11 +171,9 @@ internal static partial class VkFormats
             TextureSampleCount.Count64 => VK_SAMPLE_COUNT_64_BIT,
             _ => Illegal.Value<TextureSampleCount, VkSampleCountFlags>(),
         };
-    }
 
-    internal static VkStencilOp VdToVkStencilOp(StencilOperation op)
-    {
-        return op switch
+    internal static VkStencilOp VdToVkStencilOp(StencilOperation op) =>
+        op switch
         {
             StencilOperation.Keep => VK_STENCIL_OP_KEEP,
             StencilOperation.Zero => VK_STENCIL_OP_ZERO,
@@ -198,32 +185,26 @@ internal static partial class VkFormats
             StencilOperation.DecrementAndWrap => VK_STENCIL_OP_DECREMENT_AND_WRAP,
             _ => Illegal.Value<StencilOperation, VkStencilOp>(),
         };
-    }
 
-    internal static VkPolygonMode VdToVkPolygonMode(PolygonFillMode fillMode)
-    {
-        return fillMode switch
+    internal static VkPolygonMode VdToVkPolygonMode(PolygonFillMode fillMode) =>
+        fillMode switch
         {
             PolygonFillMode.Solid => VK_POLYGON_MODE_FILL,
             PolygonFillMode.Wireframe => VK_POLYGON_MODE_LINE,
             _ => Illegal.Value<PolygonFillMode, VkPolygonMode>(),
         };
-    }
 
-    internal static VkCullModeFlags VdToVkCullMode(FaceCullMode cullMode)
-    {
-        return cullMode switch
+    internal static VkCullModeFlags VdToVkCullMode(FaceCullMode cullMode) =>
+        cullMode switch
         {
             FaceCullMode.Back => VK_CULL_MODE_BACK_BIT,
             FaceCullMode.Front => VK_CULL_MODE_FRONT_BIT,
             FaceCullMode.None => VK_CULL_MODE_NONE,
             _ => Illegal.Value<FaceCullMode, VkCullModeFlags>(),
         };
-    }
 
-    internal static VkBlendOp VdToVkBlendOp(BlendFunction func)
-    {
-        return func switch
+    internal static VkBlendOp VdToVkBlendOp(BlendFunction func) =>
+        func switch
         {
             BlendFunction.Add => VK_BLEND_OP_ADD,
             BlendFunction.Subtract => VK_BLEND_OP_SUBTRACT,
@@ -232,7 +213,6 @@ internal static partial class VkFormats
             BlendFunction.Maximum => VK_BLEND_OP_MAX,
             _ => Illegal.Value<BlendFunction, VkBlendOp>(),
         };
-    }
 
     internal static VkColorComponentFlags VdToVkColorWriteMask(ColorWriteMask mask)
     {
@@ -240,19 +220,21 @@ internal static partial class VkFormats
 
         if ((mask & ColorWriteMask.Red) == ColorWriteMask.Red)
             flags |= VkColorComponentFlags.VK_COLOR_COMPONENT_R_BIT;
+
         if ((mask & ColorWriteMask.Green) == ColorWriteMask.Green)
             flags |= VkColorComponentFlags.VK_COLOR_COMPONENT_G_BIT;
+
         if ((mask & ColorWriteMask.Blue) == ColorWriteMask.Blue)
             flags |= VkColorComponentFlags.VK_COLOR_COMPONENT_B_BIT;
+
         if ((mask & ColorWriteMask.Alpha) == ColorWriteMask.Alpha)
             flags |= VkColorComponentFlags.VK_COLOR_COMPONENT_A_BIT;
 
         return flags;
     }
 
-    internal static VkPrimitiveTopology VdToVkPrimitiveTopology(PrimitiveTopology topology)
-    {
-        return topology switch
+    internal static VkPrimitiveTopology VdToVkPrimitiveTopology(PrimitiveTopology topology) =>
+        topology switch
         {
             PrimitiveTopology.TriangleList => VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
             PrimitiveTopology.TriangleStrip => VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
@@ -261,11 +243,9 @@ internal static partial class VkFormats
             PrimitiveTopology.PointList => VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
             _ => Illegal.Value<PrimitiveTopology, VkPrimitiveTopology>(),
         };
-    }
 
-    internal static uint GetSpecializationConstantSize(ShaderConstantType type)
-    {
-        return type switch
+    internal static uint GetSpecializationConstantSize(ShaderConstantType type) =>
+        type switch
         {
             ShaderConstantType.Bool => 4,
             ShaderConstantType.UInt16 => 2,
@@ -278,11 +258,9 @@ internal static partial class VkFormats
             ShaderConstantType.Double => 8,
             _ => Illegal.Value<ShaderConstantType, uint>(),
         };
-    }
 
-    internal static VkBlendFactor VdToVkBlendFactor(BlendFactor factor)
-    {
-        return factor switch
+    internal static VkBlendFactor VdToVkBlendFactor(BlendFactor factor) =>
+        factor switch
         {
             BlendFactor.Zero => VK_BLEND_FACTOR_ZERO,
             BlendFactor.One => VK_BLEND_FACTOR_ONE,
@@ -298,11 +276,9 @@ internal static partial class VkFormats
             BlendFactor.InverseBlendFactor => VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR,
             _ => Illegal.Value<BlendFactor, VkBlendFactor>(),
         };
-    }
 
-    internal static VkFormat VdToVkVertexElementFormat(VertexElementFormat format)
-    {
-        return format switch
+    internal static VkFormat VdToVkVertexElementFormat(VertexElementFormat format) =>
+        format switch
         {
             VertexElementFormat.Float1 => VK_FORMAT_R32_SFLOAT,
             VertexElementFormat.Float2 => VK_FORMAT_R32G32_SFLOAT,
@@ -337,7 +313,6 @@ internal static partial class VkFormats
             VertexElementFormat.Half4 => VK_FORMAT_R16G16B16A16_SFLOAT,
             _ => Illegal.Value<VertexElementFormat, VkFormat>(),
         };
-    }
 
     internal static VkShaderStageFlags VdToVkShaderStages(ShaderStages stage)
     {
@@ -364,30 +339,25 @@ internal static partial class VkFormats
         return ret;
     }
 
-    internal static VkBorderColor VdToVkSamplerBorderColor(SamplerBorderColor borderColor)
-    {
-        return borderColor switch
+    internal static VkBorderColor VdToVkSamplerBorderColor(SamplerBorderColor borderColor) =>
+        borderColor switch
         {
             SamplerBorderColor.TransparentBlack => VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
             SamplerBorderColor.OpaqueBlack => VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK,
             SamplerBorderColor.OpaqueWhite => VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
             _ => Illegal.Value<SamplerBorderColor, VkBorderColor>(),
         };
-    }
 
-    internal static VkIndexType VdToVkIndexFormat(IndexFormat format)
-    {
-        return format switch
+    internal static VkIndexType VdToVkIndexFormat(IndexFormat format) =>
+        format switch
         {
             IndexFormat.UInt16 => VK_INDEX_TYPE_UINT16,
             IndexFormat.UInt32 => VK_INDEX_TYPE_UINT32,
             _ => Illegal.Value<IndexFormat, VkIndexType>(),
         };
-    }
 
-    internal static VkCompareOp VdToVkCompareOp(ComparisonKind comparisonKind)
-    {
-        return comparisonKind switch
+    internal static VkCompareOp VdToVkCompareOp(ComparisonKind comparisonKind) =>
+        comparisonKind switch
         {
             ComparisonKind.Never => VK_COMPARE_OP_NEVER,
             ComparisonKind.Less => VK_COMPARE_OP_LESS,
@@ -399,11 +369,9 @@ internal static partial class VkFormats
             ComparisonKind.Always => VK_COMPARE_OP_ALWAYS,
             _ => Illegal.Value<ComparisonKind, VkCompareOp>(),
         };
-    }
 
-    internal static PixelFormat VkToVdPixelFormat(VkFormat vkFormat)
-    {
-        return vkFormat switch
+    internal static PixelFormat VkToVdPixelFormat(VkFormat vkFormat) =>
+        vkFormat switch
         {
             VK_FORMAT_R8_UNORM => PixelFormat.R8_UNorm,
             VK_FORMAT_R8_SNORM => PixelFormat.R8_SNorm,
@@ -463,5 +431,4 @@ internal static partial class VkFormats
             VK_FORMAT_B10G11R11_UFLOAT_PACK32 => PixelFormat.R11_G11_B10_Float,
             _ => Illegal.Value<VkFormat, PixelFormat>(),
         };
-    }
 }

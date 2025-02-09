@@ -3,8 +3,14 @@ using System.Runtime.CompilerServices;
 
 namespace Veldrid;
 
+/// <summary>
+/// Extension methods for the <see cref="BufferUsage"/> enum.
+/// </summary>
 public static class BufferUsageExtensions
 {
+    /// <summary>
+    /// Returns a string representation of the given <see cref="BufferUsage"/> value.
+    /// </summary>
     [SkipLocalsInit]
     public static string ToDisplayString(this BufferUsage usage)
     {
@@ -21,90 +27,81 @@ public static class BufferUsageExtensions
         {
             if (offset != 0)
             {
-                separator.CopyTo(buffer.Slice(offset));
+                separator.CopyTo(buffer[offset..]);
                 offset += separator.Length;
             }
 
-            dynamic.CopyTo(buffer.Slice(offset));
+            dynamic.CopyTo(buffer[offset..]);
             offset += dynamic.Length;
         }
 
         string staging = GetStagingFlagString(usage);
+
         if (staging.Length > 0)
         {
             if (offset != 0)
             {
-                separator.CopyTo(buffer.Slice(offset));
+                separator.CopyTo(buffer[offset..]);
                 offset += separator.Length;
             }
 
-            staging.CopyTo(buffer.Slice(offset));
+            staging.CopyTo(buffer[offset..]);
             offset += staging.Length;
         }
 
-        return buffer.Slice(0, offset).ToString();
+        return buffer[..offset].ToString();
     }
 
-    public static string GetStagingFlagString(BufferUsage usage)
+    static string GetStagingFlagString(BufferUsage usage)
     {
         if ((usage & BufferUsage.StagingReadWrite) == BufferUsage.StagingReadWrite)
-        {
             return "StagingRW";
-        }
-        else if ((usage & BufferUsage.StagingRead) != 0)
-        {
+
+        if ((usage & BufferUsage.StagingRead) == BufferUsage.StagingRead)
             return "StagingRead";
-        }
-        else if ((usage & BufferUsage.StagingWrite) != 0)
-        {
+
+        if ((usage & BufferUsage.StagingWrite) == BufferUsage.StagingWrite)
             return "StagingWrite";
-        }
+
         return "";
     }
 
-    public static string GetDynamicFlagString(BufferUsage usage)
+    static string GetDynamicFlagString(BufferUsage usage)
     {
         if ((usage & BufferUsage.DynamicReadWrite) == BufferUsage.DynamicReadWrite)
-        {
             return "DynamicRW";
-        }
-        else if ((usage & BufferUsage.DynamicRead) != 0)
-        {
+
+        if ((usage & BufferUsage.DynamicRead) == BufferUsage.DynamicRead)
             return "DynamicRead";
-        }
-        else if ((usage & BufferUsage.DynamicWrite) != 0)
-        {
+
+        if ((usage & BufferUsage.DynamicWrite) == BufferUsage.DynamicWrite)
             return "DynamicWrite";
-        }
+
         return "";
     }
 
-    public static string GetTypeFlagString(BufferUsage usage)
+    static string GetTypeFlagString(BufferUsage usage)
     {
-        if ((usage & BufferUsage.VertexBuffer) != 0)
-        {
+        if ((usage & BufferUsage.VertexBuffer) == BufferUsage.VertexBuffer)
             return "Vertex";
-        }
-        if ((usage & BufferUsage.IndexBuffer) != 0)
-        {
+
+        if ((usage & BufferUsage.IndexBuffer) == BufferUsage.IndexBuffer)
             return "Index";
-        }
-        if ((usage & BufferUsage.UniformBuffer) != 0)
-        {
+
+        if ((usage & BufferUsage.UniformBuffer) == BufferUsage.UniformBuffer)
             return "Uniform";
-        }
-        if ((usage & BufferUsage.StructuredBufferReadOnly) != 0)
-        {
+
+        if ((usage & BufferUsage.StructuredBufferReadOnly) == BufferUsage.StructuredBufferReadOnly)
             return "Struct";
-        }
-        if ((usage & BufferUsage.StructuredBufferReadWrite) != 0)
-        {
+
+        if (
+            (usage & BufferUsage.StructuredBufferReadWrite) == BufferUsage.StructuredBufferReadWrite
+        )
             return "StructRW";
-        }
-        if ((usage & BufferUsage.IndirectBuffer) != 0)
-        {
+
+        if ((usage & BufferUsage.IndirectBuffer) == BufferUsage.IndirectBuffer)
             return "Indirect";
-        }
+
         return "";
     }
 }

@@ -332,7 +332,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     }
 
     [Fact]
-    public unsafe void CubeMap_Copy_OneMip()
+    public void CubeMap_Copy_OneMip()
     {
         const uint TexSize = 64;
         const uint MipLevels = 1;
@@ -395,7 +395,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     }
 
     [Fact]
-    public unsafe void CubeMap_Copy_FromNonCubeMapWith6ArrayLayers()
+    public void CubeMap_Copy_FromNonCubeMapWith6ArrayLayers()
     {
         const uint TexSize = 64;
         const uint MipLevels = 1;
@@ -465,7 +465,6 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     {
         const uint TexSize = 64;
         const uint MipLevels = 3;
-        const uint CopiedMip = 1;
 
         TextureDescription srcDesc = TextureDescription.Texture2D(
             TexSize,
@@ -1149,7 +1148,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     }
 
     [Fact]
-    public unsafe void MapWrite_ThenMapRead_3D()
+    public void MapWrite_ThenMapRead_3D()
     {
         Texture tex3D = RF.CreateTexture(
             TextureDescription.Texture3D(
@@ -1219,7 +1218,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     }
 
     [SkippableFact]
-    public unsafe void MapWrite_ThenMapRead_1D()
+    public void MapWrite_ThenMapRead_1D()
     {
         Skip.IfNot(GD.Features.Texture1D);
 
@@ -1243,7 +1242,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     }
 
     [SkippableFact]
-    public unsafe void Copy_1DTo2D()
+    public void Copy_1DTo2D()
     {
         Skip.IfNot(GD.Features.Texture1D);
 
@@ -1551,7 +1550,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     }
 
     [Fact]
-    public unsafe void Map_NonZeroMip_3D()
+    public void Map_NonZeroMip_3D()
     {
         Texture tex3D = RF.CreateTexture(
             TextureDescription.Texture3D(

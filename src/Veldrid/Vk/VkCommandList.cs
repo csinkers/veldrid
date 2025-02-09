@@ -552,7 +552,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         );
     }
 
-    protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
+    private protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
     {
         VkBuffer vkBuffer = Util.AssertSubtype<DeviceBuffer, VkBuffer>(indirectBuffer);
         _currentStagingInfo.AddResource(vkBuffer.RefCount);
@@ -646,10 +646,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
         EnsureNoRenderPass();
 
-        if (_currentFramebuffer != null)
-        {
-            _currentFramebuffer.TransitionToFinalLayout(_cb, false);
-        }
+        _currentFramebuffer?.TransitionToFinalLayout(_cb, false);
 
         _currentFramebuffer = vkFB;
         _currentFramebufferEverActive = false;
@@ -919,7 +916,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         }
     }
 
-    protected override void SetGraphicsResourceSetCore(
+    private protected override void SetGraphicsResourceSetCore(
         uint slot,
         ResourceSet rs,
         ReadOnlySpan<uint> dynamicOffsets
@@ -1005,7 +1002,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         CopyBuffer(stagingBuffer, 0, buffer, bufferOffsetInBytes, sizeInBytes);
     }
 
-    protected override void CopyBufferCore(
+    private protected override void CopyBufferCore(
         DeviceBuffer source,
         DeviceBuffer destination,
         ReadOnlySpan<BufferCopyCommand> commands
@@ -1090,7 +1087,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         );
     }
 
-    protected override void CopyTextureCore(
+    private protected override void CopyTextureCore(
         Texture source,
         uint srcX,
         uint srcY,
@@ -1897,12 +1894,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     private protected override void PopDebugGroupCore()
     {
         vkCmdDebugMarkerEndEXT_t? func = _gd.MarkerEnd;
-        if (func == null)
-        {
-            return;
-        }
 
-        func(_cb);
+        func?.Invoke(_cb);
     }
 
     [SkipLocalsInit]

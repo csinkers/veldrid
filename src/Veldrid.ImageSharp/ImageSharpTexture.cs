@@ -69,7 +69,7 @@ public class ImageSharpTexture
         }
     }
 
-    public unsafe Texture CreateDeviceTexture(GraphicsDevice gd, ResourceFactory factory)
+    public Texture CreateDeviceTexture(GraphicsDevice gd, ResourceFactory factory)
     {
         return CreateTextureViaUpdate(gd, factory);
     }

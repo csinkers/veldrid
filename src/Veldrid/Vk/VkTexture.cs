@@ -176,6 +176,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                     | VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                 size = stagingSize,
             };
+
             VulkanBuffer stagingBuffer;
             VkResult result = vkCreateBuffer(_gd.Device, &bufferCI, null, &stagingBuffer);
             CheckResult(result);
@@ -199,6 +200,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                     sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2,
                     pNext = &dedicatedReqs,
                 };
+
                 _gd.GetBufferMemoryRequirements2(_gd.Device, &memReqInfo2, &memReqs2);
                 bufferMemReqs = memReqs2.memoryRequirements;
                 prefersDedicatedAllocation =
@@ -315,12 +317,12 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
 
     void TransitionIfSampled()
     {
-        if ((Usage & TextureUsage.Sampled) != 0)
-        {
-            VkCommandList cl = _gd.GetAndBeginCommandList();
-            cl.TransitionImageLayout(this, VkImageLayout.VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            _gd.EndAndSubmitCommands(cl);
-        }
+        if ((Usage & TextureUsage.Sampled) == 0)
+            return;
+
+        VkCommandList cl = _gd.GetAndBeginCommandList();
+        cl.TransitionImageLayout(this, VkImageLayout.VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        _gd.EndAndSubmitCommands(cl);
     }
 
     internal VkSubresourceLayout GetSubresourceLayout(uint mipLevel, uint arrayLevel)
@@ -387,9 +389,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
     )
     {
         if (_stagingBuffer != VulkanBuffer.NULL)
-        {
             return;
-        }
 
         Debug.Assert(baseMipLevel + levelCount <= MipLevels);
         Debug.Assert(baseArrayLayer + layerCount <= ActualArrayLayers);
@@ -407,38 +407,40 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
             }
         }
 #endif
-        if (oldLayout != newLayout)
-        {
-            VkImageAspectFlags aspectMask;
-            if ((Usage & TextureUsage.DepthStencil) != 0)
-            {
-                aspectMask = FormatHelpers.IsStencilFormat(Format)
-                    ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
-                        | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
-                    : VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
-            }
-            else
-            {
-                aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
-            }
-            VulkanUtil.TransitionImageLayout(
-                cb,
-                OptimalDeviceImage,
-                baseMipLevel,
-                levelCount,
-                baseArrayLayer,
-                layerCount,
-                aspectMask,
-                oldLayout,
-                newLayout
-            );
 
-            for (uint layer = 0; layer < layerCount; layer++)
+        if (oldLayout == newLayout)
+            return;
+
+        VkImageAspectFlags aspectMask;
+        if ((Usage & TextureUsage.DepthStencil) != 0)
+        {
+            aspectMask = FormatHelpers.IsStencilFormat(Format)
+                ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                    | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
+                : VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
+        }
+        else
+        {
+            aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
+        }
+
+        VulkanUtil.TransitionImageLayout(
+            cb,
+            OptimalDeviceImage,
+            baseMipLevel,
+            levelCount,
+            baseArrayLayer,
+            layerCount,
+            aspectMask,
+            oldLayout,
+            newLayout
+        );
+
+        for (uint layer = 0; layer < layerCount; layer++)
+        {
+            for (uint level = 0; level < levelCount; level++)
             {
-                for (uint level = 0; level < levelCount; level++)
-                {
-                    SetImageLayout(baseMipLevel + level, baseArrayLayer + layer, newLayout);
-                }
+                SetImageLayout(baseMipLevel + level, baseArrayLayer + layer, newLayout);
             }
         }
     }
@@ -453,52 +455,48 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
     )
     {
         if (_stagingBuffer != VulkanBuffer.NULL)
-        {
             return;
-        }
 
         for (uint layer = baseArrayLayer; layer < baseArrayLayer + layerCount; layer++)
         {
             for (uint level = baseMipLevel; level < baseMipLevel + levelCount; level++)
             {
                 VkImageLayout oldLayout = GetImageLayout(level, layer);
-                if (oldLayout != newLayout)
+                if (oldLayout == newLayout)
+                    continue;
+
+                VkImageAspectFlags aspectMask;
+                if ((Usage & TextureUsage.DepthStencil) != 0)
                 {
-                    VkImageAspectFlags aspectMask;
-                    if ((Usage & TextureUsage.DepthStencil) != 0)
-                    {
-                        aspectMask = FormatHelpers.IsStencilFormat(Format)
-                            ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
-                                | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
-                            : VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
-                    }
-                    else
-                    {
-                        aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
-                    }
-
-                    VulkanUtil.TransitionImageLayout(
-                        cb,
-                        OptimalDeviceImage,
-                        level,
-                        1,
-                        layer,
-                        1,
-                        aspectMask,
-                        oldLayout,
-                        newLayout
-                    );
-
-                    SetImageLayout(level, layer, newLayout);
+                    aspectMask = FormatHelpers.IsStencilFormat(Format)
+                        ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                            | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
+                        : VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
                 }
+                else
+                {
+                    aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
+                }
+
+                VulkanUtil.TransitionImageLayout(
+                    cb,
+                    OptimalDeviceImage,
+                    level,
+                    1,
+                    layer,
+                    1,
+                    aspectMask,
+                    oldLayout,
+                    newLayout
+                );
+
+                SetImageLayout(level, layer, newLayout);
             }
         }
     }
 
-    internal VkImageLayout GetImageLayout(uint mipLevel, uint arrayLayer)
-    {
-        return _imageLayouts[CalculateSubresource(mipLevel, arrayLayer)];
-    }
+    internal VkImageLayout GetImageLayout(uint mipLevel, uint arrayLayer) =>
+        _imageLayouts[CalculateSubresource(mipLevel, arrayLayer)];
 
     public override string? Name
     {
@@ -528,9 +526,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
     void IResourceRefCountTarget.RefZeroed()
     {
         if (_leaveOpen)
-        {
             return;
-        }
 
         bool isStaging = (Usage & TextureUsage.Staging) == TextureUsage.Staging;
         if (isStaging)
@@ -543,9 +539,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         }
 
         if (_memoryBlock.DeviceMemory != VkDeviceMemory.NULL)
-        {
             _gd.MemoryManager.Free(_memoryBlock);
-        }
     }
 
     internal void SetImageLayout(uint mipLevel, uint arrayLayer, VkImageLayout layout)

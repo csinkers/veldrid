@@ -1423,6 +1423,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
             vkProps.maxArrayLayers,
             (uint)vkProps.sampleCounts
         );
+
         return true;
     }
 
@@ -1774,7 +1775,7 @@ internal unsafe delegate void vkCmdDebugMarkerBeginEXT_t(
     VkCommandBuffer commandBuffer,
     VkDebugMarkerMarkerInfoEXT* pMarkerInfo
 );
-internal unsafe delegate void vkCmdDebugMarkerEndEXT_t(VkCommandBuffer commandBuffer);
+internal delegate void vkCmdDebugMarkerEndEXT_t(VkCommandBuffer commandBuffer);
 internal unsafe delegate void vkCmdDebugMarkerInsertEXT_t(
     VkCommandBuffer commandBuffer,
     VkDebugMarkerMarkerInfoEXT* pMarkerInfo

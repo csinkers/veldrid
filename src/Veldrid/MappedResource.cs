@@ -244,7 +244,7 @@ public unsafe readonly struct MappedResourceView<T>
     /// Creates a span of bytes over the mapped data region.
     /// </summary>
     /// <returns></returns>
-    public readonly unsafe Span<byte> AsBytes()
+    public readonly Span<byte> AsBytes()
     {
         return MappedResource.AsBytes();
     }
@@ -253,7 +253,7 @@ public unsafe readonly struct MappedResourceView<T>
     /// Creates a span of structures over the mapped data region.
     /// </summary>
     /// <returns>The span of structures.</returns>
-    public readonly unsafe Span<T> AsSpan()
+    public readonly Span<T> AsSpan()
     {
         return MemoryMarshal.Cast<byte, T>(MappedResource.AsBytes());
     }

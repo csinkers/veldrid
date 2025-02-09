@@ -40,10 +40,8 @@ internal sealed class OpenGLTextureView : TextureView, IOpenGLDeferredResource
                 Debug.Assert(Target.Created);
                 return Target.Texture;
             }
-            else
-            {
-                return _textureView;
-            }
+
+            return _textureView;
         }
     }
 
@@ -264,16 +262,16 @@ internal sealed class OpenGLTextureView : TextureView, IOpenGLDeferredResource
 
     public unsafe void DestroyGLResources()
     {
-        if (!_disposed)
+        if (_disposed)
+            return;
+
+        _disposed = true;
+        if (_textureView != 0)
         {
-            _disposed = true;
-            if (_textureView != 0)
-            {
-                uint texView = _textureView;
-                glDeleteTextures(1, &texView);
-                CheckLastError();
-                _textureView = texView;
-            }
+            uint texView = _textureView;
+            glDeleteTextures(1, &texView);
+            CheckLastError();
+            _textureView = texView;
         }
     }
 }

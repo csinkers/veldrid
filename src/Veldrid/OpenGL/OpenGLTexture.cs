@@ -161,9 +161,8 @@ internal sealed unsafe class OpenGLTexture : Texture, IOpenGLDeferredResource
     public void EnsureResourcesCreated()
     {
         if (!Created)
-        {
             CreateGLResources();
-        }
+
         if (_nameChanged)
         {
             _nameChanged = false;
@@ -707,33 +706,32 @@ internal sealed unsafe class OpenGLTexture : Texture, IOpenGLDeferredResource
 
     public void DestroyGLResources()
     {
-        if (!_disposed)
+        if (_disposed)
+            return;
+
+        _disposed = true;
+        uint tex = _texture;
+        glDeleteTextures(1, &tex);
+        CheckLastError();
+        _texture = tex;
+
+        for (int i = 0; i < _framebuffers.Length; i++)
         {
-            _disposed = true;
-
-            uint tex = _texture;
-            glDeleteTextures(1, &tex);
-            CheckLastError();
-            _texture = tex;
-
-            for (int i = 0; i < _framebuffers.Length; i++)
+            uint fb = _framebuffers[i];
+            if (fb != 0)
             {
-                uint fb = _framebuffers[i];
-                if (fb != 0)
-                {
-                    glDeleteFramebuffers(1, &fb);
-                    _framebuffers[i] = fb;
-                }
+                glDeleteFramebuffers(1, &fb);
+                _framebuffers[i] = fb;
             }
+        }
 
-            for (int i = 0; i < _pbos.Length; i++)
+        for (int i = 0; i < _pbos.Length; i++)
+        {
+            uint pb = _pbos[i];
+            if (pb != 0)
             {
-                uint pb = _pbos[i];
-                if (pb != 0)
-                {
-                    glDeleteBuffers(1, &pb);
-                    _pbos[i] = pb;
-                }
+                glDeleteBuffers(1, &pb);
+                _pbos[i] = pb;
             }
         }
     }

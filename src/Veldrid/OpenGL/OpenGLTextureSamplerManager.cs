@@ -34,23 +34,23 @@ internal sealed unsafe class OpenGLTextureSamplerManager
     {
         uint textureID = textureView.GLTargetTexture;
 
-        if (_textureUnitTextures[textureUnit] != textureView)
+        if (_textureUnitTextures[textureUnit] == textureView)
+            return;
+
+        if (_dsaAvailable)
         {
-            if (_dsaAvailable)
-            {
-                glBindTextureUnit(textureUnit, textureID);
-            }
-            else
-            {
-                SetActiveTextureUnit(textureUnit);
-
-                glBindTexture(textureView.TextureTarget, textureID);
-            }
-            CheckLastError();
-
-            EnsureSamplerMipmapState(textureUnit, textureView.MipLevels > 1);
-            _textureUnitTextures[textureUnit] = textureView;
+            glBindTextureUnit(textureUnit, textureID);
         }
+        else
+        {
+            SetActiveTextureUnit(textureUnit);
+
+            glBindTexture(textureView.TextureTarget, textureID);
+        }
+        CheckLastError();
+
+        EnsureSamplerMipmapState(textureUnit, textureView.MipLevels > 1);
+        _textureUnitTextures[textureUnit] = textureView;
     }
 
     public void SetTextureTransient(TextureTarget target, uint texture)
@@ -87,28 +87,30 @@ internal sealed unsafe class OpenGLTextureSamplerManager
 
     void SetActiveTextureUnit(uint textureUnit)
     {
-        if (_currentActiveUnit != textureUnit)
-        {
-            glActiveTexture(TextureUnit.Texture0 + (int)textureUnit);
-            CheckLastError();
-            _currentActiveUnit = textureUnit;
-        }
+        if (_currentActiveUnit == textureUnit)
+            return;
+
+        glActiveTexture(TextureUnit.Texture0 + (int)textureUnit);
+        CheckLastError();
+        _currentActiveUnit = textureUnit;
     }
 
     void EnsureSamplerMipmapState(uint textureUnit, bool mipmapped)
     {
         if (
-            _textureUnitSamplers[textureUnit].Sampler != null
-            && _textureUnitSamplers[textureUnit].Mipmapped != mipmapped
+            _textureUnitSamplers[textureUnit].Sampler == null
+            || _textureUnitSamplers[textureUnit].Mipmapped == mipmapped
         )
         {
-            OpenGLSampler sampler = _textureUnitSamplers[textureUnit].Sampler;
-            uint samplerID = mipmapped ? sampler.MipmapSampler : sampler.NoMipmapSampler;
-            glBindSampler(textureUnit, samplerID);
-            CheckLastError();
-
-            _textureUnitSamplers[textureUnit].Mipmapped = mipmapped;
+            return;
         }
+
+        OpenGLSampler sampler = _textureUnitSamplers[textureUnit].Sampler;
+        uint samplerID = mipmapped ? sampler.MipmapSampler : sampler.NoMipmapSampler;
+        glBindSampler(textureUnit, samplerID);
+        CheckLastError();
+
+        _textureUnitSamplers[textureUnit].Mipmapped = mipmapped;
     }
 
     struct BoundSamplerStateInfo(OpenGLSampler sampler, bool mipmapped)

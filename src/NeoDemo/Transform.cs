@@ -37,7 +37,7 @@ public class Transform
         }
     }
 
-    public event Action TransformChanged;
+    public event Action? TransformChanged;
 
     public Vector3 Forward => Vector3.Transform(-Vector3.UnitZ, _rotation);
 

@@ -3,25 +3,24 @@ using System.IO;
 using Android.Content.Res;
 using Veldrid.Tests.Utilities;
 
-namespace Veldrid.Tests.Android
+namespace Veldrid.Tests.Android;
+
+internal class AssetsShaderProvider : IShaderProvider
 {
-    internal class AssetsShaderProvider : IShaderProvider
+    readonly AssetManager _assets;
+
+    public AssetsShaderProvider(AssetManager assets)
     {
-        private readonly AssetManager _assets;
+        _assets = assets ?? throw new ArgumentNullException(nameof(assets));
+    }
 
-        public AssetsShaderProvider(AssetManager assets)
-        {
-            _assets = assets ?? throw new ArgumentNullException(nameof(assets));
-        }
+    public string GetPath(string name)
+    {
+        return Path.Combine("Shaders", name);
+    }
 
-        public string GetPath(string name)
-        {
-            return Path.Combine("Shaders", name);
-        }
-
-        public Stream OpenRead(string path)
-        {
-            return _assets.Open(path);
-        }
+    public Stream OpenRead(string path)
+    {
+        return _assets.Open(path);
     }
 }

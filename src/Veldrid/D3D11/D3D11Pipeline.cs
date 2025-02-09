@@ -5,7 +5,6 @@ namespace Veldrid.D3D11;
 
 internal sealed class D3D11Pipeline : Pipeline
 {
-    string? _name;
     bool _disposed;
 
     public ID3D11BlendState? BlendState { get; }
@@ -124,16 +123,8 @@ internal sealed class D3D11Pipeline : Pipeline
         }
     }
 
-    public override string? Name
-    {
-        get => _name;
-        set => _name = value;
-    }
-
+    public override string? Name { get; set; }
     public override bool IsDisposed => _disposed;
 
-    public override void Dispose()
-    {
-        _disposed = true;
-    }
+    public override void Dispose() => _disposed = true;
 }

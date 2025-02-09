@@ -15,7 +15,7 @@ internal sealed class D3D11Swapchain : Swapchain
     readonly IDXGISwapChain _dxgiSwapChain;
     bool _vsync;
     int _syncInterval;
-    D3D11Framebuffer _framebuffer = null!;
+    D3D11Framebuffer? _framebuffer;
     D3D11Texture? _depthTexture;
     readonly float _pixelScale = 1f;
     bool _disposed;
@@ -23,7 +23,7 @@ internal sealed class D3D11Swapchain : Swapchain
     readonly object _referencedCLsLock = new();
     readonly HashSet<D3D11CommandList> _referencedCLs = [];
 
-    public override Framebuffer Framebuffer => _framebuffer;
+    public override Framebuffer Framebuffer => _framebuffer!;
 
     public override string? Name
     {
@@ -173,11 +173,7 @@ internal sealed class D3D11Swapchain : Swapchain
         if (_framebuffer != null)
         {
             resizeBuffers = true;
-            if (_depthTexture != null)
-            {
-                _depthTexture.Dispose();
-            }
-
+            _depthTexture?.Dispose();
             _framebuffer.Dispose();
         }
 
@@ -243,13 +239,13 @@ internal sealed class D3D11Swapchain : Swapchain
 
     public override void Dispose()
     {
-        if (!_disposed)
-        {
-            _depthTexture?.Dispose();
-            _framebuffer.Dispose();
-            _dxgiSwapChain.Dispose();
+        if (_disposed)
+            return;
 
-            _disposed = true;
-        }
+        _depthTexture?.Dispose();
+        _framebuffer?.Dispose();
+        _dxgiSwapChain.Dispose();
+
+        _disposed = true;
     }
 }

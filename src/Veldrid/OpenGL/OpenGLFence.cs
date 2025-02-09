@@ -20,11 +20,11 @@ internal sealed class OpenGLFence(bool signaled) : Fence
 
     public override void Dispose()
     {
-        if (!_disposed)
-        {
-            _mre.Dispose();
-            _disposed = true;
-        }
+        if (_disposed)
+            return;
+
+        _mre.Dispose();
+        _disposed = true;
     }
 
     internal bool Wait(ulong nanosecondTimeout)

@@ -35,10 +35,7 @@ internal sealed unsafe class StagingMemoryPool : IDisposable
         return block;
     }
 
-    public StagingBlock RetrieveById(uint id)
-    {
-        return _storage[(int)id];
-    }
+    public StagingBlock RetrieveById(uint id) => _storage[(int)id];
 
     void Rent(uint size, out StagingBlock block)
     {
@@ -101,10 +98,7 @@ internal sealed unsafe class StagingMemoryPool : IDisposable
 
     sealed class CapacityComparer : IComparer<uint>
     {
-        public int Compare(uint x, uint y)
-        {
-            return x >= y ? 1 : -1;
-        }
+        public int Compare(uint x, uint y) => x >= y ? 1 : -1;
     }
 }
 

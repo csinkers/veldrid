@@ -40,14 +40,7 @@ public abstract class DeviceBuffer : DeviceResource, MappableResource, IDisposab
     }
 
     /// <inheritdoc/>
-    public uint GetSizeInBytes(uint subresource)
-    {
-        if (subresource != 0)
-        {
-            return 0;
-        }
-        return SizeInBytes;
-    }
+    public uint GetSizeInBytes(uint subresource) => subresource != 0 ? 0 : SizeInBytes;
 
     /// <summary>
     /// Returns a string that represents the current <see cref="DeviceBuffer"/>.
@@ -56,9 +49,8 @@ public abstract class DeviceBuffer : DeviceResource, MappableResource, IDisposab
     {
         string? name = Name;
         if (string.IsNullOrEmpty(name))
-        {
             name = $"{base.ToString()}<{Usage.ToDisplayString()}>";
-        }
+
         return $"[{name}: {SizeInBytes}B]";
     }
 }

@@ -21,22 +21,16 @@ internal static unsafe class VulkanUtil
     public static void ThrowResult(VkResult result)
     {
         if (
-            result == VkResult.VK_ERROR_OUT_OF_DEVICE_MEMORY
-            || result == VkResult.VK_ERROR_OUT_OF_HOST_MEMORY
+            result is VkResult.VK_ERROR_OUT_OF_DEVICE_MEMORY or VkResult.VK_ERROR_OUT_OF_HOST_MEMORY
         )
         {
             throw new VeldridOutOfMemoryException(GetExceptionMessage(result));
         }
-        else
-        {
-            throw new VeldridException(GetExceptionMessage(result));
-        }
+
+        throw new VeldridException(GetExceptionMessage(result));
     }
 
-    static string GetExceptionMessage(VkResult result)
-    {
-        return "Unsuccessful VkResult: " + result;
-    }
+    static string GetExceptionMessage(VkResult result) => "Unsuccessful VkResult: " + result;
 
     public static bool TryFindMemoryType(
         VkPhysicalDeviceMemoryProperties memProperties,
@@ -93,14 +87,10 @@ internal static unsafe class VulkanUtil
         uint propCount = 0;
         VkResult result = vkEnumerateInstanceExtensionProperties(null, &propCount, null);
         if (result != VkResult.VK_SUCCESS)
-        {
             return [];
-        }
 
         if (propCount == 0)
-        {
             return [];
-        }
 
         VkExtensionProperties[] props = new VkExtensionProperties[propCount];
         string[] ret = new string[propCount];
@@ -174,26 +164,25 @@ internal static unsafe class VulkanUtil
 
             case VK_IMAGE_LAYOUT_GENERAL:
                 if (
-                    newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
-                    || newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+                    newLayout
+                    is VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+                        or VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
                 )
                 {
                     barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
                     srcStageFlags = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
                     break;
                 }
-                else if (newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
-                {
+
+                if (newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
                     goto case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-                }
-                else if (newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
-                {
+
+                if (newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
                     goto case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-                }
-                else if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
-                {
+
+                if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
                     goto case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-                }
+
                 goto default;
 
             case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
@@ -235,30 +224,28 @@ internal static unsafe class VulkanUtil
         {
             case VK_IMAGE_LAYOUT_GENERAL:
                 if (
-                    oldLayout == VK_IMAGE_LAYOUT_PREINITIALIZED
-                    || oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+                    oldLayout
+                    is VK_IMAGE_LAYOUT_PREINITIALIZED
+                        or VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
                 )
                 {
                     barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
                     dstStageFlags = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
                     break;
                 }
-                else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
-                {
+
+                if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
                     goto case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-                }
-                else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
-                {
+
+                if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
                     goto case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-                }
-                else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
-                {
+
+                if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
                     goto case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-                }
-                else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
-                {
+
+                if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
                     goto case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-                }
+
                 goto default;
 
             case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
@@ -300,7 +287,7 @@ internal static unsafe class VulkanUtil
     }
 }
 
-internal static unsafe class VkPhysicalDeviceMemoryPropertiesEx
+internal static class VkPhysicalDeviceMemoryPropertiesEx
 {
     public static VkMemoryType GetMemoryType(
         this VkPhysicalDeviceMemoryProperties memoryProperties,

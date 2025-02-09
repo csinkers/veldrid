@@ -20,39 +20,22 @@ public class RenderQueue : IEnumerable<Renderable>
         _renderables.Clear();
     }
 
-    public void AddRange(List<Renderable> Renderables, Vector3 viewPosition)
+    public void AddRange(List<Renderable> renderables, Vector3 viewPosition)
     {
-        for (int i = 0; i < Renderables.Count; i++)
-        {
-            Renderable Renderable = Renderables[i];
-            if (Renderable != null)
-            {
-                Add(Renderable, viewPosition);
-            }
-        }
+        for (int i = 0; i < renderables.Count; i++)
+            Add(renderables[i], viewPosition);
     }
 
-    public void AddRange(IReadOnlyList<Renderable> Renderables, Vector3 viewPosition)
+    public void AddRange(IReadOnlyList<Renderable> renderables, Vector3 viewPosition)
     {
-        for (int i = 0; i < Renderables.Count; i++)
-        {
-            Renderable Renderable = Renderables[i];
-            if (Renderable != null)
-            {
-                Add(Renderable, viewPosition);
-            }
-        }
+        for (int i = 0; i < renderables.Count; i++)
+            Add(renderables[i], viewPosition);
     }
 
-    public void AddRange(IEnumerable<Renderable> Renderables, Vector3 viewPosition)
+    public void AddRange(IEnumerable<Renderable> renderables, Vector3 viewPosition)
     {
-        foreach (Renderable item in Renderables)
-        {
-            if (item != null)
-            {
-                Add(item, viewPosition);
-            }
-        }
+        foreach (Renderable item in renderables)
+            Add(item, viewPosition);
     }
 
     public void Add(Renderable item, Vector3 viewPosition)
@@ -63,28 +46,14 @@ public class RenderQueue : IEnumerable<Renderable>
         Debug.Assert(_renderables.IndexOf(item) == index);
     }
 
-    public void Sort()
-    {
-        _indices.Sort();
-    }
+    public void Sort() => _indices.Sort();
 
-    public void Sort(Comparer<RenderOrderKey> keyComparer)
-    {
-        _indices.Sort(
-            (RenderItemIndex first, RenderItemIndex second) =>
-                keyComparer.Compare(first.Key, second.Key)
-        );
-    }
+    public void Sort(Comparer<RenderOrderKey> keyComparer) =>
+        _indices.Sort((first, second) => keyComparer.Compare(first.Key, second.Key));
 
-    public void Sort(Comparer<RenderItemIndex> comparer)
-    {
-        _indices.Sort(comparer);
-    }
+    public void Sort(Comparer<RenderItemIndex> comparer) => _indices.Sort(comparer);
 
-    public Enumerator GetEnumerator()
-    {
-        return new(_indices, _renderables);
-    }
+    public Enumerator GetEnumerator() => new(_indices, _renderables);
 
     IEnumerator<Renderable> IEnumerable<Renderable>.GetEnumerator() => GetEnumerator();
 
@@ -94,10 +63,10 @@ public class RenderQueue : IEnumerable<Renderable>
         : IEnumerator<Renderable>
     {
         int _nextItemIndex = 0;
-        Renderable _currentItem = null;
+        Renderable? _currentItem = null;
 
-        public Renderable Current => _currentItem;
-        object IEnumerator.Current => _currentItem;
+        public Renderable Current => _currentItem!;
+        object IEnumerator.Current => _currentItem!;
 
         public void Dispose() { }
 
@@ -108,13 +77,11 @@ public class RenderQueue : IEnumerable<Renderable>
                 _currentItem = null;
                 return false;
             }
-            else
-            {
-                RenderItemIndex currentIndex = indices[_nextItemIndex];
-                _currentItem = renderables[currentIndex.ItemIndex];
-                _nextItemIndex += 1;
-                return true;
-            }
+
+            RenderItemIndex currentIndex = indices[_nextItemIndex];
+            _currentItem = renderables[currentIndex.ItemIndex];
+            _nextItemIndex += 1;
+            return true;
         }
 
         public void Reset()

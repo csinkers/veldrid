@@ -50,10 +50,7 @@ internal sealed class MTLSwapchainFramebuffer : MTLFramebufferBase
     void RecreateDepthTexture(uint width, uint height)
     {
         Debug.Assert(_depthFormat.HasValue);
-        if (_depthTexture != null)
-        {
-            _depthTexture.Dispose();
-        }
+        _depthTexture?.Dispose();
 
         _depthTexture = Util.AssertSubtype<Texture, MTLTexture>(
             _gd.ResourceFactory.CreateTexture(

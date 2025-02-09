@@ -164,45 +164,27 @@ internal sealed class OpenGLExtensions : IReadOnlyCollection<string>
 
     public bool GLVersion(int major, int minor)
     {
-        if (_backend == GraphicsBackend.OpenGL)
-        {
-            if (_major > major)
-            {
-                return true;
-            }
-            else
-            {
-                return _major == major && _minor >= minor;
-            }
-        }
+        if (_backend != GraphicsBackend.OpenGL)
+            return false;
 
-        return false;
+        if (_major > major)
+            return true;
+
+        return _major == major && _minor >= minor;
     }
 
     public bool GLESVersion(int major, int minor)
     {
-        if (_backend == GraphicsBackend.OpenGLES)
-        {
-            if (_major > major)
-            {
-                return true;
-            }
-            else
-            {
-                return _major == major && _minor >= minor;
-            }
-        }
+        if (_backend != GraphicsBackend.OpenGLES)
+            return false;
 
-        return false;
+        if (_major > major)
+            return true;
+
+        return _major == major && _minor >= minor;
     }
 
-    public IEnumerator<string> GetEnumerator()
-    {
-        return _extensions.GetEnumerator();
-    }
+    public IEnumerator<string> GetEnumerator() => _extensions.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

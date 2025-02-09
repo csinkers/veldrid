@@ -7,18 +7,11 @@ internal sealed class OpenGLResourceLayout(in ResourceLayoutDescription descript
 
     public ResourceLayoutElementDescription[] Elements { get; } =
         Util.ShallowClone(description.Elements);
-
     public override string? Name { get; set; }
-
     public override bool IsDisposed => _disposed;
 
-    public bool IsDynamicBuffer(uint slot)
-    {
-        return (Elements[slot].Options & ResourceLayoutElementOptions.DynamicBinding) != 0;
-    }
+    public bool IsDynamicBuffer(uint slot) =>
+        (Elements[slot].Options & ResourceLayoutElementOptions.DynamicBinding) != 0;
 
-    public override void Dispose()
-    {
-        _disposed = true;
-    }
+    public override void Dispose() => _disposed = true;
 }

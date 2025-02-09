@@ -67,7 +67,7 @@ public struct ShaderDescription : IEquatable<ShaderDescription>
     /// Element-wise equality.
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
-    /// <returns>True if all elements and if array instances are equal; false otherswise.</returns>
+    /// <returns>True if all elements and if array instances are equal; false otherwise.</returns>
     public bool Equals(ShaderDescription other)
     {
         return Stage == other.Stage

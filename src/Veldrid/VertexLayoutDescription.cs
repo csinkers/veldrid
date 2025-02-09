@@ -89,7 +89,7 @@ public struct VertexLayoutDescription : IEquatable<VertexLayoutDescription>
     /// Element-wise equality.
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
-    /// <returns>True if all elements and all array elements are equal; false otherswise.</returns>
+    /// <returns>True if all elements and all array elements are equal; false otherwise.</returns>
     public bool Equals(VertexLayoutDescription other)
     {
         return Stride.Equals(other.Stride)

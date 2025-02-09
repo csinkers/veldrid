@@ -14,7 +14,7 @@ internal static class StaticResourceCache
     static readonly Dictionary<Texture, TextureView> s_textureViews = new();
     static readonly Dictionary<ResourceSetDescription, ResourceSet> s_resourceSets = new();
 
-    static Texture _pinkTex;
+    static Texture? _pinkTex;
 
     public static readonly ResourceLayoutDescription ProjViewLayoutDescription = new(
         new ResourceLayoutElementDescription(
@@ -34,7 +34,7 @@ internal static class StaticResourceCache
         ref GraphicsPipelineDescription desc
     )
     {
-        if (!s_pipelines.TryGetValue(desc, out Pipeline p))
+        if (!s_pipelines.TryGetValue(desc, out Pipeline? p))
         {
             p = factory.CreateGraphicsPipeline(desc);
             s_pipelines.Add(desc, p);
@@ -48,7 +48,7 @@ internal static class StaticResourceCache
         ResourceLayoutDescription desc
     )
     {
-        if (!s_layouts.TryGetValue(desc, out ResourceLayout p))
+        if (!s_layouts.TryGetValue(desc, out ResourceLayout? p))
         {
             p = factory.CreateResourceLayout(desc);
             s_layouts.Add(desc, p);
@@ -123,7 +123,7 @@ internal static class StaticResourceCache
         ImageSharpTexture textureData
     )
     {
-        if (!s_textures.TryGetValue(textureData, out Texture tex))
+        if (!s_textures.TryGetValue(textureData, out Texture? tex))
         {
             tex = textureData.CreateDeviceTexture(gd, factory);
             s_textures.Add(textureData, tex);
@@ -134,7 +134,7 @@ internal static class StaticResourceCache
 
     internal static TextureView GetTextureView(ResourceFactory factory, Texture texture)
     {
-        if (!s_textureViews.TryGetValue(texture, out TextureView view))
+        if (!s_textureViews.TryGetValue(texture, out TextureView? view))
         {
             view = factory.CreateTextureView(texture);
             s_textureViews.Add(texture, view);
@@ -169,7 +169,7 @@ internal static class StaticResourceCache
         ResourceSetDescription description
     )
     {
-        if (!s_resourceSets.TryGetValue(description, out ResourceSet ret))
+        if (!s_resourceSets.TryGetValue(description, out ResourceSet? ret))
         {
             ret = factory.CreateResourceSet(description);
             s_resourceSets.Add(description, ret);

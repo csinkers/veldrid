@@ -22,6 +22,7 @@ internal sealed unsafe class VkFence : Fence, IResourceRefCountTarget
             sType = VkStructureType.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             flags = signaled ? VkFenceCreateFlags.VK_FENCE_CREATE_SIGNALED_BIT : 0,
         };
+
         VulkanFence fence;
         VkResult result = vkCreateFence(_gd.Device, &fenceCI, null, &fence);
         VulkanUtil.CheckResult(result);

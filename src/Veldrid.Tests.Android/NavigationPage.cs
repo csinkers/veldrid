@@ -1,10 +1,9 @@
-﻿namespace Veldrid.Tests.Android
+﻿namespace Veldrid.Tests.Android;
+
+public enum NavigationPage
 {
-    public enum NavigationPage
-    {
-        Home,
-        AssemblyTestList,
-        TestResult,
-        Credits,
-    }
+    Home,
+    AssemblyTestList,
+    TestResult,
+    Credits,
 }

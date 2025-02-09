@@ -24,64 +24,64 @@ internal sealed class D3D11TextureView : TextureView
             description.ArrayLayers,
             Format
         );
+
         ShaderResourceView = device.CreateShaderResourceView(d3dTex.DeviceTexture, srvDesc);
 
-        if ((d3dTex.Usage & TextureUsage.Storage) == TextureUsage.Storage)
-        {
-            UnorderedAccessViewDescription uavDesc = new()
-            {
-                Format = D3D11Formats.GetViewFormat(d3dTex.DxgiFormat),
-            };
+        if ((d3dTex.Usage & TextureUsage.Storage) == 0)
+            return;
 
-            if ((d3dTex.Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap)
+        UnorderedAccessViewDescription uavDesc = new()
+        {
+            Format = D3D11Formats.GetViewFormat(d3dTex.DxgiFormat),
+        };
+
+        if ((d3dTex.Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap)
+            throw new NotSupportedException();
+
+        if (d3dTex.Depth == 1)
+        {
+            if (d3dTex.ArrayLayers == 1)
             {
-                throw new NotSupportedException();
-            }
-            else if (d3dTex.Depth == 1)
-            {
-                if (d3dTex.ArrayLayers == 1)
+                if (d3dTex.Type == TextureType.Texture1D)
                 {
-                    if (d3dTex.Type == TextureType.Texture1D)
-                    {
-                        uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture1D;
-                        uavDesc.Texture1D.MipSlice = (int)description.BaseMipLevel;
-                    }
-                    else
-                    {
-                        uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture2D;
-                        uavDesc.Texture2D.MipSlice = (int)description.BaseMipLevel;
-                    }
+                    uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture1D;
+                    uavDesc.Texture1D.MipSlice = (int)description.BaseMipLevel;
                 }
                 else
                 {
-                    if (d3dTex.Type == TextureType.Texture1D)
-                    {
-                        uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture1DArray;
-                        uavDesc.Texture1DArray.MipSlice = (int)description.BaseMipLevel;
-                        uavDesc.Texture1DArray.FirstArraySlice = (int)description.BaseArrayLayer;
-                        uavDesc.Texture1DArray.ArraySize = (int)description.ArrayLayers;
-                    }
-                    else
-                    {
-                        uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture2DArray;
-                        uavDesc.Texture2DArray.MipSlice = (int)description.BaseMipLevel;
-                        uavDesc.Texture2DArray.FirstArraySlice = (int)description.BaseArrayLayer;
-                        uavDesc.Texture2DArray.ArraySize = (int)description.ArrayLayers;
-                    }
+                    uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture2D;
+                    uavDesc.Texture2D.MipSlice = (int)description.BaseMipLevel;
                 }
             }
             else
             {
-                uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture3D;
-                uavDesc.Texture3D.MipSlice = (int)description.BaseMipLevel;
-
-                // Map the entire range of the 3D texture.
-                uavDesc.Texture3D.FirstWSlice = 0;
-                uavDesc.Texture3D.WSize = (int)d3dTex.Depth;
+                if (d3dTex.Type == TextureType.Texture1D)
+                {
+                    uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture1DArray;
+                    uavDesc.Texture1DArray.MipSlice = (int)description.BaseMipLevel;
+                    uavDesc.Texture1DArray.FirstArraySlice = (int)description.BaseArrayLayer;
+                    uavDesc.Texture1DArray.ArraySize = (int)description.ArrayLayers;
+                }
+                else
+                {
+                    uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture2DArray;
+                    uavDesc.Texture2DArray.MipSlice = (int)description.BaseMipLevel;
+                    uavDesc.Texture2DArray.FirstArraySlice = (int)description.BaseArrayLayer;
+                    uavDesc.Texture2DArray.ArraySize = (int)description.ArrayLayers;
+                }
             }
-
-            UnorderedAccessView = device.CreateUnorderedAccessView(d3dTex.DeviceTexture, uavDesc);
         }
+        else
+        {
+            uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture3D;
+            uavDesc.Texture3D.MipSlice = (int)description.BaseMipLevel;
+
+            // Map the entire range of the 3D texture.
+            uavDesc.Texture3D.FirstWSlice = 0;
+            uavDesc.Texture3D.WSize = (int)d3dTex.Depth;
+        }
+
+        UnorderedAccessView = device.CreateUnorderedAccessView(d3dTex.DeviceTexture, uavDesc);
     }
 
     public override string? Name
@@ -90,14 +90,10 @@ internal sealed class D3D11TextureView : TextureView
         set
         {
             _name = value;
-            if (ShaderResourceView != null)
-            {
-                ShaderResourceView.DebugName = value + "_SRV";
-            }
+            ShaderResourceView.DebugName = value + "_SRV";
+
             if (UnorderedAccessView != null)
-            {
                 UnorderedAccessView.DebugName = value + "_UAV";
-            }
         }
     }
 
@@ -105,11 +101,11 @@ internal sealed class D3D11TextureView : TextureView
 
     public override void Dispose()
     {
-        if (!_disposed)
-        {
-            ShaderResourceView?.Dispose();
-            UnorderedAccessView?.Dispose();
-            _disposed = true;
-        }
+        if (_disposed)
+            return;
+
+        ShaderResourceView.Dispose();
+        UnorderedAccessView?.Dispose();
+        _disposed = true;
     }
 }

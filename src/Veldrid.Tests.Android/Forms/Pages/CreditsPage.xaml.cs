@@ -3,20 +3,19 @@ using System.Windows.Input;
 using Veldrid.Tests.Android.Utilities;
 using Xamarin.Forms;
 
-namespace Veldrid.Tests.Android.Forms.Pages
+namespace Veldrid.Tests.Android.Forms.Pages;
+
+internal partial class CreditsPage : ContentPage
 {
-    partial class CreditsPage : ContentPage
+    public ICommand LaunchUrl { get; } = new DelegateCommand<string>(OnLaunchUrl);
+
+    public CreditsPage()
     {
-        public ICommand LaunchUrl { get; } = new DelegateCommand<string>(OnLaunchUrl);
+        InitializeComponent();
+    }
 
-        public CreditsPage()
-        {
-            InitializeComponent();
-        }
-
-        static void OnLaunchUrl(string str)
-        {
-            Device.OpenUri(new Uri(str));
-        }
+    static void OnLaunchUrl(string str)
+    {
+        Device.OpenUri(new Uri(str));
     }
 }

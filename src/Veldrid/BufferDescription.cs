@@ -102,28 +102,24 @@ public struct BufferDescription : IEquatable<BufferDescription>
     /// Element-wise equality.
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
-    /// <returns>True if all elements are equal; false otherswise.</returns>
-    public bool Equals(BufferDescription other)
-    {
-        return SizeInBytes.Equals(other.SizeInBytes)
-            && Usage == other.Usage
-            && StructureByteStride.Equals(other.StructureByteStride)
-            && RawBuffer.Equals(other.RawBuffer)
-            && InitialData == other.InitialData;
-    }
+    /// <returns>True if all elements are equal; false otherwise.</returns>
+    public bool Equals(BufferDescription other) =>
+        SizeInBytes.Equals(other.SizeInBytes)
+        && Usage == other.Usage
+        && StructureByteStride.Equals(other.StructureByteStride)
+        && RawBuffer.Equals(other.RawBuffer)
+        && InitialData == other.InitialData;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-    public override int GetHashCode()
-    {
-        return HashHelper.Combine(
+    public override int GetHashCode() =>
+        HashHelper.Combine(
             SizeInBytes.GetHashCode(),
             (int)Usage,
             StructureByteStride.GetHashCode(),
             RawBuffer.GetHashCode(),
             InitialData.GetHashCode()
         );
-    }
 }

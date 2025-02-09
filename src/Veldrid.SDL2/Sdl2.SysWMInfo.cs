@@ -26,7 +26,7 @@ public struct SDL_SysWMinfo
 }
 
 [StructLayout(LayoutKind.Sequential, Size = 100)]
-public unsafe struct WindowInfo { }
+public struct WindowInfo { }
 
 public struct Win32WindowInfo
 {

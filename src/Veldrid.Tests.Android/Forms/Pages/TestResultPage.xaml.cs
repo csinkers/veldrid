@@ -1,12 +1,11 @@
 ﻿using Xamarin.Forms;
 
-namespace Veldrid.Tests.Android.Forms.Pages
+namespace Veldrid.Tests.Android.Forms.Pages;
+
+internal partial class TestResultPage : ContentPage
 {
-    partial class TestResultPage : ContentPage
+    public TestResultPage()
     {
-        public TestResultPage()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

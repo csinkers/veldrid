@@ -28,7 +28,7 @@ internal static class Util
         return derived;
 
 #else
-        return (TDerived)value;
+        return (TDerived)value!;
 #endif
     }
 
@@ -50,7 +50,7 @@ internal static class Util
         return GetString((byte*)stringStart);
     }
 
-    internal static unsafe string GetString(ReadOnlySpan<byte> span)
+    internal static string GetString(ReadOnlySpan<byte> span)
     {
         int length = span.IndexOf((byte)'\0');
         if (length == -1)
@@ -60,7 +60,7 @@ internal static class Util
         return Encoding.UTF8.GetString(span.Slice(0, length));
     }
 
-    internal static unsafe string GetString(ReadOnlySpan<sbyte> span)
+    internal static string GetString(ReadOnlySpan<sbyte> span)
     {
         return GetString(MemoryMarshal.AsBytes(span));
     }
@@ -290,13 +290,9 @@ internal static class Util
         }
         else
         {
-            static DeviceBufferRange Throw(BindableResourceKind resourceKind)
-            {
-                throw new VeldridException(
-                    $"Unexpected resource type used in a buffer type slot: {resourceKind}"
-                );
-            }
-            return Throw(resource.Kind);
+            throw new VeldridException(
+                $"Unexpected resource type used in a buffer type slot: {resource.Kind}"
+            );
         }
     }
 
@@ -332,13 +328,9 @@ internal static class Util
         }
         else
         {
-            static TextureView Throw(BindableResourceKind resourceKind)
-            {
-                throw new VeldridException(
-                    $"Unexpected resource type used in a texture type slot: {resourceKind}."
-                );
-            }
-            return Throw(resource.Kind);
+            throw new VeldridException(
+                $"Unexpected resource type used in a texture type slot: {resource.Kind}."
+            );
         }
     }
 

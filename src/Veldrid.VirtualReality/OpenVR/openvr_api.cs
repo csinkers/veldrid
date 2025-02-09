@@ -923,7 +923,7 @@ internal struct IVRChaperoneSetup
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate bool _GetWorkingCollisionBoundsInfo(
-        [In, Out] HmdQuad_t[] pQuadsBuffer,
+        [In, Out] HmdQuad_t[]? pQuadsBuffer,
         ref uint punQuadsCount
     );
 
@@ -932,7 +932,7 @@ internal struct IVRChaperoneSetup
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate bool _GetLiveCollisionBoundsInfo(
-        [In, Out] HmdQuad_t[] pQuadsBuffer,
+        [In, Out] HmdQuad_t[]? pQuadsBuffer,
         ref uint punQuadsCount
     );
 
@@ -1011,7 +1011,7 @@ internal struct IVRChaperoneSetup
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate bool _GetLiveCollisionBoundsTagsInfo(
-        [In, Out] byte[] pTagsBuffer,
+        [In, Out] byte[]? pTagsBuffer,
         ref uint punTagCount
     );
 
@@ -1029,7 +1029,7 @@ internal struct IVRChaperoneSetup
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate bool _GetLivePhysicalBoundsInfo(
-        [In, Out] HmdQuad_t[] pQuadsBuffer,
+        [In, Out] HmdQuad_t[]? pQuadsBuffer,
         ref uint punQuadsCount
     );
 

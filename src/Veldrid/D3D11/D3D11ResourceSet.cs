@@ -3,7 +3,6 @@
 internal sealed class D3D11ResourceSet(in ResourceSetDescription description)
     : ResourceSet(description)
 {
-    string? _name;
     bool _disposed;
 
     public new BindableResource[] Resources { get; } =
@@ -11,16 +10,8 @@ internal sealed class D3D11ResourceSet(in ResourceSetDescription description)
     public new D3D11ResourceLayout Layout { get; } =
         Util.AssertSubtype<ResourceLayout, D3D11ResourceLayout>(description.Layout);
 
-    public override string? Name
-    {
-        get => _name;
-        set => _name = value;
-    }
-
+    public override string? Name { get; set; }
     public override bool IsDisposed => _disposed;
 
-    public override void Dispose()
-    {
-        _disposed = true;
-    }
+    public override void Dispose() => _disposed = true;
 }

@@ -73,14 +73,10 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         _swapchainSource = description.Source;
         _colorSrgb = description.ColorSrgb;
 
-        if (existingSurface == VkSurfaceKHR.NULL)
-        {
-            _surface = VkSurfaceUtil.CreateSurface(gd.Instance, _swapchainSource);
-        }
-        else
-        {
-            _surface = existingSurface;
-        }
+        _surface =
+            existingSurface == VkSurfaceKHR.NULL
+                ? VkSurfaceUtil.CreateSurface(gd.Instance, _swapchainSource)
+                : existingSurface;
 
         if (!GetPresentQueueIndex(out _presentQueueIndex))
         {
@@ -138,6 +134,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             fence,
             &imageIndex
         );
+
         _framebuffer.SetImageIndex(imageIndex);
         _currentImageIndex = imageIndex;
 
@@ -146,31 +143,25 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             CreateSwapchain(_framebuffer.Width, _framebuffer.Height);
             return false;
         }
-        else if (result != VkResult.VK_SUCCESS)
-        {
+
+        if (result != VkResult.VK_SUCCESS)
             throw new VeldridException("Could not acquire next image from the Vulkan swapchain.");
-        }
 
         return true;
     }
 
     void RecreateAndReacquire(uint width, uint height)
     {
-        if (CreateSwapchain(width, height))
-        {
-            VulkanFence imageAvailableFence = _imageAvailableFence;
-            if (AcquireNextImage(_gd.Device, default, imageAvailableFence))
-            {
-                vkWaitForFences(
-                    _gd.Device,
-                    1,
-                    &imageAvailableFence,
-                    (VkBool32)true,
-                    ulong.MaxValue
-                );
-                vkResetFences(_gd.Device, 1, &imageAvailableFence);
-            }
-        }
+        if (!CreateSwapchain(width, height))
+            return;
+
+        VulkanFence imageAvailableFence = _imageAvailableFence;
+        if (!AcquireNextImage(_gd.Device, default, imageAvailableFence))
+            return;
+
+        vkWaitForFences(_gd.Device, 1, &imageAvailableFence, (VkBool32)true, ulong.MaxValue);
+
+        vkResetFences(_gd.Device, 1, &imageAvailableFence);
     }
 
     bool CreateSwapchain(uint width, uint height)
@@ -182,10 +173,9 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             _surface,
             &surfaceCapabilities
         );
+
         if (result == VkResult.VK_ERROR_SURFACE_LOST_KHR)
-        {
             throw new VeldridException("The Swapchain's underlying surface has been lost.");
-        }
 
         if (
             surfaceCapabilities.minImageExtent is { width: 0, height: 0 }
@@ -208,6 +198,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             &surfaceFormatCount,
             null
         );
+
         CheckResult(result);
         VkSurfaceFormatKHR[] formats = new VkSurfaceFormatKHR[surfaceFormatCount];
         fixed (VkSurfaceFormatKHR* formatsPtr = formats)
@@ -280,26 +271,21 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         if (_syncToVBlank)
         {
             if (presentModes.Contains(VkPresentModeKHR.VK_PRESENT_MODE_FIFO_RELAXED_KHR))
-            {
                 presentMode = VkPresentModeKHR.VK_PRESENT_MODE_FIFO_RELAXED_KHR;
-            }
         }
         else
         {
             if (presentModes.Contains(VkPresentModeKHR.VK_PRESENT_MODE_MAILBOX_KHR))
-            {
                 presentMode = VkPresentModeKHR.VK_PRESENT_MODE_MAILBOX_KHR;
-            }
             else if (presentModes.Contains(VkPresentModeKHR.VK_PRESENT_MODE_IMMEDIATE_KHR))
-            {
                 presentMode = VkPresentModeKHR.VK_PRESENT_MODE_IMMEDIATE_KHR;
-            }
         }
 
         uint maxImageCount =
             surfaceCapabilities.maxImageCount == 0
                 ? uint.MaxValue
                 : surfaceCapabilities.maxImageCount;
+
         uint imageCount = Math.Min(maxImageCount, surfaceCapabilities.minImageCount + 1);
 
         uint clampedWidth = Util.Clamp(
@@ -307,11 +293,13 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             surfaceCapabilities.minImageExtent.width,
             surfaceCapabilities.maxImageExtent.width
         );
+
         uint clampedHeight = Util.Clamp(
             height,
             surfaceCapabilities.minImageExtent.height,
             surfaceCapabilities.maxImageExtent.height
         );
+
         VkSwapchainCreateInfoKHR swapchainCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
@@ -379,7 +367,8 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             queueFamilyIndex = graphicsQueueIndex;
             return true;
         }
-        else if (
+
+        if (
             graphicsQueueIndex != presentQueueIndex
             && QueueSupportsPresent(presentQueueIndex, _surface)
         )

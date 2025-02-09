@@ -64,8 +64,5 @@ internal sealed class OpenGLSwapchainFramebuffer : Framebuffer
         Height = height;
     }
 
-    public override void Dispose()
-    {
-        _disposed = true;
-    }
+    public override void Dispose() => _disposed = true;
 }

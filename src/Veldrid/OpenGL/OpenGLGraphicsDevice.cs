@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -26,16 +27,16 @@ using unsafe DebugProc = delegate* unmanaged[Cdecl]<
 
 internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
 {
-    string _version;
-    string _shadingLanguageVersion;
+    string _version = "";
+    string _shadingLanguageVersion = "";
     readonly ConcurrentQueue<IOpenGLDeferredResource> _resourcesToDispose = new();
     IntPtr _glContext;
-    Action<IntPtr> _makeCurrent;
-    Func<IntPtr> _getCurrentContext;
-    Action<IntPtr> _deleteContext;
-    Action _clearCurrentContext;
-    Action _swapBuffers;
-    Action<bool> _setSyncToVBlank;
+    Action<IntPtr> _makeCurrent = _ => { };
+    Func<IntPtr> _getCurrentContext = () => IntPtr.Zero;
+    Action<IntPtr> _deleteContext = _ => { };
+    Action _clearCurrentContext = () => { };
+    Action _swapBuffers = () => { };
+    Action<bool> _setSyncToVBlank = _ => { };
     OpenGLSwapchainFramebuffer _swapchainFramebuffer;
     OpenGLTextureSamplerManager _textureSamplerManager;
     OpenGLCommandExecutor _commandExecutor;
@@ -55,13 +56,13 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
     ExecutionThread _executionThread;
     readonly object _commandListDisposalLock = new();
     readonly Dictionary<OpenGLCommandList, int> _submittedCommandListCounts = new();
-    readonly HashSet<OpenGLCommandList> _commandListsToDispose = [];
+    readonly HashSet<OpenGLCommandList> _commandListsToDispose = new();
 
     readonly object _mappedResourceLock = new();
     readonly Dictionary<MappedResourceCacheKey, MappedResourceInfo> _mappedResources = new();
 
     readonly object _resetEventsLock = new();
-    readonly List<ManualResetEvent[]> _resetEvents = [];
+    readonly List<ManualResetEvent[]> _resetEvents = new();
 
     bool _syncToVBlank;
 
@@ -72,11 +73,11 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         get => _syncToVBlank;
         set
         {
-            if (_syncToVBlank != value)
-            {
-                _syncToVBlank = value;
-                _executionThread.SetSyncToVerticalBlank(value);
-            }
+            if (_syncToVBlank == value)
+                return;
+
+            _syncToVBlank = value;
+            _executionThread.SetSyncToVerticalBlank(value);
         }
     }
 
@@ -98,6 +99,16 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         Init(options, platformInfo, width, height, true);
     }
 
+    [MemberNotNull(
+        nameof(_swapchainFramebuffer),
+        nameof(_textureSamplerManager),
+        nameof(_commandExecutor),
+        nameof(_extensions),
+        nameof(_openglInfo),
+        nameof(_workItems),
+        nameof(_workResetEvent),
+        nameof(_executionThread)
+    )]
     void Init(
         GraphicsDeviceOptions options,
         OpenGLPlatformInfo platformInfo,
@@ -133,10 +144,11 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             BackendType == GraphicsBackend.OpenGLES
         );
 
-        int majorVersion,
-            minorVersion;
+        int majorVersion;
         glGetIntegerv(GetPName.MajorVersion, &majorVersion);
         CheckLastError();
+
+        int minorVersion;
         glGetIntegerv(GetPName.MinorVersion, &minorVersion);
         CheckLastError();
 
@@ -154,7 +166,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         glGetIntegerv(GetPName.NumExtensions, &extensionCount);
         CheckLastError();
 
-        HashSet<string> extensions = [];
+        HashSet<string> extensions = new();
         for (uint i = 0; i < extensionCount; i++)
         {
             byte* extensionNamePtr = glGetStringi(StringNameIndexed.Extensions, i);
@@ -462,6 +474,16 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         }
     }
 
+    [MemberNotNull(
+        nameof(_swapchainFramebuffer),
+        nameof(_textureSamplerManager),
+        nameof(_commandExecutor),
+        nameof(_extensions),
+        nameof(_openglInfo),
+        nameof(_workItems),
+        nameof(_workResetEvent),
+        nameof(_executionThread)
+    )]
     void InitializeUIView(GraphicsDeviceOptions options, IntPtr uIViewPtr)
     {
         EAGLContext eaglContext = EAGLContext.Create(EAGLRenderingAPI.OpenGLES3);
@@ -611,6 +633,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         {
             eaglLayer.frame = uiView.frame;
 
+            Debug.Assert(_executionThread != null, nameof(_executionThread) + " != null");
             _executionThread.Run(
                 () =>
                 {
@@ -691,6 +714,16 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         Init(options, platformInfo, (uint)fbWidth, (uint)fbHeight, false);
     }
 
+    [MemberNotNull(
+        nameof(_swapchainFramebuffer),
+        nameof(_textureSamplerManager),
+        nameof(_commandExecutor),
+        nameof(_extensions),
+        nameof(_openglInfo),
+        nameof(_workItems),
+        nameof(_workResetEvent),
+        nameof(_executionThread)
+    )]
     void InitializeANativeWindow(
         GraphicsDeviceOptions options,
         IntPtr aNativeWindow,
@@ -705,12 +738,10 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             );
         }
 
-        int major,
-            minor;
+        int major;
+        int minor;
         if (eglInitialize(display, &major, &minor) == 0)
-        {
             throw new VeldridException($"Failed to initialize EGL: {eglGetError()}");
-        }
 
         int* attribs =
             stackalloc int[] {
@@ -735,19 +766,15 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
 
         IntPtr* configs = stackalloc IntPtr[50];
 
-        int num_config;
-        if (eglChooseConfig(display, attribs, configs, 50, &num_config) == 0)
-        {
+        int numConfig;
+        if (eglChooseConfig(display, attribs, configs, 50, &numConfig) == 0)
             throw new VeldridException($"Failed to select a valid EGLConfig: {eglGetError()}");
-        }
 
         IntPtr bestConfig = configs[0];
 
         int format;
         if (eglGetConfigAttrib(display, bestConfig, EGL_NATIVE_VISUAL_ID, &format) == 0)
-        {
             throw new VeldridException($"Failed to get the EGLConfig's format: {eglGetError()}");
-        }
 
         IntPtr eglSurface;
         if (aNativeWindow != IntPtr.Zero)
@@ -758,6 +785,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
                 0,
                 format
             );
+
             if (setBuffersGeometryResult != 0)
             {
                 throw new VeldridException(
@@ -1361,7 +1389,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         readonly IntPtr _context;
         readonly Thread _thread;
         bool _terminated;
-        readonly List<Exception> _exceptions = [];
+        readonly List<Exception> _exceptions = new();
         readonly Queue<ManualResetEvent> _resetEventPool = new();
 
         public ExecutionThread(
@@ -2276,7 +2304,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         InitializeResource,
     }
 
-    unsafe struct ExecutionThreadWorkItem
+    struct ExecutionThreadWorkItem
     {
         public readonly WorkItemType Type;
         public readonly object? Object0;

@@ -5,10 +5,10 @@ namespace Veldrid.NeoDemo.Objects;
 
 internal class ScreenDuplicator : Renderable
 {
-    DisposeCollector _disposeCollector;
-    Pipeline _pipeline;
-    DeviceBuffer _ib;
-    DeviceBuffer _vb;
+    DisposeCollector? _disposeCollector;
+    Pipeline? _pipeline;
+    DeviceBuffer? _ib;
+    DeviceBuffer? _vb;
 
     public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
@@ -80,13 +80,10 @@ internal class ScreenDuplicator : Renderable
 
     public override void DestroyDeviceObjects()
     {
-        _disposeCollector.DisposeAll();
+        _disposeCollector?.DisposeAll();
     }
 
-    public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition)
-    {
-        return new();
-    }
+    public override RenderOrderKey GetRenderOrderKey(Vector3 cameraPosition) => new();
 
     public override void Render(
         GraphicsDevice gd,
@@ -95,10 +92,10 @@ internal class ScreenDuplicator : Renderable
         RenderPasses renderPass
     )
     {
-        cl.SetPipeline(_pipeline);
+        cl.SetPipeline(_pipeline!);
         cl.SetGraphicsResourceSet(0, sc.MainSceneViewResourceSet);
-        cl.SetVertexBuffer(0, _vb);
-        cl.SetIndexBuffer(_ib, IndexFormat.UInt16);
+        cl.SetVertexBuffer(0, _vb!);
+        cl.SetIndexBuffer(_ib!, IndexFormat.UInt16);
         cl.DrawIndexed(6, 1, 0, 0, 0);
     }
 

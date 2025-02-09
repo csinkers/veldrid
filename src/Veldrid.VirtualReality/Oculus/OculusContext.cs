@@ -12,11 +12,11 @@ internal unsafe class OculusContext : VRContext
     readonly ovrGraphicsLuid _luid;
     readonly OculusMirrorTexture _mirrorTexture;
     readonly VRContextOptions _options;
-    GraphicsDevice _gd;
+    GraphicsDevice? _gd;
     ovrHmdDesc _hmdDesc;
-    string _deviceName;
-    ovrRecti[] _eyeRenderViewport;
-    OculusSwapchain[] _eyeSwapchains;
+    string _deviceName = "";
+    ovrRecti[] _eyeRenderViewport = [];
+    OculusSwapchain[] _eyeSwapchains = [];
     int _frameIndex;
     ovrTimewarpProjectionDesc _posTimewarpProjectionDesc;
     double _sensorSampleTime;
@@ -68,7 +68,7 @@ internal unsafe class OculusContext : VRContext
 
     public override Framebuffer RightEyeFramebuffer => _eyeSwapchains[1].GetFramebuffer();
 
-    internal GraphicsDevice GraphicsDevice => _gd;
+    internal GraphicsDevice GraphicsDevice => _gd!;
     internal ovrSession Session => _session;
 
     public OculusContext(VRContextOptions options)
@@ -82,21 +82,16 @@ internal unsafe class OculusContext : VRContext
 
         ovrResult result = ovr_Initialize(&initParams);
         if (result != ovrResult.Success)
-        {
             throw new VeldridException($"Failed to initialize Oculus: {result}");
-        }
 
         ovrSession session;
         ovrGraphicsLuid luid;
         result = ovr_Create(&session, &luid);
         if (result != ovrResult.Success)
-        {
             throw new VeldridException("Failed to create an Oculus session.");
-        }
 
         _session = session;
         _luid = luid;
-
         _mirrorTexture = new(this);
     }
 
@@ -112,10 +107,9 @@ internal unsafe class OculusContext : VRContext
                 vkInfo.Instance,
                 &physicalDevice
             );
+
             if (result != ovrResult.Success)
-            {
                 throw new VeldridException("Failed to get Vulkan physical device.");
-            }
 
             result = ovr_SetSynchonizationQueueVk(_session, vkInfo.GraphicsQueue);
             if (result != ovrResult.Success)
@@ -157,22 +151,15 @@ internal unsafe class OculusContext : VRContext
         CommandList cl,
         Framebuffer fb,
         MirrorTextureEyeSource source
-    )
-    {
-        _mirrorTexture.Render(cl, fb, source);
-    }
+    ) => _mirrorTexture.Render(cl, fb, source);
 
     public override void SubmitFrame()
     {
-        if (_gd.GetOpenGLInfo(out BackendInfoOpenGL? glInfo))
-        {
+        if (_gd!.GetOpenGLInfo(out BackendInfoOpenGL? glInfo))
             glInfo.FlushAndFinish();
-        }
 
         for (int eye = 0; eye < 2; ++eye)
-        {
             _eyeSwapchains[eye].Commit();
-        }
 
         // Initialize our single full screen Fov layer.
         ovrLayerEyeFovDepth ld = new();
@@ -195,27 +182,22 @@ internal unsafe class OculusContext : VRContext
 
         ovrLayerHeader* layers = &ld.Header;
         ovrResult result = ovr_SubmitFrame(_session, _frameIndex, null, &layers, 1);
+
         if (result != ovrResult.Success)
-        {
             throw new VeldridException($"Failed to submit Oculus frame: {result}");
-        }
 
         _frameIndex++;
     }
 
-    public override unsafe HmdPoseState WaitForPoses()
+    public override HmdPoseState WaitForPoses()
     {
         ovrSessionStatus sessionStatus;
         ovrResult result = ovr_GetSessionStatus(_session, &sessionStatus);
         if (result != ovrResult.Success)
-        {
             throw new VeldridException($"Failed to retrieve Oculus session status: {result}");
-        }
 
         if (sessionStatus.ShouldRecenter)
-        {
             ovr_RecenterTrackingOrigin(_session);
-        }
 
         // Call ovr_GetRenderDesc each frame to get the ovrEyeRenderDesc, as the returned values (e.g. HmdToEyePose) may change at runtime.
         ovrEyeRenderDesc* eyeRenderDescs = stackalloc ovrEyeRenderDesc[2];
@@ -286,9 +268,7 @@ internal unsafe class OculusContext : VRContext
     public override void Dispose()
     {
         foreach (OculusSwapchain sc in _eyeSwapchains)
-        {
             sc.Dispose();
-        }
 
         _mirrorTexture.Dispose();
         ovr_Destroy(_session);
@@ -533,7 +513,6 @@ internal unsafe class OculusSwapchain
     )
     {
         ovrTextureSwapChain otsc = default;
-        Texture[]? textures = default;
 
         ovrResult result = ovrResult.Success;
         gd.GetOpenGLInfo()
@@ -556,13 +535,12 @@ internal unsafe class OculusSwapchain
             });
 
         if (otsc.IsNull)
-        {
             throw new VeldridException($"Failed to call ovr_CreateTextureSwapChainGL: {result}");
-        }
 
         int textureCount = 0;
         ovr_GetTextureSwapChainLength(session, otsc, &textureCount);
-        textures = new Texture[textureCount];
+
+        Texture[] textures = new Texture[textureCount];
         for (int i = 0; i < textureCount; ++i)
         {
             uint glID;
@@ -579,18 +557,13 @@ internal unsafe class OculusSwapchain
     public void Dispose()
     {
         foreach (Framebuffer fb in Framebuffers)
-        {
             fb.Dispose();
-        }
 
         if (ColorChain.NativePtr != IntPtr.Zero)
-        {
             ovr_DestroyTextureSwapChain(_session, ColorChain);
-        }
+
         if (DepthChain.NativePtr != IntPtr.Zero)
-        {
             ovr_DestroyTextureSwapChain(_session, DepthChain);
-        }
     }
 
     public Framebuffer GetFramebuffer()
@@ -608,14 +581,10 @@ internal unsafe class OculusSwapchain
     {
         ovrResult result = ovr_CommitTextureSwapChain(_session, ColorChain);
         if (result != ovrResult.Success)
-        {
             throw new InvalidOperationException();
-        }
 
         result = ovr_CommitTextureSwapChain(_session, DepthChain);
         if (result != ovrResult.Success)
-        {
             throw new InvalidOperationException();
-        }
     }
 }

@@ -64,6 +64,7 @@ public abstract class MainSwapchainTests<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Textures_Properties_Correct()
     {
+        Assert.NotNull(GD.MainSwapchain);
         Texture colorTarget = GD.MainSwapchain.Framebuffer.ColorTargets[0].Target;
         Assert.Equal(TextureType.Texture2D, colorTarget.Type);
         Assert.InRange(colorTarget.Width, 1u, uint.MaxValue);
@@ -74,6 +75,7 @@ public abstract class MainSwapchainTests<T> : GraphicsDeviceTestBase<T>
         Assert.Equal(TextureUsage.RenderTarget, colorTarget.Usage);
         Assert.Equal(TextureSampleCount.Count1, colorTarget.SampleCount);
 
+        Assert.NotNull(GD.MainSwapchain.Framebuffer.DepthTarget);
         Texture depthTarget = GD.MainSwapchain.Framebuffer.DepthTarget.Value.Target;
         Assert.Equal(TextureType.Texture2D, depthTarget.Type);
         Assert.Equal(colorTarget.Width, depthTarget.Width);

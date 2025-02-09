@@ -6,7 +6,7 @@ using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLBuffer : DeviceBuffer, IOpenGLDeferredResource
+internal sealed class OpenGLBuffer : DeviceBuffer, IOpenGLDeferredResource
 {
     readonly OpenGLGraphicsDevice _gd;
     uint _buffer;
@@ -26,7 +26,6 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, IOpenGLDeferredResourc
     }
 
     public uint Buffer => _buffer;
-
     public bool Created { get; private set; }
     public bool CanBufferSubData { get; private set; }
 
@@ -46,14 +45,10 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, IOpenGLDeferredResourc
     public void EnsureResourcesCreated()
     {
         if (!Created)
-        {
             CreateGLResources(IntPtr.Zero);
-        }
 
         if (_nameChanged)
-        {
             UpdateObjectLabel();
-        }
     }
 
     void UpdateObjectLabel()
@@ -61,9 +56,7 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, IOpenGLDeferredResourc
         _nameChanged = false;
 
         if (_gd.Extensions.KHR_Debug)
-        {
             SetObjectLabel(ObjectLabelIdentifier.Buffer, _buffer, _name);
-        }
     }
 
     public static BufferStorageMask GetStorageMask(BufferUsage usage)
@@ -90,28 +83,21 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, IOpenGLDeferredResourc
     public static BufferUsageHint GetUsageHint(BufferUsage usage)
     {
         if ((usage & BufferUsage.StagingRead) != 0)
-        {
             return BufferUsageHint.StreamRead;
-        }
-        else if ((usage & BufferUsage.StagingWrite) != 0)
-        {
+
+        if ((usage & BufferUsage.StagingWrite) != 0)
             return BufferUsageHint.StreamCopy;
-        }
-        else if ((usage & BufferUsage.DynamicRead) != 0)
-        {
+
+        if ((usage & BufferUsage.DynamicRead) != 0)
             return BufferUsageHint.DynamicRead;
-        }
-        else if ((usage & BufferUsage.DynamicWrite) != 0)
-        {
+
+        if ((usage & BufferUsage.DynamicWrite) != 0)
             return BufferUsageHint.DynamicDraw;
-        }
-        else
-        {
-            return BufferUsageHint.StaticDraw;
-        }
+
+        return BufferUsageHint.StaticDraw;
     }
 
-    public void CreateGLResources(IntPtr initialData)
+    public unsafe void CreateGLResources(IntPtr initialData)
     {
         Debug.Assert(!Created);
 
@@ -178,7 +164,7 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, IOpenGLDeferredResourc
         }
     }
 
-    public void DestroyGLResources()
+    public unsafe void DestroyGLResources()
     {
         uint buffer = _buffer;
         glDeleteBuffers(1, &buffer);

@@ -135,18 +135,18 @@ internal sealed unsafe class OpenGLShader : Shader, IOpenGLDeferredResource
 
     public void DestroyGLResources()
     {
-        if (!_disposed)
+        if (_disposed)
+            return;
+
+        _disposed = true;
+        if (Created)
         {
-            _disposed = true;
-            if (Created)
-            {
-                glDeleteShader(_shader);
-                CheckLastError();
-            }
-            else
-            {
-                _gd.StagingMemoryPool.Free(_stagingBlock);
-            }
+            glDeleteShader(_shader);
+            CheckLastError();
+        }
+        else
+        {
+            _gd.StagingMemoryPool.Free(_stagingBlock);
         }
     }
 }

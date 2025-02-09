@@ -245,7 +245,7 @@ internal static unsafe class VkSurfaceUtil
         return surface;
     }
 
-    static unsafe VkSurfaceKHR CreateNSWindowSurfaceExt(
+    static VkSurfaceKHR CreateNSWindowSurfaceExt(
         IntPtr ext,
         VkInstance instance,
         NSWindowSwapchainSource nsWindowSource
@@ -255,7 +255,7 @@ internal static unsafe class VkSurfaceUtil
         return CreateNSViewSurfaceExt(ext, instance, new(nswindow.contentView.NativePtr));
     }
 
-    static unsafe VkSurfaceKHR CreateNSWindowSurfaceMvk(
+    static VkSurfaceKHR CreateNSWindowSurfaceMvk(
         IntPtr mvk,
         VkInstance instance,
         NSWindowSwapchainSource nsWindowSource
@@ -275,7 +275,7 @@ internal static unsafe class VkSurfaceUtil
         }
     }
 
-    static unsafe VkSurfaceKHR CreateNSViewSurfaceExt(
+    static VkSurfaceKHR CreateNSViewSurfaceExt(
         IntPtr ext,
         VkInstance instance,
         NSViewSwapchainSource nsViewSource
@@ -302,7 +302,7 @@ internal static unsafe class VkSurfaceUtil
         return surface;
     }
 
-    static unsafe VkSurfaceKHR CreateNSViewSurfaceMvk(
+    static VkSurfaceKHR CreateNSViewSurfaceMvk(
         IntPtr mvk,
         VkInstance instance,
         NSViewSwapchainSource nsViewSource

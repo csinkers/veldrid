@@ -33,11 +33,7 @@ internal sealed class OpenGLCommandList(
     public override void Begin()
     {
         ClearCachedState();
-        if (_currentCommands != null)
-        {
-            _currentCommands.Dispose();
-        }
-
+        _currentCommands?.Dispose();
         _currentCommands = GetFreeCommandList();
         _currentCommands.Begin();
     }
@@ -119,7 +115,7 @@ internal sealed class OpenGLCommandList(
         _currentCommands.Dispatch(groupCountX, groupCountY, groupCountZ);
     }
 
-    protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
+    private protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
     {
         _currentCommands.DispatchIndirect(indirectBuffer, offset);
     }
@@ -157,7 +153,7 @@ internal sealed class OpenGLCommandList(
         _currentCommands.SetPipeline(pipeline);
     }
 
-    protected override void SetGraphicsResourceSetCore(
+    private protected override void SetGraphicsResourceSetCore(
         uint slot,
         ResourceSet rs,
         ReadOnlySpan<uint> dynamicOffsets
@@ -213,7 +209,7 @@ internal sealed class OpenGLCommandList(
         _currentCommands.UpdateBuffer(buffer, bufferOffsetInBytes, source, sizeInBytes);
     }
 
-    protected override void CopyBufferCore(
+    private protected override void CopyBufferCore(
         DeviceBuffer source,
         DeviceBuffer destination,
         ReadOnlySpan<BufferCopyCommand> commands
@@ -222,7 +218,7 @@ internal sealed class OpenGLCommandList(
         _currentCommands.CopyBuffer(source, destination, commands);
     }
 
-    protected override void CopyTextureCore(
+    private protected override void CopyTextureCore(
         Texture source,
         uint srcX,
         uint srcY,

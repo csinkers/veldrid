@@ -470,18 +470,19 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
 
         VkSpecializationInfo specializationInfo;
         SpecializationConstant[]? specDescs = description.Specializations;
+
         if (specDescs != null)
         {
             uint specDataSize = 0;
             foreach (SpecializationConstant spec in specDescs)
-            {
                 specDataSize += VkFormats.GetSpecializationConstantSize(spec.Type);
-            }
+
             byte* fullSpecData = stackalloc byte[(int)specDataSize];
             int specializationCount = specDescs.Length;
             VkSpecializationMapEntry* mapEntries =
                 stackalloc VkSpecializationMapEntry[specializationCount];
             uint specOffset = 0;
+
             for (int i = 0; i < specializationCount; i++)
             {
                 ulong data = specDescs[i].Data;
@@ -493,6 +494,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 mapEntries[i].size = dataSize;
                 specOffset += dataSize;
             }
+
             specializationInfo.dataSize = specDataSize;
             specializationInfo.pData = fullSpecData;
             specializationInfo.mapEntryCount = (uint)specializationCount;
@@ -501,6 +503,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
 
         Shader shader = description.ComputeShader;
         VkShader vkShader = Util.AssertSubtype<Shader, VkShader>(shader);
+
         VkPipelineShaderStageCreateInfo stageCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
@@ -526,11 +529,13 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             null,
             &devicePipeline
         );
+
         CheckResult(result);
         _devicePipeline = devicePipeline;
 
         ResourceSetCount = (uint)description.ResourceLayouts.Length;
         DynamicOffsetsCount = 0;
+
         foreach (VkResourceLayout layout in description.ResourceLayouts)
         {
             DynamicOffsetsCount += layout.DynamicBufferCount;

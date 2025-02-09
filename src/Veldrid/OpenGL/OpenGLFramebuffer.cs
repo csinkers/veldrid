@@ -28,7 +28,6 @@ internal sealed unsafe class OpenGLFramebuffer(
     }
 
     public uint Framebuffer => _framebuffer;
-
     public bool Created { get; private set; }
 
     public override bool IsDisposed => _disposeRequested;
@@ -175,13 +174,13 @@ internal sealed unsafe class OpenGLFramebuffer(
 
     public void DestroyGLResources()
     {
-        if (!_disposed)
-        {
-            _disposed = true;
-            uint framebuffer = _framebuffer;
-            glDeleteFramebuffers(1, &framebuffer);
-            CheckLastError();
-            _framebuffer = framebuffer;
-        }
+        if (_disposed)
+            return;
+
+        _disposed = true;
+        uint framebuffer = _framebuffer;
+        glDeleteFramebuffers(1, &framebuffer);
+        CheckLastError();
+        _framebuffer = framebuffer;
     }
 }

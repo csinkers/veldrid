@@ -30,8 +30,5 @@ internal struct VkVersion
 
     public uint Patch => API_VERSION_PATCH(value);
 
-    public static implicit operator uint(VkVersion version)
-    {
-        return version.value;
-    }
+    public static implicit operator uint(VkVersion version) => version.value;
 }

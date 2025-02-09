@@ -12,7 +12,7 @@ using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
+internal sealed unsafe class OpenGLPipeline : Pipeline, IOpenGLDeferredResource
 {
     const uint GL_INVALID_INDEX = 0xFFFFFFFF;
     readonly OpenGLGraphicsDevice _gd;

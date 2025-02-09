@@ -8,7 +8,7 @@ namespace Veldrid.OpenGL;
 internal sealed unsafe class OpenGLFramebuffer(
     OpenGLGraphicsDevice gd,
     in FramebufferDescription description
-) : Framebuffer(description.DepthTarget, description.ColorTargets), OpenGLDeferredResource
+) : Framebuffer(description.DepthTarget, description.ColorTargets), IOpenGLDeferredResource
 {
     uint _framebuffer;
 

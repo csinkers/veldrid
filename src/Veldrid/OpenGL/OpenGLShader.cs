@@ -5,7 +5,7 @@ using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLShader : Shader, OpenGLDeferredResource
+internal sealed unsafe class OpenGLShader : Shader, IOpenGLDeferredResource
 {
     readonly OpenGLGraphicsDevice _gd;
     readonly ShaderType _shaderType;

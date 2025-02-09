@@ -6,7 +6,7 @@ using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
+internal sealed unsafe class OpenGLTexture : Texture, IOpenGLDeferredResource
 {
     readonly OpenGLGraphicsDevice _gd;
     uint _texture;

@@ -7,7 +7,7 @@ namespace Veldrid.OpenGL;
 internal sealed unsafe class OpenGLSampler(
     OpenGLGraphicsDevice gd,
     in SamplerDescription description
-) : Sampler, OpenGLDeferredResource
+) : Sampler, IOpenGLDeferredResource
 {
     readonly SamplerDescription _description = description;
     InternalSamplerState _noMipmapState;

@@ -5,7 +5,7 @@ using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
-internal sealed class OpenGLTextureView : TextureView, OpenGLDeferredResource
+internal sealed class OpenGLTextureView : TextureView, IOpenGLDeferredResource
 {
     readonly OpenGLGraphicsDevice _gd;
     readonly bool _needsTextureView;

@@ -28,7 +28,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
 {
     string _version;
     string _shadingLanguageVersion;
-    readonly ConcurrentQueue<OpenGLDeferredResource> _resourcesToDispose = new();
+    readonly ConcurrentQueue<IOpenGLDeferredResource> _resourcesToDispose = new();
     IntPtr _glContext;
     Action<IntPtr> _makeCurrent;
     Func<IntPtr> _getCurrentContext;
@@ -1210,7 +1210,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         Util.AssertSubtype<Fence, OpenGLFence>(fence).Reset();
     }
 
-    internal void EnqueueDisposal(OpenGLDeferredResource resource)
+    internal void EnqueueDisposal(IOpenGLDeferredResource resource)
     {
         _resourcesToDispose.Enqueue(resource);
     }
@@ -1250,7 +1250,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
 
     void FlushDisposables()
     {
-        while (_resourcesToDispose.TryDequeue(out OpenGLDeferredResource? resource))
+        while (_resourcesToDispose.TryDequeue(out IOpenGLDeferredResource? resource))
         {
             resource.DestroyGLResources();
         }
@@ -1347,7 +1347,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         _executionThread.FlushAndFinish();
     }
 
-    internal void EnsureResourceInitialized(OpenGLDeferredResource deferredResource)
+    internal void EnsureResourceInitialized(IOpenGLDeferredResource deferredResource)
     {
         _executionThread.InitializeResource(deferredResource);
     }
@@ -1626,7 +1626,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
 
                     case WorkItemType.InitializeResource:
                         {
-                            OpenGLDeferredResource? resource = Unsafe.As<OpenGLDeferredResource>(
+                            IOpenGLDeferredResource? resource = Unsafe.As<IOpenGLDeferredResource>(
                                 workItem.Object0
                             );
                             eventAfterExecute = Unsafe.As<ManualResetEvent>(workItem.Object1);
@@ -2239,7 +2239,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             CheckExceptions();
         }
 
-        internal void InitializeResource(OpenGLDeferredResource deferredResource)
+        internal void InitializeResource(IOpenGLDeferredResource deferredResource)
         {
             CheckExceptions();
 
@@ -2396,7 +2396,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             UInt1 = 0;
         }
 
-        public ExecutionThreadWorkItem(OpenGLDeferredResource resource, ManualResetEvent mre)
+        public ExecutionThreadWorkItem(IOpenGLDeferredResource resource, ManualResetEvent mre)
         {
             Type = WorkItemType.InitializeResource;
             Object0 = resource;

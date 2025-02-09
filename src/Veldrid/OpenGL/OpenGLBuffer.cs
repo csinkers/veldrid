@@ -6,7 +6,7 @@ using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLBuffer : DeviceBuffer, OpenGLDeferredResource
+internal sealed unsafe class OpenGLBuffer : DeviceBuffer, IOpenGLDeferredResource
 {
     readonly OpenGLGraphicsDevice _gd;
     uint _buffer;

@@ -6,7 +6,11 @@ namespace Veldrid;
 
 internal static class FormatHelpers
 {
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     public static int GetElementCount(VertexElementFormat format)
     {
         switch (format)
@@ -69,8 +73,8 @@ internal static class FormatHelpers
     internal static bool IsExactStencilFormat(PixelFormat format)
     {
         return format == PixelFormat.D16_UNorm_S8_UInt
-               || format == PixelFormat.D24_UNorm_S8_UInt
-               || format == PixelFormat.D32_Float_S8_UInt;
+            || format == PixelFormat.D24_UNorm_S8_UInt
+            || format == PixelFormat.D32_Float_S8_UInt;
     }
 
     internal static bool IsStencilFormat(PixelFormat format)
@@ -80,15 +84,14 @@ internal static class FormatHelpers
 
     internal static bool IsExactDepthFormat(PixelFormat format)
     {
-        return format == PixelFormat.D16_UNorm
-               || format == PixelFormat.D32_Float;
+        return format == PixelFormat.D16_UNorm || format == PixelFormat.D32_Float;
     }
 
     internal static bool IsDepthFormat(PixelFormat format)
     {
         return format == PixelFormat.R16_UNorm
-               || format == PixelFormat.R32_Float
-               || IsExactDepthFormat(format);
+            || format == PixelFormat.R32_Float
+            || IsExactDepthFormat(format);
     }
 
     internal static bool IsExactDepthStencilFormat(PixelFormat format)
@@ -121,22 +124,22 @@ internal static class FormatHelpers
     internal static bool IsCompressedFormat(PixelFormat format)
     {
         return format == PixelFormat.BC1_Rgb_UNorm
-               || format == PixelFormat.BC1_Rgb_UNorm_SRgb
-               || format == PixelFormat.BC1_Rgba_UNorm
-               || format == PixelFormat.BC1_Rgba_UNorm_SRgb
-               || format == PixelFormat.BC2_UNorm
-               || format == PixelFormat.BC2_UNorm_SRgb
-               || format == PixelFormat.BC3_UNorm
-               || format == PixelFormat.BC3_UNorm_SRgb
-               || format == PixelFormat.BC4_UNorm
-               || format == PixelFormat.BC4_SNorm
-               || format == PixelFormat.BC5_UNorm
-               || format == PixelFormat.BC5_SNorm
-               || format == PixelFormat.BC7_UNorm
-               || format == PixelFormat.BC7_UNorm_SRgb
-               || format == PixelFormat.ETC2_R8_G8_B8_UNorm
-               || format == PixelFormat.ETC2_R8_G8_B8_A1_UNorm
-               || format == PixelFormat.ETC2_R8_G8_B8_A8_UNorm;
+            || format == PixelFormat.BC1_Rgb_UNorm_SRgb
+            || format == PixelFormat.BC1_Rgba_UNorm
+            || format == PixelFormat.BC1_Rgba_UNorm_SRgb
+            || format == PixelFormat.BC2_UNorm
+            || format == PixelFormat.BC2_UNorm_SRgb
+            || format == PixelFormat.BC3_UNorm
+            || format == PixelFormat.BC3_UNorm_SRgb
+            || format == PixelFormat.BC4_UNorm
+            || format == PixelFormat.BC4_SNorm
+            || format == PixelFormat.BC5_UNorm
+            || format == PixelFormat.BC5_SNorm
+            || format == PixelFormat.BC7_UNorm
+            || format == PixelFormat.BC7_UNorm_SRgb
+            || format == PixelFormat.ETC2_R8_G8_B8_UNorm
+            || format == PixelFormat.ETC2_R8_G8_B8_A1_UNorm
+            || format == PixelFormat.ETC2_R8_G8_B8_A8_UNorm;
     }
 
     internal static uint GetRowPitch(uint width, PixelFormat format)
@@ -169,7 +172,11 @@ internal static class FormatHelpers
         }
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     public static uint GetBlockSizeInBytes(PixelFormat format)
     {
         switch (format)
@@ -215,7 +222,11 @@ internal static class FormatHelpers
         throw new NotImplementedException();
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static uint GetNumRows(uint height, PixelFormat format)
     {
         switch (format)
@@ -287,7 +298,11 @@ internal static class FormatHelpers
         }
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static PixelFormat GetViewFamilyFormat(PixelFormat format)
     {
         switch (format)

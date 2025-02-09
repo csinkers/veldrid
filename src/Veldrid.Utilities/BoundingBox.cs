@@ -12,15 +12,25 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
 
     public readonly ContainmentType Contains(BoundingBox other)
     {
-        if (Max.X < other.Min.X || Min.X > other.Max.X
-                                || Max.Y < other.Min.Y || Min.Y > other.Max.Y
-                                || Max.Z < other.Min.Z || Min.Z > other.Max.Z)
+        if (
+            Max.X < other.Min.X
+            || Min.X > other.Max.X
+            || Max.Y < other.Min.Y
+            || Min.Y > other.Max.Y
+            || Max.Z < other.Min.Z
+            || Min.Z > other.Max.Z
+        )
         {
             return ContainmentType.Disjoint;
         }
-        else if (Min.X <= other.Min.X && Max.X >= other.Max.X
-                                      && Min.Y <= other.Min.Y && Max.Y >= other.Max.Y
-                                      && Min.Z <= other.Min.Z && Max.Z >= other.Max.Z)
+        else if (
+            Min.X <= other.Min.X
+            && Max.X >= other.Max.X
+            && Min.Y <= other.Min.Y
+            && Max.Y >= other.Max.Y
+            && Min.Z <= other.Min.Z
+            && Max.Z >= other.Max.Z
+        )
         {
             return ContainmentType.Contains;
         }
@@ -61,7 +71,8 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
         ReadOnlySpan<Vector3> points,
         Quaternion rotation,
         Vector3 offset,
-        Vector3 scale)
+        Vector3 scale
+    )
     {
         if (points.Length == 0)
         {
@@ -75,14 +86,20 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
         {
             Vector3 pos = Vector3.Transform(points[i], rotation);
 
-            if (min.X > pos.X) min.X = pos.X;
-            if (max.X < pos.X) max.X = pos.X;
+            if (min.X > pos.X)
+                min.X = pos.X;
+            if (max.X < pos.X)
+                max.X = pos.X;
 
-            if (min.Y > pos.Y) min.Y = pos.Y;
-            if (max.Y < pos.Y) max.Y = pos.Y;
+            if (min.Y > pos.Y)
+                min.Y = pos.Y;
+            if (max.Y < pos.Y)
+                max.Y = pos.Y;
 
-            if (min.Z > pos.Z) min.Z = pos.Z;
-            if (max.Z < pos.Z) max.Z = pos.Z;
+            if (min.Z > pos.Z)
+                min.Z = pos.Z;
+            if (max.Z < pos.Z)
+                max.Z = pos.Z;
         }
 
         return new BoundingBox((min * scale) + offset, (max * scale) + offset);
@@ -93,7 +110,8 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
         int pointStride,
         Quaternion rotation,
         Vector3 offset,
-        Vector3 scale)
+        Vector3 scale
+    )
     {
         nuint stride = (nuint)pointStride;
         nuint pointCount = (nuint)pointBytes.Length / stride;
@@ -134,16 +152,12 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
                 max.Z = pos.Z;
         }
 
-        return new BoundingBox(
-            (min * scale) + offset,
-            (max * scale) + offset);
+        return new BoundingBox((min * scale) + offset, (max * scale) + offset);
     }
 
     public static BoundingBox Combine(BoundingBox box1, BoundingBox box2)
     {
-        return new BoundingBox(
-            Vector3.Min(box1.Min, box2.Min),
-            Vector3.Max(box1.Max, box2.Max));
+        return new BoundingBox(Vector3.Min(box1.Min, box2.Min), Vector3.Max(box1.Max, box2.Max));
     }
 
     public static bool operator ==(BoundingBox first, BoundingBox second)
@@ -200,7 +214,11 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
 
     public readonly bool ContainsNaN()
     {
-        return float.IsNaN(Min.X) || float.IsNaN(Min.Y) || float.IsNaN(Min.Z)
-               || float.IsNaN(Max.X) || float.IsNaN(Max.Y) || float.IsNaN(Max.Z);
+        return float.IsNaN(Min.X)
+            || float.IsNaN(Min.Y)
+            || float.IsNaN(Min.Z)
+            || float.IsNaN(Max.X)
+            || float.IsNaN(Max.Y)
+            || float.IsNaN(Max.Z);
     }
 }

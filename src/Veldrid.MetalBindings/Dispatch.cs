@@ -8,14 +8,18 @@ public static unsafe class Dispatch
     const string LibdispatchLocation = @"/usr/lib/system/libdispatch.dylib";
 
     [DllImport(LibdispatchLocation)]
-    public static extern DispatchQueue dispatch_get_global_queue(QualityOfServiceLevel identifier, ulong flags);
+    public static extern DispatchQueue dispatch_get_global_queue(
+        QualityOfServiceLevel identifier,
+        ulong flags
+    );
 
     [DllImport(LibdispatchLocation)]
     public static extern DispatchData dispatch_data_create(
         void* buffer,
         UIntPtr size,
         DispatchQueue queue,
-        IntPtr destructorBlock);
+        IntPtr destructorBlock
+    );
 
     [DllImport(LibdispatchLocation)]
     public static extern void dispatch_release(IntPtr nativePtr);

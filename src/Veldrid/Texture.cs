@@ -79,7 +79,12 @@ public abstract class Texture : DeviceResource, MappableResource, IDisposable
     /// </summary>
     public abstract bool IsDisposed { get; }
 
-    internal virtual void GetSubresourceLayout(uint mipLevel, uint arrayLevel, out uint rowPitch, out uint depthPitch)
+    internal virtual void GetSubresourceLayout(
+        uint mipLevel,
+        uint arrayLevel,
+        out uint rowPitch,
+        out uint depthPitch
+    )
     {
         uint blockSize = FormatHelpers.IsCompressedFormat(Format) ? 4u : 1u;
         Util.GetMipDimensions(this, mipLevel, out uint mipWidth, out uint mipHeight, out _);
@@ -94,13 +99,21 @@ public abstract class Texture : DeviceResource, MappableResource, IDisposable
     {
         Util.GetMipLevelAndArrayLayer(this, subresource, out uint mipLevel, out _);
         uint blockSize = FormatHelpers.IsCompressedFormat(Format) ? 4u : 1u;
-        Util.GetMipDimensions(this, mipLevel, out uint mipWidth, out uint mipHeight, out uint mipDepth);
+        Util.GetMipDimensions(
+            this,
+            mipLevel,
+            out uint mipWidth,
+            out uint mipHeight,
+            out uint mipDepth
+        );
         uint storageWidth = Math.Max(blockSize, mipWidth);
         uint storageHeight = Math.Max(blockSize, mipHeight);
-        return mipDepth * FormatHelpers.GetDepthPitch(
-            FormatHelpers.GetRowPitch(storageWidth, Format),
-            storageHeight,
-            Format);
+        return mipDepth
+            * FormatHelpers.GetDepthPitch(
+                FormatHelpers.GetRowPitch(storageWidth, Format),
+                storageHeight,
+                Format
+            );
     }
 
     internal TextureView GetFullTextureView(GraphicsDevice gd)

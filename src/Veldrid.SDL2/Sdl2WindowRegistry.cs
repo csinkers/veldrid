@@ -64,7 +64,6 @@ internal static class Sdl2WindowRegistry
                 break;
         }
 
-
         if (handled && _eventsByWindowID.TryGetValue(windowID, out Sdl2Window? window))
         {
             window.AddEvent(ev);

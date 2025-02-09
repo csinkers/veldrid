@@ -5,8 +5,16 @@ using Veldrid.OpenGL.EntryList;
 
 namespace Veldrid.OpenGL;
 
-internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListDescription description)
-    : CommandList(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
+internal sealed class OpenGLCommandList(
+    OpenGLGraphicsDevice gd,
+    in CommandListDescription description
+)
+    : CommandList(
+        description,
+        gd.Features,
+        gd.UniformBufferMinOffsetAlignment,
+        gd.StructuredBufferMinOffsetAlignment
+    )
 {
     OpenGLCommandEntryList _currentCommands = null!;
     bool _disposed;
@@ -59,22 +67,49 @@ internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListD
         _currentCommands.ClearDepthTarget(depth, stencil);
     }
 
-    private protected override void DrawCore(uint vertexCount, uint instanceCount, uint vertexStart, uint instanceStart)
+    private protected override void DrawCore(
+        uint vertexCount,
+        uint instanceCount,
+        uint vertexStart,
+        uint instanceStart
+    )
     {
         _currentCommands.Draw(vertexCount, instanceCount, vertexStart, instanceStart);
     }
 
-    private protected override void DrawIndexedCore(uint indexCount, uint instanceCount, uint indexStart, int vertexOffset, uint instanceStart)
+    private protected override void DrawIndexedCore(
+        uint indexCount,
+        uint instanceCount,
+        uint indexStart,
+        int vertexOffset,
+        uint instanceStart
+    )
     {
-        _currentCommands.DrawIndexed(indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
+        _currentCommands.DrawIndexed(
+            indexCount,
+            instanceCount,
+            indexStart,
+            vertexOffset,
+            instanceStart
+        );
     }
 
-    protected override void DrawIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    protected override void DrawIndirectCore(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         _currentCommands.DrawIndirect(indirectBuffer, offset, drawCount, stride);
     }
 
-    protected override void DrawIndexedIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    protected override void DrawIndexedIndirectCore(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         _currentCommands.DrawIndexedIndirect(indirectBuffer, offset, drawCount, stride);
     }
@@ -104,7 +139,11 @@ internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListD
         _currentCommands.SetFramebuffer(fb);
     }
 
-    private protected override void SetIndexBufferCore(DeviceBuffer buffer, IndexFormat format, uint offset)
+    private protected override void SetIndexBufferCore(
+        DeviceBuffer buffer,
+        IndexFormat format,
+        uint offset
+    )
     {
         if (gd.IsDebug)
         {
@@ -118,12 +157,20 @@ internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListD
         _currentCommands.SetPipeline(pipeline);
     }
 
-    protected override void SetGraphicsResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    protected override void SetGraphicsResourceSetCore(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         _currentCommands.SetGraphicsResourceSet(slot, rs, dynamicOffsets);
     }
 
-    protected override void SetComputeResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    protected override void SetComputeResourceSetCore(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         _currentCommands.SetComputeResourceSet(slot, rs, dynamicOffsets);
     }
@@ -133,7 +180,11 @@ internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListD
         _currentCommands.SetScissorRect(index, x, y, width, height);
     }
 
-    private protected override void SetVertexBufferCore(uint index, DeviceBuffer buffer, uint offset)
+    private protected override void SetVertexBufferCore(
+        uint index,
+        DeviceBuffer buffer,
+        uint offset
+    )
     {
         if (gd.IsDebug)
         {
@@ -152,7 +203,12 @@ internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListD
         _currentCommands.Reset();
     }
 
-    private protected override void UpdateBufferCore(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
+    private protected override void UpdateBufferCore(
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr source,
+        uint sizeInBytes
+    )
     {
         _currentCommands.UpdateBuffer(buffer, bufferOffsetInBytes, source, sizeInBytes);
     }
@@ -160,34 +216,49 @@ internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListD
     protected override void CopyBufferCore(
         DeviceBuffer source,
         DeviceBuffer destination,
-        ReadOnlySpan<BufferCopyCommand> commands)
+        ReadOnlySpan<BufferCopyCommand> commands
+    )
     {
         _currentCommands.CopyBuffer(source, destination, commands);
     }
 
     protected override void CopyTextureCore(
         Texture source,
-        uint srcX, uint srcY, uint srcZ,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
         uint srcMipLevel,
         uint srcBaseArrayLayer,
         Texture destination,
-        uint dstX, uint dstY, uint dstZ,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
         uint dstMipLevel,
         uint dstBaseArrayLayer,
-        uint width, uint height, uint depth,
-        uint layerCount)
+        uint width,
+        uint height,
+        uint depth,
+        uint layerCount
+    )
     {
         _currentCommands.CopyTexture(
             source,
-            srcX, srcY, srcZ,
+            srcX,
+            srcY,
+            srcZ,
             srcMipLevel,
             srcBaseArrayLayer,
             destination,
-            dstX, dstY, dstZ,
+            dstX,
+            dstY,
+            dstZ,
             dstMipLevel,
             dstBaseArrayLayer,
-            width, height, depth,
-            layerCount);
+            width,
+            height,
+            depth,
+            layerCount
+        );
     }
 
     private protected override void GenerateMipmapsCore(Texture texture)

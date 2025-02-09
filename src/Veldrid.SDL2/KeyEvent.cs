@@ -7,7 +7,8 @@ public readonly struct KeyEvent(
     bool repeat,
     Key physical,
     VKey @virtual,
-    ModifierKeys modifiers)
+    ModifierKeys modifiers
+)
 {
     public uint Timestamp { get; } = timestamp;
     public uint WindowID { get; } = windowId;

@@ -13,14 +13,14 @@ public readonly struct MTLRenderPassDescriptor
 
     public static MTLRenderPassDescriptor New() => s_class.AllocInit<MTLRenderPassDescriptor>();
 
-    public MTLRenderPassColorAttachmentDescriptorArray colorAttachments
-        => objc_msgSend<MTLRenderPassColorAttachmentDescriptorArray>(NativePtr, sel_colorAttachments);
+    public MTLRenderPassColorAttachmentDescriptorArray colorAttachments =>
+        objc_msgSend<MTLRenderPassColorAttachmentDescriptorArray>(NativePtr, sel_colorAttachments);
 
-    public MTLRenderPassDepthAttachmentDescriptor depthAttachment
-        => objc_msgSend<MTLRenderPassDepthAttachmentDescriptor>(NativePtr, sel_depthAttachment);
+    public MTLRenderPassDepthAttachmentDescriptor depthAttachment =>
+        objc_msgSend<MTLRenderPassDepthAttachmentDescriptor>(NativePtr, sel_depthAttachment);
 
-    public MTLRenderPassStencilAttachmentDescriptor stencilAttachment
-        => objc_msgSend<MTLRenderPassStencilAttachmentDescriptor>(NativePtr, sel_stencilAttachment);
+    public MTLRenderPassStencilAttachmentDescriptor stencilAttachment =>
+        objc_msgSend<MTLRenderPassStencilAttachmentDescriptor>(NativePtr, sel_stencilAttachment);
 
     static readonly Selector sel_colorAttachments = "colorAttachments"u8;
     static readonly Selector sel_depthAttachment = "depthAttachment"u8;

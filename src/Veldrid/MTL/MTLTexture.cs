@@ -11,6 +11,7 @@ internal sealed class MTLTexture : Texture
     /// The native MTLTexture object. This property is only valid for non-staging Textures.
     /// </summary>
     public MetalBindings.MTLTexture DeviceTexture { get; }
+
     /// <summary>
     /// The staging MTLBuffer object. This property is only valid for staging Textures.
     /// </summary>
@@ -40,7 +41,8 @@ internal sealed class MTLTexture : Texture
             Type,
             ArrayLayers,
             SampleCount != TextureSampleCount.Count1,
-            (Usage & TextureUsage.Cubemap) != 0);
+            (Usage & TextureUsage.Cubemap) != 0
+        );
         if (Usage != TextureUsage.Staging)
         {
             MTLTextureDescriptor texDescriptor = MTLTextureDescriptor.New();
@@ -64,19 +66,29 @@ internal sealed class MTLTexture : Texture
             uint totalStorageSize = 0;
             for (uint level = 0; level < MipLevels; level++)
             {
-                Util.GetMipDimensions(this, level, out uint levelWidth, out uint levelHeight, out uint levelDepth);
+                Util.GetMipDimensions(
+                    this,
+                    level,
+                    out uint levelWidth,
+                    out uint levelHeight,
+                    out uint levelDepth
+                );
                 uint storageWidth = Math.Max(levelWidth, blockSize);
                 uint storageHeight = Math.Max(levelHeight, blockSize);
-                totalStorageSize += levelDepth * FormatHelpers.GetDepthPitch(
-                    FormatHelpers.GetRowPitch(levelWidth, Format),
-                    levelHeight,
-                    Format);
+                totalStorageSize +=
+                    levelDepth
+                    * FormatHelpers.GetDepthPitch(
+                        FormatHelpers.GetRowPitch(levelWidth, Format),
+                        levelHeight,
+                        Format
+                    );
             }
             totalStorageSize *= ArrayLayers;
 
             StagingBuffer = _gd.Device.newBufferWithLengthOptions(
                 (UIntPtr)totalStorageSize,
-                MTLResourceOptions.StorageModeShared);
+                MTLResourceOptions.StorageModeShared
+            );
         }
     }
 
@@ -92,13 +104,14 @@ internal sealed class MTLTexture : Texture
         Usage = description.Usage;
         Type = description.Type;
         SampleCount = description.SampleCount;
-            
+
         MTLPixelFormat = MTLFormats.VdToMTLPixelFormat(Format, Usage);
         MTLTextureType = MTLFormats.VdToMTLTextureType(
             Type,
             ArrayLayers,
             SampleCount != TextureSampleCount.Count1,
-            (Usage & TextureUsage.Cubemap) != 0);
+            (Usage & TextureUsage.Cubemap) != 0
+        );
     }
 
     private protected override void DisposeCore()

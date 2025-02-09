@@ -8,7 +8,10 @@ internal static class Utilities
 {
     public static Encoding UTF8 { get; } = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-    public static unsafe IntPtr GetNullTerminatedUtf8(ReadOnlySpan<char> text, ref Span<byte> utf8Buffer)
+    public static unsafe IntPtr GetNullTerminatedUtf8(
+        ReadOnlySpan<char> text,
+        ref Span<byte> utf8Buffer
+    )
     {
         IntPtr heapPtr = IntPtr.Zero;
         int byteCount = UTF8.GetMaxByteCount(text.Length) + 1;

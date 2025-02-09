@@ -8,7 +8,7 @@ namespace Veldrid.Tests.Android.Forms.Pages
 {
     partial class HomePage : ContentPage
     {
-        private readonly static RunStatusToColorConverter RunStatusConverter = new();
+        private static readonly RunStatusToColorConverter RunStatusConverter = new();
 
         private HomeViewModel viewModel;
 
@@ -44,33 +44,26 @@ namespace Veldrid.Tests.Android.Forms.Pages
             {
                 Label lblAssm = new();
                 lblAssm.SetBinding(Label.TextProperty, nameof(ta.DisplayName));
-                lblAssm.SetBinding(Label.TextColorProperty, nameof(ta.RunStatus), converter: RunStatusConverter);
+                lblAssm.SetBinding(
+                    Label.TextColorProperty,
+                    nameof(ta.RunStatus),
+                    converter: RunStatusConverter
+                );
 
-                Label lblPassed = new()
-                {
-                    TextColor = Color.Green,
-                    Margin = margin
-                };
+                Label lblPassed = new() { TextColor = Color.Green, Margin = margin };
                 lblPassed.SetBinding(Label.TextProperty, nameof(ta.Passed));
 
-                Label lblFailed = new()
-                {
-                    TextColor = Color.Red,
-                    Margin = margin
-                };
+                Label lblFailed = new() { TextColor = Color.Red, Margin = margin };
                 lblFailed.SetBinding(Label.TextProperty, nameof(ta.Failed));
 
                 Label lblSkipped = new()
                 {
                     TextColor = RunStatusToColorConverter.SkippedColor,
-                    Margin = margin
+                    Margin = margin,
                 };
                 lblSkipped.SetBinding(Label.TextProperty, nameof(ta.Skipped));
 
-                Label lblNotRun = new()
-                {
-                    TextColor = Color.DarkGray
-                };
+                Label lblNotRun = new() { TextColor = Color.DarkGray };
                 lblNotRun.SetBinding(Label.TextProperty, nameof(ta.NotRun));
 
                 CommandViewCell vs = new()
@@ -91,17 +84,21 @@ namespace Veldrid.Tests.Android.Forms.Pages
                                     lblPassed,
                                     new Label { Text = " ⛔ " },
                                     lblFailed,
-                                    new Label { Text = " ⚠ ", TextColor = RunStatusToColorConverter.SkippedColor },
+                                    new Label
+                                    {
+                                        Text = " ⚠ ",
+                                        TextColor = RunStatusToColorConverter.SkippedColor,
+                                    },
                                     lblSkipped,
                                     new Label { Text = " 🔷 " },
-                                    lblNotRun
-                                }
-                            }
-                        }
+                                    lblNotRun,
+                                },
+                            },
+                        },
                     },
                     AutomationId = $"testAssembly_{i}",
                     CommandParameter = ta,
-                    Command = viewModel.NavigateToTestAssemblyCommand
+                    Command = viewModel.NavigateToTestAssemblyCommand,
                 };
 
                 i++;
@@ -114,7 +111,7 @@ namespace Veldrid.Tests.Android.Forms.Pages
             {
                 Text = "Run Everything",
                 Command = viewModel.RunEverythingCommand,
-                AutomationId = "runEverything"
+                AutomationId = "runEverything",
             };
 
             table.Root.Skip(1).First().Insert(0, run);

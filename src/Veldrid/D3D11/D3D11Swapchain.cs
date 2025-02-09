@@ -1,10 +1,10 @@
-﻿using Vortice;
-using Vortice.Direct3D11;
-using Vortice.DXGI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using SharpGen.Runtime;
+using Vortice;
+using Vortice.Direct3D11;
+using Vortice.DXGI;
 
 namespace Veldrid.D3D11;
 
@@ -33,7 +33,11 @@ internal sealed class D3D11Swapchain : Swapchain
             {
                 byte* pname = stackalloc byte[1024];
                 int size = 1024 - 1;
-                _dxgiSwapChain.GetPrivateData(CommonGuid.DebugObjectName, ref size, new IntPtr(pname));
+                _dxgiSwapChain.GetPrivateData(
+                    CommonGuid.DebugObjectName,
+                    ref size,
+                    new IntPtr(pname)
+                );
                 pname[size] = 0;
                 return Marshal.PtrToStringAnsi(new IntPtr(pname));
             }
@@ -55,7 +59,8 @@ internal sealed class D3D11Swapchain : Swapchain
 
     public override bool SyncToVerticalBlank
     {
-        get => _vsync; set
+        get => _vsync;
+        set
         {
             _vsync = value;
             _syncInterval = D3D11Util.GetSyncInterval(value);
@@ -74,9 +79,7 @@ internal sealed class D3D11Swapchain : Swapchain
         _depthFormat = description.DepthFormat;
         SyncToVerticalBlank = description.SyncToVerticalBlank;
 
-        _colorFormat = description.ColorSrgb
-            ? Format.B8G8R8A8_UNorm_SRgb
-            : Format.B8G8R8A8_UNorm;
+        _colorFormat = description.ColorSrgb ? Format.B8G8R8A8_UNorm_SRgb : Format.B8G8R8A8_UNorm;
 
         if (description.Source is Win32SwapchainSource win32Source)
         {
@@ -85,16 +88,22 @@ internal sealed class D3D11Swapchain : Swapchain
                 BufferCount = 2,
                 Windowed = true,
                 BufferDescription = new ModeDescription(
-                    (int) description.Width, (int) description.Height, _colorFormat),
+                    (int)description.Width,
+                    (int)description.Height,
+                    _colorFormat
+                ),
                 OutputWindow = win32Source.Hwnd,
                 SampleDescription = new SampleDescription(1, 0),
                 SwapEffect = SwapEffect.Discard,
-                BufferUsage = Usage.RenderTargetOutput
+                BufferUsage = Usage.RenderTargetOutput,
             };
 
             using IDXGIFactory dxgiFactory = _gd.Adapter.GetParent<IDXGIFactory>()!;
             _dxgiSwapChain = dxgiFactory.CreateSwapChain(_gd.Device, dxgiSCDesc);
-            dxgiFactory.MakeWindowAssociation(win32Source.Hwnd, WindowAssociationFlags.IgnoreAltEnter);
+            dxgiFactory.MakeWindowAssociation(
+                win32Source.Hwnd,
+                WindowAssociationFlags.IgnoreAltEnter
+            );
         }
         else if (description.Source is UwpSwapchainSource uwpSource)
         {
@@ -106,8 +115,8 @@ internal sealed class D3D11Swapchain : Swapchain
                 AlphaMode = AlphaMode.Ignore,
                 BufferCount = 2,
                 Format = _colorFormat,
-                Height = (int) (description.Height * _pixelScale),
-                Width = (int) (description.Width * _pixelScale),
+                Height = (int)(description.Height * _pixelScale),
+                Width = (int)(description.Width * _pixelScale),
                 SampleDescription = new SampleDescription(1, 0),
                 SwapEffect = SwapEffect.FlipSequential,
                 BufferUsage = Usage.RenderTargetOutput,
@@ -117,20 +126,25 @@ internal sealed class D3D11Swapchain : Swapchain
             using (IDXGIFactory2 dxgiFactory = _gd.Adapter.GetParent<IDXGIFactory2>()!)
             {
                 // Create the swap chain and get the highest version available.
-                using IDXGISwapChain1 swapChain1 = dxgiFactory.CreateSwapChainForComposition(_gd.Device, swapChainDescription)!;
+                using IDXGISwapChain1 swapChain1 = dxgiFactory.CreateSwapChainForComposition(
+                    _gd.Device,
+                    swapChainDescription
+                )!;
                 _dxgiSwapChain = swapChain1.QueryInterface<IDXGISwapChain2>();
             }
 
             ComObject co = new(uwpSource.SwapChainPanelNative);
 
-            ISwapChainPanelNative? swapchainPanelNative = co.QueryInterfaceOrNull<ISwapChainPanelNative>();
+            ISwapChainPanelNative? swapchainPanelNative =
+                co.QueryInterfaceOrNull<ISwapChainPanelNative>();
             if (swapchainPanelNative != null)
             {
                 swapchainPanelNative.SetSwapChain(_dxgiSwapChain);
             }
             else
             {
-                ISwapChainBackgroundPanelNative? bgPanelNative = co.QueryInterfaceOrNull<ISwapChainBackgroundPanelNative>();
+                ISwapChainBackgroundPanelNative? bgPanelNative =
+                    co.QueryInterfaceOrNull<ISwapChainBackgroundPanelNative>();
                 if (bgPanelNative != null)
                 {
                     bgPanelNative.SetSwapChain(_dxgiSwapChain);
@@ -171,11 +185,19 @@ internal sealed class D3D11Swapchain : Swapchain
             _framebuffer.Dispose();
         }
 
-        uint actualWidth = (uint) (width * _pixelScale);
-        uint actualHeight = (uint) (height * _pixelScale);
+        uint actualWidth = (uint)(width * _pixelScale);
+        uint actualHeight = (uint)(height * _pixelScale);
         if (resizeBuffers)
         {
-            _dxgiSwapChain.ResizeBuffers(2, (int) actualWidth, (int) actualHeight, _colorFormat, SwapChainFlags.None).CheckError();
+            _dxgiSwapChain
+                .ResizeBuffers(
+                    2,
+                    (int)actualWidth,
+                    (int)actualHeight,
+                    _colorFormat,
+                    SwapChainFlags.None
+                )
+                .CheckError();
         }
 
         // Get the backbuffer from the swapchain
@@ -183,23 +205,26 @@ internal sealed class D3D11Swapchain : Swapchain
         if (_depthFormat != null)
         {
             TextureDescription depthDesc = new(
-                actualWidth, actualHeight, 1, 1, 1,
+                actualWidth,
+                actualHeight,
+                1,
+                1,
+                1,
                 _depthFormat.Value,
                 TextureUsage.DepthStencil,
-                TextureType.Texture2D);
+                TextureType.Texture2D
+            );
             _depthTexture = new D3D11Texture(_gd.Device, depthDesc);
         }
 
         D3D11Texture backBufferVdTexture = new(
             backBufferTexture,
             TextureType.Texture2D,
-            D3D11Formats.ToVdFormat(_colorFormat));
+            D3D11Formats.ToVdFormat(_colorFormat)
+        );
 
         FramebufferDescription desc = new(_depthTexture, backBufferVdTexture);
-        _framebuffer = new D3D11Framebuffer(_gd.Device, desc)
-        {
-            Swapchain = this
-        };
+        _framebuffer = new D3D11Framebuffer(_gd.Device, desc) { Swapchain = this };
     }
 
     public void AddCommandListReference(D3D11CommandList cl)

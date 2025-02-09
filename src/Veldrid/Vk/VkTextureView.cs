@@ -44,15 +44,16 @@ internal sealed unsafe class VkTextureView : TextureView, IResourceRefCountTarge
                 baseMipLevel = description.BaseMipLevel,
                 levelCount = description.MipLevels,
                 baseArrayLayer = description.BaseArrayLayer,
-                layerCount = description.ArrayLayers
-            }
+                layerCount = description.ArrayLayers,
+            },
         };
 
         if ((tex.Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap)
         {
-            imageViewCI.viewType = description.ArrayLayers == 1
-                ? VkImageViewType.VK_IMAGE_VIEW_TYPE_CUBE
-                : VkImageViewType.VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+            imageViewCI.viewType =
+                description.ArrayLayers == 1
+                    ? VkImageViewType.VK_IMAGE_VIEW_TYPE_CUBE
+                    : VkImageViewType.VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
             imageViewCI.subresourceRange.layerCount *= 6;
         }
         else
@@ -60,14 +61,16 @@ internal sealed unsafe class VkTextureView : TextureView, IResourceRefCountTarge
             switch (tex.Type)
             {
                 case TextureType.Texture1D:
-                    imageViewCI.viewType = description.ArrayLayers == 1
-                        ? VkImageViewType.VK_IMAGE_VIEW_TYPE_1D
-                        : VkImageViewType.VK_IMAGE_VIEW_TYPE_1D_ARRAY;
+                    imageViewCI.viewType =
+                        description.ArrayLayers == 1
+                            ? VkImageViewType.VK_IMAGE_VIEW_TYPE_1D
+                            : VkImageViewType.VK_IMAGE_VIEW_TYPE_1D_ARRAY;
                     break;
                 case TextureType.Texture2D:
-                    imageViewCI.viewType = description.ArrayLayers == 1
-                        ? VkImageViewType.VK_IMAGE_VIEW_TYPE_2D
-                        : VkImageViewType.VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+                    imageViewCI.viewType =
+                        description.ArrayLayers == 1
+                            ? VkImageViewType.VK_IMAGE_VIEW_TYPE_2D
+                            : VkImageViewType.VK_IMAGE_VIEW_TYPE_2D_ARRAY;
                     break;
                 case TextureType.Texture3D:
                     imageViewCI.viewType = VkImageViewType.VK_IMAGE_VIEW_TYPE_3D;

@@ -21,5 +21,4 @@ public enum MTLBlendFactor
     OneMinusSource1Color = 16,
     Source1Alpha = 17,
     OneMinusSource1Alpha = 18,
-
 }

@@ -82,7 +82,8 @@ public class OpenGLPlatformInfo
         Action clearCurrentContext,
         Action<IntPtr> deleteContext,
         Action swapBuffers,
-        Action<bool> setSyncToVerticalBlank)
+        Action<bool> setSyncToVerticalBlank
+    )
     {
         OpenGLContextHandle = openGLContextHandle;
         GetProcAddress = getProcAddress;
@@ -122,7 +123,8 @@ public class OpenGLPlatformInfo
         Action swapBuffers,
         Action<bool> setSyncToVerticalBlank,
         Action? setSwapchainFramebuffer,
-        Action<uint, uint>? resizeSwapchain)
+        Action<uint, uint>? resizeSwapchain
+    )
     {
         OpenGLContextHandle = openGLContextHandle;
         GetProcAddress = getProcAddress;

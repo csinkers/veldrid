@@ -9,7 +9,7 @@ internal sealed unsafe class VkFence : Fence, IResourceRefCountTarget
     readonly VkGraphicsDevice _gd;
     VulkanFence _fence;
     string? _name;
-        
+
     public ResourceRefCount RefCount { get; }
 
     public VulkanFence DeviceFence => _fence;
@@ -20,7 +20,7 @@ internal sealed unsafe class VkFence : Fence, IResourceRefCountTarget
         VkFenceCreateInfo fenceCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-            flags = signaled ? VkFenceCreateFlags.VK_FENCE_CREATE_SIGNALED_BIT : 0
+            flags = signaled ? VkFenceCreateFlags.VK_FENCE_CREATE_SIGNALED_BIT : 0,
         };
         VulkanFence fence;
         VkResult result = vkCreateFence(_gd.Device, &fenceCI, null, &fence);

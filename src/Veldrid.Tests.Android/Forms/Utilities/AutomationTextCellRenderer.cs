@@ -11,7 +11,12 @@ namespace Veldrid.Tests.Android.Forms.Utilities
 {
     public class AutomationTextCellRenderer : TextCellRenderer
     {
-        protected override AView GetCellCore(Cell item, AView convertView, ViewGroup parent, Context context)
+        protected override AView GetCellCore(
+            Cell item,
+            AView convertView,
+            ViewGroup parent,
+            Context context
+        )
         {
             AView view = base.GetCellCore(item, convertView, parent, context);
             view.ContentDescription = Cell.AutomationId;

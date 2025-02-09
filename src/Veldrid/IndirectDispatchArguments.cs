@@ -9,10 +9,12 @@ public struct IndirectDispatchArguments
     /// The X group count, as if passed to the <see cref="CommandList.Dispatch(uint, uint, uint)"/> method.
     /// </summary>
     public uint GroupCountX;
+
     /// <summary>
     /// The Y group count, as if passed to the <see cref="CommandList.Dispatch(uint, uint, uint)"/> method.
     /// </summary>
     public uint GroupCountY;
+
     /// <summary>
     /// The Z group count, as if passed to the <see cref="CommandList.Dispatch(uint, uint, uint)"/> method.
     /// </summary>

@@ -26,9 +26,10 @@ internal sealed class MTLFeatureSupport : IReadOnlyCollection<MTLFeatureSet>
             }
         }
 
-        IsMacOS = IsSupported(MTLFeatureSet.macOS_GPUFamily1_v1)
-                  || IsSupported(MTLFeatureSet.macOS_GPUFamily1_v2)
-                  || IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3);
+        IsMacOS =
+            IsSupported(MTLFeatureSet.macOS_GPUFamily1_v1)
+            || IsSupported(MTLFeatureSet.macOS_GPUFamily1_v2)
+            || IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3);
     }
 
     public bool IsSupported(MTLFeatureSet featureSet) => _supportedFeatureSets.Contains(featureSet);
@@ -36,11 +37,11 @@ internal sealed class MTLFeatureSupport : IReadOnlyCollection<MTLFeatureSet>
     public bool IsDrawBaseVertexInstanceSupported()
     {
         return IsSupported(MTLFeatureSet.iOS_GPUFamily3_v1)
-               || IsSupported(MTLFeatureSet.iOS_GPUFamily3_v2)
-               || IsSupported(MTLFeatureSet.iOS_GPUFamily3_v3)
-               || IsSupported(MTLFeatureSet.iOS_GPUFamily4_v1)
-               || IsSupported(MTLFeatureSet.tvOS_GPUFamily2_v1)
-               || IsMacOS;
+            || IsSupported(MTLFeatureSet.iOS_GPUFamily3_v2)
+            || IsSupported(MTLFeatureSet.iOS_GPUFamily3_v3)
+            || IsSupported(MTLFeatureSet.iOS_GPUFamily4_v1)
+            || IsSupported(MTLFeatureSet.tvOS_GPUFamily2_v1)
+            || IsMacOS;
     }
 
     public IEnumerator<MTLFeatureSet> GetEnumerator()

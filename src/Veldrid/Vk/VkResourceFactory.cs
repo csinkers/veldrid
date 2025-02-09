@@ -2,7 +2,8 @@
 
 namespace Veldrid.Vulkan;
 
-internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice) : ResourceFactory(vkGraphicsDevice.Features)
+internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice)
+    : ResourceFactory(vkGraphicsDevice.Features)
 {
     public override GraphicsBackend BackendType => GraphicsBackend.Vulkan;
 
@@ -60,14 +61,17 @@ internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice) : Res
     {
         return new VkTexture(
             vkGraphicsDevice,
-            description.Width, description.Height,
-            description.MipLevels, description.ArrayLayers,
+            description.Width,
+            description.Height,
+            description.MipLevels,
+            description.ArrayLayers,
             VkFormats.VdToVkPixelFormat(description.Format, description.Usage),
             description.Usage,
             description.SampleCount,
             new VkImage(nativeTexture),
             false,
-            true);
+            true
+        );
     }
 
     public override TextureView CreateTextureView(in TextureViewDescription description)

@@ -1,11 +1,11 @@
-﻿using ImGuiNET;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using ImGuiNET;
 using Veldrid.NeoDemo.Objects;
 using Veldrid.Sdl2;
 using Veldrid.Utilities;
@@ -14,14 +14,17 @@ namespace Veldrid.NeoDemo;
 
 public class Scene
 {
-    readonly Octree<CullRenderable> _octree
-        = new(new BoundingBox(Vector3.One * -50, Vector3.One * 50), 2);
+    readonly Octree<CullRenderable> _octree = new(
+        new BoundingBox(Vector3.One * -50, Vector3.One * 50),
+        2
+    );
 
     readonly List<Renderable> _freeRenderables = [];
     readonly List<IUpdateable> _updateables = [];
 
-    readonly ConcurrentDictionary<RenderPasses, Func<CullRenderable, bool>> _filters
-        = new(new RenderPassesComparer());
+    readonly ConcurrentDictionary<RenderPasses, Func<CullRenderable, bool>> _filters = new(
+        new RenderPassesComparer()
+    );
 
     internal MirrorMesh MirrorMesh { get; set; } = new MirrorMesh();
 
@@ -97,16 +100,21 @@ public class Scene
         Vector4 midLimitCS = Vector4.Transform(new Vector3(0, 0, -_midCascadeLimit), cameraProj);
         Vector4 farLimitCS = Vector4.Transform(new Vector3(0, 0, -_farCascadeLimit), cameraProj);
 
-        cl.UpdateBuffer(sc.DepthLimitsBuffer, 0, new DepthCascadeLimits
-        {
-            NearLimit = nearLimitCS.Z,
-            MidLimit = midLimitCS.Z,
-            FarLimit = farLimitCS.Z
-        });
+        cl.UpdateBuffer(
+            sc.DepthLimitsBuffer,
+            0,
+            new DepthCascadeLimits
+            {
+                NearLimit = nearLimitCS.Z,
+                MidLimit = midLimitCS.Z,
+                FarLimit = farLimitCS.Z,
+            }
+        );
 
         cl.UpdateBuffer(sc.LightInfoBuffer, 0, sc.DirectionalLight.GetInfo());
 
-        Vector3 lightPos = sc.DirectionalLight.Transform.Position - sc.DirectionalLight.Direction * 1000f;
+        Vector3 lightPos =
+            sc.DirectionalLight.Transform.Position - sc.DirectionalLight.Direction * 1000f;
         // Near
         cl.PushDebugGroup("Shadow Map - Near Cascade");
         Matrix4x4 viewProj0 = UpdateDirectionalLightMatrices(
@@ -115,12 +123,25 @@ public class Scene
             Camera.NearDistance,
             _nearCascadeLimit,
             sc.ShadowMapTexture.Width,
-            out BoundingFrustum lightFrustum);
+            out BoundingFrustum lightFrustum
+        );
         cl.UpdateBuffer(sc.LightViewProjectionBuffer0, 0, ref viewProj0);
         cl.SetFramebuffer(sc.NearShadowMapFramebuffer);
         cl.SetFullViewports();
         cl.ClearDepthStencil(depthClear);
-        Render(gd, cl, sc, RenderPasses.ShadowMapNear, lightFrustum, lightPos, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.ShadowMapNear,
+            lightFrustum,
+            lightPos,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
         cl.PopDebugGroup();
 
         // Mid
@@ -131,12 +152,25 @@ public class Scene
             _nearCascadeLimit,
             _midCascadeLimit,
             sc.ShadowMapTexture.Width,
-            out lightFrustum);
+            out lightFrustum
+        );
         cl.UpdateBuffer(sc.LightViewProjectionBuffer1, 0, ref viewProj1);
         cl.SetFramebuffer(sc.MidShadowMapFramebuffer);
         cl.SetFullViewports();
         cl.ClearDepthStencil(depthClear);
-        Render(gd, cl, sc, RenderPasses.ShadowMapMid, lightFrustum, lightPos, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.ShadowMapMid,
+            lightFrustum,
+            lightPos,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
         cl.PopDebugGroup();
 
         // Far
@@ -147,12 +181,25 @@ public class Scene
             _midCascadeLimit,
             _farCascadeLimit,
             sc.ShadowMapTexture.Width,
-            out lightFrustum);
+            out lightFrustum
+        );
         cl.UpdateBuffer(sc.LightViewProjectionBuffer2, 0, ref viewProj2);
         cl.SetFramebuffer(sc.FarShadowMapFramebuffer);
         cl.SetFullViewports();
         cl.ClearDepthStencil(depthClear);
-        Render(gd, cl, sc, RenderPasses.ShadowMapFar, lightFrustum, lightPos, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.ShadowMapFar,
+            lightFrustum,
+            lightPos,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
         cl.PopDebugGroup();
 
         // Reflections
@@ -169,8 +216,13 @@ public class Scene
         // Render reflected scene.
         Matrix4x4 planeReflectionMatrix = Matrix4x4.CreateReflection(MirrorMesh.Plane);
         CameraInfo camInfo = new();
-        camInfo.CameraLookDirection = Vector3.Normalize(Vector3.Reflect(_camera.LookDirection, MirrorMesh.Plane.Normal));
-        camInfo.CameraPosition_WorldSpace = Vector3.Transform(_camera.Position, planeReflectionMatrix);
+        camInfo.CameraLookDirection = Vector3.Normalize(
+            Vector3.Reflect(_camera.LookDirection, MirrorMesh.Plane.Normal)
+        );
+        camInfo.CameraPosition_WorldSpace = Vector3.Transform(
+            _camera.Position,
+            planeReflectionMatrix
+        );
         cl.UpdateBuffer(sc.CameraInfoBuffer, 0, ref camInfo);
 
         Matrix4x4 view = sc.Camera.ViewMatrix;
@@ -181,7 +233,19 @@ public class Scene
         cl.UpdateBuffer(sc.ReflectionViewProjBuffer, 0, view * projection);
 
         BoundingFrustum cameraFrustum = new(view * projection);
-        Render(gd, cl, sc, RenderPasses.ReflectionMap, cameraFrustum, _camera.Position, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.ReflectionMap,
+            cameraFrustum,
+            _camera.Position,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
 
         cl.GenerateMipmaps(sc.ReflectionColorTexture);
         cl.PopDebugGroup();
@@ -198,13 +262,49 @@ public class Scene
         cl.ClearDepthStencil(depthClear);
         sc.UpdateCameraBuffers(cl); // Re-set because reflection step changed it.
         cameraFrustum = new BoundingFrustum(_camera.ViewMatrix * _camera.ProjectionMatrix);
-        Render(gd, cl, sc, RenderPasses.Standard, cameraFrustum, _camera.Position, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.Standard,
+            cameraFrustum,
+            _camera.Position,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
         cl.PopDebugGroup();
         cl.PushDebugGroup("Transparent Pass");
-        Render(gd, cl, sc, RenderPasses.AlphaBlend, cameraFrustum, _camera.Position, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.AlphaBlend,
+            cameraFrustum,
+            _camera.Position,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
         cl.PopDebugGroup();
         cl.PushDebugGroup("Overlay");
-        Render(gd, cl, sc, RenderPasses.Overlay, cameraFrustum, _camera.Position, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.Overlay,
+            cameraFrustum,
+            _camera.Position,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
         cl.PopDebugGroup();
 
         if (sc.MainSceneColorTexture.SampleCount != TextureSampleCount.Count1)
@@ -217,7 +317,19 @@ public class Scene
         fbWidth = sc.DuplicatorFramebuffer.Width;
         fbHeight = sc.DuplicatorFramebuffer.Height;
         cl.SetFullViewports();
-        Render(gd, cl, sc, RenderPasses.Duplicator, new BoundingFrustum(), _camera.Position, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.Duplicator,
+            new BoundingFrustum(),
+            _camera.Position,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
         cl.PopDebugGroup();
 
         cl.PushDebugGroup("Swapchain Pass");
@@ -225,7 +337,19 @@ public class Scene
         fbWidth = gd.SwapchainFramebuffer.Width;
         fbHeight = gd.SwapchainFramebuffer.Height;
         cl.SetFullViewports();
-        Render(gd, cl, sc, RenderPasses.SwapchainOutput, new BoundingFrustum(), _camera.Position, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.SwapchainOutput,
+            new BoundingFrustum(),
+            _camera.Position,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
         cl.PopDebugGroup();
 
         cl.End();
@@ -248,19 +372,27 @@ public class Scene
         Vector4 nearLimitCS = Vector4.Transform(new Vector3(0, 0, -_nearCascadeLimit), cameraProj);
         Vector4 midLimitCS = Vector4.Transform(new Vector3(0, 0, -_midCascadeLimit), cameraProj);
         Vector4 farLimitCS = Vector4.Transform(new Vector3(0, 0, -_farCascadeLimit), cameraProj);
-        Vector3 lightPos = sc.DirectionalLight.Transform.Position - sc.DirectionalLight.Direction * 1000f;
+        Vector3 lightPos =
+            sc.DirectionalLight.Transform.Position - sc.DirectionalLight.Direction * 1000f;
 
         _resourceUpdateCL.Begin();
         CommandList[] cls = new CommandList[5];
         for (int i = 0; i < cls.Length; i++)
-        { cls[i] = gd.ResourceFactory.CreateCommandList(); cls[i].Begin(); }
-
-        _resourceUpdateCL.UpdateBuffer(sc.DepthLimitsBuffer, 0, new DepthCascadeLimits
         {
-            NearLimit = nearLimitCS.Z,
-            MidLimit = midLimitCS.Z,
-            FarLimit = farLimitCS.Z
-        });
+            cls[i] = gd.ResourceFactory.CreateCommandList();
+            cls[i].Begin();
+        }
+
+        _resourceUpdateCL.UpdateBuffer(
+            sc.DepthLimitsBuffer,
+            0,
+            new DepthCascadeLimits
+            {
+                NearLimit = nearLimitCS.Z,
+                MidLimit = midLimitCS.Z,
+                FarLimit = farLimitCS.Z,
+            }
+        );
 
         _resourceUpdateCL.UpdateBuffer(sc.LightInfoBuffer, 0, sc.DirectionalLight.GetInfo());
 
@@ -274,14 +406,31 @@ public class Scene
                 Camera.NearDistance,
                 _nearCascadeLimit,
                 sc.ShadowMapTexture.Width,
-                out BoundingFrustum lightFrustum0);
+                out BoundingFrustum lightFrustum0
+            );
             cls[1].UpdateBuffer(sc.LightViewProjectionBuffer0, 0, ref viewProj0);
 
             cls[1].SetFramebuffer(sc.NearShadowMapFramebuffer);
-            cls[1].SetViewport(0, new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1));
+            cls[1]
+                .SetViewport(
+                    0,
+                    new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
+                );
             cls[1].SetScissorRect(0, 0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height);
             cls[1].ClearDepthStencil(depthClear);
-            Render(gd, cls[1], sc, RenderPasses.ShadowMapNear, lightFrustum0, lightPos, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, true);
+            Render(
+                gd,
+                cls[1],
+                sc,
+                RenderPasses.ShadowMapNear,
+                lightFrustum0,
+                lightPos,
+                _renderQueues[0],
+                _cullableStage[0],
+                _renderableStage[0],
+                null,
+                true
+            );
         });
 
         _tasks[1] = Task.Run(() =>
@@ -293,14 +442,31 @@ public class Scene
                 _nearCascadeLimit,
                 _midCascadeLimit,
                 sc.ShadowMapTexture.Width,
-                out BoundingFrustum lightFrustum1);
+                out BoundingFrustum lightFrustum1
+            );
             cls[2].UpdateBuffer(sc.LightViewProjectionBuffer1, 0, ref viewProj1);
 
             cls[2].SetFramebuffer(sc.MidShadowMapFramebuffer);
-            cls[2].SetViewport(0, new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1));
+            cls[2]
+                .SetViewport(
+                    0,
+                    new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
+                );
             cls[2].SetScissorRect(0, 0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height);
             cls[2].ClearDepthStencil(depthClear);
-            Render(gd, cls[2], sc, RenderPasses.ShadowMapMid, lightFrustum1, lightPos, _renderQueues[1], _cullableStage[1], _renderableStage[1], null, true);
+            Render(
+                gd,
+                cls[2],
+                sc,
+                RenderPasses.ShadowMapMid,
+                lightFrustum1,
+                lightPos,
+                _renderQueues[1],
+                _cullableStage[1],
+                _renderableStage[1],
+                null,
+                true
+            );
         });
 
         _tasks[2] = Task.Run(() =>
@@ -312,14 +478,31 @@ public class Scene
                 _midCascadeLimit,
                 _farCascadeLimit,
                 sc.ShadowMapTexture.Width,
-                out BoundingFrustum lightFrustum2);
+                out BoundingFrustum lightFrustum2
+            );
             cls[3].UpdateBuffer(sc.LightViewProjectionBuffer2, 0, ref viewProj2);
 
             cls[3].SetFramebuffer(sc.FarShadowMapFramebuffer);
-            cls[3].SetViewport(0, new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1));
+            cls[3]
+                .SetViewport(
+                    0,
+                    new Viewport(0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height, 0, 1)
+                );
             cls[3].SetScissorRect(0, 0, 0, sc.ShadowMapTexture.Width, sc.ShadowMapTexture.Height);
             cls[3].ClearDepthStencil(depthClear);
-            Render(gd, cls[3], sc, RenderPasses.ShadowMapFar, lightFrustum2, lightPos, _renderQueues[2], _cullableStage[2], _renderableStage[2], null, true);
+            Render(
+                gd,
+                cls[3],
+                sc,
+                RenderPasses.ShadowMapFar,
+                lightFrustum2,
+                lightPos,
+                _renderQueues[2],
+                _cullableStage[2],
+                _renderableStage[2],
+                null,
+                true
+            );
         });
 
         _tasks[3] = Task.Run(() =>
@@ -337,8 +520,13 @@ public class Scene
             // Render reflected scene.
             Matrix4x4 planeReflectionMatrix = Matrix4x4.CreateReflection(MirrorMesh.Plane);
             CameraInfo camInfo = new();
-            camInfo.CameraLookDirection = Vector3.Normalize(Vector3.Reflect(_camera.LookDirection, MirrorMesh.Plane.Normal));
-            camInfo.CameraPosition_WorldSpace = Vector3.Transform(_camera.Position, planeReflectionMatrix);
+            camInfo.CameraLookDirection = Vector3.Normalize(
+                Vector3.Reflect(_camera.LookDirection, MirrorMesh.Plane.Normal)
+            );
+            camInfo.CameraPosition_WorldSpace = Vector3.Transform(
+                _camera.Position,
+                planeReflectionMatrix
+            );
             cls[4].UpdateBuffer(sc.CameraInfoBuffer, 0, ref camInfo);
 
             Matrix4x4 view = sc.Camera.ViewMatrix;
@@ -349,7 +537,19 @@ public class Scene
             cls[4].UpdateBuffer(sc.ReflectionViewProjBuffer, 0, view * projection);
 
             BoundingFrustum cameraFrustum = new(view * projection);
-            Render(gd, cls[4], sc, RenderPasses.ReflectionMap, cameraFrustum, _camera.Position, _renderQueues[3], _cullableStage[3], _renderableStage[3], null, true);
+            Render(
+                gd,
+                cls[4],
+                sc,
+                RenderPasses.ReflectionMap,
+                cameraFrustum,
+                _camera.Position,
+                _renderQueues[3],
+                _cullableStage[3],
+                _renderableStage[3],
+                null,
+                true
+            );
 
             cl.GenerateMipmaps(sc.ReflectionColorTexture);
 
@@ -363,9 +563,45 @@ public class Scene
             cls[4].ClearDepthStencil(depthClear);
             sc.UpdateCameraBuffers(cls[4]);
             cameraFrustum = new BoundingFrustum(_camera.ViewMatrix * _camera.ProjectionMatrix);
-            Render(gd, cls[4], sc, RenderPasses.Standard, cameraFrustum, _camera.Position, _renderQueues[3], _cullableStage[3], _renderableStage[3], null, true);
-            Render(gd, cls[4], sc, RenderPasses.AlphaBlend, cameraFrustum, _camera.Position, _renderQueues[3], _cullableStage[3], _renderableStage[3], null, true);
-            Render(gd, cls[4], sc, RenderPasses.Overlay, cameraFrustum, _camera.Position, _renderQueues[3], _cullableStage[3], _renderableStage[3], null, true);
+            Render(
+                gd,
+                cls[4],
+                sc,
+                RenderPasses.Standard,
+                cameraFrustum,
+                _camera.Position,
+                _renderQueues[3],
+                _cullableStage[3],
+                _renderableStage[3],
+                null,
+                true
+            );
+            Render(
+                gd,
+                cls[4],
+                sc,
+                RenderPasses.AlphaBlend,
+                cameraFrustum,
+                _camera.Position,
+                _renderQueues[3],
+                _cullableStage[3],
+                _renderableStage[3],
+                null,
+                true
+            );
+            Render(
+                gd,
+                cls[4],
+                sc,
+                RenderPasses.Overlay,
+                cameraFrustum,
+                _camera.Position,
+                _renderQueues[3],
+                _cullableStage[3],
+                _renderableStage[3],
+                null,
+                true
+            );
         });
 
         Task.WaitAll(_tasks);
@@ -378,7 +614,11 @@ public class Scene
         gd.SubmitCommands(_resourceUpdateCL);
 
         for (int i = 0; i < cls.Length; i++)
-        { cls[i].End(); gd.SubmitCommands(cls[i]); cls[i].Dispose(); }
+        {
+            cls[i].End();
+            gd.SubmitCommands(cls[i]);
+            cls[i].Dispose();
+        }
 
         if (sc.MainSceneColorTexture.SampleCount != TextureSampleCount.Count1)
         {
@@ -392,14 +632,38 @@ public class Scene
         cl.SetViewport(1, new Viewport(0, 0, fbWidth, fbHeight, 0, 1));
         cl.SetScissorRect(0, 0, 0, fbWidth, fbHeight);
         cl.SetScissorRect(1, 0, 0, fbWidth, fbHeight);
-        Render(gd, cl, sc, RenderPasses.Duplicator, new BoundingFrustum(), _camera.Position, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.Duplicator,
+            new BoundingFrustum(),
+            _camera.Position,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
 
         cl.SetFramebuffer(gd.SwapchainFramebuffer);
         fbWidth = gd.SwapchainFramebuffer.Width;
         fbHeight = gd.SwapchainFramebuffer.Height;
         cl.SetViewport(0, new Viewport(0, 0, fbWidth, fbHeight, 0, 1));
         cl.SetScissorRect(0, 0, 0, fbWidth, fbHeight);
-        Render(gd, cl, sc, RenderPasses.SwapchainOutput, new BoundingFrustum(), _camera.Position, _renderQueues[0], _cullableStage[0], _renderableStage[0], null, false);
+        Render(
+            gd,
+            cl,
+            sc,
+            RenderPasses.SwapchainOutput,
+            new BoundingFrustum(),
+            _camera.Position,
+            _renderQueues[0],
+            _cullableStage[0],
+            _renderableStage[0],
+            null,
+            false
+        );
 
         cl.End();
         gd.SubmitCommands(cl);
@@ -411,7 +675,8 @@ public class Scene
         float near,
         float far,
         uint shadowMapWidth,
-        out BoundingFrustum lightFrustum)
+        out BoundingFrustum lightFrustum
+    )
     {
         Vector3 lightDir = sc.DirectionalLight.Direction;
         Vector3 viewDir = sc.Camera.LookDirection;
@@ -429,7 +694,8 @@ public class Scene
                 far,
                 near,
                 sc.Camera.AspectRatio,
-                out cameraCorners);
+                out cameraCorners
+            );
         }
         else
         {
@@ -441,7 +707,8 @@ public class Scene
                 near,
                 far,
                 sc.Camera.AspectRatio,
-                out cameraCorners);
+                out cameraCorners
+            );
         }
 
         // Approach used: http://alextardif.com/ShadowMapping.html
@@ -485,7 +752,8 @@ public class Scene
             -radius * _bScale,
             radius * _tScale,
             -radius * _nScale,
-            radius * _fScale);
+            radius * _fScale
+        );
 
         Matrix4x4 viewProjectionMatrix = lightView * lightProjection;
 
@@ -504,7 +772,8 @@ public class Scene
         List<CullRenderable> cullRenderableList,
         List<Renderable> renderableList,
         Comparer<RenderItemIndex>? comparer,
-        bool threaded)
+        bool threaded
+    )
     {
         renderQueue.Clear();
 
@@ -535,29 +804,47 @@ public class Scene
             lock (_allPerFrameRenderablesSet)
             {
                 foreach (CullRenderable thing in cullRenderableList)
-                { _allPerFrameRenderablesSet.Add(thing); }
+                {
+                    _allPerFrameRenderablesSet.Add(thing);
+                }
                 foreach (Renderable thing in renderableList)
-                { _allPerFrameRenderablesSet.Add(thing); }
+                {
+                    _allPerFrameRenderablesSet.Add(thing);
+                }
             }
         }
         else
         {
             foreach (CullRenderable thing in cullRenderableList)
-            { _allPerFrameRenderablesSet.Add(thing); }
+            {
+                _allPerFrameRenderablesSet.Add(thing);
+            }
             foreach (Renderable thing in renderableList)
-            { _allPerFrameRenderablesSet.Add(thing); }
+            {
+                _allPerFrameRenderablesSet.Add(thing);
+            }
         }
     }
 
     readonly HashSet<Renderable> _allPerFrameRenderablesSet = [];
-    readonly RenderQueue[] _renderQueues = Enumerable.Range(0, 4).Select(i => new RenderQueue()).ToArray();
-    readonly List<CullRenderable>[] _cullableStage = Enumerable.Range(0, 4).Select(i => new List<CullRenderable>()).ToArray();
-    readonly List<Renderable>[] _renderableStage = Enumerable.Range(0, 4).Select(i => new List<Renderable>()).ToArray();
+    readonly RenderQueue[] _renderQueues = Enumerable
+        .Range(0, 4)
+        .Select(i => new RenderQueue())
+        .ToArray();
+    readonly List<CullRenderable>[] _cullableStage = Enumerable
+        .Range(0, 4)
+        .Select(i => new List<CullRenderable>())
+        .ToArray();
+    readonly List<Renderable>[] _renderableStage = Enumerable
+        .Range(0, 4)
+        .Select(i => new List<Renderable>())
+        .ToArray();
 
     void CollectVisibleObjects(
         ref BoundingFrustum frustum,
         RenderPasses renderPass,
-        List<CullRenderable> renderables)
+        List<CullRenderable> renderables
+    )
     {
         _octree.GetContainedObjects(frustum, renderables, GetFilter(renderPass));
     }
@@ -573,7 +860,8 @@ public class Scene
         }
     }
 
-    static Func<RenderPasses, Func<CullRenderable, bool>> s_createFilterFunc = rp => CreateFilter(rp);
+    static Func<RenderPasses, Func<CullRenderable, bool>> s_createFilterFunc = rp =>
+        CreateFilter(rp);
     CommandList _resourceUpdateCL;
 
     Func<CullRenderable, bool> GetFilter(RenderPasses passes)
@@ -624,6 +912,7 @@ public class Scene
     class RenderPassesComparer : IEqualityComparer<RenderPasses>
     {
         public bool Equals(RenderPasses x, RenderPasses y) => x == y;
+
         public int GetHashCode(RenderPasses obj) => ((byte)obj).GetHashCode();
     }
 }

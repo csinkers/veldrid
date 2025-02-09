@@ -29,7 +29,9 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
     {
         _gd = gd;
         RefCount = new ResourceRefCount(this);
-        VkResourceLayout vkLayout = Util.AssertSubtype<ResourceLayout, VkResourceLayout>(description.Layout);
+        VkResourceLayout vkLayout = Util.AssertSubtype<ResourceLayout, VkResourceLayout>(
+            description.Layout
+        );
 
         VkDescriptorSetLayout dsl = vkLayout.DescriptorSetLayout;
         _descriptorCounts = vkLayout.DescriptorResourceCounts;
@@ -37,9 +39,12 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
 
         BindableResource[] boundResources = description.BoundResources;
         uint descriptorWriteCount = (uint)boundResources.Length;
-        VkWriteDescriptorSet* descriptorWrites = stackalloc VkWriteDescriptorSet[(int)descriptorWriteCount];
-        VkDescriptorBufferInfo* bufferInfos = stackalloc VkDescriptorBufferInfo[(int)descriptorWriteCount];
-        VkDescriptorImageInfo* imageInfos = stackalloc VkDescriptorImageInfo[(int)descriptorWriteCount];
+        VkWriteDescriptorSet* descriptorWrites =
+            stackalloc VkWriteDescriptorSet[(int)descriptorWriteCount];
+        VkDescriptorBufferInfo* bufferInfos =
+            stackalloc VkDescriptorBufferInfo[(int)descriptorWriteCount];
+        VkDescriptorImageInfo* imageInfos =
+            stackalloc VkDescriptorImageInfo[(int)descriptorWriteCount];
 
         for (int i = 0; i < descriptorWriteCount; i++)
         {
@@ -51,13 +56,15 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
                 descriptorCount = 1,
                 descriptorType = type,
                 dstBinding = (uint)i,
-                dstSet = _descriptorAllocationToken.Set
+                dstSet = _descriptorAllocationToken.Set,
             };
 
-            if (type == VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ||
-                type == VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC ||
-                type == VkDescriptorType.VK_DESCRIPTOR_TYPE_STORAGE_BUFFER ||
-                type == VkDescriptorType.VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC)
+            if (
+                type == VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+                || type == VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+                || type == VkDescriptorType.VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+                || type == VkDescriptorType.VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
+            )
             {
                 DeviceBufferRange range = Util.GetBufferRange(boundResources[i], 0);
                 VkBuffer rangedVkBuffer = Util.AssertSubtype<DeviceBuffer, VkBuffer>(range.Buffer);
@@ -65,7 +72,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
                 {
                     buffer = rangedVkBuffer.DeviceBuffer,
                     offset = range.Offset,
-                    range = range.SizeInBytes
+                    range = range.SizeInBytes,
                 };
                 descriptorWrites[i].pBufferInfo = &bufferInfos[i];
                 _refCounts.Add(rangedVkBuffer.RefCount);
@@ -77,7 +84,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
                 imageInfos[i] = new VkDescriptorImageInfo()
                 {
                     imageView = vkTexView.ImageView,
-                    imageLayout = VkImageLayout.VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+                    imageLayout = VkImageLayout.VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 };
                 descriptorWrites[i].pImageInfo = &imageInfos[i];
                 _sampledTextures.Add(Util.AssertSubtype<Texture, VkTexture>(texView.Target));
@@ -90,7 +97,7 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
                 imageInfos[i] = new VkDescriptorImageInfo()
                 {
                     imageView = vkTexView.ImageView,
-                    imageLayout = VkImageLayout.VK_IMAGE_LAYOUT_GENERAL
+                    imageLayout = VkImageLayout.VK_IMAGE_LAYOUT_GENERAL,
                 };
                 descriptorWrites[i].pImageInfo = &imageInfos[i];
                 _storageImages.Add(Util.AssertSubtype<Texture, VkTexture>(texView.Target));
@@ -98,7 +105,9 @@ internal sealed unsafe class VkResourceSet : ResourceSet, IResourceRefCountTarge
             }
             else if (type == VkDescriptorType.VK_DESCRIPTOR_TYPE_SAMPLER)
             {
-                VkSampler sampler = Util.AssertSubtype<Sampler, VkSampler>(boundResources[i].GetSampler());
+                VkSampler sampler = Util.AssertSubtype<Sampler, VkSampler>(
+                    boundResources[i].GetSampler()
+                );
                 imageInfos[i] = new VkDescriptorImageInfo() { sampler = sampler.DeviceSampler };
                 descriptorWrites[i].pImageInfo = &imageInfos[i];
                 _refCounts.Add(sampler.RefCount);

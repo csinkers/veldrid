@@ -10,7 +10,8 @@ public static class ShaderHelper
     public static (Shader vs, Shader fs) LoadSPIRV(
         GraphicsDevice gd,
         ResourceFactory factory,
-        string setName)
+        string setName
+    )
     {
         byte[] vsBytes = LoadBytecode(GraphicsBackend.Vulkan, setName, ShaderStages.Vertex);
         byte[] fsBytes = LoadBytecode(GraphicsBackend.Vulkan, setName, ShaderStages.Fragment);
@@ -21,7 +22,8 @@ public static class ShaderHelper
         Shader[] shaders = factory.CreateFromSpirv(
             new ShaderDescription(ShaderStages.Vertex, vsBytes, "main", debug),
             new ShaderDescription(ShaderStages.Fragment, fsBytes, "main", debug),
-            GetOptions(gd));
+            GetOptions(gd)
+        );
 
         Shader vs = shaders[0];
         Shader fs = shaders[1];
@@ -36,8 +38,9 @@ public static class ShaderHelper
     {
         SpecializationConstant[] specializations = GetSpecializations(gd);
 
-        bool fixClipZ = (gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES)
-                        && !gd.IsDepthRangeZeroToOne;
+        bool fixClipZ =
+            (gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES)
+            && !gd.IsDepthRangeZeroToOne;
         bool invertY = false;
 
         return new CrossCompileOptions(fixClipZ, invertY, specializations);
@@ -45,18 +48,24 @@ public static class ShaderHelper
 
     public static SpecializationConstant[] GetSpecializations(GraphicsDevice gd)
     {
-        bool glOrGles = gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES;
+        bool glOrGles =
+            gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES;
 
         List<SpecializationConstant> specializations =
         [
             new SpecializationConstant(100, gd.IsClipSpaceYInverted),
             new SpecializationConstant(101, glOrGles), // TextureCoordinatesInvertedY
-            new SpecializationConstant(102, gd.IsDepthRangeZeroToOne)
+            new SpecializationConstant(102, gd.IsDepthRangeZeroToOne),
         ];
 
-        PixelFormat swapchainFormat = gd.MainSwapchain.Framebuffer.OutputDescription.ColorAttachments[0].Format;
-        bool swapchainIsSrgb = swapchainFormat == PixelFormat.B8_G8_R8_A8_UNorm_SRgb
-                               || swapchainFormat == PixelFormat.R8_G8_B8_A8_UNorm_SRgb;
+        PixelFormat swapchainFormat = gd.MainSwapchain
+            .Framebuffer
+            .OutputDescription
+            .ColorAttachments[0]
+            .Format;
+        bool swapchainIsSrgb =
+            swapchainFormat == PixelFormat.B8_G8_R8_A8_UNorm_SRgb
+            || swapchainFormat == PixelFormat.R8_G8_B8_A8_UNorm_SRgb;
         specializations.Add(new SpecializationConstant(103, swapchainIsSrgb));
 
         return specializations.ToArray();
@@ -70,7 +79,9 @@ public static class ShaderHelper
         if (backend == GraphicsBackend.Vulkan || backend == GraphicsBackend.Direct3D11)
         {
             string bytecodeExtension = GetBytecodeExtension(backend);
-            string bytecodePath = AssetHelper.GetPath(Path.Combine("Shaders", name + bytecodeExtension));
+            string bytecodePath = AssetHelper.GetPath(
+                Path.Combine("Shaders", name + bytecodeExtension)
+            );
             if (File.Exists(bytecodePath))
             {
                 return File.ReadAllBytes(bytecodePath);
@@ -88,7 +99,9 @@ public static class ShaderHelper
         {
             GraphicsBackend.Direct3D11 => ".hlsl.bytes",
             GraphicsBackend.Vulkan => ".spv",
-            GraphicsBackend.OpenGL => throw new InvalidOperationException("OpenGL and OpenGLES do not support shader bytecode."),
+            GraphicsBackend.OpenGL => throw new InvalidOperationException(
+                "OpenGL and OpenGLES do not support shader bytecode."
+            ),
             _ => throw new InvalidOperationException("Invalid Graphics backend: " + backend),
         };
     }

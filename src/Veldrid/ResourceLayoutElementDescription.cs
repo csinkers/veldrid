@@ -52,7 +52,8 @@ public struct ResourceLayoutElementDescription : IEquatable<ResourceLayoutElemen
         string name,
         ResourceKind kind,
         ShaderStages stages,
-        ResourceLayoutElementOptions options)
+        ResourceLayoutElementOptions options
+    )
     {
         Name = name;
         Kind = kind;
@@ -67,7 +68,10 @@ public struct ResourceLayoutElementDescription : IEquatable<ResourceLayoutElemen
     /// <returns>True if all elements are equal; false otherswise.</returns>
     public bool Equals(ResourceLayoutElementDescription other)
     {
-        return Name == other.Name && Kind == other.Kind && Stages == other.Stages && Options == other.Options;
+        return Name == other.Name
+            && Kind == other.Kind
+            && Stages == other.Stages
+            && Options == other.Options;
     }
 
     /// <summary>
@@ -90,6 +94,7 @@ public enum ResourceLayoutElementOptions
     /// No special options.
     /// </summary>
     None,
+
     /// <summary>
     /// Can be applied to a buffer type resource (<see cref="ResourceKind.StructuredBufferReadOnly"/>,
     /// <see cref="ResourceKind.StructuredBufferReadWrite"/>, or <see cref="ResourceKind.UniformBuffer"/>), allowing it to be

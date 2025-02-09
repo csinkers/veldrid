@@ -12,7 +12,9 @@ internal sealed class OpenGLFence(bool signaled) : Fence
     public ManualResetEvent ResetEvent => _mre;
 
     public void Set() => _mre.Set();
+
     public override void Reset() => _mre.Reset();
+
     public override bool Signaled => _mre.WaitOne(0);
     public override bool IsDisposed => _disposed;
 

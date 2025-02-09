@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-
 using static Veldrid.Sdl2.Sdl2Native;
 
 namespace Veldrid.Sdl2;

@@ -33,7 +33,9 @@ namespace Veldrid.Tests.Android.Forms.Pages
 
         void Cell_OnTapped(object? sender, EventArgs e)
         {
-            _ = ((TestCaseViewModel)((BindableObject)sender!).BindingContext).NavigateToResultsPageAsync();
+            _ = (
+                (TestCaseViewModel)((BindableObject)sender!).BindingContext
+            ).NavigateToResultsPageAsync();
         }
     }
 }

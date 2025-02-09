@@ -41,7 +41,8 @@ internal static partial class VkFormats
         SamplerFilter filter,
         out VkFilter minFilter,
         out VkFilter magFilter,
-        out VkSamplerMipmapMode mipmapMode)
+        out VkSamplerMipmapMode mipmapMode
+    )
     {
         switch (filter)
         {
@@ -101,7 +102,8 @@ internal static partial class VkFormats
 
     internal static VkImageUsageFlags VdToVkTextureUsage(TextureUsage vdUsage)
     {
-        VkImageUsageFlags vkUsage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+        VkImageUsageFlags vkUsage =
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
         bool isDepthStencil = (vdUsage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil;
         if ((vdUsage & TextureUsage.Sampled) == TextureUsage.Sampled)
         {
@@ -134,17 +136,28 @@ internal static partial class VkFormats
         };
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
-    internal static VkDescriptorType VdToVkDescriptorType(ResourceKind kind, ResourceLayoutElementOptions options)
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
+    internal static VkDescriptorType VdToVkDescriptorType(
+        ResourceKind kind,
+        ResourceLayoutElementOptions options
+    )
     {
         bool dynamicBinding = (options & ResourceLayoutElementOptions.DynamicBinding) != 0;
         switch (kind)
         {
             case ResourceKind.UniformBuffer:
-                return dynamicBinding ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                return dynamicBinding
+                    ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
+                    : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             case ResourceKind.StructuredBufferReadWrite:
             case ResourceKind.StructuredBufferReadOnly:
-                return dynamicBinding ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                return dynamicBinding
+                    ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC
+                    : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
             case ResourceKind.TextureReadOnly:
                 return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
             case ResourceKind.TextureReadWrite:

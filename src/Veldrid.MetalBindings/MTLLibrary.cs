@@ -17,7 +17,10 @@ public readonly struct MTLLibrary(IntPtr ptr)
         return new MTLFunction(function);
     }
 
-    public unsafe MTLFunction newFunctionWithNameConstantValues(string name, MTLFunctionConstantValues constantValues)
+    public unsafe MTLFunction newFunctionWithNameConstantValues(
+        string name,
+        MTLFunctionConstantValues constantValues
+    )
     {
         NSString nameNSS = NSString.New(name);
         NSError error;
@@ -26,7 +29,8 @@ public readonly struct MTLLibrary(IntPtr ptr)
             sel_newFunctionWithNameConstantValues,
             nameNSS.NativePtr,
             constantValues.NativePtr,
-            &error);
+            &error
+        );
         release(nameNSS.NativePtr);
 
         if (function == IntPtr.Zero)
@@ -38,5 +42,6 @@ public readonly struct MTLLibrary(IntPtr ptr)
     }
 
     static readonly Selector sel_newFunctionWithName = "newFunctionWithName:"u8;
-    static readonly Selector sel_newFunctionWithNameConstantValues = "newFunctionWithName:constantValues:error:"u8;
+    static readonly Selector sel_newFunctionWithNameConstantValues =
+        "newFunctionWithName:constantValues:error:"u8;
 }

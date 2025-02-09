@@ -32,7 +32,8 @@ internal unsafe class OculusContext : VRContext
         try
         {
             ovrInitParams initParams = new();
-            initParams.Flags = ovrInitFlags.RequestVersion | ovrInitFlags.FocusAware | ovrInitFlags.Debug;
+            initParams.Flags =
+                ovrInitFlags.RequestVersion | ovrInitFlags.FocusAware | ovrInitFlags.Debug;
             initParams.RequestedMinorVersion = 30;
 
             ovrResult result = ovr_Initialize(&initParams);
@@ -75,7 +76,8 @@ internal unsafe class OculusContext : VRContext
         _options = options;
 
         ovrInitParams initParams = new();
-        initParams.Flags = ovrInitFlags.RequestVersion | ovrInitFlags.FocusAware | ovrInitFlags.Debug;
+        initParams.Flags =
+            ovrInitFlags.RequestVersion | ovrInitFlags.FocusAware | ovrInitFlags.Debug;
         initParams.RequestedMinorVersion = 30;
 
         ovrResult result = ovr_Initialize(&initParams);
@@ -104,7 +106,12 @@ internal unsafe class OculusContext : VRContext
         if (gd.GetVulkanInfo(out BackendInfoVulkan? vkInfo))
         {
             IntPtr physicalDevice;
-            ovrResult result = ovr_GetSessionPhysicalDeviceVk(_session, _luid, vkInfo.Instance, &physicalDevice);
+            ovrResult result = ovr_GetSessionPhysicalDeviceVk(
+                _session,
+                _luid,
+                vkInfo.Instance,
+                &physicalDevice
+            );
             if (result != ovrResult.Success)
             {
                 throw new VeldridException($"Failed to get Vulkan physical device.");
@@ -113,7 +120,9 @@ internal unsafe class OculusContext : VRContext
             result = ovr_SetSynchonizationQueueVk(_session, vkInfo.GraphicsQueue);
             if (result != ovrResult.Success)
             {
-                throw new VeldridException($"Failed to set the Oculus session's Vulkan synchronization queue.");
+                throw new VeldridException(
+                    $"Failed to set the Oculus session's Vulkan synchronization queue."
+                );
             }
         }
 
@@ -128,20 +137,27 @@ internal unsafe class OculusContext : VRContext
                 _session,
                 (ovrEyeType)eye,
                 _hmdDesc.DefaultEyeFov[eye],
-                1.0f);
+                1.0f
+            );
             _eyeSwapchains[eye] = new OculusSwapchain(
                 _gd,
                 _session,
-                idealSize.w, idealSize.h,
+                idealSize.w,
+                idealSize.h,
                 Util.GetSampleCount(_options.EyeFramebufferSampleCount),
-                createDepth: true);
+                createDepth: true
+            );
             _eyeRenderViewport[eye].Pos.X = 0;
             _eyeRenderViewport[eye].Pos.Y = 0;
             _eyeRenderViewport[eye].Size = idealSize;
         }
     }
 
-    public override void RenderMirrorTexture(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
+    public override void RenderMirrorTexture(
+        CommandList cl,
+        Framebuffer fb,
+        MirrorTextureEyeSource source
+    )
     {
         _mirrorTexture.Render(cl, fb, source);
     }
@@ -161,9 +177,10 @@ internal unsafe class OculusContext : VRContext
         // Initialize our single full screen Fov layer.
         ovrLayerEyeFovDepth ld = new();
         ld.Header.Type = ovrLayerType.EyeFovDepth;
-        ld.Header.Flags = _gd.BackendType == GraphicsBackend.OpenGL || _gd.BackendType == GraphicsBackend.OpenGLES
-            ? ovrLayerFlags.TextureOriginAtBottomLeft
-            : ovrLayerFlags.None;
+        ld.Header.Flags =
+            _gd.BackendType == GraphicsBackend.OpenGL || _gd.BackendType == GraphicsBackend.OpenGLES
+                ? ovrLayerFlags.TextureOriginAtBottomLeft
+                : ovrLayerFlags.None;
         ld.ProjectionDesc = _posTimewarpProjectionDesc;
         ld.SensorSampleTime = _sensorSampleTime;
 
@@ -186,7 +203,7 @@ internal unsafe class OculusContext : VRContext
         _frameIndex++;
     }
 
-    public unsafe override HmdPoseState WaitForPoses()
+    public override unsafe HmdPoseState WaitForPoses()
     {
         ovrSessionStatus sessionStatus;
         ovrResult result = ovr_GetSessionStatus(_session, &sessionStatus);
@@ -202,23 +219,40 @@ internal unsafe class OculusContext : VRContext
 
         // Call ovr_GetRenderDesc each frame to get the ovrEyeRenderDesc, as the returned values (e.g. HmdToEyePose) may change at runtime.
         ovrEyeRenderDesc* eyeRenderDescs = stackalloc ovrEyeRenderDesc[2];
-        eyeRenderDescs[0] = ovr_GetRenderDesc2(_session, ovrEyeType.Left, _hmdDesc.DefaultEyeFov[0]);
-        eyeRenderDescs[1] = ovr_GetRenderDesc2(_session, ovrEyeType.Right, _hmdDesc.DefaultEyeFov[1]);
+        eyeRenderDescs[0] = ovr_GetRenderDesc2(
+            _session,
+            ovrEyeType.Left,
+            _hmdDesc.DefaultEyeFov[0]
+        );
+        eyeRenderDescs[1] = ovr_GetRenderDesc2(
+            _session,
+            ovrEyeType.Right,
+            _hmdDesc.DefaultEyeFov[1]
+        );
 
-        // Get both eye poses simultaneously, with IPD offset already included. 
+        // Get both eye poses simultaneously, with IPD offset already included.
         EyePair_ovrPosef hmdToEyePoses = new(
             eyeRenderDescs[0].HmdToEyePose,
-            eyeRenderDescs[1].HmdToEyePose);
+            eyeRenderDescs[1].HmdToEyePose
+        );
 
         double predictedTime = ovr_GetPredictedDisplayTime(_session, _frameIndex);
 
         ovrTrackingState trackingState = ovr_GetTrackingState(_session, predictedTime, true);
 
-        double sensorSampleTime;    // sensorSampleTime is fed into the layer later
+        double sensorSampleTime; // sensorSampleTime is fed into the layer later
         EyePair_Vector3 hmdToEyeOffset = new(
             hmdToEyePoses.Left.Position,
-            hmdToEyePoses.Right.Position);
-        ovr_GetEyePoses(_session, _frameIndex, true, &hmdToEyeOffset, out _eyeRenderPoses, &sensorSampleTime);
+            hmdToEyePoses.Right.Position
+        );
+        ovr_GetEyePoses(
+            _session,
+            _frameIndex,
+            true,
+            &hmdToEyeOffset,
+            out _eyeRenderPoses,
+            &sensorSampleTime
+        );
         _sensorSampleTime = sensorSampleTime;
 
         // Render Scene to Eye Buffers
@@ -226,15 +260,27 @@ internal unsafe class OculusContext : VRContext
         {
             _rotations[eye] = _eyeRenderPoses[eye].Orientation;
             _positions[eye] = _eyeRenderPoses[eye].Position;
-            Matrix4x4 proj = ovrMatrix4f_Projection(eyeRenderDescs[eye].Fov, 0.2f, 1000f, ovrProjectionModifier.None);
-            _posTimewarpProjectionDesc = ovrTimewarpProjectionDesc_FromProjection(proj, ovrProjectionModifier.None);
+            Matrix4x4 proj = ovrMatrix4f_Projection(
+                eyeRenderDescs[eye].Fov,
+                0.2f,
+                1000f,
+                ovrProjectionModifier.None
+            );
+            _posTimewarpProjectionDesc = ovrTimewarpProjectionDesc_FromProjection(
+                proj,
+                ovrProjectionModifier.None
+            );
             _projections[eye] = Matrix4x4.Transpose(proj);
         }
 
         return new HmdPoseState(
-            _projections[0], _projections[1],
-            _positions[0], _positions[1],
-            _rotations[0], _rotations[1]);
+            _projections[0],
+            _projections[1],
+            _positions[0],
+            _positions[1],
+            _rotations[0],
+            _rotations[1]
+        );
     }
 
     public override void Dispose()
@@ -255,7 +301,9 @@ internal unsafe class OculusContext : VRContext
         ovrResult result = ovr_GetInstanceExtensionsVk(_luid, null, &instanceExtCount);
         if (result != ovrResult.Success)
         {
-            throw new VeldridException($"Failed to retrieve the number of required Vulkan instance extensions: {result}");
+            throw new VeldridException(
+                $"Failed to retrieve the number of required Vulkan instance extensions: {result}"
+            );
         }
 
         byte[] instanceExtensions = new byte[instanceExtCount];
@@ -264,7 +312,9 @@ internal unsafe class OculusContext : VRContext
             result = ovr_GetInstanceExtensionsVk(_luid, instanceExtensionsPtr, &instanceExtCount);
             if (result != ovrResult.Success)
             {
-                throw new VeldridException($"Failed to retrieve the required Vulkan instance extensions: {result}");
+                throw new VeldridException(
+                    $"Failed to retrieve the required Vulkan instance extensions: {result}"
+                );
             }
         }
 
@@ -274,7 +324,9 @@ internal unsafe class OculusContext : VRContext
         result = ovr_GetDeviceExtensionsVk(_luid, null, &deviceExtCount);
         if (result != ovrResult.Success)
         {
-            throw new VeldridException($"Failed to retrieve the number of required Vulkan device extensions: {result}");
+            throw new VeldridException(
+                $"Failed to retrieve the number of required Vulkan device extensions: {result}"
+            );
         }
 
         byte[] deviceExtensions = new byte[deviceExtCount];
@@ -283,7 +335,9 @@ internal unsafe class OculusContext : VRContext
             result = ovr_GetDeviceExtensionsVk(_luid, deviceExtensionsPtr, &deviceExtCount);
             if (result != ovrResult.Success)
             {
-                throw new VeldridException($"Failed to retrieve the required Vulkan device extensions: {result}");
+                throw new VeldridException(
+                    $"Failed to retrieve the required Vulkan device extensions: {result}"
+                );
             }
         }
 
@@ -320,7 +374,14 @@ internal unsafe class OculusSwapchain
     public readonly ovrTextureSwapChain DepthChain;
     public readonly Framebuffer[] Framebuffers;
 
-    public OculusSwapchain(GraphicsDevice gd, ovrSession session, int sizeW, int sizeH, int sampleCount, bool createDepth)
+    public OculusSwapchain(
+        GraphicsDevice gd,
+        ovrSession session,
+        int sizeW,
+        int sizeH,
+        int sampleCount,
+        bool createDepth
+    )
     {
         _session = session;
 
@@ -335,7 +396,8 @@ internal unsafe class OculusSwapchain
         colorDesc.MipLevels = 1;
         colorDesc.SampleCount = sampleCount;
         colorDesc.Format = ovrTextureFormat.R8G8B8A8_UNORM_SRGB;
-        colorDesc.MiscFlags = ovrTextureMiscFlags.DX_Typeless | ovrTextureMiscFlags.AllowGenerateMips;
+        colorDesc.MiscFlags =
+            ovrTextureMiscFlags.DX_Typeless | ovrTextureMiscFlags.AllowGenerateMips;
         colorDesc.BindFlags = ovrTextureBindFlags.DX_RenderTarget;
         colorDesc.StaticImage = false;
 
@@ -362,9 +424,9 @@ internal unsafe class OculusSwapchain
         Framebuffers = new Framebuffer[colorTextures.Length];
         for (int i = 0; i < Framebuffers.Length; i++)
         {
-            Framebuffers[i] = gd.ResourceFactory.CreateFramebuffer(new FramebufferDescription(
-                depthTextures?[i],
-                colorTextures[i]));
+            Framebuffers[i] = gd.ResourceFactory.CreateFramebuffer(
+                new FramebufferDescription(depthTextures?[i], colorTextures[i])
+            );
         }
 
         CommandList = gd.ResourceFactory.CreateCommandList();
@@ -373,24 +435,40 @@ internal unsafe class OculusSwapchain
     (ovrTextureSwapChain, Texture[]) CreateSwapchain(
         ovrSession session,
         GraphicsDevice gd,
-        ovrTextureSwapChainDesc desc)
+        ovrTextureSwapChainDesc desc
+    )
     {
         return gd.BackendType switch
         {
             GraphicsBackend.Direct3D11 => CreateSwapchainD3D11(session, gd, desc),
-            GraphicsBackend.OpenGL or GraphicsBackend.OpenGLES => CreateSwapchainGL(session, gd, desc),
+            GraphicsBackend.OpenGL or GraphicsBackend.OpenGLES => CreateSwapchainGL(
+                session,
+                gd,
+                desc
+            ),
             GraphicsBackend.Vulkan => CreateSwapchainVk(session, gd, desc),
-            GraphicsBackend.Metal => throw new PlatformNotSupportedException("Using Oculus with the Metal backend is not supported."),
+            GraphicsBackend.Metal => throw new PlatformNotSupportedException(
+                "Using Oculus with the Metal backend is not supported."
+            ),
             _ => throw new NotImplementedException(),
         };
     }
 
-    (ovrTextureSwapChain, Texture[]) CreateSwapchainVk(ovrSession session, GraphicsDevice gd, ovrTextureSwapChainDesc desc)
+    (ovrTextureSwapChain, Texture[]) CreateSwapchainVk(
+        ovrSession session,
+        GraphicsDevice gd,
+        ovrTextureSwapChainDesc desc
+    )
     {
         ovrTextureSwapChain otsc;
         Texture[] textures;
 
-        ovrResult result = ovr_CreateTextureSwapChainVk(session, gd.GetVulkanInfo().Device, &desc, &otsc);
+        ovrResult result = ovr_CreateTextureSwapChainVk(
+            session,
+            gd.GetVulkanInfo().Device,
+            &desc,
+            &otsc
+        );
         if (result != ovrResult.Success)
         {
             throw new VeldridException($"Failed to call ovr_CreateTextureSwapChainVk: {result}");
@@ -405,7 +483,8 @@ internal unsafe class OculusSwapchain
             ovr_GetTextureSwapChainBufferVk(session, otsc, i, &nativeTexture);
             textures[i] = gd.ResourceFactory.CreateTexture(
                 nativeTexture,
-                OculusUtil.GetVeldridTextureDescription(desc));
+                OculusUtil.GetVeldridTextureDescription(desc)
+            );
         }
 
         return (otsc, textures);
@@ -414,12 +493,18 @@ internal unsafe class OculusSwapchain
     static (ovrTextureSwapChain, Texture[]) CreateSwapchainD3D11(
         ovrSession session,
         GraphicsDevice gd,
-        ovrTextureSwapChainDesc desc)
+        ovrTextureSwapChainDesc desc
+    )
     {
         ovrTextureSwapChain otsc;
         Texture[] textures;
 
-        ovrResult result = ovr_CreateTextureSwapChainDX(session, gd.GetD3D11Info().Device, &desc, &otsc);
+        ovrResult result = ovr_CreateTextureSwapChainDX(
+            session,
+            gd.GetD3D11Info().Device,
+            &desc,
+            &otsc
+        );
         if (result != ovrResult.Success)
         {
             throw new VeldridException($"Failed to call ovr_CreateTextureSwapChainDX: {result}");
@@ -434,7 +519,8 @@ internal unsafe class OculusSwapchain
             ovr_GetTextureSwapChainBufferDX(session, otsc, i, s_d3d11Tex2DGuid, &nativeTexture);
             textures[i] = gd.ResourceFactory.CreateTexture(
                 (ulong)nativeTexture,
-                OculusUtil.GetVeldridTextureDescription(desc));
+                OculusUtil.GetVeldridTextureDescription(desc)
+            );
         }
 
         return (otsc, textures);
@@ -443,27 +529,31 @@ internal unsafe class OculusSwapchain
     static (ovrTextureSwapChain, Texture[]) CreateSwapchainGL(
         ovrSession session,
         GraphicsDevice gd,
-        ovrTextureSwapChainDesc desc)
+        ovrTextureSwapChainDesc desc
+    )
     {
         ovrTextureSwapChain otsc = default;
         Texture[]? textures = default;
 
         ovrResult result = ovrResult.Success;
-        gd.GetOpenGLInfo().ExecuteOnGLThread(() =>
-        {
-            ovrTextureSwapChainDesc localDesc = desc;
-            localDesc.MiscFlags &= ~(ovrTextureMiscFlags.DX_Typeless | ovrTextureMiscFlags.AllowGenerateMips);
-            localDesc.BindFlags = ovrTextureBindFlags.None;
-
-            ovrTextureSwapChain sc;
-            result = ovr_CreateTextureSwapChainGL(session, &localDesc, &sc);
-
-            if (result != ovrResult.Success)
+        gd.GetOpenGLInfo()
+            .ExecuteOnGLThread(() =>
             {
-                return;
-            }
-            otsc = sc;
-        });
+                ovrTextureSwapChainDesc localDesc = desc;
+                localDesc.MiscFlags &= ~(
+                    ovrTextureMiscFlags.DX_Typeless | ovrTextureMiscFlags.AllowGenerateMips
+                );
+                localDesc.BindFlags = ovrTextureBindFlags.None;
+
+                ovrTextureSwapChain sc;
+                result = ovr_CreateTextureSwapChainGL(session, &localDesc, &sc);
+
+                if (result != ovrResult.Success)
+                {
+                    return;
+                }
+                otsc = sc;
+            });
 
         if (otsc.IsNull)
         {
@@ -479,7 +569,8 @@ internal unsafe class OculusSwapchain
             ovr_GetTextureSwapChainBufferGL(session, otsc, i, &glID);
             textures[i] = gd.ResourceFactory.CreateTexture(
                 glID,
-                OculusUtil.GetVeldridTextureDescription(desc));
+                OculusUtil.GetVeldridTextureDescription(desc)
+            );
         }
 
         return (otsc, textures);
@@ -516,9 +607,15 @@ internal unsafe class OculusSwapchain
     public void Commit()
     {
         ovrResult result = ovr_CommitTextureSwapChain(_session, ColorChain);
-        if (result != ovrResult.Success) { throw new InvalidOperationException(); }
+        if (result != ovrResult.Success)
+        {
+            throw new InvalidOperationException();
+        }
 
         result = ovr_CommitTextureSwapChain(_session, DepthChain);
-        if (result != ovrResult.Success) { throw new InvalidOperationException(); }
+        if (result != ovrResult.Success)
+        {
+            throw new InvalidOperationException();
+        }
     }
 }

@@ -1,9 +1,9 @@
-﻿using ImGuiNET;
-using SixLabors.ImageSharp;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using ImGuiNET;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid.NeoDemo;
 using Veldrid.Sdl2;
@@ -33,16 +33,19 @@ internal class Program
 
         Sdl2Window window = VeldridStartup.CreateWindow(
             new WindowCreateInfo(
-                Sdl2Native.SDL_WINDOWPOS_CENTERED, Sdl2Native.SDL_WINDOWPOS_CENTERED,
-                1280, 720,
+                Sdl2Native.SDL_WINDOWPOS_CENTERED,
+                Sdl2Native.SDL_WINDOWPOS_CENTERED,
+                1280,
+                720,
                 WindowState.Normal,
-                "Veldrid.VirtualReality Sample"));
+                "Veldrid.VirtualReality Sample"
+            )
+        );
 
-        VRContextOptions options = new()
-        {
-            EyeFramebufferSampleCount = TextureSampleCount.Count4
-        };
-        VRContext vrContext = _useOculus ? VRContext.CreateOculus(options) : VRContext.CreateOpenVR(options);
+        VRContextOptions options = new() { EyeFramebufferSampleCount = TextureSampleCount.Count4 };
+        VRContext vrContext = _useOculus
+            ? VRContext.CreateOculus(options)
+            : VRContext.CreateOpenVR(options);
 
         GraphicsBackend backend = GraphicsBackend.Direct3D11;
 
@@ -51,7 +54,15 @@ internal class Program
         debug = true;
 #endif
 
-        GraphicsDeviceOptions gdo = new(debug, null, false, ResourceBindingModel.Improved, true, true, true);
+        GraphicsDeviceOptions gdo = new(
+            debug,
+            null,
+            false,
+            ResourceBindingModel.Improved,
+            true,
+            true,
+            true
+        );
 
         if (backend == GraphicsBackend.Vulkan)
         {
@@ -59,19 +70,31 @@ internal class Program
             gdo.Debug = false;
         }
 
-        (GraphicsDevice gd, Swapchain sc) = CreateDeviceAndSwapchain(window, vrContext, backend, gdo);
+        (GraphicsDevice gd, Swapchain sc) = CreateDeviceAndSwapchain(
+            window,
+            vrContext,
+            backend,
+            gdo
+        );
         window.Resized += () => sc.Resize((uint)window.Width, (uint)window.Height);
 
         vrContext.Initialize(gd);
 
-        ImGuiRenderer igr = new(gd, sc.Framebuffer.OutputDescription, window.Width, window.Height, ColorSpaceHandling.Linear);
+        ImGuiRenderer igr = new(
+            gd,
+            sc.Framebuffer.OutputDescription,
+            window.Width,
+            window.Height,
+            ColorSpaceHandling.Linear
+        );
         window.Resized += () => igr.WindowResized(window.Width, window.Height);
 
         AssimpMesh mesh = new(
             gd,
             vrContext.LeftEyeFramebuffer.OutputDescription,
             Path.Combine(AppContext.BaseDirectory, "cat", "cat.obj"),
-            Path.Combine(AppContext.BaseDirectory, "cat", "cat_diff.png"));
+            Path.Combine(AppContext.BaseDirectory, "cat", "cat_diff.png")
+        );
 
         Skybox skybox = new(
             Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
@@ -79,7 +102,8 @@ internal class Program
             Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_lf.png")),
             Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_rt.png")),
             Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_up.png")),
-            Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_dn.png")));
+            Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_dn.png"))
+        );
         skybox.CreateDeviceObjects(gd, vrContext.LeftEyeFramebuffer.OutputDescription);
 
         CommandList windowCL = gd.ResourceFactory.CreateCommandList();
@@ -97,7 +121,10 @@ internal class Program
             lastFrameTime = newFrameTime;
 
             InputSnapshot snapshot = window.PumpEvents();
-            if (!window.Exists) { break; }
+            if (!window.Exists)
+            {
+                break;
+            }
             InputTracker.UpdateFrameInput(snapshot, window);
             HandleInputs(deltaSeconds);
 
@@ -109,15 +136,33 @@ internal class Program
                 {
                     if (ImGui.BeginMenu("Mirror Texture"))
                     {
-                        if (ImGui.MenuItem("Both Eyes", null, eyeSource == MirrorTextureEyeSource.BothEyes))
+                        if (
+                            ImGui.MenuItem(
+                                "Both Eyes",
+                                null,
+                                eyeSource == MirrorTextureEyeSource.BothEyes
+                            )
+                        )
                         {
                             eyeSource = MirrorTextureEyeSource.BothEyes;
                         }
-                        if (ImGui.MenuItem("Left Eye", null, eyeSource == MirrorTextureEyeSource.LeftEye))
+                        if (
+                            ImGui.MenuItem(
+                                "Left Eye",
+                                null,
+                                eyeSource == MirrorTextureEyeSource.LeftEye
+                            )
+                        )
                         {
                             eyeSource = MirrorTextureEyeSource.LeftEye;
                         }
-                        if (ImGui.MenuItem("Right Eye", null, eyeSource == MirrorTextureEyeSource.RightEye))
+                        if (
+                            ImGui.MenuItem(
+                                "Right Eye",
+                                null,
+                                eyeSource == MirrorTextureEyeSource.RightEye
+                            )
+                        )
                         {
                             eyeSource = MirrorTextureEyeSource.RightEye;
                         }
@@ -162,13 +207,37 @@ internal class Program
             eyesCL.Begin();
 
             eyesCL.PushDebugGroup("Left Eye");
-            Matrix4x4 leftView = poses.CreateView(VREye.Left, _userPosition, -Vector3.UnitZ, Vector3.UnitY);
-            RenderEye(eyesCL, vrContext.LeftEyeFramebuffer, mesh, skybox, poses.LeftEyeProjection, leftView);
+            Matrix4x4 leftView = poses.CreateView(
+                VREye.Left,
+                _userPosition,
+                -Vector3.UnitZ,
+                Vector3.UnitY
+            );
+            RenderEye(
+                eyesCL,
+                vrContext.LeftEyeFramebuffer,
+                mesh,
+                skybox,
+                poses.LeftEyeProjection,
+                leftView
+            );
             eyesCL.PopDebugGroup();
 
             eyesCL.PushDebugGroup("Right Eye");
-            Matrix4x4 rightView = poses.CreateView(VREye.Right, _userPosition, -Vector3.UnitZ, Vector3.UnitY);
-            RenderEye(eyesCL, vrContext.RightEyeFramebuffer, mesh, skybox, poses.RightEyeProjection, rightView);
+            Matrix4x4 rightView = poses.CreateView(
+                VREye.Right,
+                _userPosition,
+                -Vector3.UnitZ,
+                Vector3.UnitY
+            );
+            RenderEye(
+                eyesCL,
+                vrContext.RightEyeFramebuffer,
+                mesh,
+                skybox,
+                poses.RightEyeProjection,
+                rightView
+            );
             eyesCL.PopDebugGroup();
 
             eyesCL.End();
@@ -189,26 +258,45 @@ internal class Program
         gd.Dispose();
     }
 
-    static void RenderEye(CommandList cl, Framebuffer fb, AssimpMesh mesh, Skybox skybox, Matrix4x4 proj, Matrix4x4 view)
+    static void RenderEye(
+        CommandList cl,
+        Framebuffer fb,
+        AssimpMesh mesh,
+        Skybox skybox,
+        Matrix4x4 proj,
+        Matrix4x4 view
+    )
     {
         cl.SetFramebuffer(fb);
         cl.ClearDepthStencil(1f);
         cl.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
 
-        mesh.Render(cl, new UBO(
-            proj,
-            view,
-            Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(0f, -1, -2f)));
+        mesh.Render(
+            cl,
+            new UBO(
+                proj,
+                view,
+                Matrix4x4.CreateScale(1f) * Matrix4x4.CreateTranslation(0f, -1, -2f)
+            )
+        );
 
-        mesh.Render(cl, new UBO(
-            proj,
-            view,
-            Matrix4x4.CreateScale(0.66f) * Matrix4x4.CreateTranslation(-0.5f, -1, -2f)));
+        mesh.Render(
+            cl,
+            new UBO(
+                proj,
+                view,
+                Matrix4x4.CreateScale(0.66f) * Matrix4x4.CreateTranslation(-0.5f, -1, -2f)
+            )
+        );
 
-        mesh.Render(cl, new UBO(
-            proj,
-            view,
-            Matrix4x4.CreateScale(1.5f) * Matrix4x4.CreateTranslation(0.5f, -1, -2f)));
+        mesh.Render(
+            cl,
+            new UBO(
+                proj,
+                view,
+                Matrix4x4.CreateScale(1.5f) * Matrix4x4.CreateTranslation(0.5f, -1, -2f)
+            )
+        );
 
         skybox.Render(cl, fb, proj, view);
     }
@@ -217,12 +305,30 @@ internal class Program
     {
         Vector3 motionDir = Vector3.Zero;
 
-        if (InputTracker.GetKey(Key.W)) { motionDir += -Vector3.UnitZ; }
-        if (InputTracker.GetKey(Key.A)) { motionDir += -Vector3.UnitX; }
-        if (InputTracker.GetKey(Key.S)) { motionDir += Vector3.UnitZ; }
-        if (InputTracker.GetKey(Key.D)) { motionDir += Vector3.UnitX; }
-        if (InputTracker.GetKey(Key.Q)) { motionDir += -Vector3.UnitY; }
-        if (InputTracker.GetKey(Key.E)) { motionDir += Vector3.UnitY; }
+        if (InputTracker.GetKey(Key.W))
+        {
+            motionDir += -Vector3.UnitZ;
+        }
+        if (InputTracker.GetKey(Key.A))
+        {
+            motionDir += -Vector3.UnitX;
+        }
+        if (InputTracker.GetKey(Key.S))
+        {
+            motionDir += Vector3.UnitZ;
+        }
+        if (InputTracker.GetKey(Key.D))
+        {
+            motionDir += Vector3.UnitX;
+        }
+        if (InputTracker.GetKey(Key.Q))
+        {
+            motionDir += -Vector3.UnitY;
+        }
+        if (InputTracker.GetKey(Key.E))
+        {
+            motionDir += Vector3.UnitY;
+        }
 
         if (motionDir != Vector3.Zero)
         {
@@ -235,17 +341,24 @@ internal class Program
         Sdl2Window window,
         VRContext vrc,
         GraphicsBackend backend,
-        GraphicsDeviceOptions gdo)
+        GraphicsDeviceOptions gdo
+    )
     {
         if (backend == GraphicsBackend.Vulkan)
         {
             (string[] instance, string[] device) = vrc.GetRequiredVulkanExtensions();
             VulkanDeviceOptions vdo = new(instance, device);
             GraphicsDevice gd = GraphicsDevice.CreateVulkan(gdo, vdo);
-            Swapchain sc = gd.ResourceFactory.CreateSwapchain(new SwapchainDescription(
-                VeldridStartup.GetSwapchainSource(window),
-                (uint)window.Width, (uint)window.Height,
-                gdo.SwapchainDepthFormat, gdo.SyncToVerticalBlank, true));
+            Swapchain sc = gd.ResourceFactory.CreateSwapchain(
+                new SwapchainDescription(
+                    VeldridStartup.GetSwapchainSource(window),
+                    (uint)window.Width,
+                    (uint)window.Height,
+                    gdo.SwapchainDepthFormat,
+                    gdo.SyncToVerticalBlank,
+                    true
+                )
+            );
             return (gd, sc);
         }
         else

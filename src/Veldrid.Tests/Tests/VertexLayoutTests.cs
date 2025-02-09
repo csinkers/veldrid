@@ -16,17 +16,53 @@ public abstract class VertexLayoutTests<T> : GraphicsDeviceTestBase<T>
     [InlineData(0, 12, 12, 12, -1, false)]
     [InlineData(0, 12, 0, 36, -1, false)]
     [InlineData(0, 12, 28, 35, -1, false)]
-    public void ExplicitOffsets(uint firstOffset, uint secondOffset, uint thirdOffset, uint fourthOffset, int stride, bool succeeds)
+    public void ExplicitOffsets(
+        uint firstOffset,
+        uint secondOffset,
+        uint thirdOffset,
+        uint fourthOffset,
+        int stride,
+        bool succeeds
+    )
     {
         Texture outTex = RF.CreateTexture(
-            TextureDescription.Texture2D(1, 1, 1, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget));
+            TextureDescription.Texture2D(
+                1,
+                1,
+                1,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.RenderTarget
+            )
+        );
         Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, outTex));
 
         VertexLayoutDescription vertexLayoutDesc = new(
-            new VertexElementDescription("A_V3", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3, firstOffset),
-            new VertexElementDescription("B_V4", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4, secondOffset),
-            new VertexElementDescription("C_V2", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2, thirdOffset),
-            new VertexElementDescription("D_V4", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4, fourthOffset));
+            new VertexElementDescription(
+                "A_V3",
+                VertexElementSemantic.TextureCoordinate,
+                VertexElementFormat.Float3,
+                firstOffset
+            ),
+            new VertexElementDescription(
+                "B_V4",
+                VertexElementSemantic.TextureCoordinate,
+                VertexElementFormat.Float4,
+                secondOffset
+            ),
+            new VertexElementDescription(
+                "C_V2",
+                VertexElementSemantic.TextureCoordinate,
+                VertexElementFormat.Float2,
+                thirdOffset
+            ),
+            new VertexElementDescription(
+                "D_V4",
+                VertexElementSemantic.TextureCoordinate,
+                VertexElementFormat.Float4,
+                fourthOffset
+            )
+        );
 
         if (stride > 0)
         {
@@ -34,21 +70,23 @@ public abstract class VertexLayoutTests<T> : GraphicsDeviceTestBase<T>
         }
 
         ShaderSetDescription shaderSet = new(
-            [
-                vertexLayoutDesc
-            ],
-            TestShaders.LoadVertexFragment(RF, "VertexLayoutTestShader"));
+            [vertexLayoutDesc],
+            TestShaders.LoadVertexFragment(RF, "VertexLayoutTestShader")
+        );
 
         try
         {
-            RF.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-                BlendStateDescription.SingleOverrideBlend,
-                DepthStencilStateDescription.Disabled,
-                RasterizerStateDescription.Default,
-                PrimitiveTopology.TriangleList,
-                shaderSet,
-                [],
-                fb.OutputDescription));
+            RF.CreateGraphicsPipeline(
+                new GraphicsPipelineDescription(
+                    BlendStateDescription.SingleOverrideBlend,
+                    DepthStencilStateDescription.Disabled,
+                    RasterizerStateDescription.Default,
+                    PrimitiveTopology.TriangleList,
+                    shaderSet,
+                    [],
+                    fb.OutputDescription
+                )
+            );
         }
         catch when (!succeeds) { }
     }
@@ -71,6 +109,6 @@ public class VulkanVertexLayoutTests : VertexLayoutTests<VulkanDeviceCreator> { 
 public class D3D11VertexLayoutTests : VertexLayoutTests<D3D11DeviceCreator> { }
 #endif
 #if TEST_METAL
-    [Trait("Backend", "Metal")]
-    public class MetalVertexLayoutTests : RenderTests<MetalDeviceCreator> { }
+[Trait("Backend", "Metal")]
+public class MetalVertexLayoutTests : RenderTests<MetalDeviceCreator> { }
 #endif

@@ -39,7 +39,8 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
                 slot,
                 elements[i].Stages,
                 elements[i].Kind,
-                (elements[i].Options & ResourceLayoutElementOptions.DynamicBinding) != 0);
+                (elements[i].Options & ResourceLayoutElementOptions.DynamicBinding) != 0
+            );
         }
 
         UniformBufferCount = cbIndex;
@@ -54,7 +55,9 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
         {
             void Throw()
             {
-                throw new VeldridException($"Invalid resource index: {resourceLayoutIndex}. Maximum is: {_bindingInfosByVdIndex.Length - 1}.");
+                throw new VeldridException(
+                    $"Invalid resource index: {resourceLayoutIndex}. Maximum is: {_bindingInfosByVdIndex.Length - 1}."
+                );
             }
             Throw();
         }
@@ -75,7 +78,12 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
         _disposed = true;
     }
 
-    internal readonly struct ResourceBindingInfo(int slot, ShaderStages stages, ResourceKind kind, bool dynamicBuffer)
+    internal readonly struct ResourceBindingInfo(
+        int slot,
+        ShaderStages stages,
+        ResourceKind kind,
+        bool dynamicBuffer
+    )
     {
         public readonly int Slot = slot;
         public readonly ShaderStages Stages = stages;

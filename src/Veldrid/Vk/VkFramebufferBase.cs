@@ -7,7 +7,8 @@ internal abstract class VkFramebufferBase : Framebuffer, IResourceRefCountTarget
 {
     public VkFramebufferBase(
         FramebufferAttachmentDescription? depthTexture,
-        ReadOnlySpan<FramebufferAttachmentDescription> colorTextures)
+        ReadOnlySpan<FramebufferAttachmentDescription> colorTextures
+    )
         : base(depthTexture, colorTextures)
     {
         RefCount = new ResourceRefCount(this);

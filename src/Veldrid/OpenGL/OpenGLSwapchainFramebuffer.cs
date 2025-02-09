@@ -1,5 +1,4 @@
-﻿
-namespace Veldrid.OpenGL;
+﻿namespace Veldrid.OpenGL;
 
 internal sealed class OpenGLSwapchainFramebuffer : Framebuffer
 {
@@ -20,23 +19,25 @@ internal sealed class OpenGLSwapchainFramebuffer : Framebuffer
         uint height,
         PixelFormat colorFormat,
         PixelFormat? depthFormat,
-        bool disableSrgbConversion)
+        bool disableSrgbConversion
+    )
     {
         _depthFormat = depthFormat;
         // This is wrong, but it's not really used.
-        OutputAttachmentDescription? depthDesc = _depthFormat != null
-            ? new OutputAttachmentDescription(_depthFormat.Value)
-            : null;
+        OutputAttachmentDescription? depthDesc =
+            _depthFormat != null ? new OutputAttachmentDescription(_depthFormat.Value) : null;
         OutputDescription = new OutputDescription(
             depthDesc,
-            new OutputAttachmentDescription(colorFormat));
+            new OutputAttachmentDescription(colorFormat)
+        );
 
         _colorTexture = new OpenGLPlaceholderTexture(
             width,
             height,
             colorFormat,
             TextureUsage.RenderTarget,
-            TextureSampleCount.Count1);
+            TextureSampleCount.Count1
+        );
         _colorTargets = [new FramebufferAttachment(_colorTexture, 0)];
 
         if (_depthFormat != null)
@@ -46,7 +47,8 @@ internal sealed class OpenGLSwapchainFramebuffer : Framebuffer
                 height,
                 _depthFormat.Value,
                 TextureUsage.DepthStencil,
-                TextureSampleCount.Count1);
+                TextureSampleCount.Count1
+            );
             _depthTarget = new FramebufferAttachment(_depthTexture, 0);
         }
 

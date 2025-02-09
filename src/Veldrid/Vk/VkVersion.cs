@@ -3,8 +3,11 @@
 internal struct VkVersion
 {
     public static uint API_VERSION_VARIANT(uint version) => (version) >> 29;
+
     public static uint API_VERSION_MAJOR(uint version) => (version >> 22) & 0x7FU;
+
     public static uint API_VERSION_MINOR(uint version) => (version >> 12) & 0x3FFU;
+
     public static uint API_VERSION_PATCH(uint version) => (version) & 0xFFFU;
 
     public uint value;

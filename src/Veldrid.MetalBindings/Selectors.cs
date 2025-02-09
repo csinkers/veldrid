@@ -15,7 +15,8 @@ internal static class Selectors
     internal static readonly Selector level = "level"u8;
     internal static readonly Selector setLevel = "setLevel:"u8;
     internal static readonly Selector objectAtIndexedSubscript = "objectAtIndexedSubscript:"u8;
-    internal static readonly Selector setObjectAtIndexedSubscript = "setObject:atIndexedSubscript:"u8;
+    internal static readonly Selector setObjectAtIndexedSubscript =
+        "setObject:atIndexedSubscript:"u8;
     internal static readonly Selector pixelFormat = "pixelFormat"u8;
     internal static readonly Selector setPixelFormat = "setPixelFormat:"u8;
     internal static readonly Selector alloc = "alloc"u8;

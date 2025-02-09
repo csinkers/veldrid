@@ -22,8 +22,12 @@ public unsafe class BackendInfoVulkan
     {
         _gd = gd;
         _instanceLayers = new ReadOnlyCollection<string>(VulkanUtil.EnumerateInstanceLayers());
-        _instanceExtensions = new ReadOnlyCollection<string>(VulkanUtil.EnumerateInstanceExtensions());
-        _deviceExtensions = new Lazy<ReadOnlyCollection<ExtensionProperties>>(EnumerateDeviceExtensions);
+        _instanceExtensions = new ReadOnlyCollection<string>(
+            VulkanUtil.EnumerateInstanceExtensions()
+        );
+        _deviceExtensions = new Lazy<ReadOnlyCollection<ExtensionProperties>>(
+            EnumerateDeviceExtensions
+        );
     }
 
     /// <summary>
@@ -65,7 +69,8 @@ public unsafe class BackendInfoVulkan
 
     public ReadOnlyCollection<string> AvailableInstanceExtensions => _instanceExtensions;
 
-    public ReadOnlyCollection<ExtensionProperties> AvailableDeviceExtensions => _deviceExtensions.Value;
+    public ReadOnlyCollection<ExtensionProperties> AvailableDeviceExtensions =>
+        _deviceExtensions.Value;
 
     /// <summary>
     /// Overrides the current VkImageLayout tracked by the given Texture. This should be used when a VkImage is created by
@@ -97,8 +102,9 @@ public unsafe class BackendInfoVulkan
         if ((vkTexture.Usage & TextureUsage.Staging) != 0)
         {
             throw new VeldridException(
-                $"{nameof(GetVkImage)} cannot be used if the {nameof(Texture)} " +
-                $"has {nameof(TextureUsage)}.{nameof(TextureUsage.Staging)}.");
+                $"{nameof(GetVkImage)} cannot be used if the {nameof(Texture)} "
+                    + $"has {nameof(TextureUsage)}.{nameof(TextureUsage.Staging)}."
+            );
         }
 
         return vkTexture.OptimalDeviceImage.Value;
@@ -113,7 +119,10 @@ public unsafe class BackendInfoVulkan
     public void TransitionImageLayout(CommandList commandList, Texture texture, uint layout)
     {
         VkCommandList vkCL = Util.AssertSubtype<CommandList, VkCommandList>(commandList);
-        vkCL.TransitionImageLayout(Util.AssertSubtype<Texture, VkTexture>(texture), (VkImageLayout)layout);
+        vkCL.TransitionImageLayout(
+            Util.AssertSubtype<Texture, VkTexture>(texture),
+            (VkImageLayout)layout
+        );
     }
 
     /// <inheritdoc cref="TransitionImageLayout(CommandList, Texture, uint)"/>
@@ -121,7 +130,10 @@ public unsafe class BackendInfoVulkan
     public void TransitionImageLayout(Texture texture, uint layout)
     {
         VkCommandList cl = _gd.GetAndBeginCommandList();
-        cl.TransitionImageLayout(Util.AssertSubtype<Texture, VkTexture>(texture), (VkImageLayout)layout);
+        cl.TransitionImageLayout(
+            Util.AssertSubtype<Texture, VkTexture>(texture),
+            (VkImageLayout)layout
+        );
         _gd.EndAndSubmitCommands(cl);
     }
 
@@ -139,7 +151,10 @@ public unsafe class BackendInfoVulkan
         for (int i = 0; i < vkProps.Length; i++)
         {
             VkExtensionProperties prop = vkProps[i];
-            veldridProps[i] = new ExtensionProperties(Util.GetString(prop.extensionName), prop.specVersion);
+            veldridProps[i] = new ExtensionProperties(
+                Util.GetString(prop.extensionName),
+                prop.specVersion
+            );
         }
 
         return new ReadOnlyCollection<ExtensionProperties>(veldridProps);

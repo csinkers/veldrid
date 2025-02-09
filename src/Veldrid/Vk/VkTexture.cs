@@ -14,7 +14,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
     readonly VkMemoryBlock _memoryBlock;
     readonly VulkanBuffer _stagingBuffer;
     readonly uint _actualImageArrayLayers;
-        
+
     public uint ActualArrayLayers => _actualImageArrayLayers;
     public override bool IsDisposed => RefCount.IsDisposed;
 
@@ -42,9 +42,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         MipLevels = description.MipLevels;
         ArrayLayers = description.ArrayLayers;
         bool isCubemap = (description.Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap;
-        _actualImageArrayLayers = isCubemap
-            ? 6 * ArrayLayers
-            : ArrayLayers;
+        _actualImageArrayLayers = isCubemap ? 6 * ArrayLayers : ArrayLayers;
         Format = description.Format;
         Usage = description.Usage;
         Type = description.Type;
@@ -66,14 +64,16 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                 {
                     width = Width,
                     height = Height,
-                    depth = Depth
+                    depth = Depth,
                 },
                 initialLayout = VkImageLayout.VK_IMAGE_LAYOUT_PREINITIALIZED,
                 usage = VkFormats.VdToVkTextureUsage(Usage),
-                tiling = isStaging ? VkImageTiling.VK_IMAGE_TILING_LINEAR : VkImageTiling.VK_IMAGE_TILING_OPTIMAL,
+                tiling = isStaging
+                    ? VkImageTiling.VK_IMAGE_TILING_LINEAR
+                    : VkImageTiling.VK_IMAGE_TILING_OPTIMAL,
                 format = VkFormat,
                 flags = VkImageCreateFlags.VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT,
-                samples = VkSampleCount
+                samples = VkSampleCount,
             };
 
             if (isCubemap)
@@ -94,20 +94,22 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                 VkImageMemoryRequirementsInfo2 memReqsInfo2 = new()
                 {
                     sType = VkStructureType.VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2,
-                    image = _optimalImage
+                    image = _optimalImage,
                 };
                 VkMemoryDedicatedRequirements dedicatedReqs = new()
                 {
-                    sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS
+                    sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS,
                 };
                 VkMemoryRequirements2 memReqs2 = new()
                 {
                     sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2,
-                    pNext = &dedicatedReqs
+                    pNext = &dedicatedReqs,
                 };
                 _gd.GetImageMemoryRequirements2(_gd.Device, &memReqsInfo2, &memReqs2);
                 memoryRequirements = memReqs2.memoryRequirements;
-                prefersDedicatedAllocation = dedicatedReqs.prefersDedicatedAllocation | dedicatedReqs.requiresDedicatedAllocation;
+                prefersDedicatedAllocation =
+                    dedicatedReqs.prefersDedicatedAllocation
+                    | dedicatedReqs.requiresDedicatedAllocation;
             }
             else
             {
@@ -124,9 +126,15 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                 memoryRequirements.alignment,
                 prefersDedicatedAllocation,
                 _optimalImage,
-                default);
+                default
+            );
             _memoryBlock = memoryToken;
-            result = vkBindImageMemory(gd.Device, _optimalImage, _memoryBlock.DeviceMemory, _memoryBlock.Offset);
+            result = vkBindImageMemory(
+                gd.Device,
+                _optimalImage,
+                _memoryBlock.DeviceMemory,
+                _memoryBlock.Offset
+            );
             CheckResult(result);
 
             _imageLayouts = new VkImageLayout[subresourceCount];
@@ -137,16 +145,24 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
             uint depthPitch = FormatHelpers.GetDepthPitch(
                 FormatHelpers.GetRowPitch(Width, Format),
                 Height,
-                Format);
+                Format
+            );
             uint stagingSize = depthPitch * Depth;
             for (uint level = 1; level < MipLevels; level++)
             {
-                Util.GetMipDimensions(this, level, out uint mipWidth, out uint mipHeight, out uint mipDepth);
+                Util.GetMipDimensions(
+                    this,
+                    level,
+                    out uint mipWidth,
+                    out uint mipHeight,
+                    out uint mipDepth
+                );
 
                 depthPitch = FormatHelpers.GetDepthPitch(
                     FormatHelpers.GetRowPitch(mipWidth, Format),
                     mipHeight,
-                    Format);
+                    Format
+                );
 
                 stagingSize += depthPitch * mipDepth;
             }
@@ -155,8 +171,10 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
             VkBufferCreateInfo bufferCI = new()
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-                usage = VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                size = stagingSize
+                usage =
+                    VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_SRC_BIT
+                    | VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                size = stagingSize,
             };
             VulkanBuffer stagingBuffer;
             VkResult result = vkCreateBuffer(_gd.Device, &bufferCI, null, &stagingBuffer);
@@ -170,20 +188,22 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                 VkBufferMemoryRequirementsInfo2 memReqInfo2 = new()
                 {
                     sType = VkStructureType.VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2,
-                    buffer = _stagingBuffer
+                    buffer = _stagingBuffer,
                 };
                 VkMemoryDedicatedRequirements dedicatedReqs = new()
                 {
-                    sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS
+                    sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS,
                 };
                 VkMemoryRequirements2 memReqs2 = new()
                 {
                     sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2,
-                    pNext = &dedicatedReqs
+                    pNext = &dedicatedReqs,
                 };
                 _gd.GetBufferMemoryRequirements2(_gd.Device, &memReqInfo2, &memReqs2);
                 bufferMemReqs = memReqs2.memoryRequirements;
-                prefersDedicatedAllocation = dedicatedReqs.prefersDedicatedAllocation | dedicatedReqs.requiresDedicatedAllocation;
+                prefersDedicatedAllocation =
+                    dedicatedReqs.prefersDedicatedAllocation
+                    | dedicatedReqs.requiresDedicatedAllocation;
             }
             else
             {
@@ -193,11 +213,18 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
 
             // Use "host cached" memory when available, for better performance of GPU -> CPU transfers
             VkMemoryPropertyFlags propertyFlags =
-                VkMemoryPropertyFlags.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                VkMemoryPropertyFlags.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
-                VkMemoryPropertyFlags.VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+                VkMemoryPropertyFlags.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+                | VkMemoryPropertyFlags.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+                | VkMemoryPropertyFlags.VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
 
-            if (!TryFindMemoryType(_gd.PhysicalDeviceMemProperties, bufferMemReqs.memoryTypeBits, propertyFlags, out _))
+            if (
+                !TryFindMemoryType(
+                    _gd.PhysicalDeviceMemProperties,
+                    bufferMemReqs.memoryTypeBits,
+                    propertyFlags,
+                    out _
+                )
+            )
             {
                 propertyFlags ^= VkMemoryPropertyFlags.VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
             }
@@ -211,9 +238,15 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                 bufferMemReqs.alignment,
                 prefersDedicatedAllocation,
                 default,
-                _stagingBuffer);
+                _stagingBuffer
+            );
 
-            result = vkBindBufferMemory(_gd.Device, _stagingBuffer, _memoryBlock.DeviceMemory, _memoryBlock.Offset);
+            result = vkBindBufferMemory(
+                _gd.Device,
+                _stagingBuffer,
+                _memoryBlock.DeviceMemory,
+                _memoryBlock.Offset
+            );
             CheckResult(result);
 
             _imageLayouts = [];
@@ -236,7 +269,8 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         TextureSampleCount sampleCount,
         VkImage existingImage,
         bool isSwapchainTexture,
-        bool leaveOpen)
+        bool leaveOpen
+    )
     {
         Debug.Assert(width > 0 && height > 0);
         _gd = gd;
@@ -248,9 +282,7 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         Format = VkFormats.VkToVdPixelFormat(VkFormat);
         ArrayLayers = arrayLayers;
         bool isCubemap = (usage & TextureUsage.Cubemap) == TextureUsage.Cubemap;
-        _actualImageArrayLayers = isCubemap
-            ? 6 * ArrayLayers
-            : ArrayLayers;
+        _actualImageArrayLayers = isCubemap ? 6 * ArrayLayers : ArrayLayers;
         Usage = usage;
         Type = TextureType.Texture2D;
         SampleCount = sampleCount;
@@ -297,14 +329,18 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         bool staging = _stagingBuffer != VulkanBuffer.NULL;
         if (!staging)
         {
-            VkImageAspectFlags aspect = (Usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil
-                ? (VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT)
-                : VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
+            VkImageAspectFlags aspect =
+                (Usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil
+                    ? (
+                        VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                        | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
+                    )
+                    : VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
             VkImageSubresource imageSubresource = new()
             {
                 arrayLayer = arrayLevel,
                 mipLevel = mipLevel,
-                aspectMask = aspect
+                aspectMask = aspect,
             };
 
             vkGetImageSubresourceLayout(_gd.Device, _optimalImage, &imageSubresource, &layout);
@@ -322,7 +358,12 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         return layout;
     }
 
-    internal override void GetSubresourceLayout(uint mipLevel, uint arrayLevel, out uint rowPitch, out uint depthPitch)
+    internal override void GetSubresourceLayout(
+        uint mipLevel,
+        uint arrayLevel,
+        out uint rowPitch,
+        out uint depthPitch
+    )
     {
         VkSubresourceLayout layout = GetSubresourceLayout(mipLevel, arrayLevel);
         rowPitch = (uint)layout.rowPitch;
@@ -342,7 +383,8 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         uint levelCount,
         uint baseArrayLayer,
         uint layerCount,
-        VkImageLayout newLayout)
+        VkImageLayout newLayout
+    )
     {
         if (_stagingBuffer != VulkanBuffer.NULL)
         {
@@ -371,7 +413,8 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
             if ((Usage & TextureUsage.DepthStencil) != 0)
             {
                 aspectMask = FormatHelpers.IsStencilFormat(Format)
-                    ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
+                    ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                        | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
                     : VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
             }
             else
@@ -387,7 +430,8 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                 layerCount,
                 aspectMask,
                 oldLayout,
-                newLayout);
+                newLayout
+            );
 
             for (uint layer = 0; layer < layerCount; layer++)
             {
@@ -405,7 +449,8 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
         uint levelCount,
         uint baseArrayLayer,
         uint layerCount,
-        VkImageLayout newLayout)
+        VkImageLayout newLayout
+    )
     {
         if (_stagingBuffer != VulkanBuffer.NULL)
         {
@@ -423,7 +468,8 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                     if ((Usage & TextureUsage.DepthStencil) != 0)
                     {
                         aspectMask = FormatHelpers.IsStencilFormat(Format)
-                            ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
+                            ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                                | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
                             : VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
                     }
                     else
@@ -440,7 +486,8 @@ internal sealed unsafe class VkTexture : Texture, IResourceRefCountTarget
                         1,
                         aspectMask,
                         oldLayout,
-                        newLayout);
+                        newLayout
+                    );
 
                     SetImageLayout(level, layer, newLayout);
                 }

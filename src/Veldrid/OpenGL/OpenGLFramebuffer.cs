@@ -1,12 +1,14 @@
-﻿using static Veldrid.OpenGLBinding.OpenGLNative;
-using static Veldrid.OpenGL.OpenGLUtil;
+﻿using System;
 using Veldrid.OpenGLBinding;
-using System;
+using static Veldrid.OpenGL.OpenGLUtil;
+using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in FramebufferDescription description)
-    : Framebuffer(description.DepthTarget, description.ColorTargets), OpenGLDeferredResource
+internal sealed unsafe class OpenGLFramebuffer(
+    OpenGLGraphicsDevice gd,
+    in FramebufferDescription description
+) : Framebuffer(description.DepthTarget, description.ColorTargets), OpenGLDeferredResource
 {
     uint _framebuffer;
 
@@ -15,7 +17,15 @@ internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in Frame
     bool _disposeRequested;
     bool _disposed;
 
-    public override string? Name { get => _name; set { _name = value; _nameChanged = true; } }
+    public override string? Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            _nameChanged = true;
+        }
+    }
 
     public uint Framebuffer => _framebuffer;
 
@@ -56,7 +66,9 @@ internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in Frame
             for (int i = 0; i < colorTargets.Length; i++)
             {
                 FramebufferAttachment colorAttachment = colorTargets[i];
-                OpenGLTexture glTex = Util.AssertSubtype<Texture, OpenGLTexture>(colorAttachment.Target);
+                OpenGLTexture glTex = Util.AssertSubtype<Texture, OpenGLTexture>(
+                    colorAttachment.Target
+                );
                 glTex.EnsureResourcesCreated();
 
                 gd.TextureSamplerManager.SetTextureTransient(glTex.TextureTarget, glTex.Texture);
@@ -70,7 +82,8 @@ internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in Frame
                         GLFramebufferAttachment.ColorAttachment0 + i,
                         textureTarget,
                         glTex.Texture,
-                        (int)colorAttachment.MipLevel);
+                        (int)colorAttachment.MipLevel
+                    );
                 }
                 else
                 {
@@ -79,7 +92,8 @@ internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in Frame
                         GLFramebufferAttachment.ColorAttachment0 + i,
                         glTex.Texture,
                         (int)colorAttachment.MipLevel,
-                        (int)colorAttachment.ArrayLayer);
+                        (int)colorAttachment.ArrayLayer
+                    );
                 }
                 CheckLastError();
             }
@@ -99,7 +113,9 @@ internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in Frame
         {
             FramebufferAttachment depthTargetValue = DepthTarget.GetValueOrDefault();
 
-            OpenGLTexture glDepthTex = Util.AssertSubtype<Texture, OpenGLTexture>(depthTargetValue.Target);
+            OpenGLTexture glDepthTex = Util.AssertSubtype<Texture, OpenGLTexture>(
+                depthTargetValue.Target
+            );
             glDepthTex.EnsureResourcesCreated();
             depthTarget = glDepthTex.TextureTarget;
 
@@ -122,7 +138,8 @@ internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in Frame
                     framebufferAttachment,
                     depthTarget,
                     depthTextureID,
-                    (int)depthTargetValue.MipLevel);
+                    (int)depthTargetValue.MipLevel
+                );
             }
             else
             {
@@ -131,10 +148,10 @@ internal sealed unsafe class OpenGLFramebuffer(OpenGLGraphicsDevice gd, in Frame
                     framebufferAttachment,
                     glDepthTex.Texture,
                     (int)depthTargetValue.MipLevel,
-                    (int)depthTargetValue.ArrayLayer);
+                    (int)depthTargetValue.ArrayLayer
+                );
             }
             CheckLastError();
-
         }
 
         FramebufferErrorCode errorCode = glCheckFramebufferStatus(FramebufferTarget.Framebuffer);

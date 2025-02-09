@@ -20,7 +20,8 @@ public abstract class SwapchainSource
     /// <param name="hinstance">The Win32 instance handle.</param>
     /// <returns>A new SwapchainSource which can be used to create a <see cref="Swapchain"/> for the given Win32 window.
     /// </returns>
-    public static SwapchainSource CreateWin32(IntPtr hwnd, IntPtr hinstance) => new Win32SwapchainSource(hwnd, hinstance);
+    public static SwapchainSource CreateWin32(IntPtr hwnd, IntPtr hinstance) =>
+        new Win32SwapchainSource(hwnd, hinstance);
 
     /// <summary>
     /// Creates a new SwapchainSource for a UWP SwapChain panel.
@@ -31,13 +32,13 @@ public abstract class SwapchainSource
     /// <param name="logicalDpi">The logical DPI of the swapchain panel.</param>
     /// <returns>A new SwapchainSource which can be used to create a <see cref="Swapchain"/> for the given UWP panel.
     /// </returns>
-    public static SwapchainSource CreateUwp(IntPtr swapChainPanel, float logicalDpi)
-        => new UwpSwapchainSource(swapChainPanel, logicalDpi);
+    public static SwapchainSource CreateUwp(IntPtr swapChainPanel, float logicalDpi) =>
+        new UwpSwapchainSource(swapChainPanel, logicalDpi);
 
     /// <inheritdoc cref="CreateUwp(IntPtr, float)"/>
     [SupportedOSPlatform("windows")]
-    public static SwapchainSource CreateUwp(object swapChainPanel, float logicalDpi)
-        => new UwpSwapchainSource(Marshal.GetIUnknownForObject(swapChainPanel), logicalDpi);
+    public static SwapchainSource CreateUwp(object swapChainPanel, float logicalDpi) =>
+        new UwpSwapchainSource(Marshal.GetIUnknownForObject(swapChainPanel), logicalDpi);
 
     /// <summary>
     /// Creates a new SwapchainSource from the given Xlib information.
@@ -46,7 +47,8 @@ public abstract class SwapchainSource
     /// <param name="window">An Xlib Window.</param>
     /// <returns>A new SwapchainSource which can be used to create a <see cref="Swapchain"/> for the given Xlib window.
     /// </returns>
-    public static SwapchainSource CreateXlib(IntPtr display, IntPtr window) => new XlibSwapchainSource(display, window);
+    public static SwapchainSource CreateXlib(IntPtr display, IntPtr window) =>
+        new XlibSwapchainSource(display, window);
 
     /// <summary>
     /// Creates a new SwapchainSource from the given Wayland information.
@@ -55,8 +57,8 @@ public abstract class SwapchainSource
     /// <param name="surface">The Wayland surface proxy to map.</param>
     /// <returns>A new SwapchainSource which can be used to create a <see cref="Swapchain"/> for the given Wayland surface.
     /// </returns>
-    public static SwapchainSource CreateWayland(IntPtr display, IntPtr surface) => new WaylandSwapchainSource(display, surface);
-
+    public static SwapchainSource CreateWayland(IntPtr display, IntPtr surface) =>
+        new WaylandSwapchainSource(display, surface);
 
     /// <summary>
     /// Creates a new SwapchainSource for the given NSWindow.
@@ -64,7 +66,8 @@ public abstract class SwapchainSource
     /// <param name="nsWindow">A pointer to an NSWindow.</param>
     /// <returns>A new SwapchainSource which can be used to create a Metal <see cref="Swapchain"/> for the given NSWindow.
     /// </returns>
-    public static SwapchainSource CreateNSWindow(IntPtr nsWindow) => new NSWindowSwapchainSource(nsWindow);
+    public static SwapchainSource CreateNSWindow(IntPtr nsWindow) =>
+        new NSWindowSwapchainSource(nsWindow);
 
     /// <summary>
     /// Creates a new SwapchainSource for the given UIView.
@@ -82,8 +85,8 @@ public abstract class SwapchainSource
     /// <param name="jniEnv">The Java Native Interface Environment handle.</param>
     /// <returns>A new SwapchainSource which can be used to create a Vulkan <see cref="Swapchain"/> or an OpenGLES
     /// <see cref="GraphicsDevice"/> for the given Android Surface.</returns>
-    public static SwapchainSource CreateAndroidSurface(IntPtr surfaceHandle, IntPtr jniEnv)
-        => new AndroidSurfaceSwapchainSource(surfaceHandle, jniEnv);
+    public static SwapchainSource CreateAndroidSurface(IntPtr surfaceHandle, IntPtr jniEnv) =>
+        new AndroidSurfaceSwapchainSource(surfaceHandle, jniEnv);
 
     /// <summary>
     /// Creates a new SwapchainSource for the given Native Window.
@@ -91,8 +94,8 @@ public abstract class SwapchainSource
     /// <param name="aNativeWindow">The handle of the Native Window.</param>
     /// <returns>A new SwapchainSource which can be used to create a Vulkan <see cref="Swapchain"/> or an OpenGLES
     /// <see cref="GraphicsDevice"/> for the given Native Window.</returns>
-    public static SwapchainSource CreateAndroidWindow(IntPtr aNativeWindow)
-        => new AndroidWindowSwapchainSource(aNativeWindow);
+    public static SwapchainSource CreateAndroidWindow(IntPtr aNativeWindow) =>
+        new AndroidWindowSwapchainSource(aNativeWindow);
 
     /// <summary>
     /// Creates a new SwapchainSource for the given NSView.
@@ -100,8 +103,7 @@ public abstract class SwapchainSource
     /// <param name="nsView">A pointer to an NSView.</param>
     /// <returns>A new SwapchainSource which can be used to create a Metal <see cref="Swapchain"/> for the given NSView.
     /// </returns>
-    public static SwapchainSource CreateNSView(IntPtr nsView)
-        => new NSViewSwapchainSource(nsView);
+    public static SwapchainSource CreateNSView(IntPtr nsView) => new NSViewSwapchainSource(nsView);
 }
 
 internal sealed class Win32SwapchainSource(IntPtr hwnd, IntPtr hinstance) : SwapchainSource
@@ -110,7 +112,8 @@ internal sealed class Win32SwapchainSource(IntPtr hwnd, IntPtr hinstance) : Swap
     public IntPtr Hinstance { get; } = hinstance;
 }
 
-internal sealed class UwpSwapchainSource(IntPtr swapChainPanelNative, float logicalDpi) : SwapchainSource
+internal sealed class UwpSwapchainSource(IntPtr swapChainPanelNative, float logicalDpi)
+    : SwapchainSource
 {
     public IntPtr SwapChainPanelNative { get; } = swapChainPanelNative;
     public float LogicalDpi { get; } = logicalDpi;
@@ -138,7 +141,8 @@ internal sealed class UIViewSwapchainSource(IntPtr uiView) : SwapchainSource
     public IntPtr UIView { get; } = uiView;
 }
 
-internal sealed class AndroidSurfaceSwapchainSource(IntPtr surfaceHandle, IntPtr jniEnv) : SwapchainSource
+internal sealed class AndroidSurfaceSwapchainSource(IntPtr surfaceHandle, IntPtr jniEnv)
+    : SwapchainSource
 {
     public IntPtr Surface { get; } = surfaceHandle;
     public IntPtr JniEnv { get; } = jniEnv;

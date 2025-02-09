@@ -31,7 +31,10 @@ internal static class OpenGLFormats
         };
     }
 
-    internal static PixelInternalFormat VdToGLPixelInternalFormat(PixelFormat format, TextureUsage usage)
+    internal static PixelInternalFormat VdToGLPixelInternalFormat(
+        PixelFormat format,
+        TextureUsage usage
+    )
     {
         bool depthFormat = FormatHelpers.IsDepthFormatPreferred(format, usage);
 
@@ -41,14 +44,18 @@ internal static class OpenGLFormats
             PixelFormat.R8_SNorm => PixelInternalFormat.R8Snorm,
             PixelFormat.R8_UInt => PixelInternalFormat.R8ui,
             PixelFormat.R8_SInt => PixelInternalFormat.R8i,
-            PixelFormat.R16_UNorm => depthFormat ? PixelInternalFormat.DepthComponent16 : PixelInternalFormat.R16,
+            PixelFormat.R16_UNorm => depthFormat
+                ? PixelInternalFormat.DepthComponent16
+                : PixelInternalFormat.R16,
             PixelFormat.R16_SNorm => PixelInternalFormat.R16Snorm,
             PixelFormat.R16_UInt => PixelInternalFormat.R16ui,
             PixelFormat.R16_SInt => PixelInternalFormat.R16i,
             PixelFormat.R16_Float => PixelInternalFormat.R16f,
             PixelFormat.R32_UInt => PixelInternalFormat.R32ui,
             PixelFormat.R32_SInt => PixelInternalFormat.R32i,
-            PixelFormat.R32_Float => depthFormat ? PixelInternalFormat.DepthComponent32f : PixelInternalFormat.R32f,
+            PixelFormat.R32_Float => depthFormat
+                ? PixelInternalFormat.DepthComponent32f
+                : PixelInternalFormat.R32f,
             PixelFormat.R8_G8_UNorm => PixelInternalFormat.Rg8,
             PixelFormat.R8_G8_SNorm => PixelInternalFormat.Rg8Snorm,
             PixelFormat.R8_G8_UInt => PixelInternalFormat.Rg8ui,
@@ -91,7 +98,8 @@ internal static class OpenGLFormats
             PixelFormat.BC7_UNorm => PixelInternalFormat.CompressedRgbaBptcUnorm,
             PixelFormat.BC7_UNorm_SRgb => PixelInternalFormat.CompressedSrgbAlphaBptcUnorm,
             PixelFormat.ETC2_R8_G8_B8_UNorm => PixelInternalFormat.CompressedRgb8Etc2,
-            PixelFormat.ETC2_R8_G8_B8_A1_UNorm => PixelInternalFormat.CompressedRgb8PunchthroughAlpha1Etc2,
+            PixelFormat.ETC2_R8_G8_B8_A1_UNorm =>
+                PixelInternalFormat.CompressedRgb8PunchthroughAlpha1Etc2,
             PixelFormat.ETC2_R8_G8_B8_A8_UNorm => PixelInternalFormat.CompressedRgba8Etc2Eac,
             PixelFormat.D16_UNorm => PixelInternalFormat.DepthComponent16,
             PixelFormat.D32_Float => PixelInternalFormat.DepthComponent32f,
@@ -198,7 +206,9 @@ internal static class OpenGLFormats
             case PixelFormat.D16_UNorm:
                 return GLPixelFormat.DepthComponent;
             case PixelFormat.D16_UNorm_S8_UInt:
-                throw new VeldridException($"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on OpenGL.");
+                throw new VeldridException(
+                    $"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on OpenGL."
+                );
             case PixelFormat.D32_Float:
                 return GLPixelFormat.DepthComponent;
             case PixelFormat.D24_UNorm_S8_UInt:
@@ -217,7 +227,11 @@ internal static class OpenGLFormats
         }
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static GLPixelType VdToGLPixelType(PixelFormat format)
     {
         switch (format)
@@ -292,7 +306,9 @@ internal static class OpenGLFormats
                 return GLPixelType.UnsignedByte; // ?
 
             case PixelFormat.D16_UNorm_S8_UInt:
-                throw new VeldridException($"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on OpenGL.");
+                throw new VeldridException(
+                    $"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on OpenGL."
+                );
             case PixelFormat.D32_Float_S8_UInt:
                 return GLPixelType.Float32UnsignedInt248Rev;
             case PixelFormat.D24_UNorm_S8_UInt:
@@ -309,7 +325,10 @@ internal static class OpenGLFormats
         }
     }
 
-    internal static SizedInternalFormat VdToGLSizedInternalFormat(PixelFormat format, TextureUsage usage)
+    internal static SizedInternalFormat VdToGLSizedInternalFormat(
+        PixelFormat format,
+        TextureUsage usage
+    )
     {
         bool depthFormat = FormatHelpers.IsDepthFormatPreferred(format, usage);
 
@@ -325,7 +344,9 @@ internal static class OpenGLFormats
                 return SizedInternalFormat.R8i;
 
             case PixelFormat.R16_UNorm:
-                return depthFormat ? (SizedInternalFormat)PixelInternalFormat.DepthComponent16 : SizedInternalFormat.R16;
+                return depthFormat
+                    ? (SizedInternalFormat)PixelInternalFormat.DepthComponent16
+                    : SizedInternalFormat.R16;
             case PixelFormat.R16_SNorm:
                 return SizedInternalFormat.R16i;
             case PixelFormat.R16_UInt:
@@ -340,7 +361,9 @@ internal static class OpenGLFormats
             case PixelFormat.R32_SInt:
                 return SizedInternalFormat.R32i;
             case PixelFormat.R32_Float:
-                return depthFormat ? (SizedInternalFormat)PixelInternalFormat.DepthComponent32f : SizedInternalFormat.R32f;
+                return depthFormat
+                    ? (SizedInternalFormat)PixelInternalFormat.DepthComponent32f
+                    : SizedInternalFormat.R32f;
 
             case PixelFormat.R8_G8_UNorm:
                 return SizedInternalFormat.Rg8;
@@ -434,17 +457,24 @@ internal static class OpenGLFormats
             case PixelFormat.ETC2_R8_G8_B8_UNorm:
                 return (SizedInternalFormat)PixelInternalFormat.CompressedRgb8Etc2;
             case PixelFormat.ETC2_R8_G8_B8_A1_UNorm:
-                return (SizedInternalFormat)PixelInternalFormat.CompressedRgb8PunchthroughAlpha1Etc2;
+                return (SizedInternalFormat)
+                    PixelInternalFormat.CompressedRgb8PunchthroughAlpha1Etc2;
             case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
                 return (SizedInternalFormat)PixelInternalFormat.CompressedRgba8Etc2Eac;
 
             case PixelFormat.D16_UNorm:
-                return (SizedInternalFormat)(depthFormat ? PixelInternalFormat.DepthComponent16 : PixelInternalFormat.R16);
+                return (SizedInternalFormat)(
+                    depthFormat ? PixelInternalFormat.DepthComponent16 : PixelInternalFormat.R16
+                );
             case PixelFormat.D16_UNorm_S8_UInt:
                 Debug.Assert(depthFormat);
-                throw new VeldridException($"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on OpenGL.");
+                throw new VeldridException(
+                    $"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on OpenGL."
+                );
             case PixelFormat.D32_Float:
-                return (SizedInternalFormat)(depthFormat ? PixelInternalFormat.DepthComponent32f : PixelInternalFormat.R32f);
+                return (SizedInternalFormat)(
+                    depthFormat ? PixelInternalFormat.DepthComponent32f : PixelInternalFormat.R32f
+                );
             case PixelFormat.D32_Float_S8_UInt:
                 Debug.Assert(depthFormat);
                 return (SizedInternalFormat)PixelInternalFormat.Depth32fStencil8;
@@ -464,7 +494,12 @@ internal static class OpenGLFormats
         }
     }
 
-    internal static void VdToGLTextureMinMagFilter(SamplerFilter filter, bool mip, out TextureMinFilter min, out TextureMagFilter mag)
+    internal static void VdToGLTextureMinMagFilter(
+        SamplerFilter filter,
+        bool mip,
+        out TextureMinFilter min,
+        out TextureMagFilter mag
+    )
     {
         switch (filter)
         {
@@ -514,7 +549,9 @@ internal static class OpenGLFormats
         return mode switch
         {
             MapMode.Read => BufferAccessMask.Read,
-            MapMode.Write => BufferAccessMask.Write | BufferAccessMask.InvalidateBuffer | BufferAccessMask.InvalidateRange,
+            MapMode.Write => BufferAccessMask.Write
+                | BufferAccessMask.InvalidateBuffer
+                | BufferAccessMask.InvalidateRange,
             MapMode.ReadWrite => BufferAccessMask.Read | BufferAccessMask.Write,
             _ => Illegal.Value<MapMode, BufferAccessMask>(),
         };
@@ -523,7 +560,8 @@ internal static class OpenGLFormats
     internal static VertexAttribPointerType VdToGLVertexAttribPointerType(
         VertexElementFormat format,
         out bool normalized,
-        out bool isInteger)
+        out bool isInteger
+    )
     {
         switch (format)
         {
@@ -601,8 +639,16 @@ internal static class OpenGLFormats
         }
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
-    internal static bool IsFormatSupported(OpenGLExtensions extensions, PixelFormat format, GraphicsBackend backend)
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
+    internal static bool IsFormatSupported(
+        OpenGLExtensions extensions,
+        PixelFormat format,
+        GraphicsBackend backend
+    )
     {
         switch (format)
         {
@@ -625,12 +671,14 @@ internal static class OpenGLFormats
             case PixelFormat.BC4_SNorm:
             case PixelFormat.BC5_UNorm:
             case PixelFormat.BC5_SNorm:
-                return extensions.GLVersion(3, 0) || extensions.IsExtensionSupported("GL_ARB_texture_compression_rgtc");
+                return extensions.GLVersion(3, 0)
+                    || extensions.IsExtensionSupported("GL_ARB_texture_compression_rgtc");
 
             case PixelFormat.BC7_UNorm:
             case PixelFormat.BC7_UNorm_SRgb:
-                return extensions.GLVersion(4, 2) || extensions.IsExtensionSupported("GL_ARB_texture_compression_bptc")
-                                                  || extensions.IsExtensionSupported("GL_EXT_texture_compression_bptc");
+                return extensions.GLVersion(4, 2)
+                    || extensions.IsExtensionSupported("GL_ARB_texture_compression_bptc")
+                    || extensions.IsExtensionSupported("GL_EXT_texture_compression_bptc");
 
             case PixelFormat.B8_G8_R8_A8_UNorm:
             case PixelFormat.B8_G8_R8_A8_UNorm_SRgb:

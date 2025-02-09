@@ -46,7 +46,8 @@ internal sealed class ResourceRefCount(IResourceRefCountTarget target)
 
         // Might have to perform the following steps multiple times due to
         // interference from other Increment's and Release's.
-        int oldState, newState;
+        int oldState,
+            newState;
         do
         {
             // First step is to read the current handle state. We use this as a
@@ -65,8 +66,7 @@ internal sealed class ResourceRefCount(IResourceRefCountTarget target)
             // modifies the state field between the read and write operations) or
             // the state moves to closed.
             newState = oldState + StateBits.RefCountOne;
-        }
-        while (Interlocked.CompareExchange(ref _state, newState, oldState) != oldState);
+        } while (Interlocked.CompareExchange(ref _state, newState, oldState) != oldState);
 
         // If we got here we managed to update the ref count while the state
         // remained non closed. So we're done.
@@ -96,7 +96,8 @@ internal sealed class ResourceRefCount(IResourceRefCountTarget target)
 
         // Might have to perform the following steps multiple times due to
         // interference from other Increment's and Decrement's.
-        int oldState, newState;
+        int oldState,
+            newState;
         do
         {
             // First step is to read the current handle state. We use this cached
@@ -129,7 +130,8 @@ internal sealed class ResourceRefCount(IResourceRefCountTarget target)
             // currently invalid by asking the SafeHandle subclass. We must do this before
             // transitioning the handle to closed, however, since setting the closed
             // state will cause IsInvalid to always return true.]]
-            performRelease = (oldState & (StateBits.RefCount | StateBits.Closed)) == StateBits.RefCountOne;
+            performRelease =
+                (oldState & (StateBits.RefCount | StateBits.Closed)) == StateBits.RefCountOne;
 
             // Attempt the update to the new state, fail and retry if the initial
             // state has been modified in the meantime. Decrement the ref count by
@@ -145,8 +147,7 @@ internal sealed class ResourceRefCount(IResourceRefCountTarget target)
             {
                 newState |= StateBits.Disposed;
             }
-        }
-        while (Interlocked.CompareExchange(ref _state, newState, oldState) != oldState);
+        } while (Interlocked.CompareExchange(ref _state, newState, oldState) != oldState);
 
         // If we get here we successfully decremented the ref count. Additionally we
         // may have decremented it to zero and set the handle state as closed. In

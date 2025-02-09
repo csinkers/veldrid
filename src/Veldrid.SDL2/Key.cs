@@ -81,7 +81,7 @@ public enum Key
     /// OSes I've seen treat the two codes
     /// identically. So, as an implementor, unless
     /// your keyboard generates both of those
-    /// codes and your OS treats them differently, 
+    /// codes and your OS treats them differently,
     /// you should generate SDL_SCANCODE_BACKSLASH
     /// instead of this code. As a user, you
     /// should not rely on this code because SDL
@@ -373,7 +373,7 @@ public enum Key
     LeftAlt = SDL_Scancode.SDL_SCANCODE_LALT,
 
     /// <summary>
-    /// windows, command (apple), meta 
+    /// windows, command (apple), meta
     /// </summary>
     LeftGui = SDL_Scancode.SDL_SCANCODE_LGUI,
 
@@ -386,7 +386,7 @@ public enum Key
     RightAlt = SDL_Scancode.SDL_SCANCODE_RALT,
 
     /// <summary>
-    /// windows, command (apple), meta 
+    /// windows, command (apple), meta
     /// </summary>
     RightGui = SDL_Scancode.SDL_SCANCODE_RGUI,
 
@@ -396,7 +396,6 @@ public enum Key
     /// special KMOD_MODE for it I'm adding it here.
     /// </summary>
     Mode = SDL_Scancode.SDL_SCANCODE_MODE,
-
 
     // Usage page 0x0C
     // These values are mapped from usage page 0x0C (USB consumer page).
@@ -419,7 +418,6 @@ public enum Key
     AppControlRefresh = SDL_Scancode.SDL_SCANCODE_AC_REFRESH,
     AppControlBookmarks = SDL_Scancode.SDL_SCANCODE_AC_BOOKMARKS,
 
-
     // Walther keys
     // These are values that Christian Walther added (for mac keyboard?).
 
@@ -440,7 +438,6 @@ public enum Key
 
     App1 = SDL_Scancode.SDL_SCANCODE_APP1,
     App2 = SDL_Scancode.SDL_SCANCODE_APP2,
-
 
     // Add any other keys here.
 

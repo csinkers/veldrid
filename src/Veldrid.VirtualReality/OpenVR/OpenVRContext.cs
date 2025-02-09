@@ -39,12 +39,15 @@ internal class OpenVRContext : VRContext
         CVRSystem? vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene);
         if (initError != EVRInitError.None || vrSystem == null)
         {
-            throw new VeldridException($"Failed to initialize OpenVR: {OVR.GetStringForHmdError(initError)}");
+            throw new VeldridException(
+                $"Failed to initialize OpenVR: {OVR.GetStringForHmdError(initError)}"
+            );
         }
         _vrSystem = vrSystem;
 
-        _compositor = OVR.Compositor ?? throw new VeldridException("Failed to access the OpenVR Compositor.");
-            
+        _compositor =
+            OVR.Compositor ?? throw new VeldridException("Failed to access the OpenVR Compositor.");
+
         _mirrorTexture = new OpenVRMirrorTexture(this);
     }
 
@@ -71,7 +74,8 @@ internal class OpenVRContext : VRContext
             ETrackedDeviceProperty.Prop_TrackingSystemName_String,
             sb,
             512u,
-            ref error);
+            ref error
+        );
         if (error != ETrackedPropertyError.TrackedProp_Success)
         {
             _deviceName = "<Unknown OpenVR Device>";
@@ -121,15 +125,29 @@ internal class OpenVRContext : VRContext
         Matrix4x4 viewRight = absoluteToDevice * _headToEyeRight;
 
         Matrix4x4.Invert(viewLeft, out Matrix4x4 invViewLeft);
-        Matrix4x4.Decompose(invViewLeft, out _, out Quaternion leftRotation, out Vector3 leftPosition);
+        Matrix4x4.Decompose(
+            invViewLeft,
+            out _,
+            out Quaternion leftRotation,
+            out Vector3 leftPosition
+        );
 
         Matrix4x4.Invert(viewRight, out Matrix4x4 invViewRight);
-        Matrix4x4.Decompose(invViewRight, out _, out Quaternion rightRotation, out Vector3 rightPosition);
+        Matrix4x4.Decompose(
+            invViewRight,
+            out _,
+            out Quaternion rightRotation,
+            out Vector3 rightPosition
+        );
 
         return new HmdPoseState(
-            _projLeft, _projRight,
-            leftPosition, rightPosition,
-            leftRotation, rightRotation);
+            _projLeft,
+            _projRight,
+            leftPosition,
+            rightPosition,
+            leftRotation,
+            rightRotation
+        );
     }
 
     public override void SubmitFrame()
@@ -143,7 +161,11 @@ internal class OpenVRContext : VRContext
         SubmitTexture(_compositor, RightEyeFramebuffer.ColorTargets[0].Target, EVREye.Eye_Right);
     }
 
-    public override void RenderMirrorTexture(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source)
+    public override void RenderMirrorTexture(
+        CommandList cl,
+        Framebuffer fb,
+        MirrorTextureEyeSource source
+    )
     {
         _mirrorTexture.Render(cl, fb, source);
     }
@@ -166,7 +188,10 @@ internal class OpenVRContext : VRContext
         }
         else if (_gd.GetVulkanInfo(out BackendInfoVulkan? vkInfo))
         {
-            vkInfo.TransitionImageLayout(colorTex, (uint)VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+            vkInfo.TransitionImageLayout(
+                colorTex,
+                (uint)VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+            );
 
             VRVulkanTextureData_t vkTexData;
             vkTexData.m_nImage = vkInfo.GetVkImage(colorTex);
@@ -203,17 +228,29 @@ internal class OpenVRContext : VRContext
         {
             glInfo.ExecuteOnGLThread(() =>
             {
-                compositorError = compositor.Submit(eye, ref texT, ref boundsT, EVRSubmitFlags.Submit_Default);
+                compositorError = compositor.Submit(
+                    eye,
+                    ref texT,
+                    ref boundsT,
+                    EVRSubmitFlags.Submit_Default
+                );
             });
         }
         else
         {
-            compositorError = compositor.Submit(eye, ref texT, ref boundsT, EVRSubmitFlags.Submit_Default);
+            compositorError = compositor.Submit(
+                eye,
+                ref texT,
+                ref boundsT,
+                EVRSubmitFlags.Submit_Default
+            );
         }
 
         if (compositorError != EVRCompositorError.None)
         {
-            throw new VeldridException($"Failed to submit to the OpenVR Compositor: {compositorError}");
+            throw new VeldridException(
+                $"Failed to submit to the OpenVR Compositor: {compositorError}"
+            );
         }
     }
 
@@ -235,37 +272,73 @@ internal class OpenVRContext : VRContext
     Framebuffer CreateFramebuffer(uint width, uint height)
     {
         ResourceFactory factory = _gd.ResourceFactory;
-        Texture colorTarget = factory.CreateTexture(TextureDescription.Texture2D(
-            width, height,
-            1, 1,
-            PixelFormat.R8_G8_B8_A8_UNorm_SRgb,
-            TextureUsage.RenderTarget | TextureUsage.Sampled,
-            _options.EyeFramebufferSampleCount));
-        Texture depthTarget = factory.CreateTexture(TextureDescription.Texture2D(
-            width, height,
-            1, 1,
-            PixelFormat.R32_Float,
-            TextureUsage.DepthStencil,
-            _options.EyeFramebufferSampleCount));
+        Texture colorTarget = factory.CreateTexture(
+            TextureDescription.Texture2D(
+                width,
+                height,
+                1,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm_SRgb,
+                TextureUsage.RenderTarget | TextureUsage.Sampled,
+                _options.EyeFramebufferSampleCount
+            )
+        );
+        Texture depthTarget = factory.CreateTexture(
+            TextureDescription.Texture2D(
+                width,
+                height,
+                1,
+                1,
+                PixelFormat.R32_Float,
+                TextureUsage.DepthStencil,
+                _options.EyeFramebufferSampleCount
+            )
+        );
         return factory.CreateFramebuffer(new FramebufferDescription(depthTarget, colorTarget));
     }
 
     static Matrix4x4 ToSysMatrix(HmdMatrix34_t hmdMat)
     {
         return new Matrix4x4(
-            hmdMat.m0, hmdMat.m4, hmdMat.m8, 0f,
-            hmdMat.m1, hmdMat.m5, hmdMat.m9, 0f,
-            hmdMat.m2, hmdMat.m6, hmdMat.m10, 0f,
-            hmdMat.m3, hmdMat.m7, hmdMat.m11, 1f);
+            hmdMat.m0,
+            hmdMat.m4,
+            hmdMat.m8,
+            0f,
+            hmdMat.m1,
+            hmdMat.m5,
+            hmdMat.m9,
+            0f,
+            hmdMat.m2,
+            hmdMat.m6,
+            hmdMat.m10,
+            0f,
+            hmdMat.m3,
+            hmdMat.m7,
+            hmdMat.m11,
+            1f
+        );
     }
 
     static Matrix4x4 ToSysMatrix(HmdMatrix44_t hmdMat)
     {
         return new Matrix4x4(
-            hmdMat.m0, hmdMat.m4, hmdMat.m8, hmdMat.m12,
-            hmdMat.m1, hmdMat.m5, hmdMat.m9, hmdMat.m13,
-            hmdMat.m2, hmdMat.m6, hmdMat.m10, hmdMat.m14,
-            hmdMat.m3, hmdMat.m7, hmdMat.m11, hmdMat.m15);
+            hmdMat.m0,
+            hmdMat.m4,
+            hmdMat.m8,
+            hmdMat.m12,
+            hmdMat.m1,
+            hmdMat.m5,
+            hmdMat.m9,
+            hmdMat.m13,
+            hmdMat.m2,
+            hmdMat.m6,
+            hmdMat.m10,
+            hmdMat.m14,
+            hmdMat.m3,
+            hmdMat.m7,
+            hmdMat.m11,
+            hmdMat.m15
+        );
     }
 
     static uint GetSampleCount(TextureSampleCount sampleCount)

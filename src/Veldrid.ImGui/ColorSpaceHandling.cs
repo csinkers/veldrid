@@ -10,6 +10,7 @@ public enum ColorSpaceHandling
     /// before blending them.
     /// </summary>
     Legacy = 0,
+
     /// <summary>
     /// Improved color space handling. In this mode, the render will convert sRGB vertex colors into linear space before
     /// blending them with colors from user Textures.

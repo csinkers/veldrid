@@ -37,10 +37,12 @@ public struct VertexElementDescription : IEquatable<VertexElementDescription>
     /// <param name="name">The name of the element.</param>
     /// <param name="semantic">The semantic type of the element.</param>
     /// <param name="format">The format of the element.</param>
-    public VertexElementDescription(string name, VertexElementSemantic semantic, VertexElementFormat format)
-        : this(name, format, semantic)
-    {
-    }
+    public VertexElementDescription(
+        string name,
+        VertexElementSemantic semantic,
+        VertexElementFormat format
+    )
+        : this(name, format, semantic) { }
 
     /// <summary>
     /// Constructs a new VertexElementDescription.
@@ -51,7 +53,8 @@ public struct VertexElementDescription : IEquatable<VertexElementDescription>
     public VertexElementDescription(
         string name,
         VertexElementFormat format,
-        VertexElementSemantic semantic)
+        VertexElementSemantic semantic
+    )
     {
         Name = name;
         Format = format;
@@ -70,7 +73,8 @@ public struct VertexElementDescription : IEquatable<VertexElementDescription>
         string name,
         VertexElementSemantic semantic,
         VertexElementFormat format,
-        uint offset)
+        uint offset
+    )
     {
         Name = name;
         Format = format;
@@ -86,9 +90,9 @@ public struct VertexElementDescription : IEquatable<VertexElementDescription>
     public bool Equals(VertexElementDescription other)
     {
         return Name.Equals(other.Name)
-               && Format == other.Format
-               && Semantic == other.Semantic
-               && Offset == other.Offset;
+            && Format == other.Format
+            && Semantic == other.Semantic
+            && Offset == other.Offset;
     }
 
     /// <summary>
@@ -97,10 +101,6 @@ public struct VertexElementDescription : IEquatable<VertexElementDescription>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
     public override int GetHashCode()
     {
-        return HashHelper.Combine(
-            Name.GetHashCode(),
-            (int)Format,
-            (int)Semantic,
-            (int)Offset);
+        return HashHelper.Combine(Name.GetHashCode(), (int)Format, (int)Semantic, (int)Offset);
     }
 }

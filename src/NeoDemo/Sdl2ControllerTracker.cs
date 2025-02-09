@@ -60,7 +60,9 @@ public class Sdl2ControllerTracker : IDisposable
         switch (ev.type)
         {
             case SDL_EventType.ControllerAxisMotion:
-                SDL_ControllerAxisEvent axisEvent = Unsafe.As<SDL_Event, SDL_ControllerAxisEvent>(ref ev);
+                SDL_ControllerAxisEvent axisEvent = Unsafe.As<SDL_Event, SDL_ControllerAxisEvent>(
+                    ref ev
+                );
                 if (axisEvent.which == _controllerIndex)
                 {
                     _axisValues[axisEvent.axis] = Normalize(axisEvent.value);
@@ -68,7 +70,10 @@ public class Sdl2ControllerTracker : IDisposable
                 break;
             case SDL_EventType.ControllerButtonDown:
             case SDL_EventType.ControllerButtonUp:
-                SDL_ControllerButtonEvent buttonEvent = Unsafe.As<SDL_Event, SDL_ControllerButtonEvent>(ref ev);
+                SDL_ControllerButtonEvent buttonEvent = Unsafe.As<
+                    SDL_Event,
+                    SDL_ControllerButtonEvent
+                >(ref ev);
                 if (buttonEvent.which == _controllerIndex)
                 {
                     _buttons[buttonEvent.button] = buttonEvent.state == 1;
@@ -79,9 +84,7 @@ public class Sdl2ControllerTracker : IDisposable
 
     static float Normalize(short value)
     {
-        return value < 0
-            ? -(value / (float)short.MinValue)
-            : (value / (float)short.MaxValue);
+        return value < 0 ? -(value / (float)short.MinValue) : (value / (float)short.MaxValue);
     }
 
     public void Dispose()

@@ -42,9 +42,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
     public MTLFeatureSupport MetalFeatures { get; }
     public ResourceBindingModel ResourceBindingModel { get; }
 
-    public MTLGraphicsDevice(
-        GraphicsDeviceOptions options,
-        SwapchainDescription? swapchainDesc)
+    public MTLGraphicsDevice(GraphicsDeviceOptions options, SwapchainDescription? swapchainDesc)
     {
         VendorName = "Apple";
         BackendType = GraphicsBackend.Metal;
@@ -84,7 +82,8 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
             subsetTextureView: true,
             commandListDebugMarkers: true,
             bufferRangeBinding: true,
-            shaderFloat64: false);
+            shaderFloat64: false
+        );
         ResourceBindingModel = options.ResourceBindingModel;
 
         _libSystem = NativeLibrary.Load("libSystem.dylib");
@@ -197,7 +196,8 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         PixelFormat format,
         TextureType type,
         TextureUsage usage,
-        out PixelFormatProperties properties)
+        out PixelFormatProperties properties
+    )
     {
         if (!MTLFormats.IsFormatSupported(format, usage, MetalFeatures))
         {
@@ -261,7 +261,8 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
             maxDepth,
             uint.MaxValue,
             maxArrayLayer,
-            sampleCounts);
+            sampleCounts
+        );
         return true;
     }
 
@@ -282,7 +283,12 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         mtlSC.GetNextDrawable();
     }
 
-    private protected override void UpdateBufferCore(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
+    private protected override void UpdateBufferCore(
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr source,
+        uint sizeInBytes
+    )
     {
         MTLBuffer mtlBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(buffer);
         void* destPtr = mtlBuffer.DeviceBuffer.contents();
@@ -301,20 +307,45 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         uint height,
         uint depth,
         uint mipLevel,
-        uint arrayLayer)
+        uint arrayLayer
+    )
     {
         MTLTexture mtlTex = Util.AssertSubtype<Texture, MTLTexture>(texture);
         if (mtlTex.StagingBuffer.IsNull)
         {
-            Texture stagingTex = ResourceFactory.CreateTexture(new TextureDescription(
-                width, height, depth, 1, 1, texture.Format, TextureUsage.Staging, texture.Type));
+            Texture stagingTex = ResourceFactory.CreateTexture(
+                new TextureDescription(
+                    width,
+                    height,
+                    depth,
+                    1,
+                    1,
+                    texture.Format,
+                    TextureUsage.Staging,
+                    texture.Type
+                )
+            );
             UpdateTexture(stagingTex, source, sizeInBytes, 0, 0, 0, width, height, depth, 0, 0);
             CommandList cl = ResourceFactory.CreateCommandList();
             cl.Begin();
             cl.CopyTexture(
-                stagingTex, 0, 0, 0, 0, 0,
-                texture, x, y, z, mipLevel, arrayLayer,
-                width, height, depth, 1);
+                stagingTex,
+                0,
+                0,
+                0,
+                0,
+                0,
+                texture,
+                x,
+                y,
+                z,
+                mipLevel,
+                arrayLayer,
+                width,
+                height,
+                depth,
+                1
+            );
             cl.End();
             SubmitCommands(cl);
 
@@ -323,19 +354,33 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         }
         else
         {
-            mtlTex.GetSubresourceLayout(mipLevel, arrayLayer, out uint dstRowPitch, out uint dstDepthPitch);
+            mtlTex.GetSubresourceLayout(
+                mipLevel,
+                arrayLayer,
+                out uint dstRowPitch,
+                out uint dstDepthPitch
+            );
             ulong dstOffset = Util.ComputeSubresourceOffset(mtlTex, mipLevel, arrayLayer);
             uint srcRowPitch = FormatHelpers.GetRowPitch(width, texture.Format);
             uint srcDepthPitch = FormatHelpers.GetDepthPitch(srcRowPitch, height, texture.Format);
             Util.CopyTextureRegion(
                 source.ToPointer(),
-                0, 0, 0,
-                srcRowPitch, srcDepthPitch,
+                0,
+                0,
+                0,
+                srcRowPitch,
+                srcDepthPitch,
                 (byte*)mtlTex.StagingBuffer.contents() + dstOffset,
-                x, y, z,
-                dstRowPitch, dstDepthPitch,
-                width, height, depth,
-                texture.Format);
+                x,
+                y,
+                z,
+                dstRowPitch,
+                dstDepthPitch,
+                width,
+                height,
+                depth,
+                texture.Format
+            );
         }
     }
 
@@ -357,7 +402,12 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
     }
 
     private protected override MappedResource MapCore(
-        MappableResource resource, uint offsetInBytes, uint sizeInBytes, MapMode mode, uint subresource)
+        MappableResource resource,
+        uint offsetInBytes,
+        uint sizeInBytes,
+        MapMode mode,
+        uint subresource
+    )
     {
         if (resource is MTLBuffer buffer)
         {
@@ -373,18 +423,16 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
     MappedResource MapBuffer(MTLBuffer buffer, uint offsetInBytes, uint sizeInBytes, MapMode mode)
     {
         byte* data = (byte*)buffer.DeviceBuffer.contents() + offsetInBytes;
-        return new MappedResource(
-            buffer,
-            mode,
-            (IntPtr)data,
-            offsetInBytes,
-            sizeInBytes,
-            0,
-            0,
-            0);
+        return new MappedResource(buffer, mode, (IntPtr)data, offsetInBytes, sizeInBytes, 0, 0, 0);
     }
 
-    MappedResource MapTexture(MTLTexture texture, uint offsetInBytes, uint sizeInBytes, MapMode mode, uint subresource)
+    MappedResource MapTexture(
+        MTLTexture texture,
+        uint offsetInBytes,
+        uint sizeInBytes,
+        MapMode mode,
+        uint subresource
+    )
     {
         Debug.Assert(!texture.StagingBuffer.IsNull);
         byte* data = (byte*)texture.StagingBuffer.contents() + offsetInBytes;
@@ -392,7 +440,16 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         texture.GetSubresourceLayout(mipLevel, arrayLayer, out uint rowPitch, out uint depthPitch);
         ulong offset = Util.ComputeSubresourceOffset(texture, mipLevel, arrayLayer);
         byte* offsetPtr = data + offset;
-        return new MappedResource(texture, mode, (IntPtr)offsetPtr, offsetInBytes, sizeInBytes, subresource, rowPitch, depthPitch);
+        return new MappedResource(
+            texture,
+            mode,
+            (IntPtr)offsetPtr,
+            offsetInBytes,
+            sizeInBytes,
+            subresource,
+            rowPitch,
+            depthPitch
+        );
     }
 
     protected override void Dispose(bool disposing)
@@ -424,9 +481,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         return true;
     }
 
-    private protected override void UnmapCore(MappableResource resource, uint subresource)
-    {
-    }
+    private protected override void UnmapCore(MappableResource resource, uint subresource) { }
 
     public override bool WaitForFence(Fence fence, ulong nanosecondTimeout)
     {
@@ -538,20 +593,29 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         {
             if (_unalignedBufferCopyPipeline.IsNull)
             {
-                MTLComputePipelineDescriptor descriptor = MTLUtil.AllocInit<MTLComputePipelineDescriptor>(
-                    "MTLComputePipelineDescriptor"u8);
+                MTLComputePipelineDescriptor descriptor =
+                    MTLUtil.AllocInit<MTLComputePipelineDescriptor>(
+                        "MTLComputePipelineDescriptor"u8
+                    );
                 MTLPipelineBufferDescriptor buffer0 = descriptor.buffers[0];
                 buffer0.mutability = MTLMutability.Mutable;
                 MTLPipelineBufferDescriptor buffer1 = descriptor.buffers[1];
                 buffer0.mutability = MTLMutability.Mutable;
 
                 Debug.Assert(_unalignedBufferCopyShader == null);
-                string name = MetalFeatures.IsMacOS ? UnalignedBufferCopyPipelineMacOSName : UnalignedBufferCopyPipelineiOSName;
-                using (Stream? resourceStream = typeof(MTLGraphicsDevice).Assembly.GetManifestResourceStream(name))
+                string name = MetalFeatures.IsMacOS
+                    ? UnalignedBufferCopyPipelineMacOSName
+                    : UnalignedBufferCopyPipelineiOSName;
+                using (
+                    Stream? resourceStream =
+                        typeof(MTLGraphicsDevice).Assembly.GetManifestResourceStream(name)
+                )
                 {
                     if (resourceStream == null)
                     {
-                        throw new Exception($"Missing required shader manifest resource \"{name}\".");
+                        throw new Exception(
+                            $"Missing required shader manifest resource \"{name}\"."
+                        );
                     }
 
                     byte[] data = new byte[resourceStream.Length];
@@ -562,7 +626,9 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
                 }
 
                 descriptor.computeFunction = _unalignedBufferCopyShader.Function;
-                _unalignedBufferCopyPipeline = _device.newComputePipelineStateWithDescriptor(descriptor);
+                _unalignedBufferCopyPipeline = _device.newComputePipelineStateWithDescriptor(
+                    descriptor
+                );
                 ObjectiveCRuntime.release(descriptor.NativePtr);
             }
 

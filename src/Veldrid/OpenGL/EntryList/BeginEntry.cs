@@ -1,5 +1,3 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct BeginEntry
-{
-}
+internal struct BeginEntry { }

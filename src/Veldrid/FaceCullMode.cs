@@ -9,10 +9,12 @@ public enum FaceCullMode : byte
     /// The back face.
     /// </summary>
     Back,
+
     /// <summary>
     /// The front face.
     /// </summary>
     Front,
+
     /// <summary>
     /// No face culling.
     /// </summary>

@@ -1,10 +1,12 @@
 ﻿namespace Veldrid.OpenGL;
 
-internal sealed class OpenGLResourceLayout(in ResourceLayoutDescription description) : ResourceLayout(description)
+internal sealed class OpenGLResourceLayout(in ResourceLayoutDescription description)
+    : ResourceLayout(description)
 {
     bool _disposed;
 
-    public ResourceLayoutElementDescription[] Elements { get; } = Util.ShallowClone(description.Elements);
+    public ResourceLayoutElementDescription[] Elements { get; } =
+        Util.ShallowClone(description.Elements);
 
     public override string? Name { get; set; }
 

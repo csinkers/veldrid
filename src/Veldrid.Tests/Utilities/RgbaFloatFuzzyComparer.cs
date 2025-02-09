@@ -10,9 +10,9 @@ internal class RgbaFloatFuzzyComparer : IEqualityComparer<RgbaFloat>
     public bool Equals(RgbaFloat x, RgbaFloat y)
     {
         return FuzzyEquals(x.R, y.R)
-               && FuzzyEquals(x.G, y.G)
-               && FuzzyEquals(x.B, y.B)
-               && FuzzyEquals(x.A, y.A);
+            && FuzzyEquals(x.G, y.G)
+            && FuzzyEquals(x.B, y.B)
+            && FuzzyEquals(x.A, y.A);
     }
 
     bool FuzzyEquals(float x, float y)

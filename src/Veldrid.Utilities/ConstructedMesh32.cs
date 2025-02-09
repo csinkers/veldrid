@@ -25,15 +25,21 @@ public class ConstructedMesh32 : ConstructedMesh
     /// <param name="vertices">The vertices.</param>
     /// <param name="indices">The indices.</param>
     /// <param name="materialName">The name of the associated MTL <see cref="MaterialDefinition"/>.</param>
-    public ConstructedMesh32(VertexPositionNormalTexture[] vertices, uint[] indices, string? materialName) :
-        base(vertices, materialName)
+    public ConstructedMesh32(
+        VertexPositionNormalTexture[] vertices,
+        uint[] indices,
+        string? materialName
+    )
+        : base(vertices, materialName)
     {
         Indices = indices ?? throw new ArgumentNullException(nameof(indices));
     }
 
     public override DeviceBuffer CreateIndexBuffer(ResourceFactory factory, CommandList cl)
     {
-        DeviceBuffer ib = factory.CreateBuffer(new BufferDescription((uint)Indices.Length * sizeof(uint), BufferUsage.IndexBuffer));
+        DeviceBuffer ib = factory.CreateBuffer(
+            new BufferDescription((uint)Indices.Length * sizeof(uint), BufferUsage.IndexBuffer)
+        );
         cl.UpdateBuffer(ib, 0, Indices);
         return ib;
     }
@@ -78,7 +84,8 @@ public class ConstructedMesh32 : ConstructedMesh
     {
         int _indexOffset = 0;
 
-        public ConstructedMesh32 Mesh { get; } = mesh ?? throw new ArgumentNullException(nameof(mesh));
+        public ConstructedMesh32 Mesh { get; } =
+            mesh ?? throw new ArgumentNullException(nameof(mesh));
         public Ray Ray { get; } = ray;
 
         public float Current { get; private set; } = default;
@@ -117,8 +124,6 @@ public class ConstructedMesh32 : ConstructedMesh
             return this;
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
     }
 }

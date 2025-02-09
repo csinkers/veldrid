@@ -61,50 +61,137 @@ public class SceneContext
     public virtual void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
         ResourceFactory factory = gd.ResourceFactory;
-        ProjectionMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
-        ViewMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
-        LightViewProjectionBuffer0 = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
+        ProjectionMatrixBuffer = factory.CreateBuffer(
+            new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+        );
+        ViewMatrixBuffer = factory.CreateBuffer(
+            new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+        );
+        LightViewProjectionBuffer0 = factory.CreateBuffer(
+            new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+        );
         LightViewProjectionBuffer0.Name = "LightViewProjectionBuffer0";
-        LightViewProjectionBuffer1 = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
+        LightViewProjectionBuffer1 = factory.CreateBuffer(
+            new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+        );
         LightViewProjectionBuffer1.Name = "LightViewProjectionBuffer1";
-        LightViewProjectionBuffer2 = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
+        LightViewProjectionBuffer2 = factory.CreateBuffer(
+            new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+        );
         LightViewProjectionBuffer2.Name = "LightViewProjectionBuffer2";
-        DepthLimitsBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<DepthCascadeLimits>(), BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
-        LightInfoBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<DirectionalLightInfo>(), BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
-        CameraInfoBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<CameraInfo>(), BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
+        DepthLimitsBuffer = factory.CreateBuffer(
+            new BufferDescription(
+                (uint)Unsafe.SizeOf<DepthCascadeLimits>(),
+                BufferUsage.UniformBuffer | BufferUsage.DynamicWrite
+            )
+        );
+        LightInfoBuffer = factory.CreateBuffer(
+            new BufferDescription(
+                (uint)Unsafe.SizeOf<DirectionalLightInfo>(),
+                BufferUsage.UniformBuffer | BufferUsage.DynamicWrite
+            )
+        );
+        CameraInfoBuffer = factory.CreateBuffer(
+            new BufferDescription(
+                (uint)Unsafe.SizeOf<CameraInfo>(),
+                BufferUsage.UniformBuffer | BufferUsage.DynamicWrite
+            )
+        );
         if (Camera != null)
         {
             UpdateCameraBuffers(cl);
         }
 
-        PointLightsBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<PointLightsInfo.Blittable>(), BufferUsage.UniformBuffer));
+        PointLightsBuffer = factory.CreateBuffer(
+            new BufferDescription(
+                (uint)Unsafe.SizeOf<PointLightsInfo.Blittable>(),
+                BufferUsage.UniformBuffer
+            )
+        );
 
         PointLightsInfo pli = new();
         pli.NumActiveLights = 4;
         pli.PointLights =
         [
-            new PointLightInfo { Color = new Vector3(.6f, .6f, .6f), Position = new Vector3(-50, 5, 0), Range = 75f },
-            new PointLightInfo { Color = new Vector3(.6f, .35f, .4f), Position = new Vector3(0, 5, 0), Range = 100f },
-            new PointLightInfo { Color = new Vector3(.6f, .6f, 0.35f), Position = new Vector3(50, 5, 0), Range = 40f },
-            new PointLightInfo { Color = new Vector3(0.4f, 0.4f, .6f), Position = new Vector3(25, 5, 45), Range = 150f }
+            new PointLightInfo
+            {
+                Color = new Vector3(.6f, .6f, .6f),
+                Position = new Vector3(-50, 5, 0),
+                Range = 75f,
+            },
+            new PointLightInfo
+            {
+                Color = new Vector3(.6f, .35f, .4f),
+                Position = new Vector3(0, 5, 0),
+                Range = 100f,
+            },
+            new PointLightInfo
+            {
+                Color = new Vector3(.6f, .6f, 0.35f),
+                Position = new Vector3(50, 5, 0),
+                Range = 40f,
+            },
+            new PointLightInfo
+            {
+                Color = new Vector3(0.4f, 0.4f, .6f),
+                Position = new Vector3(25, 5, 45),
+                Range = 150f,
+            },
         ];
 
         cl.UpdateBuffer(PointLightsBuffer, 0, pli.GetBlittable());
 
-        TextureSamplerResourceLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("SourceTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-            new ResourceLayoutElementDescription("SourceSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+        TextureSamplerResourceLayout = factory.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "SourceTexture",
+                    ResourceKind.TextureReadOnly,
+                    ShaderStages.Fragment
+                ),
+                new ResourceLayoutElementDescription(
+                    "SourceSampler",
+                    ResourceKind.Sampler,
+                    ShaderStages.Fragment
+                )
+            )
+        );
 
         uint ReflectionMapSize = 2048;
-        ReflectionColorTexture = factory.CreateTexture(TextureDescription.Texture2D(ReflectionMapSize, ReflectionMapSize, 12, 1, PixelFormat.R16_G16_B16_A16_Float, TextureUsage.RenderTarget | TextureUsage.Sampled | TextureUsage.GenerateMipmaps));
-        ReflectionDepthTexture = factory.CreateTexture(TextureDescription.Texture2D(ReflectionMapSize, ReflectionMapSize, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil));
+        ReflectionColorTexture = factory.CreateTexture(
+            TextureDescription.Texture2D(
+                ReflectionMapSize,
+                ReflectionMapSize,
+                12,
+                1,
+                PixelFormat.R16_G16_B16_A16_Float,
+                TextureUsage.RenderTarget | TextureUsage.Sampled | TextureUsage.GenerateMipmaps
+            )
+        );
+        ReflectionDepthTexture = factory.CreateTexture(
+            TextureDescription.Texture2D(
+                ReflectionMapSize,
+                ReflectionMapSize,
+                1,
+                1,
+                PixelFormat.R32_Float,
+                TextureUsage.DepthStencil
+            )
+        );
         ReflectionColorView = factory.CreateTextureView(ReflectionColorTexture);
-        ReflectionFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(ReflectionDepthTexture, ReflectionColorTexture));
-        ReflectionViewProjBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
+        ReflectionFramebuffer = factory.CreateFramebuffer(
+            new FramebufferDescription(ReflectionDepthTexture, ReflectionColorTexture)
+        );
+        ReflectionViewProjBuffer = factory.CreateBuffer(
+            new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+        );
 
-        MirrorClipPlaneBuffer = factory.CreateBuffer(new BufferDescription(32, BufferUsage.UniformBuffer));
+        MirrorClipPlaneBuffer = factory.CreateBuffer(
+            new BufferDescription(32, BufferUsage.UniformBuffer)
+        );
         gd.UpdateBuffer(MirrorClipPlaneBuffer, 0, new ClipPlaneInfo(MirrorMesh.Plane, true));
-        NoClipPlaneBuffer = factory.CreateBuffer(new BufferDescription(32, BufferUsage.UniformBuffer));
+        NoClipPlaneBuffer = factory.CreateBuffer(
+            new BufferDescription(32, BufferUsage.UniformBuffer)
+        );
         gd.UpdateBuffer(NoClipPlaneBuffer, 0, new ClipPlaneInfo());
 
         RecreateWindowSizedResources(gd, cl);
@@ -181,7 +268,8 @@ public class SceneContext
             PixelFormat.R16_G16_B16_A16_Float,
             TextureType.Texture2D,
             TextureUsage.RenderTarget,
-            out PixelFormatProperties properties);
+            out PixelFormatProperties properties
+        );
 
         TextureSampleCount sampleCount = MainSceneSampleCount;
         while (!properties.IsSampleCountSupported(sampleCount))
@@ -196,7 +284,8 @@ public class SceneContext
             1,
             PixelFormat.R16_G16_B16_A16_Float,
             TextureUsage.RenderTarget | TextureUsage.Sampled,
-            sampleCount);
+            sampleCount
+        );
 
         MainSceneColorTexture = factory.CreateTexture(mainColorDesc);
         if (sampleCount != TextureSampleCount.Count1)
@@ -209,16 +298,27 @@ public class SceneContext
             MainSceneResolvedColorTexture = MainSceneColorTexture;
         }
         MainSceneResolvedColorView = factory.CreateTextureView(MainSceneResolvedColorTexture);
-        MainSceneDepthTexture = factory.CreateTexture(TextureDescription.Texture2D(
-            gd.SwapchainFramebuffer.Width,
-            gd.SwapchainFramebuffer.Height,
-            1,
-            1,
-            PixelFormat.R32_Float,
-            TextureUsage.DepthStencil,
-            sampleCount));
-        MainSceneFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(MainSceneDepthTexture, MainSceneColorTexture));
-        MainSceneViewResourceSet = factory.CreateResourceSet(new ResourceSetDescription(TextureSamplerResourceLayout, MainSceneResolvedColorView, gd.PointSampler));
+        MainSceneDepthTexture = factory.CreateTexture(
+            TextureDescription.Texture2D(
+                gd.SwapchainFramebuffer.Width,
+                gd.SwapchainFramebuffer.Height,
+                1,
+                1,
+                PixelFormat.R32_Float,
+                TextureUsage.DepthStencil,
+                sampleCount
+            )
+        );
+        MainSceneFramebuffer = factory.CreateFramebuffer(
+            new FramebufferDescription(MainSceneDepthTexture, MainSceneColorTexture)
+        );
+        MainSceneViewResourceSet = factory.CreateResourceSet(
+            new ResourceSetDescription(
+                TextureSamplerResourceLayout,
+                MainSceneResolvedColorView,
+                gd.PointSampler
+            )
+        );
 
         TextureDescription colorTargetDesc = TextureDescription.Texture2D(
             gd.SwapchainFramebuffer.Width,
@@ -226,13 +326,26 @@ public class SceneContext
             1,
             1,
             PixelFormat.R16_G16_B16_A16_Float,
-            TextureUsage.RenderTarget | TextureUsage.Sampled);
+            TextureUsage.RenderTarget | TextureUsage.Sampled
+        );
         DuplicatorTarget0 = factory.CreateTexture(colorTargetDesc);
         DuplicatorTargetView0 = factory.CreateTextureView(DuplicatorTarget0);
         DuplicatorTarget1 = factory.CreateTexture(colorTargetDesc);
         DuplicatorTargetView1 = factory.CreateTextureView(DuplicatorTarget1);
-        DuplicatorTargetSet0 = factory.CreateResourceSet(new ResourceSetDescription(TextureSamplerResourceLayout, DuplicatorTargetView0, gd.PointSampler));
-        DuplicatorTargetSet1 = factory.CreateResourceSet(new ResourceSetDescription(TextureSamplerResourceLayout, DuplicatorTargetView1, gd.PointSampler));
+        DuplicatorTargetSet0 = factory.CreateResourceSet(
+            new ResourceSetDescription(
+                TextureSamplerResourceLayout,
+                DuplicatorTargetView0,
+                gd.PointSampler
+            )
+        );
+        DuplicatorTargetSet1 = factory.CreateResourceSet(
+            new ResourceSetDescription(
+                TextureSamplerResourceLayout,
+                DuplicatorTargetView1,
+                gd.PointSampler
+            )
+        );
 
         FramebufferDescription fbDesc = new(null, DuplicatorTarget0, DuplicatorTarget1);
         DuplicatorFramebuffer = factory.CreateFramebuffer(fbDesc);
@@ -256,22 +369,36 @@ public class CascadedShadowMaps
     public void CreateDeviceResources(GraphicsDevice gd)
     {
         ResourceFactory factory = gd.ResourceFactory;
-        TextureDescription desc = TextureDescription.Texture2D(2048, 2048, 1, 1, PixelFormat.D32_Float_S8_UInt, TextureUsage.DepthStencil | TextureUsage.Sampled);
+        TextureDescription desc = TextureDescription.Texture2D(
+            2048,
+            2048,
+            1,
+            1,
+            PixelFormat.D32_Float_S8_UInt,
+            TextureUsage.DepthStencil | TextureUsage.Sampled
+        );
         NearShadowMap = factory.CreateTexture(desc);
         NearShadowMap.Name = "Near Shadow Map";
         NearShadowMapView = factory.CreateTextureView(NearShadowMap);
-        NearShadowMapFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(
-            new FramebufferAttachmentDescription(NearShadowMap, 0), []));
+        NearShadowMapFramebuffer = factory.CreateFramebuffer(
+            new FramebufferDescription(new FramebufferAttachmentDescription(NearShadowMap, 0), [])
+        );
 
         MidShadowMap = factory.CreateTexture(desc);
-        MidShadowMapView = factory.CreateTextureView(new TextureViewDescription(MidShadowMap, 0, 1, 0, 1));
-        MidShadowMapFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(
-            new FramebufferAttachmentDescription(MidShadowMap, 0), []));
+        MidShadowMapView = factory.CreateTextureView(
+            new TextureViewDescription(MidShadowMap, 0, 1, 0, 1)
+        );
+        MidShadowMapFramebuffer = factory.CreateFramebuffer(
+            new FramebufferDescription(new FramebufferAttachmentDescription(MidShadowMap, 0), [])
+        );
 
         FarShadowMap = factory.CreateTexture(desc);
-        FarShadowMapView = factory.CreateTextureView(new TextureViewDescription(FarShadowMap, 0, 1, 0, 1));
-        FarShadowMapFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(
-            new FramebufferAttachmentDescription(FarShadowMap, 0), []));
+        FarShadowMapView = factory.CreateTextureView(
+            new TextureViewDescription(FarShadowMap, 0, 1, 0, 1)
+        );
+        FarShadowMapFramebuffer = factory.CreateFramebuffer(
+            new FramebufferDescription(new FramebufferAttachmentDescription(FarShadowMap, 0), [])
+        );
     }
 
     public void DestroyDeviceObjects()

@@ -12,14 +12,17 @@ public enum VertexElementSemantic : byte
     /// A position.
     /// </summary>
     Position,
+
     /// <summary>
     /// A normal direction.
     /// </summary>
     Normal,
+
     /// <summary>
     /// A texture coordinate.
     /// </summary>
     TextureCoordinate,
+
     /// <summary>
     /// A color.
     /// </summary>

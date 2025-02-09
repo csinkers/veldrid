@@ -10,21 +10,34 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
     public void NoDepthTarget_ClearAllColors_Succeeds()
     {
         Texture colorTarget = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 1, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget));
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                1,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.RenderTarget
+            )
+        );
         Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, colorTarget));
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
         cl.SetFramebuffer(fb);
         cl.ClearColorTarget(0, RgbaFloat.Red);
-            
-        Texture staging = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 1, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.Staging));
 
-        cl.CopyTexture(
-            colorTarget, 0, 0, 0, 0, 0,
-            staging, 0, 0, 0, 0, 0,
-            1024, 1024, 1, 1);
+        Texture staging = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                1,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.Staging
+            )
+        );
+
+        cl.CopyTexture(colorTarget, 0, 0, 0, 0, 0, staging, 0, 0, 0, 0, 0, 1024, 1024, 1, 1);
         cl.End();
         GD.SubmitCommands(cl);
         GD.WaitForIdle();
@@ -41,7 +54,15 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
     public void NoDepthTarget_ClearDepth_Fails()
     {
         Texture colorTarget = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 1, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget));
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                1,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.RenderTarget
+            )
+        );
         Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, colorTarget));
 
         CommandList cl = RF.CreateCommandList();
@@ -54,7 +75,15 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
     public void NoColorTarget_ClearColor_Fails()
     {
         Texture depthTarget = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 1, 1, PixelFormat.R16_UNorm, TextureUsage.DepthStencil));
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                1,
+                1,
+                PixelFormat.R16_UNorm,
+                TextureUsage.DepthStencil
+            )
+        );
         Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(depthTarget));
 
         CommandList cl = RF.CreateCommandList();
@@ -67,10 +96,18 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
     public void ClearColorTarget_OutOfRange_Fails()
     {
         TextureDescription desc = TextureDescription.Texture2D(
-            1024, 1024, 1, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget);
+            1024,
+            1024,
+            1,
+            1,
+            PixelFormat.R32_G32_B32_A32_Float,
+            TextureUsage.RenderTarget
+        );
         Texture colorTarget0 = RF.CreateTexture(desc);
         Texture colorTarget1 = RF.CreateTexture(desc);
-        Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, colorTarget0, colorTarget1));
+        Framebuffer fb = RF.CreateFramebuffer(
+            new FramebufferDescription(null, colorTarget0, colorTarget1)
+        );
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -85,13 +122,25 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
     public void NonZeroMipLevel_ClearColor_Succeeds()
     {
         Texture testTex = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 11, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget));
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                11,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.RenderTarget
+            )
+        );
 
         Framebuffer[] framebuffers = new Framebuffer[11];
         for (uint level = 0; level < 11; level++)
         {
             framebuffers[level] = RF.CreateFramebuffer(
-                new FramebufferDescription(null, [new FramebufferAttachmentDescription(testTex, 0, level)]));
+                new FramebufferDescription(
+                    null,
+                    [new FramebufferAttachmentDescription(testTex, 0, level)]
+                )
+            );
         }
 
         CommandList cl = RF.CreateCommandList();
@@ -101,10 +150,18 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
             cl.SetFramebuffer(framebuffers[level]);
             cl.ClearColorTarget(0, new RgbaFloat(level, level, level, 1));
         }
-            
+
         Texture readback = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 11, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.Staging));
-            
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                11,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.Staging
+            )
+        );
+
         cl.CopyTexture(testTex, readback);
         cl.End();
         GD.SubmitCommands(cl);
@@ -114,7 +171,11 @@ public abstract class FramebufferTests<T> : GraphicsDeviceTestBase<T>
         uint mipHeight = 1024;
         for (uint level = 0; level < 11; level++)
         {
-            MappedResourceView<RgbaFloat> readView = GD.Map<RgbaFloat>(readback, MapMode.Read, level);
+            MappedResourceView<RgbaFloat> readView = GD.Map<RgbaFloat>(
+                readback,
+                MapMode.Read,
+                level
+            );
             for (uint y = 0; y < mipHeight; y++)
             for (uint x = 0; x < mipWidth; x++)
             {
@@ -146,30 +207,39 @@ public abstract class SwapchainFramebufferTests<T> : GraphicsDeviceTestBase<T>
 #if TEST_OPENGL
 [Trait("Backend", "OpenGL")]
 public class OpenGLFramebufferTests : FramebufferTests<OpenGLDeviceCreator> { }
+
 [Trait("Backend", "OpenGL")]
 public class OpenGLSwapchainFramebufferTests : SwapchainFramebufferTests<OpenGLDeviceCreator> { }
 #endif
 #if TEST_OPENGLES
 [Trait("Backend", "OpenGLES")]
 public class OpenGLESFramebufferTests : FramebufferTests<OpenGLESDeviceCreator> { }
+
 [Trait("Backend", "OpenGLES")]
-public class OpenGLESSwapchainFramebufferTests : SwapchainFramebufferTests<OpenGLESDeviceCreator> { }
+public class OpenGLESSwapchainFramebufferTests
+    : SwapchainFramebufferTests<OpenGLESDeviceCreator> { }
 #endif
 #if TEST_VULKAN
 [Trait("Backend", "Vulkan")]
 public class VulkanFramebufferTests : FramebufferTests<VulkanDeviceCreator> { }
+
 [Trait("Backend", "Vulkan")]
-public class VulkanSwapchainFramebufferTests : SwapchainFramebufferTests<VulkanDeviceCreatorWithMainSwapchain> { }
+public class VulkanSwapchainFramebufferTests
+    : SwapchainFramebufferTests<VulkanDeviceCreatorWithMainSwapchain> { }
 #endif
 #if TEST_D3D11
 [Trait("Backend", "D3D11")]
 public class D3D11FramebufferTests : FramebufferTests<D3D11DeviceCreator> { }
+
 [Trait("Backend", "D3D11")]
-public class D3D11SwapchainFramebufferTests : SwapchainFramebufferTests<D3D11DeviceCreatorWithMainSwapchain> { }
+public class D3D11SwapchainFramebufferTests
+    : SwapchainFramebufferTests<D3D11DeviceCreatorWithMainSwapchain> { }
 #endif
 #if TEST_METAL
-    [Trait("Backend", "Metal")]
-    public class MetalFramebufferTests : FramebufferTests<MetalDeviceCreator> { }
-    [Trait("Backend", "Metal")]
-    public class MetalSwapchainFramebufferTests : SwapchainFramebufferTests<MetalDeviceCreatorWithMainSwapchain> { }
+[Trait("Backend", "Metal")]
+public class MetalFramebufferTests : FramebufferTests<MetalDeviceCreator> { }
+
+[Trait("Backend", "Metal")]
+public class MetalSwapchainFramebufferTests
+    : SwapchainFramebufferTests<MetalDeviceCreatorWithMainSwapchain> { }
 #endif

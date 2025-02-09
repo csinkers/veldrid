@@ -68,14 +68,19 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     public override bool IsDisposed => RefCount.IsDisposed;
 
     public VkCommandList(VkGraphicsDevice gd, in CommandListDescription description)
-        : base(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
+        : base(
+            description,
+            gd.Features,
+            gd.UniformBufferMinOffsetAlignment,
+            gd.StructuredBufferMinOffsetAlignment
+        )
     {
         _gd = gd;
         VkCommandPoolCreateInfo poolCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
             flags = VkCommandPoolCreateFlags.VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-            queueFamilyIndex = gd.GraphicsQueueIndex
+            queueFamilyIndex = gd.GraphicsQueueIndex,
         };
 
         if (description.Transient)
@@ -110,7 +115,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
             commandPool = _pool,
             commandBufferCount = 1,
-            level = VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_PRIMARY
+            level = VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         };
         VkCommandBuffer cb;
         VkResult result = vkAllocateCommandBuffers(_gd.Device, &cbAI, &cb);
@@ -121,7 +126,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             _gd.SetDebugMarkerName(
                 VkDebugReportObjectTypeEXT.VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT,
                 (ulong)cb.Value,
-                _name);
+                _name
+            );
         }
 
         return cb;
@@ -180,7 +186,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         if (_commandBufferBegun)
         {
             throw new VeldridException(
-                "CommandList must be in its initial state, or End() must have been called, for Begin() to be valid to call.");
+                "CommandList must be in its initial state, or End() must have been called, for Begin() to be valid to call."
+            );
         }
         if (_commandBufferEnded)
         {
@@ -207,7 +214,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         VkCommandBufferBeginInfo beginInfo = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            flags = VkCommandBufferUsageFlags.VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+            flags = VkCommandBufferUsageFlags.VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
         };
         VkResult result = vkBeginCommandBuffer(_cb, &beginInfo);
         CheckResult(result);
@@ -231,7 +238,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     {
         VkClearValue clearValue = new()
         {
-            color = Unsafe.BitCast<RgbaFloat, VkClearColorValue>(clearColor)
+            color = Unsafe.BitCast<RgbaFloat, VkClearColorValue>(clearColor),
         };
 
         if (_activeRenderPass != VkRenderPass.NULL)
@@ -240,7 +247,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             {
                 colorAttachment = index,
                 aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
-                clearValue = clearValue
+                clearValue = clearValue,
             };
 
             Texture colorTex = _currentFramebuffer!.ColorTargets[(int)index].Target;
@@ -252,8 +259,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 rect = new VkRect2D()
                 {
                     offset = new VkOffset2D(),
-                    extent = new VkExtent2D() { width = colorTex.Width, height = colorTex.Height }
-                }
+                    extent = new VkExtent2D() { width = colorTex.Width, height = colorTex.Height },
+                },
             };
             vkCmdClearAttachments(_cb, 1, &clearAttachment, 1, &clearRect);
         }
@@ -269,22 +276,21 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     {
         VkClearValue clearValue = new()
         {
-            depthStencil = new VkClearDepthStencilValue()
-            {
-                depth = depth,
-                stencil = stencil
-            }
+            depthStencil = new VkClearDepthStencilValue() { depth = depth, stencil = stencil },
         };
 
         if (_activeRenderPass != VkRenderPass.NULL)
         {
-            VkImageAspectFlags aspect = FormatHelpers.IsStencilFormat(_currentFramebuffer!.DepthTarget!.Value.Target.Format)
-                ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
+            VkImageAspectFlags aspect = FormatHelpers.IsStencilFormat(
+                _currentFramebuffer!.DepthTarget!.Value.Target.Format
+            )
+                ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                    | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
                 : VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
             VkClearAttachment clearAttachment = new()
             {
                 aspectMask = aspect,
-                clearValue = clearValue
+                clearValue = clearValue,
             };
 
             VkExtent2D renderableExtent = _currentFramebuffer.RenderableExtent;
@@ -294,11 +300,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 {
                     baseArrayLayer = 0,
                     layerCount = 1,
-                    rect = new VkRect2D()
-                    {
-                        offset = new VkOffset2D(),
-                        extent = renderableExtent
-                    }
+                    rect = new VkRect2D() { offset = new VkOffset2D(), extent = renderableExtent },
                 };
                 vkCmdClearAttachments(_cb, 1, &clearAttachment, 1, &clearRect);
             }
@@ -310,19 +312,35 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         }
     }
 
-    private protected override void DrawCore(uint vertexCount, uint instanceCount, uint vertexStart, uint instanceStart)
+    private protected override void DrawCore(
+        uint vertexCount,
+        uint instanceCount,
+        uint vertexStart,
+        uint instanceStart
+    )
     {
         PreDrawCommand();
         vkCmdDraw(_cb, vertexCount, instanceCount, vertexStart, instanceStart);
     }
 
-    private protected override void DrawIndexedCore(uint indexCount, uint instanceCount, uint indexStart, int vertexOffset, uint instanceStart)
+    private protected override void DrawIndexedCore(
+        uint indexCount,
+        uint instanceCount,
+        uint indexStart,
+        int vertexOffset,
+        uint instanceStart
+    )
     {
         PreDrawCommand();
         vkCmdDrawIndexed(_cb, indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
     }
 
-    protected override void DrawIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    protected override void DrawIndirectCore(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         VkBuffer vkBuffer = Util.AssertSubtype<DeviceBuffer, VkBuffer>(indirectBuffer);
         _currentStagingInfo.AddResource(vkBuffer.RefCount);
@@ -331,7 +349,12 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         vkCmdDrawIndirect(_cb, vkBuffer.DeviceBuffer, offset, drawCount, stride);
     }
 
-    protected override void DrawIndexedIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    protected override void DrawIndexedIndirectCore(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         VkBuffer vkBuffer = Util.AssertSubtype<DeviceBuffer, VkBuffer>(indirectBuffer);
         _currentStagingInfo.AddResource(vkBuffer.RefCount);
@@ -365,7 +388,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         FlushNewResourceSets(
             _currentGraphicsResourceSets,
             _graphicsResourceSetsChanged,
-            _currentGraphicsPipeline!);
+            _currentGraphicsPipeline!
+        );
     }
 
     void FlushVertexBindings()
@@ -373,11 +397,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         fixed (VulkanBuffer* vertexBindings = _vertexBindings)
         fixed (ulong* vertexOffsets = _vertexOffsets)
         {
-            vkCmdBindVertexBuffers(
-                _cb,
-                0, _numVertexBindings,
-                vertexBindings,
-                vertexOffsets);
+            vkCmdBindVertexBuffers(_cb, 0, _numVertexBindings, vertexBindings, vertexOffsets);
         }
     }
 
@@ -412,7 +432,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     void FlushNewResourceSets(
         BoundResourceSetInfo[] resourceSets,
         bool[] resourceSetsChanged,
-        VkPipeline pipeline)
+        VkPipeline pipeline
+    )
     {
         int resourceSetCount = (int)pipeline.ResourceSetCount;
 
@@ -437,7 +458,9 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             {
                 setsChanged[currentSlot] = false;
                 ref BoundResourceSetInfo resourceSet = ref sets[currentSlot];
-                VkResourceSet vkSet = Util.AssertSubtype<ResourceSet, VkResourceSet>(resourceSet.Set);
+                VkResourceSet vkSet = Util.AssertSubtype<ResourceSet, VkResourceSet>(
+                    resourceSet.Set
+                );
                 descriptorSets[currentBatchCount] = vkSet.DescriptorSet;
                 currentBatchCount += 1;
 
@@ -469,7 +492,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                         currentBatchCount,
                         descriptorSets,
                         currentBatchDynamicOffsetCount,
-                        dynamicOffsets);
+                        dynamicOffsets
+                    );
                 }
 
                 currentBatchCount = 0;
@@ -498,12 +522,20 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     {
         EnsureNoRenderPass();
 
-        for (uint currentSlot = 0; currentSlot < _currentComputePipeline!.ResourceSetCount; currentSlot++)
+        for (
+            uint currentSlot = 0;
+            currentSlot < _currentComputePipeline!.ResourceSetCount;
+            currentSlot++
+        )
         {
             VkResourceSet vkSet = Util.AssertSubtype<ResourceSet, VkResourceSet>(
-                _currentComputeResourceSets[currentSlot].Set);
+                _currentComputeResourceSets[currentSlot].Set
+            );
 
-            TransitionImages(vkSet.SampledTextures, VkImageLayout.VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            TransitionImages(
+                vkSet.SampledTextures,
+                VkImageLayout.VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+            );
             TransitionImages(vkSet.StorageTextures, VkImageLayout.VK_IMAGE_LAYOUT_GENERAL);
 
             for (int texIdx = 0; texIdx < vkSet.StorageTextures.Count; texIdx++)
@@ -516,7 +548,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         FlushNewResourceSets(
             _currentComputeResourceSets,
             _computeResourceSetsChanged,
-            _currentComputePipeline);
+            _currentComputePipeline
+        );
     }
 
     protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
@@ -537,18 +570,47 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
         EnsureNoRenderPass();
 
-        VkImageAspectFlags aspectFlags = ((source.Usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil)
-            ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
-            : VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
+        VkImageAspectFlags aspectFlags =
+            ((source.Usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil)
+                ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                    | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
+                : VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
         VkImageResolve region = new()
         {
-            extent = new VkExtent3D() { width = source.Width, height = source.Height, depth = source.Depth },
-            srcSubresource = new VkImageSubresourceLayers() { layerCount = 1, aspectMask = aspectFlags },
-            dstSubresource = new VkImageSubresourceLayers() { layerCount = 1, aspectMask = aspectFlags }
+            extent = new VkExtent3D()
+            {
+                width = source.Width,
+                height = source.Height,
+                depth = source.Depth,
+            },
+            srcSubresource = new VkImageSubresourceLayers()
+            {
+                layerCount = 1,
+                aspectMask = aspectFlags,
+            },
+            dstSubresource = new VkImageSubresourceLayers()
+            {
+                layerCount = 1,
+                aspectMask = aspectFlags,
+            },
         };
 
-        vkSource.TransitionImageLayout(_cb, 0, 1, 0, 1, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-        vkDestination.TransitionImageLayout(_cb, 0, 1, 0, 1, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        vkSource.TransitionImageLayout(
+            _cb,
+            0,
+            1,
+            0,
+            1,
+            VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+        );
+        vkDestination.TransitionImageLayout(
+            _cb,
+            0,
+            1,
+            0,
+            1,
+            VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+        );
 
         vkCmdResolveImage(
             _cb,
@@ -557,7 +619,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             vkDestination.OptimalDeviceImage,
             VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
             1,
-            &region);
+            &region
+        );
 
         TransitionBackFromTransfer(_cb, vkSource, 0, 1, 0, 1);
         TransitionBackFromTransfer(_cb, vkDestination, 0, 1, 0, 1);
@@ -567,7 +630,9 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     {
         if (!_commandBufferBegun)
         {
-            throw new VeldridException("CommandBuffer must have been started before End() may be called.");
+            throw new VeldridException(
+                "CommandBuffer must have been started before End() may be called."
+            );
         }
 
         _commandBufferBegun = false;
@@ -657,7 +722,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         uint attachmentCount = _currentFramebuffer.AttachmentCount;
         int colorTargetCount = _currentFramebuffer.ColorTargets.Length;
         bool haveAnyAttachments = colorTargetCount > 0 || _currentFramebuffer.DepthTarget != null;
-        bool haveAllClearValues = _depthClearValue.HasValue || _currentFramebuffer.DepthTarget == null;
+        bool haveAllClearValues =
+            _depthClearValue.HasValue || _currentFramebuffer.DepthTarget == null;
         bool haveAnyClearValues = _depthClearValue.HasValue;
         for (int i = 0; i < colorTargetCount; i++)
         {
@@ -677,9 +743,9 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             renderArea = new VkRect2D()
             {
                 offset = new VkOffset2D(),
-                extent = _currentFramebuffer.RenderableExtent
+                extent = _currentFramebuffer.RenderableExtent,
             },
-            framebuffer = _currentFramebuffer.CurrentFramebuffer
+            framebuffer = _currentFramebuffer.CurrentFramebuffer,
         };
 
         if (!haveAnyAttachments || !haveAllClearValues)
@@ -696,7 +762,9 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             {
                 if (_depthClearValue.HasValue)
                 {
-                    VkClearDepthStencilValue depthStencil = _depthClearValue.GetValueOrDefault().depthStencil;
+                    VkClearDepthStencilValue depthStencil = _depthClearValue
+                        .GetValueOrDefault()
+                        .depthStencil;
                     ClearDepthStencilCore(depthStencil.depth, (byte)depthStencil.stencil);
                     _depthClearValue = null;
                 }
@@ -707,7 +775,9 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                     {
                         _validColorClearValues[i] = false;
                         VkClearValue vkClearValue = _clearValues[i];
-                        RgbaFloat clearColor = Unsafe.BitCast<VkClearValue, RgbaFloat>(vkClearValue);
+                        RgbaFloat clearColor = Unsafe.BitCast<VkClearValue, RgbaFloat>(
+                            vkClearValue
+                        );
                         ClearColorTargetCore(i, clearColor);
                     }
                 }
@@ -728,7 +798,11 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                     _clearValues[colorTargetCount] = _depthClearValue.GetValueOrDefault();
                     _depthClearValue = null;
                 }
-                vkCmdBeginRenderPass(_cb, &renderPassBI, VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
+                vkCmdBeginRenderPass(
+                    _cb,
+                    &renderPassBI,
+                    VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE
+                );
                 _activeRenderPass = renderPassBI.renderPass;
                 Util.ClearArray(_validColorClearValues);
             }
@@ -757,10 +831,15 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             0,
             null,
             0,
-            null);
+            null
+        );
     }
 
-    private protected override void SetVertexBufferCore(uint index, DeviceBuffer buffer, uint offset)
+    private protected override void SetVertexBufferCore(
+        uint index,
+        DeviceBuffer buffer,
+        uint offset
+    )
     {
         VkBuffer vkBuffer = Util.AssertSubtype<DeviceBuffer, VkBuffer>(buffer);
 
@@ -779,12 +858,21 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         }
     }
 
-    private protected override void SetIndexBufferCore(DeviceBuffer buffer, IndexFormat format, uint offset)
+    private protected override void SetIndexBufferCore(
+        DeviceBuffer buffer,
+        IndexFormat format,
+        uint offset
+    )
     {
         VkBuffer vkBuffer = Util.AssertSubtype<DeviceBuffer, VkBuffer>(buffer);
         _currentStagingInfo.AddResource(vkBuffer.RefCount);
 
-        vkCmdBindIndexBuffer(_cb, vkBuffer.DeviceBuffer, offset, VkFormats.VdToVkIndexFormat(format));
+        vkCmdBindIndexBuffer(
+            _cb,
+            vkBuffer.DeviceBuffer,
+            offset,
+            VkFormats.VdToVkIndexFormat(format)
+        );
     }
 
     private protected override void SetPipelineCore(Pipeline pipeline)
@@ -794,10 +882,20 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
         if (!pipeline.IsComputePipeline && _currentGraphicsPipeline != pipeline)
         {
-            Util.EnsureArrayMinimumSize(ref _currentGraphicsResourceSets, vkPipeline.ResourceSetCount);
+            Util.EnsureArrayMinimumSize(
+                ref _currentGraphicsResourceSets,
+                vkPipeline.ResourceSetCount
+            );
             ClearSets(_currentGraphicsResourceSets);
-            Util.EnsureArrayMinimumSize(ref _graphicsResourceSetsChanged, vkPipeline.ResourceSetCount);
-            vkCmdBindPipeline(_cb, VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS, vkPipeline.DevicePipeline);
+            Util.EnsureArrayMinimumSize(
+                ref _graphicsResourceSetsChanged,
+                vkPipeline.ResourceSetCount
+            );
+            vkCmdBindPipeline(
+                _cb,
+                VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,
+                vkPipeline.DevicePipeline
+            );
             _currentGraphicsPipeline = vkPipeline;
 
             uint vertexBufferCount = vkPipeline.VertexLayoutCount;
@@ -806,10 +904,20 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         }
         else if (pipeline.IsComputePipeline && _currentComputePipeline != pipeline)
         {
-            Util.EnsureArrayMinimumSize(ref _currentComputeResourceSets, vkPipeline.ResourceSetCount);
+            Util.EnsureArrayMinimumSize(
+                ref _currentComputeResourceSets,
+                vkPipeline.ResourceSetCount
+            );
             ClearSets(_currentComputeResourceSets);
-            Util.EnsureArrayMinimumSize(ref _computeResourceSetsChanged, vkPipeline.ResourceSetCount);
-            vkCmdBindPipeline(_cb, VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_COMPUTE, vkPipeline.DevicePipeline);
+            Util.EnsureArrayMinimumSize(
+                ref _computeResourceSetsChanged,
+                vkPipeline.ResourceSetCount
+            );
+            vkCmdBindPipeline(
+                _cb,
+                VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_COMPUTE,
+                vkPipeline.DevicePipeline
+            );
             _currentComputePipeline = vkPipeline;
         }
     }
@@ -823,7 +931,11 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         }
     }
 
-    protected override void SetGraphicsResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    protected override void SetGraphicsResourceSetCore(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         ref BoundResourceSetInfo set = ref _currentGraphicsResourceSets[slot];
         if (!set.Equals(rs, dynamicOffsets))
@@ -835,7 +947,11 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         }
     }
 
-    protected override void SetComputeResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    protected override void SetComputeResourceSetCore(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         ref BoundResourceSetInfo set = ref _currentComputeResourceSets[slot];
         if (!set.Equals(rs, dynamicOffsets))
@@ -852,14 +968,16 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         VkRect2D scissor = new()
         {
             offset = new VkOffset2D() { x = (int)x, y = (int)y },
-            extent = new VkExtent2D() { width = width, height = height }
+            extent = new VkExtent2D() { width = width, height = height },
         };
 
         VkRect2D[] scissorRects = _scissorRects;
-        if (scissorRects[index].offset.x != scissor.offset.x ||
-            scissorRects[index].offset.y != scissor.offset.y ||
-            scissorRects[index].extent.width != scissor.extent.width ||
-            scissorRects[index].extent.height != scissor.extent.height)
+        if (
+            scissorRects[index].offset.x != scissor.offset.x
+            || scissorRects[index].offset.y != scissor.offset.y
+            || scissorRects[index].extent.width != scissor.extent.width
+            || scissorRects[index].extent.height != scissor.extent.height
+        )
         {
             _scissorRectsChanged = true;
             scissorRects[index] = scissor;
@@ -869,12 +987,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     public override void SetViewport(uint index, in Viewport viewport)
     {
         bool yInverted = _gd.IsClipSpaceYInverted;
-        float vpY = yInverted
-            ? viewport.Y
-            : viewport.Height + viewport.Y;
-        float vpHeight = yInverted
-            ? viewport.Height
-            : -viewport.Height;
+        float vpY = yInverted ? viewport.Y : viewport.Height + viewport.Y;
+        float vpHeight = yInverted ? viewport.Height : -viewport.Height;
 
         _viewportsChanged = true;
         _viewports[index] = new VkViewport()
@@ -884,11 +998,16 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             width = viewport.Width,
             height = vpHeight,
             minDepth = viewport.MinDepth,
-            maxDepth = viewport.MaxDepth
+            maxDepth = viewport.MaxDepth,
         };
     }
 
-    private protected override void UpdateBufferCore(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
+    private protected override void UpdateBufferCore(
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr source,
+        uint sizeInBytes
+    )
     {
         VkBuffer stagingBuffer = _gd.GetPooledStagingBuffer(sizeInBytes);
         stagingBuffer.Name = _stagingBufferName;
@@ -901,7 +1020,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
     protected override void CopyBufferCore(
         DeviceBuffer source,
         DeviceBuffer destination,
-        ReadOnlySpan<BufferCopyCommand> commands)
+        ReadOnlySpan<BufferCopyCommand> commands
+    )
     {
         VkBuffer srcVkBuffer = Util.AssertSubtype<DeviceBuffer, VkBuffer>(source);
         _currentStagingInfo.AddResource(srcVkBuffer.RefCount);
@@ -931,7 +1051,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                         srcVkBuffer.DeviceBuffer,
                         dstVkBuffer.DeviceBuffer,
                         (uint)count,
-                        (VkBufferCopy*)(commandPtr + prevOffset));
+                        (VkBufferCopy*)(commandPtr + prevOffset)
+                    );
                 }
 
                 while (offset < commands.Length)
@@ -954,7 +1075,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                         srcVkBuffer.DeviceBuffer,
                         dstVkBuffer.DeviceBuffer,
                         (uint)count,
-                        (VkBufferCopy*)(commandPtr + prevOffset));
+                        (VkBufferCopy*)(commandPtr + prevOffset)
+                    );
                 }
             }
         }
@@ -963,7 +1085,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_BARRIER,
             srcAccessMask = VkAccessFlags.VK_ACCESS_TRANSFER_WRITE_BIT,
-            dstAccessMask = VkAccessFlags.VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT
+            dstAccessMask = VkAccessFlags.VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
         };
 
         vkCmdPipelineBarrier(
@@ -971,22 +1093,33 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             VkPipelineStageFlags.VK_PIPELINE_STAGE_TRANSFER_BIT,
             VkPipelineStageFlags.VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,
             0,
-            1, &barrier,
-            0, null,
-            0, null);
+            1,
+            &barrier,
+            0,
+            null,
+            0,
+            null
+        );
     }
 
     protected override void CopyTextureCore(
         Texture source,
-        uint srcX, uint srcY, uint srcZ,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
         uint srcMipLevel,
         uint srcBaseArrayLayer,
         Texture destination,
-        uint dstX, uint dstY, uint dstZ,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
         uint dstMipLevel,
         uint dstBaseArrayLayer,
-        uint width, uint height, uint depth,
-        uint layerCount)
+        uint width,
+        uint height,
+        uint depth,
+        uint layerCount
+    )
     {
         VkTexture srcVkTexture = Util.AssertSubtype<Texture, VkTexture>(source);
         _currentStagingInfo.AddResource(srcVkTexture.RefCount);
@@ -997,9 +1130,23 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
         CopyTextureCore_VkCommandBuffer(
             _cb,
-            srcVkTexture, srcX, srcY, srcZ, srcMipLevel, srcBaseArrayLayer,
-            dstVkTexture, dstX, dstY, dstZ, dstMipLevel, dstBaseArrayLayer,
-            width, height, depth, layerCount);
+            srcVkTexture,
+            srcX,
+            srcY,
+            srcZ,
+            srcMipLevel,
+            srcBaseArrayLayer,
+            dstVkTexture,
+            dstX,
+            dstY,
+            dstZ,
+            dstMipLevel,
+            dstBaseArrayLayer,
+            width,
+            height,
+            depth,
+            layerCount
+        );
     }
 
     internal static VkImageLayout GetTransitionBackLayout(TextureUsage usage)
@@ -1026,7 +1173,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         uint baseMipLevel,
         uint levelCount,
         uint baseArrayLayer,
-        uint layerCount)
+        uint layerCount
+    )
     {
         VkImageLayout layout = GetTransitionBackLayout(texture.Usage);
 
@@ -1036,21 +1184,29 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             levelCount,
             baseArrayLayer,
             layerCount,
-            layout);
+            layout
+        );
     }
 
     internal static void CopyTextureCore_VkCommandBuffer(
         VkCommandBuffer cb,
         VkTexture source,
-        uint srcX, uint srcY, uint srcZ,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
         uint srcMipLevel,
         uint srcBaseArrayLayer,
         VkTexture destination,
-        uint dstX, uint dstY, uint dstZ,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
         uint dstMipLevel,
         uint dstBaseArrayLayer,
-        uint width, uint height, uint depth,
-        uint layerCount)
+        uint width,
+        uint height,
+        uint depth,
+        uint layerCount
+    )
     {
         VkTexture srcVkTexture = source;
         VkTexture dstVkTexture = destination;
@@ -1065,7 +1221,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
                 layerCount = layerCount,
                 mipLevel = srcMipLevel,
-                baseArrayLayer = srcBaseArrayLayer
+                baseArrayLayer = srcBaseArrayLayer,
             };
 
             VkImageSubresourceLayers dstSubresource = new()
@@ -1073,16 +1229,31 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
                 layerCount = layerCount,
                 mipLevel = dstMipLevel,
-                baseArrayLayer = dstBaseArrayLayer
+                baseArrayLayer = dstBaseArrayLayer,
             };
 
             VkImageCopy region = new()
             {
-                srcOffset = new VkOffset3D() { x = (int)srcX, y = (int)srcY, z = (int)srcZ },
-                dstOffset = new VkOffset3D() { x = (int)dstX, y = (int)dstY, z = (int)dstZ },
+                srcOffset = new VkOffset3D()
+                {
+                    x = (int)srcX,
+                    y = (int)srcY,
+                    z = (int)srcZ,
+                },
+                dstOffset = new VkOffset3D()
+                {
+                    x = (int)dstX,
+                    y = (int)dstY,
+                    z = (int)dstZ,
+                },
                 srcSubresource = srcSubresource,
                 dstSubresource = dstSubresource,
-                extent = new VkExtent3D() { width = width, height = height, depth = depth }
+                extent = new VkExtent3D()
+                {
+                    width = width,
+                    height = height,
+                    depth = depth,
+                },
             };
 
             srcVkTexture.TransitionImageLayout(
@@ -1091,7 +1262,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 1,
                 srcBaseArrayLayer,
                 layerCount,
-                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+            );
 
             dstVkTexture.TransitionImageLayout(
                 cb,
@@ -1099,7 +1271,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 1,
                 dstBaseArrayLayer,
                 layerCount,
-                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+            );
 
             vkCmdCopyImage(
                 cb,
@@ -1108,16 +1281,34 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 dstVkTexture.OptimalDeviceImage,
                 VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                 1,
-                &region);
+                &region
+            );
 
-            TransitionBackFromTransfer(cb, srcVkTexture, srcMipLevel, 1, srcBaseArrayLayer, layerCount);
+            TransitionBackFromTransfer(
+                cb,
+                srcVkTexture,
+                srcMipLevel,
+                1,
+                srcBaseArrayLayer,
+                layerCount
+            );
 
-            TransitionBackFromTransfer(cb, dstVkTexture, dstMipLevel, 1, dstBaseArrayLayer, layerCount);
+            TransitionBackFromTransfer(
+                cb,
+                dstVkTexture,
+                dstMipLevel,
+                1,
+                dstBaseArrayLayer,
+                layerCount
+            );
         }
         else if (sourceIsStaging && !destIsStaging)
         {
             VulkanBuffer srcBuffer = srcVkTexture.StagingBuffer;
-            VkSubresourceLayout srcLayout = srcVkTexture.GetSubresourceLayout(srcMipLevel, srcBaseArrayLayer);
+            VkSubresourceLayout srcLayout = srcVkTexture.GetSubresourceLayout(
+                srcMipLevel,
+                srcBaseArrayLayer
+            );
             VkImage dstImage = dstVkTexture.OptimalDeviceImage;
             dstVkTexture.TransitionImageLayout(
                 cb,
@@ -1125,47 +1316,84 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 1,
                 dstBaseArrayLayer,
                 layerCount,
-                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+            );
 
             VkImageSubresourceLayers dstSubresource = new()
             {
                 aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
                 layerCount = layerCount,
                 mipLevel = dstMipLevel,
-                baseArrayLayer = dstBaseArrayLayer
+                baseArrayLayer = dstBaseArrayLayer,
             };
 
-            Util.GetMipDimensions(srcVkTexture, srcMipLevel, out uint mipWidth, out uint mipHeight, out _);
+            Util.GetMipDimensions(
+                srcVkTexture,
+                srcMipLevel,
+                out uint mipWidth,
+                out uint mipHeight,
+                out _
+            );
             uint blockSize = FormatHelpers.IsCompressedFormat(srcVkTexture.Format) ? 4u : 1u;
             uint bufferRowLength = Math.Max(mipWidth, blockSize);
             uint bufferImageHeight = Math.Max(mipHeight, blockSize);
             uint compressedX = srcX / blockSize;
             uint compressedY = srcY / blockSize;
-            uint blockSizeInBytes = blockSize == 1
-                ? FormatSizeHelpers.GetSizeInBytes(srcVkTexture.Format)
-                : FormatHelpers.GetBlockSizeInBytes(srcVkTexture.Format);
+            uint blockSizeInBytes =
+                blockSize == 1
+                    ? FormatSizeHelpers.GetSizeInBytes(srcVkTexture.Format)
+                    : FormatHelpers.GetBlockSizeInBytes(srcVkTexture.Format);
             uint rowPitch = FormatHelpers.GetRowPitch(bufferRowLength, srcVkTexture.Format);
-            uint depthPitch = FormatHelpers.GetDepthPitch(rowPitch, bufferImageHeight, srcVkTexture.Format);
+            uint depthPitch = FormatHelpers.GetDepthPitch(
+                rowPitch,
+                bufferImageHeight,
+                srcVkTexture.Format
+            );
 
             uint copyWidth = Math.Min(width, mipWidth);
             uint copyheight = Math.Min(height, mipHeight);
 
             VkBufferImageCopy regions = new()
             {
-                bufferOffset = srcLayout.offset
-                               + (srcZ * depthPitch)
-                               + (compressedY * rowPitch)
-                               + (compressedX * blockSizeInBytes),
+                bufferOffset =
+                    srcLayout.offset
+                    + (srcZ * depthPitch)
+                    + (compressedY * rowPitch)
+                    + (compressedX * blockSizeInBytes),
                 bufferRowLength = bufferRowLength,
                 bufferImageHeight = bufferImageHeight,
-                imageExtent = new VkExtent3D() { width = copyWidth, height = copyheight, depth = depth },
-                imageOffset = new VkOffset3D() { x = (int)dstX, y = (int)dstY, z = (int)dstZ },
-                imageSubresource = dstSubresource
+                imageExtent = new VkExtent3D()
+                {
+                    width = copyWidth,
+                    height = copyheight,
+                    depth = depth,
+                },
+                imageOffset = new VkOffset3D()
+                {
+                    x = (int)dstX,
+                    y = (int)dstY,
+                    z = (int)dstZ,
+                },
+                imageSubresource = dstSubresource,
             };
 
-            vkCmdCopyBufferToImage(cb, srcBuffer, dstImage, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &regions);
+            vkCmdCopyBufferToImage(
+                cb,
+                srcBuffer,
+                dstImage,
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1,
+                &regions
+            );
 
-            TransitionBackFromTransfer(cb, dstVkTexture, dstMipLevel, 1, dstBaseArrayLayer, layerCount);
+            TransitionBackFromTransfer(
+                cb,
+                dstVkTexture,
+                dstMipLevel,
+                1,
+                dstBaseArrayLayer,
+                layerCount
+            );
         }
         else if (!sourceIsStaging && destIsStaging)
         {
@@ -1176,13 +1404,15 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 1,
                 srcBaseArrayLayer,
                 layerCount,
-                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+            );
 
             VulkanBuffer dstBuffer = dstVkTexture.StagingBuffer;
 
-            VkImageAspectFlags srcAspect = (srcVkTexture.Usage & TextureUsage.DepthStencil) != 0
-                ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
-                : VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
+            VkImageAspectFlags srcAspect =
+                (srcVkTexture.Usage & TextureUsage.DepthStencil) != 0
+                    ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                    : VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT;
 
             Util.GetMipDimensions(dstVkTexture, dstMipLevel, out uint mipWidth, out uint mipHeight);
             uint blockSize = FormatHelpers.IsCompressedFormat(dstVkTexture.Format) ? 4u : 1u;
@@ -1190,52 +1420,91 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             uint bufferImageHeight = Math.Max(mipHeight, blockSize);
             uint compressedDstX = dstX / blockSize;
             uint compressedDstY = dstY / blockSize;
-            uint blockSizeInBytes = blockSize == 1
-                ? FormatSizeHelpers.GetSizeInBytes(dstVkTexture.Format)
-                : FormatHelpers.GetBlockSizeInBytes(dstVkTexture.Format);
+            uint blockSizeInBytes =
+                blockSize == 1
+                    ? FormatSizeHelpers.GetSizeInBytes(dstVkTexture.Format)
+                    : FormatHelpers.GetBlockSizeInBytes(dstVkTexture.Format);
             uint rowPitch = FormatHelpers.GetRowPitch(bufferRowLength, dstVkTexture.Format);
-            uint depthPitch = FormatHelpers.GetDepthPitch(rowPitch, bufferImageHeight, dstVkTexture.Format);
+            uint depthPitch = FormatHelpers.GetDepthPitch(
+                rowPitch,
+                bufferImageHeight,
+                dstVkTexture.Format
+            );
 
             VkBufferImageCopy* layers = stackalloc VkBufferImageCopy[(int)layerCount];
             for (uint layer = 0; layer < layerCount; layer++)
             {
-                VkSubresourceLayout dstLayout = dstVkTexture.GetSubresourceLayout(dstMipLevel, dstBaseArrayLayer + layer);
+                VkSubresourceLayout dstLayout = dstVkTexture.GetSubresourceLayout(
+                    dstMipLevel,
+                    dstBaseArrayLayer + layer
+                );
 
                 VkImageSubresourceLayers srcSubresource = new()
                 {
                     aspectMask = srcAspect,
                     layerCount = 1,
                     mipLevel = srcMipLevel,
-                    baseArrayLayer = srcBaseArrayLayer + layer
+                    baseArrayLayer = srcBaseArrayLayer + layer,
                 };
 
                 VkBufferImageCopy region = new()
                 {
                     bufferRowLength = bufferRowLength,
                     bufferImageHeight = bufferImageHeight,
-                    bufferOffset = dstLayout.offset
-                                   + (dstZ * depthPitch)
-                                   + (compressedDstY * rowPitch)
-                                   + (compressedDstX * blockSizeInBytes),
-                    imageExtent = new VkExtent3D { width = width, height = height, depth = depth },
-                    imageOffset = new VkOffset3D { x = (int)srcX, y = (int)srcY, z = (int)srcZ },
-                    imageSubresource = srcSubresource
+                    bufferOffset =
+                        dstLayout.offset
+                        + (dstZ * depthPitch)
+                        + (compressedDstY * rowPitch)
+                        + (compressedDstX * blockSizeInBytes),
+                    imageExtent = new VkExtent3D
+                    {
+                        width = width,
+                        height = height,
+                        depth = depth,
+                    },
+                    imageOffset = new VkOffset3D
+                    {
+                        x = (int)srcX,
+                        y = (int)srcY,
+                        z = (int)srcZ,
+                    },
+                    imageSubresource = srcSubresource,
                 };
 
                 layers[layer] = region;
             }
 
-            vkCmdCopyImageToBuffer(cb, srcImage, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer, layerCount, layers);
+            vkCmdCopyImageToBuffer(
+                cb,
+                srcImage,
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                dstBuffer,
+                layerCount,
+                layers
+            );
 
-            TransitionBackFromTransfer(cb, srcVkTexture, srcMipLevel, 1, srcBaseArrayLayer, layerCount);
+            TransitionBackFromTransfer(
+                cb,
+                srcVkTexture,
+                srcMipLevel,
+                1,
+                srcBaseArrayLayer,
+                layerCount
+            );
         }
         else
         {
             Debug.Assert(sourceIsStaging && destIsStaging);
             VulkanBuffer srcBuffer = srcVkTexture.StagingBuffer;
-            VkSubresourceLayout srcLayout = srcVkTexture.GetSubresourceLayout(srcMipLevel, srcBaseArrayLayer);
+            VkSubresourceLayout srcLayout = srcVkTexture.GetSubresourceLayout(
+                srcMipLevel,
+                srcBaseArrayLayer
+            );
             VulkanBuffer dstBuffer = dstVkTexture.StagingBuffer;
-            VkSubresourceLayout dstLayout = dstVkTexture.GetSubresourceLayout(dstMipLevel, dstBaseArrayLayer);
+            VkSubresourceLayout dstLayout = dstVkTexture.GetSubresourceLayout(
+                dstMipLevel,
+                dstBaseArrayLayer
+            );
 
             uint zLimit = Math.Max(depth, layerCount);
             if (!FormatHelpers.IsCompressedFormat(source.Format))
@@ -1249,15 +1518,17 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                     {
                         VkBufferCopy region = new()
                         {
-                            srcOffset = srcLayout.offset
-                                        + srcLayout.depthPitch * (zz + srcZ)
-                                        + srcLayout.rowPitch * (yy + srcY)
-                                        + pixelSize * srcX,
-                            dstOffset = dstLayout.offset
-                                        + dstLayout.depthPitch * (zz + dstZ)
-                                        + dstLayout.rowPitch * (yy + dstY)
-                                        + pixelSize * dstX,
-                            size = width * pixelSize
+                            srcOffset =
+                                srcLayout.offset
+                                + srcLayout.depthPitch * (zz + srcZ)
+                                + srcLayout.rowPitch * (yy + srcY)
+                                + pixelSize * srcX,
+                            dstOffset =
+                                dstLayout.offset
+                                + dstLayout.depthPitch * (zz + dstZ)
+                                + dstLayout.rowPitch * (yy + dstY)
+                                + pixelSize * dstX,
+                            size = width * pixelSize,
                         };
                         vkCmdCopyBuffer(cb, srcBuffer, dstBuffer, 1, &region);
                     }
@@ -1281,15 +1552,17 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                     {
                         VkBufferCopy region = new()
                         {
-                            srcOffset = srcLayout.offset
-                                        + srcLayout.depthPitch * (zz + srcZ)
-                                        + srcLayout.rowPitch * (row + compressedSrcY)
-                                        + blockSizeInBytes * compressedSrcX,
-                            dstOffset = dstLayout.offset
-                                        + dstLayout.depthPitch * (zz + dstZ)
-                                        + dstLayout.rowPitch * (row + compressedDstY)
-                                        + blockSizeInBytes * compressedDstX,
-                            size = denseRowSize
+                            srcOffset =
+                                srcLayout.offset
+                                + srcLayout.depthPitch * (zz + srcZ)
+                                + srcLayout.rowPitch * (row + compressedSrcY)
+                                + blockSizeInBytes * compressedSrcX,
+                            dstOffset =
+                                dstLayout.offset
+                                + dstLayout.depthPitch * (zz + dstZ)
+                                + dstLayout.rowPitch * (row + compressedDstY)
+                                + blockSizeInBytes * compressedDstX,
+                            size = denseRowSize,
                         };
                         vkCmdCopyBuffer(cb, srcBuffer, dstBuffer, 1, &region);
                     }
@@ -1314,8 +1587,22 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         uint depth = vkTex.Depth;
         for (uint level = 1; level < vkTex.MipLevels; level++)
         {
-            vkTex.TransitionImageLayoutNonmatching(_cb, level - 1, 1, 0, layerCount, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-            vkTex.TransitionImageLayoutNonmatching(_cb, level, 1, 0, layerCount, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+            vkTex.TransitionImageLayoutNonmatching(
+                _cb,
+                level - 1,
+                1,
+                0,
+                layerCount,
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+            );
+            vkTex.TransitionImageLayoutNonmatching(
+                _cb,
+                level,
+                1,
+                0,
+                layerCount,
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+            );
 
             VkImage deviceImage = vkTex.OptimalDeviceImage;
             uint mipWidth = Math.Max(width >> 1, 1);
@@ -1327,10 +1614,15 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
                 baseArrayLayer = 0,
                 layerCount = layerCount,
-                mipLevel = level - 1
+                mipLevel = level - 1,
             };
             region.srcOffsets[0] = new VkOffset3D();
-            region.srcOffsets[1] = new VkOffset3D() { x = (int)width, y = (int)height, z = (int)depth };
+            region.srcOffsets[1] = new VkOffset3D()
+            {
+                x = (int)width,
+                y = (int)height,
+                z = (int)depth,
+            };
             region.dstOffsets[0] = new VkOffset3D();
 
             region.dstSubresource = new VkImageSubresourceLayers()
@@ -1338,16 +1630,25 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
                 baseArrayLayer = 0,
                 layerCount = layerCount,
-                mipLevel = level
+                mipLevel = level,
             };
 
-            region.dstOffsets[1] = new VkOffset3D() { x = (int)mipWidth, y = (int)mipHeight, z = (int)mipDepth };
+            region.dstOffsets[1] = new VkOffset3D()
+            {
+                x = (int)mipWidth,
+                y = (int)mipHeight,
+                z = (int)mipDepth,
+            };
             vkCmdBlitImage(
                 _cb,
-                deviceImage, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                deviceImage, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                1, &region,
-                _gd.GetFormatFilter(vkTex.VkFormat));
+                deviceImage,
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                deviceImage,
+                VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1,
+                &region,
+                _gd.GetFormatFilter(vkTex.VkFormat)
+            );
 
             width = mipWidth;
             height = mipHeight;
@@ -1388,11 +1689,25 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             baseMipLevel = 0,
             levelCount = texture.MipLevels,
             baseArrayLayer = 0,
-            layerCount = effectiveLayers
+            layerCount = effectiveLayers,
         };
 
-        texture.TransitionImageLayout(_cb, 0, texture.MipLevels, 0, effectiveLayers, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-        vkCmdClearColorImage(_cb, texture.OptimalDeviceImage, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &color, 1, &range);
+        texture.TransitionImageLayout(
+            _cb,
+            0,
+            texture.MipLevels,
+            0,
+            effectiveLayers,
+            VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+        );
+        vkCmdClearColorImage(
+            _cb,
+            texture.OptimalDeviceImage,
+            VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            &color,
+            1,
+            &range
+        );
         VkImageLayout colorLayout = texture.IsSwapchainTexture
             ? VkImageLayout.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
             : VkImageLayout.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
@@ -1406,7 +1721,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         uint effectiveLayers = texture.ActualArrayLayers;
 
         VkImageAspectFlags aspect = FormatHelpers.IsStencilFormat(texture.Format)
-            ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
+            ? VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT
+                | VkImageAspectFlags.VK_IMAGE_ASPECT_STENCIL_BIT
             : VkImageAspectFlags.VK_IMAGE_ASPECT_DEPTH_BIT;
 
         VkImageSubresourceRange range = new()
@@ -1415,25 +1731,47 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             baseMipLevel = 0,
             levelCount = texture.MipLevels,
             baseArrayLayer = 0,
-            layerCount = effectiveLayers
+            layerCount = effectiveLayers,
         };
 
-        texture.TransitionImageLayout(_cb, 0, texture.MipLevels, 0, effectiveLayers, VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        texture.TransitionImageLayout(
+            _cb,
+            0,
+            texture.MipLevels,
+            0,
+            effectiveLayers,
+            VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+        );
         vkCmdClearDepthStencilImage(
             _cb,
             texture.OptimalDeviceImage,
             VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
             &clearValue,
             1,
-            &range);
-        texture.TransitionImageLayout(_cb, 0, texture.MipLevels, 0, effectiveLayers, VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+            &range
+        );
+        texture.TransitionImageLayout(
+            _cb,
+            0,
+            texture.MipLevels,
+            0,
+            effectiveLayers,
+            VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+        );
     }
 
     internal void TransitionImageLayout(VkTexture texture, VkImageLayout layout)
     {
         _currentStagingInfo.AddResource(texture.RefCount);
 
-        texture.TransitionImageLayout(_cb, 0, texture.MipLevels, 0, texture.ActualArrayLayers, layout);
+        texture.TransitionImageLayout(
+            _cb,
+            0,
+            texture.MipLevels,
+            0,
+            texture.ActualArrayLayers,
+            layout
+        );
     }
 
     [Conditional("DEBUG")]
@@ -1443,37 +1781,37 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_BARRIER,
             srcAccessMask =
-                VkAccessFlags.VK_ACCESS_INDIRECT_COMMAND_READ_BIT |
-                VkAccessFlags.VK_ACCESS_INDEX_READ_BIT |
-                VkAccessFlags.VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT |
-                VkAccessFlags.VK_ACCESS_UNIFORM_READ_BIT |
-                VkAccessFlags.VK_ACCESS_INPUT_ATTACHMENT_READ_BIT |
-                VkAccessFlags.VK_ACCESS_SHADER_READ_BIT |
-                VkAccessFlags.VK_ACCESS_SHADER_WRITE_BIT |
-                VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-                VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
-                VkAccessFlags.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
-                VkAccessFlags.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
-                VkAccessFlags.VK_ACCESS_TRANSFER_READ_BIT |
-                VkAccessFlags.VK_ACCESS_TRANSFER_WRITE_BIT |
-                VkAccessFlags.VK_ACCESS_HOST_READ_BIT |
-                VkAccessFlags.VK_ACCESS_HOST_WRITE_BIT,
+                VkAccessFlags.VK_ACCESS_INDIRECT_COMMAND_READ_BIT
+                | VkAccessFlags.VK_ACCESS_INDEX_READ_BIT
+                | VkAccessFlags.VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT
+                | VkAccessFlags.VK_ACCESS_UNIFORM_READ_BIT
+                | VkAccessFlags.VK_ACCESS_INPUT_ATTACHMENT_READ_BIT
+                | VkAccessFlags.VK_ACCESS_SHADER_READ_BIT
+                | VkAccessFlags.VK_ACCESS_SHADER_WRITE_BIT
+                | VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_READ_BIT
+                | VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+                | VkAccessFlags.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT
+                | VkAccessFlags.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT
+                | VkAccessFlags.VK_ACCESS_TRANSFER_READ_BIT
+                | VkAccessFlags.VK_ACCESS_TRANSFER_WRITE_BIT
+                | VkAccessFlags.VK_ACCESS_HOST_READ_BIT
+                | VkAccessFlags.VK_ACCESS_HOST_WRITE_BIT,
             dstAccessMask =
-                VkAccessFlags.VK_ACCESS_INDIRECT_COMMAND_READ_BIT |
-                VkAccessFlags.VK_ACCESS_INDEX_READ_BIT |
-                VkAccessFlags.VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT |
-                VkAccessFlags.VK_ACCESS_UNIFORM_READ_BIT |
-                VkAccessFlags.VK_ACCESS_INPUT_ATTACHMENT_READ_BIT |
-                VkAccessFlags.VK_ACCESS_SHADER_READ_BIT |
-                VkAccessFlags.VK_ACCESS_SHADER_WRITE_BIT |
-                VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-                VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
-                VkAccessFlags.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
-                VkAccessFlags.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
-                VkAccessFlags.VK_ACCESS_TRANSFER_READ_BIT |
-                VkAccessFlags.VK_ACCESS_TRANSFER_WRITE_BIT |
-                VkAccessFlags.VK_ACCESS_HOST_READ_BIT |
-                VkAccessFlags.VK_ACCESS_HOST_WRITE_BIT
+                VkAccessFlags.VK_ACCESS_INDIRECT_COMMAND_READ_BIT
+                | VkAccessFlags.VK_ACCESS_INDEX_READ_BIT
+                | VkAccessFlags.VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT
+                | VkAccessFlags.VK_ACCESS_UNIFORM_READ_BIT
+                | VkAccessFlags.VK_ACCESS_INPUT_ATTACHMENT_READ_BIT
+                | VkAccessFlags.VK_ACCESS_SHADER_READ_BIT
+                | VkAccessFlags.VK_ACCESS_SHADER_WRITE_BIT
+                | VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_READ_BIT
+                | VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+                | VkAccessFlags.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT
+                | VkAccessFlags.VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT
+                | VkAccessFlags.VK_ACCESS_TRANSFER_READ_BIT
+                | VkAccessFlags.VK_ACCESS_TRANSFER_WRITE_BIT
+                | VkAccessFlags.VK_ACCESS_HOST_READ_BIT
+                | VkAccessFlags.VK_ACCESS_HOST_WRITE_BIT,
         };
 
         vkCmdPipelineBarrier(
@@ -1481,10 +1819,13 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             VkPipelineStageFlags.VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, // srcStageMask
             VkPipelineStageFlags.VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, // dstStageMask
             0,
-            1,                                  // memoryBarrierCount
-            &memoryBarrier,                     // pMemoryBarriers
-            0, null,
-            0, null);
+            1, // memoryBarrierCount
+            &memoryBarrier, // pMemoryBarriers
+            0,
+            null,
+            0,
+            null
+        );
     }
 
     public override string? Name
@@ -1510,7 +1851,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             _gd.SetDebugMarkerName(
                 VkDebugReportObjectTypeEXT.VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT,
                 (ulong)cb.Value,
-                nameUtf8);
+                nameUtf8
+            );
         }
 
         Span<byte> utf8Buffer = stackalloc byte[1024];
@@ -1537,7 +1879,8 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         _gd.SetDebugMarkerName(
             VkDebugReportObjectTypeEXT.VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_POOL_EXT,
             _pool.Value,
-            utf8Buffer);
+            utf8Buffer
+        );
     }
 
     [SkipLocalsInit]
@@ -1557,7 +1900,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             VkDebugMarkerMarkerInfoEXT markerInfo = new()
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
-                pMarkerName = (sbyte*)utf8Ptr
+                pMarkerName = (sbyte*)utf8Ptr,
             };
             func(_cb, &markerInfo);
         }
@@ -1591,7 +1934,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             VkDebugMarkerMarkerInfoEXT markerInfo = new()
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT,
-                pMarkerName = (sbyte*)utf8Ptr
+                pMarkerName = (sbyte*)utf8Ptr,
             };
             func(_cb, &markerInfo);
         }

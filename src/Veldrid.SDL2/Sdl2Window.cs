@@ -51,7 +51,15 @@ public unsafe class Sdl2Window
     bool _firstMouseEvent = true;
     Func<bool>? _closeRequestedHandler;
 
-    public Sdl2Window(string title, int x, int y, int width, int height, SDL_WindowFlags flags, bool threadedProcessing)
+    public Sdl2Window(
+        string title,
+        int x,
+        int y,
+        int width,
+        int height,
+        SDL_WindowFlags flags,
+        bool threadedProcessing
+    )
     {
         SDL_SetHint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1");
         _threadedProcessing = threadedProcessing;
@@ -66,7 +74,7 @@ public unsafe class Sdl2Window
                 Width = width,
                 Height = height,
                 WindowFlags = flags,
-                ResetEvent = mre
+                ResetEvent = mre,
             };
 
             Task.Factory.StartNew(WindowOwnerRoutine, wp, TaskCreationOptions.LongRunning);
@@ -91,7 +99,7 @@ public unsafe class Sdl2Window
             {
                 WindowHandle = windowHandle,
                 WindowFlags = 0,
-                ResetEvent = mre
+                ResetEvent = mre,
             };
 
             Task.Factory.StartNew(WindowOwnerRoutine, wp, TaskCreationOptions.LongRunning);
@@ -106,15 +114,35 @@ public unsafe class Sdl2Window
         }
     }
 
-    public int X { get => _cachedPosition.Value.X; set => SetWindowPosition(value, Y); }
-    public int Y { get => _cachedPosition.Value.Y; set => SetWindowPosition(X, value); }
+    public int X
+    {
+        get => _cachedPosition.Value.X;
+        set => SetWindowPosition(value, Y);
+    }
+    public int Y
+    {
+        get => _cachedPosition.Value.Y;
+        set => SetWindowPosition(X, value);
+    }
 
-    public int Width { get => GetWindowSize().X; set => SetWindowSize(value, Height); }
-    public int Height { get => GetWindowSize().Y; set => SetWindowSize(Width, value); }
+    public int Width
+    {
+        get => GetWindowSize().X;
+        set => SetWindowSize(value, Height);
+    }
+    public int Height
+    {
+        get => GetWindowSize().Y;
+        set => SetWindowSize(Width, value);
+    }
 
     public IntPtr Handle => GetUnderlyingWindowHandle();
 
-    public string? Title { get => _cachedWindowTitle; set => SetWindowTitle(value); }
+    public string? Title
+    {
+        get => _cachedWindowTitle;
+        set => SetWindowTitle(value);
+    }
 
     void SetWindowTitle(string? value)
     {
@@ -127,8 +155,13 @@ public unsafe class Sdl2Window
         get
         {
             SDL_WindowFlags flags = SDL_GetWindowFlags(_window);
-            if (((flags & SDL_WindowFlags.FullScreenDesktop) == SDL_WindowFlags.FullScreenDesktop)
-                || ((flags & (SDL_WindowFlags.Borderless | SDL_WindowFlags.Fullscreen)) == (SDL_WindowFlags.Borderless | SDL_WindowFlags.Fullscreen)))
+            if (
+                ((flags & SDL_WindowFlags.FullScreenDesktop) == SDL_WindowFlags.FullScreenDesktop)
+                || (
+                    (flags & (SDL_WindowFlags.Borderless | SDL_WindowFlags.Fullscreen))
+                    == (SDL_WindowFlags.Borderless | SDL_WindowFlags.Fullscreen)
+                )
+            )
             {
                 return WindowState.BorderlessFullScreen;
             }
@@ -203,10 +236,7 @@ public unsafe class Sdl2Window
 
     public bool CursorVisible
     {
-        get
-        {
-            return SDL_ShowCursor(SDL_QUERY) == 1;
-        }
+        get { return SDL_ShowCursor(SDL_QUERY) == 1; }
         set
         {
             int toggle = value ? SDL_ENABLE : SDL_DISABLE;
@@ -225,10 +255,7 @@ public unsafe class Sdl2Window
             }
             return float.NaN;
         }
-        set
-        {
-            SDL_SetWindowOpacity(_window, value);
-        }
+        set { SDL_SetWindowOpacity(_window, value); }
     }
 
     public bool Focused => (SDL_GetWindowFlags(_window) & SDL_WindowFlags.InputFocus) != 0;
@@ -278,7 +305,9 @@ public unsafe class Sdl2Window
         return new Point(p.X + position.X, p.Y + position.Y);
     }
 
-    public void SetMousePosition(Vector2 position) => SetMousePosition((int)position.X, (int)position.Y);
+    public void SetMousePosition(Vector2 position) =>
+        SetMousePosition((int)position.X, (int)position.Y);
+
     public void SetMousePosition(int x, int y)
     {
         if (_exists)
@@ -382,7 +411,10 @@ public unsafe class Sdl2Window
         _currentMouseDelta = new Vector2();
         if (_threadedProcessing)
         {
-            SimpleInputSnapshot snapshot = Interlocked.Exchange(ref _privateSnapshot, _privateBackbuffer);
+            SimpleInputSnapshot snapshot = Interlocked.Exchange(
+                ref _privateSnapshot,
+                _privateBackbuffer
+            );
             snapshot.CopyTo(_publicSnapshot);
             snapshot.Clear();
         }
@@ -442,27 +474,37 @@ public unsafe class Sdl2Window
                 HandleKeyboardEvent(keyboardEvent);
                 break;
             case SDL_EventType.TextEditing:
-                SDL_TextEditingEvent textEditingEvent = Unsafe.As<SDL_Event, SDL_TextEditingEvent>(ref ev);
+                SDL_TextEditingEvent textEditingEvent = Unsafe.As<SDL_Event, SDL_TextEditingEvent>(
+                    ref ev
+                );
                 HandleTextEditingEvent(textEditingEvent);
                 break;
             case SDL_EventType.TextInput:
-                SDL_TextInputEvent textInputEvent = Unsafe.As<SDL_Event, SDL_TextInputEvent>(ref ev);
+                SDL_TextInputEvent textInputEvent = Unsafe.As<SDL_Event, SDL_TextInputEvent>(
+                    ref ev
+                );
                 HandleTextInputEvent(textInputEvent);
                 break;
             case SDL_EventType.KeyMapChanged:
                 KeyMapChanged?.Invoke();
                 break;
             case SDL_EventType.MouseMotion:
-                SDL_MouseMotionEvent mouseMotionEvent = Unsafe.As<SDL_Event, SDL_MouseMotionEvent>(ref ev);
+                SDL_MouseMotionEvent mouseMotionEvent = Unsafe.As<SDL_Event, SDL_MouseMotionEvent>(
+                    ref ev
+                );
                 HandleMouseMotionEvent(mouseMotionEvent);
                 break;
             case SDL_EventType.MouseButtonDown:
             case SDL_EventType.MouseButtonUp:
-                SDL_MouseButtonEvent mouseButtonEvent = Unsafe.As<SDL_Event, SDL_MouseButtonEvent>(ref ev);
+                SDL_MouseButtonEvent mouseButtonEvent = Unsafe.As<SDL_Event, SDL_MouseButtonEvent>(
+                    ref ev
+                );
                 HandleMouseButtonEvent(mouseButtonEvent);
                 break;
             case SDL_EventType.MouseWheel:
-                SDL_MouseWheelEvent mouseWheelEvent = Unsafe.As<SDL_Event, SDL_MouseWheelEvent>(ref ev);
+                SDL_MouseWheelEvent mouseWheelEvent = Unsafe.As<SDL_Event, SDL_MouseWheelEvent>(
+                    ref ev
+                );
                 HandleMouseWheelEvent(mouseWheelEvent);
                 break;
             case SDL_EventType.DropBegin:
@@ -519,10 +561,7 @@ public unsafe class Sdl2Window
             snapshot.InputEvents.Add(runes[i]);
         }
 
-        TextInputEvent inputEvent = new(
-            textInputEvent.timestamp,
-            textInputEvent.windowID,
-            runes);
+        TextInputEvent inputEvent = new(textInputEvent.timestamp, textInputEvent.windowID, runes);
         TextInput?.Invoke(inputEvent);
     }
 
@@ -537,7 +576,8 @@ public unsafe class Sdl2Window
             textEditingEvent.windowID,
             runes,
             textEditingEvent.start,
-            textEditingEvent.length);
+            textEditingEvent.length
+        );
         TextEditing?.Invoke(editingEvent);
     }
 
@@ -551,7 +591,8 @@ public unsafe class Sdl2Window
         MouseWheelEvent wheelEvent = new(
             mouseWheelEvent.timestamp,
             mouseWheelEvent.windowID,
-            delta);
+            delta
+        );
         MouseWheel?.Invoke(wheelEvent);
     }
 
@@ -570,11 +611,15 @@ public unsafe class Sdl2Window
             {
                 if (dropEvent.type == SDL_EventType.DropFile)
                 {
-                    DropFile?.Invoke(new DropFileEvent(utf8, dropEvent.timestamp, dropEvent.windowID));
+                    DropFile?.Invoke(
+                        new DropFileEvent(utf8, dropEvent.timestamp, dropEvent.windowID)
+                    );
                 }
                 else if (dropEvent.type == SDL_EventType.DropText)
                 {
-                    DropText?.Invoke(new DropTextEvent(utf8, dropEvent.timestamp, dropEvent.windowID));
+                    DropText?.Invoke(
+                        new DropTextEvent(utf8, dropEvent.timestamp, dropEvent.windowID)
+                    );
                 }
             }
             finally
@@ -606,7 +651,8 @@ public unsafe class Sdl2Window
             mouseButtonEvent.windowID,
             button,
             down,
-            mouseButtonEvent.clicks);
+            mouseButtonEvent.clicks
+        );
         snapshot.MouseEvents.Add(mouseEvent);
 
         if (down)
@@ -648,7 +694,8 @@ public unsafe class Sdl2Window
                 mouseMotionEvent.timestamp,
                 mouseMotionEvent.windowID,
                 mousePos,
-                delta);
+                delta
+            );
             MouseMove?.Invoke(motionEvent);
         }
         _firstMouseEvent = false;
@@ -663,7 +710,8 @@ public unsafe class Sdl2Window
             keyboardEvent.repeat == 1,
             (Key)keyboardEvent.keysym.scancode,
             (VKey)keyboardEvent.keysym.sym,
-            (ModifierKeys)keyboardEvent.keysym.mod);
+            (ModifierKeys)keyboardEvent.keysym.mod
+        );
 
         _privateSnapshot.KeyEvents.Add(keyEvent);
         if (keyEvent.Down)
@@ -729,14 +777,16 @@ public unsafe class Sdl2Window
 
     void RefreshCachedSize()
     {
-        int w, h;
+        int w,
+            h;
         SDL_GetWindowSize(_window, &w, &h);
         _cachedSize.Value = new Point(w, h);
     }
 
     void RefreshCachedPosition()
     {
-        int x, y;
+        int x,
+            y;
         SDL_GetWindowPosition(_window, &x, &y);
         _cachedPosition.Value = new Point(x, y);
     }
@@ -800,7 +850,8 @@ public unsafe class Sdl2Window
     {
         public List<Rune> InputEvents { get; private set; } = new List<Rune>();
         public List<KeyEvent> KeyEvents { get; private set; } = new List<KeyEvent>();
-        public List<MouseButtonEvent> MouseEvents { get; private set; } = new List<MouseButtonEvent>();
+        public List<MouseButtonEvent> MouseEvents { get; private set; } =
+            new List<MouseButtonEvent>();
 
         public Vector2 MousePosition { get; set; }
         public Vector2 WheelDelta { get; set; }
@@ -808,7 +859,8 @@ public unsafe class Sdl2Window
 
         ReadOnlySpan<Rune> InputSnapshot.InputEvents => CollectionsMarshal.AsSpan(InputEvents);
         ReadOnlySpan<KeyEvent> InputSnapshot.KeyEvents => CollectionsMarshal.AsSpan(KeyEvents);
-        ReadOnlySpan<MouseButtonEvent> InputSnapshot.MouseEvents => CollectionsMarshal.AsSpan(MouseEvents);
+        ReadOnlySpan<MouseButtonEvent> InputSnapshot.MouseEvents =>
+            CollectionsMarshal.AsSpan(MouseEvents);
 
         internal void Clear()
         {
@@ -865,7 +917,8 @@ public unsafe class Sdl2Window
 }
 
 [DebuggerDisplay("{DebuggerDisplayString,nq}")]
-public class BufferedValue<T> where T : struct
+public class BufferedValue<T>
+    where T : struct
 {
     public T Value
     {

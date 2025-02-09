@@ -12,7 +12,10 @@ namespace Veldrid.Tests.Android
     /// Resharper. Runner authors who are not using AST-based discovery are strongly
     /// encouraged to use <see cref="XunitFrontController"/> instead.
     /// </summary>
-    public class Xunit2Controller : Xunit.LongLivedMarshalByRefObject, IFrontController, ITestCaseDescriptorProvider
+    public class Xunit2Controller
+        : Xunit.LongLivedMarshalByRefObject,
+            IFrontController,
+            ITestCaseDescriptorProvider
     {
         ITestCaseDescriptorProvider? defaultTestCaseDescriptorProvider;
         readonly Lazy<ITestFrameworkDiscoverer> remoteDiscoverer;
@@ -27,7 +30,8 @@ namespace Veldrid.Tests.Android
         public Xunit2Controller(
             IReflectionAssemblyInfo assemblyInfo,
             ISourceInformationProvider? sourceInformationProvider = null,
-            IMessageSink? diagnosticMessageSink = null)
+            IMessageSink? diagnosticMessageSink = null
+        )
         {
             ArgumentNullException.ThrowIfNull(assemblyInfo);
 
@@ -93,7 +97,11 @@ namespace Veldrid.Tests.Android
         /// Starts the process of finding all xUnit.net v2 tests in an assembly.
         /// </summary>
         /// <inheritdoc/>
-        public void Find(bool includeSourceInformation, IMessageSink messageSink, ITestFrameworkDiscoveryOptions discoveryOptions)
+        public void Find(
+            bool includeSourceInformation,
+            IMessageSink messageSink,
+            ITestFrameworkDiscoveryOptions discoveryOptions
+        )
         {
             RemoteDiscoverer.Find(includeSourceInformation, messageSink, discoveryOptions);
         }
@@ -102,16 +110,30 @@ namespace Veldrid.Tests.Android
         /// Starts the process of finding all xUnit.net v2 tests in a class.
         /// </summary>
         /// <inheritdoc/>
-        public void Find(string typeName, bool includeSourceInformation, IMessageSink messageSink, ITestFrameworkDiscoveryOptions discoveryOptions)
+        public void Find(
+            string typeName,
+            bool includeSourceInformation,
+            IMessageSink messageSink,
+            ITestFrameworkDiscoveryOptions discoveryOptions
+        )
         {
-            RemoteDiscoverer.Find(typeName, includeSourceInformation, messageSink, discoveryOptions);
+            RemoteDiscoverer.Find(
+                typeName,
+                includeSourceInformation,
+                messageSink,
+                discoveryOptions
+            );
         }
 
         /// <summary>
         /// Starts the process of running all the xUnit.net v2 tests in the assembly.
         /// </summary>
         /// <inheritdoc/>
-        public void RunAll(IMessageSink messageSink, ITestFrameworkDiscoveryOptions discoveryOptions, ITestFrameworkExecutionOptions executionOptions)
+        public void RunAll(
+            IMessageSink messageSink,
+            ITestFrameworkDiscoveryOptions discoveryOptions,
+            ITestFrameworkExecutionOptions executionOptions
+        )
         {
             RemoteExecutor.RunAll(messageSink, discoveryOptions, executionOptions);
         }
@@ -120,17 +142,29 @@ namespace Veldrid.Tests.Android
         /// Starts the process of running the selected xUnit.net v2 tests.
         /// </summary>
         /// <inheritdoc/>
-        public void RunTests(IEnumerable<ITestCase> testCases, IMessageSink messageSink, ITestFrameworkExecutionOptions executionOptions)
+        public void RunTests(
+            IEnumerable<ITestCase> testCases,
+            IMessageSink messageSink,
+            ITestFrameworkExecutionOptions executionOptions
+        )
         {
             RemoteExecutor.RunTests(testCases, messageSink, executionOptions);
         }
 
         /// <inheritdoc/>
-        public List<TestCaseDescriptor> GetTestCaseDescriptors(List<ITestCase> testCases, bool includeSerialization)
+        public List<TestCaseDescriptor> GetTestCaseDescriptors(
+            List<ITestCase> testCases,
+            bool includeSerialization
+        )
         {
-            defaultTestCaseDescriptorProvider ??= new DefaultTestCaseDescriptorProvider(RemoteDiscoverer);
+            defaultTestCaseDescriptorProvider ??= new DefaultTestCaseDescriptorProvider(
+                RemoteDiscoverer
+            );
 
-            return defaultTestCaseDescriptorProvider.GetTestCaseDescriptors(testCases, includeSerialization);
+            return defaultTestCaseDescriptorProvider.GetTestCaseDescriptors(
+                testCases,
+                includeSerialization
+            );
         }
 
         /// <inheritdoc/>

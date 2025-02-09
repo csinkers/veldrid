@@ -1,28 +1,31 @@
-﻿
-namespace Veldrid.VirtualReality.Oculus;
+﻿namespace Veldrid.VirtualReality.Oculus;
 
 internal static class OculusUtil
 {
     public static TextureDescription GetVeldridTextureDescription(ovrTextureSwapChainDesc desc)
     {
         return TextureDescription.Texture2D(
-            (uint)desc.Width, (uint)desc.Height,
+            (uint)desc.Width,
+            (uint)desc.Height,
             (uint)desc.MipLevels,
             (uint)desc.ArraySize,
             GetVeldridPixelFormat(desc.Format),
             GetVeldridTextureUsage(desc.BindFlags),
-            GetSampleCount(desc.SampleCount));
+            GetSampleCount(desc.SampleCount)
+        );
     }
 
     public static TextureDescription GetVeldridTextureDescription(ovrMirrorTextureDesc desc)
     {
         return TextureDescription.Texture2D(
-            (uint)desc.Width, (uint)desc.Height,
+            (uint)desc.Width,
+            (uint)desc.Height,
             1,
             1,
             GetVeldridPixelFormat(desc.Format),
             TextureUsage.Sampled,
-            TextureSampleCount.Count1);
+            TextureSampleCount.Count1
+        );
     }
 
     public static PixelFormat GetVeldridPixelFormat(ovrTextureFormat format)
@@ -83,6 +86,7 @@ internal static class OculusUtil
 
     public static bool IsSrgbFormat(PixelFormat format)
     {
-        return format == PixelFormat.B8_G8_R8_A8_UNorm_SRgb || format == PixelFormat.R8_G8_B8_A8_UNorm_SRgb;
+        return format == PixelFormat.B8_G8_R8_A8_UNorm_SRgb
+            || format == PixelFormat.R8_G8_B8_A8_UNorm_SRgb;
     }
 }

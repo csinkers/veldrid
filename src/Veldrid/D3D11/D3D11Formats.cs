@@ -5,9 +5,9 @@ using Vortice.DXGI;
 
 namespace Veldrid.D3D11;
 
-using DXStencilOperation = Vortice.Direct3D11.StencilOperation;
 using DXMapMode = Vortice.Direct3D11.MapMode;
 using DXPrimitiveTopology = Vortice.Direct3D.PrimitiveTopology;
+using DXStencilOperation = Vortice.Direct3D11.StencilOperation;
 
 internal static class D3D11Formats
 {
@@ -134,7 +134,9 @@ internal static class D3D11Formats
             case PixelFormat.D16_UNorm:
                 return Format.R16_Typeless;
             case PixelFormat.D16_UNorm_S8_UInt:
-                throw new VeldridException($"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on Direct3D 11.");
+                throw new VeldridException(
+                    $"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on Direct3D 11."
+                );
             case PixelFormat.D32_Float:
                 return Format.R32_Typeless;
             case PixelFormat.D24_UNorm_S8_UInt:
@@ -152,7 +154,8 @@ internal static class D3D11Formats
             case PixelFormat.ETC2_R8_G8_B8_UNorm:
             case PixelFormat.ETC2_R8_G8_B8_A1_UNorm:
             case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
-                static Format Throw() => throw new VeldridException("ETC2 formats are not supported on Direct3D 11.");
+                static Format Throw() =>
+                    throw new VeldridException("ETC2 formats are not supported on Direct3D 11.");
                 return Throw();
 
             default:
@@ -160,7 +163,11 @@ internal static class D3D11Formats
         }
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static Format GetTypelessFormat(Format format)
     {
         switch (format)
@@ -285,12 +292,17 @@ internal static class D3D11Formats
         {
             flags |= BindFlags.ConstantBuffer;
         }
-        if ((usage & BufferUsage.StructuredBufferReadOnly) == BufferUsage.StructuredBufferReadOnly
-            || (usage & BufferUsage.StructuredBufferReadWrite) == BufferUsage.StructuredBufferReadWrite)
+        if (
+            (usage & BufferUsage.StructuredBufferReadOnly) == BufferUsage.StructuredBufferReadOnly
+            || (usage & BufferUsage.StructuredBufferReadWrite)
+                == BufferUsage.StructuredBufferReadWrite
+        )
         {
             flags |= BindFlags.ShaderResource;
         }
-        if ((usage & BufferUsage.StructuredBufferReadWrite) == BufferUsage.StructuredBufferReadWrite)
+        if (
+            (usage & BufferUsage.StructuredBufferReadWrite) == BufferUsage.StructuredBufferReadWrite
+        )
         {
             flags |= BindFlags.UnorderedAccess;
         }
@@ -298,7 +310,11 @@ internal static class D3D11Formats
         return flags;
     }
 
-    internal static TextureUsage GetVdUsage(BindFlags bindFlags, CpuAccessFlags cpuFlags, ResourceOptionFlags optionFlags)
+    internal static TextureUsage GetVdUsage(
+        BindFlags bindFlags,
+        CpuAccessFlags cpuFlags,
+        ResourceOptionFlags optionFlags
+    )
     {
         TextureUsage usage = 0;
         if ((bindFlags & BindFlags.RenderTarget) != 0)
@@ -333,8 +349,8 @@ internal static class D3D11Formats
     internal static bool IsUnsupportedFormat(PixelFormat format)
     {
         return format == PixelFormat.ETC2_R8_G8_B8_UNorm
-               || format == PixelFormat.ETC2_R8_G8_B8_A1_UNorm
-               || format == PixelFormat.ETC2_R8_G8_B8_A8_UNorm;
+            || format == PixelFormat.ETC2_R8_G8_B8_A1_UNorm
+            || format == PixelFormat.ETC2_R8_G8_B8_A8_UNorm;
     }
 
     internal static Format GetViewFormat(Format format)
@@ -375,7 +391,7 @@ internal static class D3D11Formats
         {
             IndexFormat.UInt16 => Format.R16_UInt,
             IndexFormat.UInt32 => Format.R32_UInt,
-            _ => Illegal.Value<IndexFormat, Format>()
+            _ => Illegal.Value<IndexFormat, Format>(),
         };
     }
 
@@ -494,10 +510,12 @@ internal static class D3D11Formats
             {
                 SamplerFilter.MinPoint_MagPoint_MipPoint => Filter.ComparisonMinMagMipPoint,
                 SamplerFilter.MinPoint_MagPoint_MipLinear => Filter.ComparisonMinMagPointMipLinear,
-                SamplerFilter.MinPoint_MagLinear_MipPoint => Filter.ComparisonMinPointMagLinearMipPoint,
+                SamplerFilter.MinPoint_MagLinear_MipPoint =>
+                    Filter.ComparisonMinPointMagLinearMipPoint,
                 SamplerFilter.MinPoint_MagLinear_MipLinear => Filter.ComparisonMinPointMagMipLinear,
                 SamplerFilter.MinLinear_MagPoint_MipPoint => Filter.ComparisonMinLinearMagMipPoint,
-                SamplerFilter.MinLinear_MagPoint_MipLinear => Filter.ComparisonMinLinearMagPointMipLinear,
+                SamplerFilter.MinLinear_MagPoint_MipLinear =>
+                    Filter.ComparisonMinLinearMagPointMipLinear,
                 SamplerFilter.MinLinear_MagLinear_MipPoint => Filter.ComparisonMinMagLinearMipPoint,
                 SamplerFilter.MinLinear_MagLinear_MipLinear => Filter.ComparisonMinMagMipLinear,
                 SamplerFilter.Anisotropic => Filter.ComparisonAnisotropic,
@@ -533,7 +551,9 @@ internal static class D3D11Formats
         };
     }
 
-    internal static Vortice.Direct3D.PrimitiveTopology VdToD3D11PrimitiveTopology(PrimitiveTopology primitiveTopology)
+    internal static Vortice.Direct3D.PrimitiveTopology VdToD3D11PrimitiveTopology(
+        PrimitiveTopology primitiveTopology
+    )
     {
         return primitiveTopology switch
         {

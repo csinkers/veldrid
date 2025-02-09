@@ -5,7 +5,8 @@ internal struct DrawIndexedEntry(
     uint instanceCount,
     uint indexStart,
     int vertexOffset,
-    uint instanceStart)
+    uint instanceStart
+)
 {
     public readonly uint IndexCount = indexCount;
     public readonly uint InstanceCount = instanceCount;

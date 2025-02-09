@@ -1,5 +1,4 @@
-﻿
-namespace Veldrid;
+﻿namespace Veldrid;
 
 public readonly struct GraphicsApiVersion(int major, int minor, int subminor, int patch)
 {
@@ -35,8 +34,10 @@ public readonly struct GraphicsApiVersion(int major, int minor, int subminor, in
     {
         string[] versionParts = versionString.Split(' ')[0].Split('.');
 
-        if (!int.TryParse(versionParts[0], out int major) ||
-            !int.TryParse(versionParts[1], out int minor))
+        if (
+            !int.TryParse(versionParts[0], out int major)
+            || !int.TryParse(versionParts[1], out int minor)
+        )
         {
             version = default;
             return false;

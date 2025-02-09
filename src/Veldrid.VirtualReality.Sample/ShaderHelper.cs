@@ -12,7 +12,7 @@ internal static class ShaderHelper
         bool invertY = false;
         List<SpecializationConstant> specializations =
         [
-            new SpecializationConstant(102, gd.IsDepthRangeZeroToOne)
+            new SpecializationConstant(102, gd.IsDepthRangeZeroToOne),
         ];
         switch (gd.BackendType)
         {

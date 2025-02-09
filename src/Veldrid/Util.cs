@@ -13,18 +13,22 @@ internal static class Util
 
     [DebuggerNonUserCode]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static TDerived AssertSubtype<TBase, TDerived>(TBase? value) where TDerived : class, TBase where TBase : class
+    internal static TDerived AssertSubtype<TBase, TDerived>(TBase? value)
+        where TDerived : class, TBase
+        where TBase : class
     {
 #if DEBUG
         if (value is not TDerived derived)
         {
-            throw new VeldridException($"object {value} must be derived type {typeof(TDerived).FullName} to be used in this context.");
+            throw new VeldridException(
+                $"object {value} must be derived type {typeof(TDerived).FullName} to be used in this context."
+            );
         }
 
         return derived;
 
 #else
-            return (TDerived)value;
+        return (TDerived)value;
 #endif
     }
 
@@ -55,13 +59,14 @@ internal static class Util
         }
         return Encoding.UTF8.GetString(span.Slice(0, length));
     }
-        
+
     internal static unsafe string GetString(ReadOnlySpan<sbyte> span)
     {
         return GetString(MemoryMarshal.AsBytes(span));
     }
 
-    internal static bool NullableEquals<T>(T? left, T? right) where T : struct, IEquatable<T>
+    internal static bool NullableEquals<T>(T? left, T? right)
+        where T : struct, IEquatable<T>
     {
         if (left.HasValue && right.HasValue)
         {
@@ -71,12 +76,14 @@ internal static class Util
         return left.HasValue == right.HasValue;
     }
 
-    internal static bool ArrayEquals<T>(T[]? left, T[]? right) where T : class
+    internal static bool ArrayEquals<T>(T[]? left, T[]? right)
+        where T : class
     {
         return left.AsSpan().SequenceEqual(right.AsSpan());
     }
 
-    internal static bool ArrayEqualsEquatable<T>(T[]? left, T[]? right) where T : struct, IEquatable<T>
+    internal static bool ArrayEqualsEquatable<T>(T[]? left, T[]? right)
+        where T : struct, IEquatable<T>
     {
         return left.AsSpan().SequenceEqual(right.AsSpan());
     }
@@ -105,20 +112,36 @@ internal static class Util
         }
     }
 
-    internal static void GetMipLevelAndArrayLayer(Texture tex, uint subresource, out uint mipLevel, out uint arrayLayer)
+    internal static void GetMipLevelAndArrayLayer(
+        Texture tex,
+        uint subresource,
+        out uint mipLevel,
+        out uint arrayLayer
+    )
     {
         arrayLayer = subresource / tex.MipLevels;
         mipLevel = subresource - (arrayLayer * tex.MipLevels);
     }
 
-    internal static void GetMipDimensions(Texture tex, uint mipLevel, out uint width, out uint height, out uint depth)
+    internal static void GetMipDimensions(
+        Texture tex,
+        uint mipLevel,
+        out uint width,
+        out uint height,
+        out uint depth
+    )
     {
         width = GetDimension(tex.Width, mipLevel);
         height = GetDimension(tex.Height, mipLevel);
         depth = GetDimension(tex.Depth, mipLevel);
     }
 
-    internal static void GetMipDimensions(Texture tex, uint mipLevel, out uint width, out uint height)
+    internal static void GetMipDimensions(
+        Texture tex,
+        uint mipLevel,
+        out uint width,
+        out uint height
+    )
     {
         width = GetDimension(tex.Width, mipLevel);
         height = GetDimension(tex.Height, mipLevel);
@@ -150,7 +173,12 @@ internal static class Util
             GetMipDimensions(tex, level, out uint mipWidth, out uint mipHeight, out uint mipDepth);
             uint storageWidth = Math.Max(mipWidth, blockSize);
             uint storageHeight = Math.Max(mipHeight, blockSize);
-            offset += FormatHelpers.GetRegionSize(storageWidth, storageHeight, mipDepth, tex.Format);
+            offset += FormatHelpers.GetRegionSize(
+                storageWidth,
+                storageHeight,
+                mipDepth,
+                tex.Format
+            );
         }
 
         return offset;
@@ -170,7 +198,12 @@ internal static class Util
             GetMipDimensions(tex, level, out uint mipWidth, out uint mipHeight, out uint mipDepth);
             uint storageWidth = Math.Max(mipWidth, blockSize);
             uint storageHeight = Math.Max(mipHeight, blockSize);
-            layerPitch += FormatHelpers.GetRegionSize(storageWidth, storageHeight, mipDepth, tex.Format);
+            layerPitch += FormatHelpers.GetRegionSize(
+                storageWidth,
+                storageHeight,
+                mipDepth,
+                tex.Format
+            );
         }
 
         return layerPitch * arrayLayer;
@@ -178,20 +211,28 @@ internal static class Util
 
     public static unsafe void CopyTextureRegion(
         void* src,
-        uint srcX, uint srcY, uint srcZ,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
         uint srcRowPitch,
         uint srcDepthPitch,
         void* dst,
-        uint dstX, uint dstY, uint dstZ,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
         uint dstRowPitch,
         uint dstDepthPitch,
         uint width,
         uint height,
         uint depth,
-        PixelFormat format)
+        PixelFormat format
+    )
     {
         uint blockSize = FormatHelpers.IsCompressedFormat(format) ? 4u : 1u;
-        uint blockSizeInBytes = blockSize > 1 ? FormatHelpers.GetBlockSizeInBytes(format) : FormatSizeHelpers.GetSizeInBytes(format);
+        uint blockSizeInBytes =
+            blockSize > 1
+                ? FormatHelpers.GetBlockSizeInBytes(format)
+                : FormatSizeHelpers.GetSizeInBytes(format);
         uint compressedSrcX = srcX / blockSize;
         uint compressedSrcY = srcY / blockSize;
         uint compressedDstX = dstX / blockSize;
@@ -202,26 +243,24 @@ internal static class Util
         if (srcRowPitch == dstRowPitch && srcDepthPitch == dstDepthPitch)
         {
             uint totalCopySize = depth * srcDepthPitch;
-            Buffer.MemoryCopy(
-                src,
-                dst,
-                totalCopySize,
-                totalCopySize);
+            Buffer.MemoryCopy(src, dst, totalCopySize, totalCopySize);
         }
         else
         {
             for (uint zz = 0; zz < depth; zz++)
             for (uint yy = 0; yy < numRows; yy++)
             {
-                byte* rowCopyDst = (byte*)dst
-                                   + dstDepthPitch * (zz + dstZ)
-                                   + dstRowPitch * (yy + compressedDstY)
-                                   + blockSizeInBytes * compressedDstX;
+                byte* rowCopyDst =
+                    (byte*)dst
+                    + dstDepthPitch * (zz + dstZ)
+                    + dstRowPitch * (yy + compressedDstY)
+                    + blockSizeInBytes * compressedDstX;
 
-                byte* rowCopySrc = (byte*)src
-                                   + srcDepthPitch * (zz + srcZ)
-                                   + srcRowPitch * (yy + compressedSrcY)
-                                   + blockSizeInBytes * compressedSrcX;
+                byte* rowCopySrc =
+                    (byte*)src
+                    + srcDepthPitch * (zz + srcZ)
+                    + srcRowPitch * (yy + compressedSrcY)
+                    + blockSizeInBytes * compressedSrcX;
 
                 Unsafe.CopyBlock(rowCopyDst, rowCopySrc, rowSize);
             }
@@ -242,7 +281,11 @@ internal static class Util
         if (resource.Kind == BindableResourceKind.DeviceBufferRange)
         {
             DeviceBufferRange range = resource.GetDeviceBufferRange();
-            return new DeviceBufferRange(range.Buffer, range.Offset + additionalOffset, range.SizeInBytes);
+            return new DeviceBufferRange(
+                range.Buffer,
+                range.Offset + additionalOffset,
+                range.SizeInBytes
+            );
         }
         else if (resource.Kind == BindableResourceKind.DeviceBuffer)
         {
@@ -253,13 +296,18 @@ internal static class Util
         {
             static DeviceBufferRange Throw(BindableResourceKind resourceKind)
             {
-                throw new VeldridException($"Unexpected resource type used in a buffer type slot: {resourceKind}");
+                throw new VeldridException(
+                    $"Unexpected resource type used in a buffer type slot: {resourceKind}"
+                );
             }
             return Throw(resource.Kind);
         }
     }
 
-    public static bool GetDeviceBuffer(BindableResource resource, [MaybeNullWhen(false)] out DeviceBuffer buffer)
+    public static bool GetDeviceBuffer(
+        BindableResource resource,
+        [MaybeNullWhen(false)] out DeviceBuffer buffer
+    )
     {
         if (resource.Kind == BindableResourceKind.DeviceBuffer)
         {
@@ -290,7 +338,9 @@ internal static class Util
         {
             static TextureView Throw(BindableResourceKind resourceKind)
             {
-                throw new VeldridException($"Unexpected resource type used in a texture type slot: {resourceKind}.");
+                throw new VeldridException(
+                    $"Unexpected resource type used in a texture type slot: {resourceKind}."
+                );
             }
             return Throw(resource.Kind);
         }

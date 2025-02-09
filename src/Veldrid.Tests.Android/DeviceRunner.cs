@@ -25,7 +25,11 @@ namespace Veldrid.Tests.Android
 
         readonly CancellationTokenSource _cancellationSource = new();
 
-        public DeviceRunner(IReadOnlyCollection<Assembly> testAssemblies, Navigator navigator, IResultChannel resultChannel)
+        public DeviceRunner(
+            IReadOnlyCollection<Assembly> testAssemblies,
+            Navigator navigator,
+            IResultChannel resultChannel
+        )
         {
             _navigation = navigator;
             TestAssemblies = testAssemblies;
@@ -36,7 +40,10 @@ namespace Veldrid.Tests.Android
 
         public IReadOnlyCollection<Assembly> TestAssemblies { get; }
 
-        public ValueTask RecordResultAsync(TestResultViewModel result, CancellationToken cancellationToken)
+        public ValueTask RecordResultAsync(
+            TestResultViewModel result,
+            CancellationToken cancellationToken
+        )
         {
             return _resultChannel.RecordResultAsync(result, cancellationToken);
         }
@@ -50,7 +57,11 @@ namespace Veldrid.Tests.Android
         {
             List<AssemblyRunInfo> groups = tests
                 .GroupBy(t => t.Assembly)
-                .Select(g => new AssemblyRunInfo(g.Key, GetConfiguration(g.Key.GetName().Name), g.ToList()))
+                .Select(g => new AssemblyRunInfo(
+                    g.Key,
+                    GetConfiguration(g.Key.GetName().Name),
+                    g.ToList()
+                ))
                 .ToList();
 
             return RunAsync(groups, message);
@@ -63,9 +74,10 @@ namespace Veldrid.Tests.Android
                 if (message == null)
                 {
                     List<TestCaseViewModel>? testCases = runInfos.FirstOrDefault()?.TestCases;
-                    message = runInfos.Count > 1 || testCases?.Count > 1
-                        ? "Run Multiple Tests"
-                        : testCases?.FirstOrDefault()?.DisplayName;
+                    message =
+                        runInfos.Count > 1 || testCases?.Count > 1
+                            ? "Run Multiple Tests"
+                            : testCases?.FirstOrDefault()?.DisplayName;
                 }
 
                 if (await _resultChannel.OpenChannelAsync(_cancellationSource.Token, message))
@@ -96,8 +108,11 @@ namespace Veldrid.Tests.Android
             {
                 AssemblyRunInfo info = await Task.Run(() =>
                 {
-                    TestAssemblyConfiguration configuration = GetConfiguration(assembly.GetName().Name);
-                    ITestFrameworkDiscoveryOptions discoveryOptions = TestFrameworkOptions.ForDiscovery(configuration);
+                    TestAssemblyConfiguration configuration = GetConfiguration(
+                        assembly.GetName().Name
+                    );
+                    ITestFrameworkDiscoveryOptions discoveryOptions =
+                        TestFrameworkOptions.ForDiscovery(configuration);
 
                     if (_cancellationSource.IsCancellationRequested)
                     {
@@ -105,13 +120,20 @@ namespace Veldrid.Tests.Android
                     }
 
                     using Xunit2Controller controller = new(new ReflectionAssemblyInfo(assembly));
-                    using TestDiscoverySink sink = new(() => _cancellationSource.IsCancellationRequested);
+                    using TestDiscoverySink sink = new(
+                        () => _cancellationSource.IsCancellationRequested
+                    );
 
                     controller.Find(false, sink, discoveryOptions);
                     sink.Finished.WaitOne();
 
-                    List<TestCaseViewModel> testCases = sink.TestCases
-                        .Select(tc => new TestCaseViewModel(assembly, tc, _navigation, this))
+                    List<TestCaseViewModel> testCases = sink
+                        .TestCases.Select(tc => new TestCaseViewModel(
+                            assembly,
+                            tc,
+                            _navigation,
+                            this
+                        ))
                         .ToList();
 
                     return new AssemblyRunInfo(assembly, configuration, testCases);
@@ -145,7 +167,10 @@ namespace Veldrid.Tests.Android
             return PlatformHelpers.ReadConfigJson(assemblyName);
         }
 
-        private async Task RunTestsAsync(IEnumerable<AssemblyRunInfo> testCases, CancellationToken cancellationToken)
+        private async Task RunTestsAsync(
+            IEnumerable<AssemblyRunInfo> testCases,
+            CancellationToken cancellationToken
+        )
         {
             List<Task> tasks = new();
             List<AssemblyRunInfo> syncInfos = new();
@@ -154,7 +179,12 @@ namespace Veldrid.Tests.Android
             {
                 if (runInfo.Configuration.ParallelizeTestCollectionsOrDefault)
                 {
-                    tasks.Add(Task.Run(() => RunTestsInAssembly(runInfo, cancellationToken), cancellationToken));
+                    tasks.Add(
+                        Task.Run(
+                            () => RunTestsInAssembly(runInfo, cancellationToken),
+                            cancellationToken
+                        )
+                    );
                 }
                 else
                 {
@@ -170,29 +200,43 @@ namespace Veldrid.Tests.Android
             }
         }
 
-        private void RunTestsInAssembly(AssemblyRunInfo runInfo, CancellationToken cancellationToken)
+        private void RunTestsInAssembly(
+            AssemblyRunInfo runInfo,
+            CancellationToken cancellationToken
+        )
         {
             int longRunningSeconds = runInfo.Configuration.LongRunningTestSecondsOrDefault;
 
             using Xunit2Controller controller = new(new ReflectionAssemblyInfo(runInfo.Assembly));
 
-            Dictionary<ITestCase, TestCaseViewModel> xunitTestCases = runInfo.TestCases
-                .Select(tc => (vm: tc, tc: tc.TestCase))
+            Dictionary<ITestCase, TestCaseViewModel> xunitTestCases = runInfo
+                .TestCases.Select(tc => (vm: tc, tc: tc.TestCase))
                 .Where(tc => tc.tc.UniqueID != null)
                 .ToDictionary(tc => tc.tc, tc => tc.vm);
 
-            ITestFrameworkExecutionOptions executionOptions = TestFrameworkOptions.ForExecution(runInfo.Configuration);
+            ITestFrameworkExecutionOptions executionOptions = TestFrameworkOptions.ForExecution(
+                runInfo.Configuration
+            );
 
             DeviceExecutionSink deviceExecSink = new(xunitTestCases, this, context);
 
-            IExecutionSink resultsSink = new DelegatingExecutionSummarySink(deviceExecSink, () => cancellationToken.IsCancellationRequested);
+            IExecutionSink resultsSink = new DelegatingExecutionSummarySink(
+                deviceExecSink,
+                () => cancellationToken.IsCancellationRequested
+            );
             if (longRunningSeconds > 0)
             {
                 DiagnosticMessageSink diagSink = new(
                     d => context.Post(_ => OnDiagnosticMessage?.Invoke(d), null),
-                    runInfo.Assembly.GetName().Name, executionOptions.GetDiagnosticMessagesOrDefault());
+                    runInfo.Assembly.GetName().Name,
+                    executionOptions.GetDiagnosticMessagesOrDefault()
+                );
 
-                resultsSink = new DelegatingLongRunningTestDetectionSink(resultsSink, TimeSpan.FromSeconds(longRunningSeconds), diagSink);
+                resultsSink = new DelegatingLongRunningTestDetectionSink(
+                    resultsSink,
+                    TimeSpan.FromSeconds(longRunningSeconds),
+                    diagSink
+                );
             }
 
             string? asmName = runInfo.Assembly.GetName().Name;
@@ -205,10 +249,20 @@ namespace Veldrid.Tests.Android
             XunitProjectAssembly assm = new() { AssemblyFilename = asmPath };
             deviceExecSink.OnMessage(new TestAssemblyExecutionStarting(assm, executionOptions));
 
-            controller.RunTests(xunitTestCases.Select(tc => tc.Value.TestCase).ToList(), resultsSink, executionOptions);
+            controller.RunTests(
+                xunitTestCases.Select(tc => tc.Value.TestCase).ToList(),
+                resultsSink,
+                executionOptions
+            );
             resultsSink.Finished.WaitOne();
 
-            deviceExecSink.OnMessage(new TestAssemblyExecutionFinished(assm, executionOptions, resultsSink.ExecutionSummary));
+            deviceExecSink.OnMessage(
+                new TestAssemblyExecutionFinished(
+                    assm,
+                    executionOptions,
+                    resultsSink.ExecutionSummary
+                )
+            );
         }
     }
 }

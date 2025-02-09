@@ -26,7 +26,8 @@ internal sealed unsafe class VkResourceLayout : ResourceLayout, IResourceRefCoun
         _gd = gd;
         ResourceLayoutElementDescription[] elements = description.Elements;
         _descriptorTypes = new VkDescriptorType[elements.Length];
-        VkDescriptorSetLayoutBinding* bindings = stackalloc VkDescriptorSetLayoutBinding[elements.Length];
+        VkDescriptorSetLayoutBinding* bindings =
+            stackalloc VkDescriptorSetLayoutBinding[elements.Length];
 
         uint uniformBufferCount = 0;
         uint uniformBufferDynamicCount = 0;
@@ -40,7 +41,10 @@ internal sealed unsafe class VkResourceLayout : ResourceLayout, IResourceRefCoun
         {
             bindings[i].binding = i;
             bindings[i].descriptorCount = 1;
-            VkDescriptorType descriptorType = VkFormats.VdToVkDescriptorType(elements[i].Kind, elements[i].Options);
+            VkDescriptorType descriptorType = VkFormats.VdToVkDescriptorType(
+                elements[i].Kind,
+                elements[i].Options
+            );
             bindings[i].descriptorType = descriptorType;
             bindings[i].stageFlags = VkFormats.VdToVkShaderStages(elements[i].Stages);
             if ((elements[i].Options & ResourceLayoutElementOptions.DynamicBinding) != 0)
@@ -83,13 +87,14 @@ internal sealed unsafe class VkResourceLayout : ResourceLayout, IResourceRefCoun
             samplerCount,
             storageBufferCount,
             storageBufferDynamicCount,
-            storageImageCount);
+            storageImageCount
+        );
 
         VkDescriptorSetLayoutCreateInfo dslCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
             bindingCount = (uint)elements.Length,
-            pBindings = bindings
+            pBindings = bindings,
         };
 
         VkDescriptorSetLayout dsl;

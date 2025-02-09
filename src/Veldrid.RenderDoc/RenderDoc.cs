@@ -20,7 +20,9 @@ public unsafe class RenderDoc
     {
         _nativeLib = lib;
         IntPtr getApiExport = NativeLibrary.GetExport(_nativeLib, "RENDERDOC_GetAPI");
-        pRENDERDOC_GetAPI getApiFunc = Marshal.GetDelegateForFunctionPointer<pRENDERDOC_GetAPI>(getApiExport);
+        pRENDERDOC_GetAPI getApiFunc = Marshal.GetDelegateForFunctionPointer<pRENDERDOC_GetAPI>(
+            getApiExport
+        );
         void* apiPointers;
         int result = getApiFunc(RENDERDOC_Version.API_Version_1_2_0, &apiPointers);
         if (result != 1)
@@ -28,7 +30,7 @@ public unsafe class RenderDoc
             throw new InvalidOperationException("Failed to load RenderDoc API.");
         }
 
-        _api = Marshal.PtrToStructure<RENDERDOC_API_1_4_0>((IntPtr) apiPointers);
+        _api = Marshal.PtrToStructure<RENDERDOC_API_1_4_0>((IntPtr)apiPointers);
     }
 
     /// <summary>
@@ -90,7 +92,11 @@ public unsafe class RenderDoc
     public bool CaptureCallstacksOnlyDraws
     {
         get => _api.GetCaptureOptionU32(RENDERDOC_CaptureOption.CaptureCallstacksOnlyDraws) != 0;
-        set => _api.SetCaptureOptionU32(RENDERDOC_CaptureOption.CaptureCallstacksOnlyDraws, value ? 1u : 0u);
+        set =>
+            _api.SetCaptureOptionU32(
+                RENDERDOC_CaptureOption.CaptureCallstacksOnlyDraws,
+                value ? 1u : 0u
+            );
     }
 
     /// <summary>
@@ -118,7 +124,8 @@ public unsafe class RenderDoc
     public bool VerifyBufferAccess
     {
         get => _api.GetCaptureOptionU32(RENDERDOC_CaptureOption.VerifyBufferAccess) != 0;
-        set => _api.SetCaptureOptionU32(RENDERDOC_CaptureOption.VerifyBufferAccess, value ? 1u : 0u);
+        set =>
+            _api.SetCaptureOptionU32(RENDERDOC_CaptureOption.VerifyBufferAccess, value ? 1u : 0u);
     }
 
     /// <summary>
@@ -161,7 +168,8 @@ public unsafe class RenderDoc
     public bool CaptureAllCmdLists
     {
         get => _api.GetCaptureOptionU32(RENDERDOC_CaptureOption.CaptureAllCmdLists) != 0;
-        set => _api.SetCaptureOptionU32(RENDERDOC_CaptureOption.CaptureAllCmdLists, value ? 1u : 0u);
+        set =>
+            _api.SetCaptureOptionU32(RENDERDOC_CaptureOption.CaptureAllCmdLists, value ? 1u : 0u);
     }
 
     /// <summary>
@@ -203,8 +211,8 @@ public unsafe class RenderDoc
     /// </summary>
     /// <param name="device"> is a handle to the API ‘device’ object that will be set active. May be null for wildcard match.</param>
     /// <param name="wndHandle"> is a handle to the platform window handle that will be set active. May be null for wildcard match.</param>
-    public void StartFrameCapture(IntPtr device, IntPtr wndHandle) => _api.StartFrameCapture(device.ToPointer(), wndHandle.ToPointer());
-
+    public void StartFrameCapture(IntPtr device, IntPtr wndHandle) =>
+        _api.StartFrameCapture(device.ToPointer(), wndHandle.ToPointer());
 
     /// <summary>
     /// Returns whether or not a frame capture is currently ongoing anywhere.
@@ -224,7 +232,8 @@ public unsafe class RenderDoc
     /// <param name="device"> is a handle to the API ‘device’ object that will be set active. May be null for wildcard match.</param>
     /// <param name="wndHandle"> is a handle to the platform window handle that will be set active. May be null for wildcard match.</param>
     /// <returns>True if the capture succeeded, false if there was an error capturing.</returns>
-    public bool EndFrameCapture(IntPtr device, IntPtr wndHandle) => _api.EndFrameCapture(device.ToPointer(), wndHandle.ToPointer()) != 0;
+    public bool EndFrameCapture(IntPtr device, IntPtr wndHandle) =>
+        _api.EndFrameCapture(device.ToPointer(), wndHandle.ToPointer()) != 0;
 
     /// <summary>
     /// This function will launch the Replay UI associated with the RenderDoc library injected into the running application.
@@ -238,7 +247,8 @@ public unsafe class RenderDoc
     /// </summary>
     /// <param name="device"> is a handle to the API ‘device’ object that will be set active. Must be valid.</param>
     /// <param name="wndHandle"> is a handle to the platform window handle that will be set active. Must be valid.</param>
-    public void SetActiveWindow(IntPtr device, IntPtr wndHandle) => _api.SetActiveWindow(device.ToPointer(), wndHandle.ToPointer());
+    public void SetActiveWindow(IntPtr device, IntPtr wndHandle) =>
+        _api.SetActiveWindow(device.ToPointer(), wndHandle.ToPointer());
 
     /// <summary>
     /// This function will launch the Replay UI associated with the RenderDoc library injected into the running application.
@@ -291,12 +301,18 @@ public unsafe class RenderDoc
     /// </summary>
     public bool OverlayEnabled
     {
-        get => (_api.GetOverlayBits() & (uint) RENDERDOC_OverlayBits.Enabled) != 0;
+        get => (_api.GetOverlayBits() & (uint)RENDERDOC_OverlayBits.Enabled) != 0;
         set
         {
-            uint bit = (uint) RENDERDOC_OverlayBits.Enabled;
-            if (value) { _api.MaskOverlayBits(~0u, bit); }
-            else { _api.MaskOverlayBits(~bit, 0); }
+            uint bit = (uint)RENDERDOC_OverlayBits.Enabled;
+            if (value)
+            {
+                _api.MaskOverlayBits(~0u, bit);
+            }
+            else
+            {
+                _api.MaskOverlayBits(~bit, 0);
+            }
         }
     }
 
@@ -305,12 +321,18 @@ public unsafe class RenderDoc
     /// </summary>
     public bool OverlayFrameRate
     {
-        get => (_api.GetOverlayBits() & (uint) RENDERDOC_OverlayBits.FrameRate) != 0;
+        get => (_api.GetOverlayBits() & (uint)RENDERDOC_OverlayBits.FrameRate) != 0;
         set
         {
-            uint bit = (uint) RENDERDOC_OverlayBits.FrameRate;
-            if (value) { _api.MaskOverlayBits(~0u, bit); }
-            else { _api.MaskOverlayBits(~bit, 0); }
+            uint bit = (uint)RENDERDOC_OverlayBits.FrameRate;
+            if (value)
+            {
+                _api.MaskOverlayBits(~0u, bit);
+            }
+            else
+            {
+                _api.MaskOverlayBits(~bit, 0);
+            }
         }
     }
 
@@ -319,12 +341,18 @@ public unsafe class RenderDoc
     /// </summary>
     public bool OverlayFrameNumber
     {
-        get => (_api.GetOverlayBits() & (uint) RENDERDOC_OverlayBits.FrameNumber) != 0;
+        get => (_api.GetOverlayBits() & (uint)RENDERDOC_OverlayBits.FrameNumber) != 0;
         set
         {
-            uint bit = (uint) RENDERDOC_OverlayBits.FrameNumber;
-            if (value) { _api.MaskOverlayBits(~0u, bit); }
-            else { _api.MaskOverlayBits(~bit, 0); }
+            uint bit = (uint)RENDERDOC_OverlayBits.FrameNumber;
+            if (value)
+            {
+                _api.MaskOverlayBits(~0u, bit);
+            }
+            else
+            {
+                _api.MaskOverlayBits(~bit, 0);
+            }
         }
     }
 
@@ -333,12 +361,18 @@ public unsafe class RenderDoc
     /// </summary>
     public bool OverlayCaptureList
     {
-        get => (_api.GetOverlayBits() & (uint) RENDERDOC_OverlayBits.CaptureList) != 0;
+        get => (_api.GetOverlayBits() & (uint)RENDERDOC_OverlayBits.CaptureList) != 0;
         set
         {
-            uint bit = (uint) RENDERDOC_OverlayBits.CaptureList;
-            if (value) { _api.MaskOverlayBits(~0u, bit); }
-            else { _api.MaskOverlayBits(~bit, 0); }
+            uint bit = (uint)RENDERDOC_OverlayBits.CaptureList;
+            if (value)
+            {
+                _api.MaskOverlayBits(~0u, bit);
+            }
+            else
+            {
+                _api.MaskOverlayBits(~bit, 0);
+            }
         }
     }
 
@@ -347,7 +381,8 @@ public unsafe class RenderDoc
     /// </summary>
     /// <param name="renderDoc">If successful, this parameter contains a loaded <see cref="RenderDoc"/> instance.</param>
     /// <returns>Whether or not RenderDoc was successfully loaded.</returns>
-    public static bool Load([MaybeNullWhen(false)] out RenderDoc renderDoc) => Load(GetLibNames(), out renderDoc);
+    public static bool Load([MaybeNullWhen(false)] out RenderDoc renderDoc) =>
+        Load(GetLibNames(), out renderDoc);
 
     /// Attempts to load RenderDoc from the given path.
     /// </summary>

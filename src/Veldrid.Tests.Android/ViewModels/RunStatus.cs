@@ -6,6 +6,6 @@ namespace Veldrid.Tests.Android.ViewModels
         Failed,
         NoTests,
         Skipped,
-        NotRun
+        NotRun,
     }
 }

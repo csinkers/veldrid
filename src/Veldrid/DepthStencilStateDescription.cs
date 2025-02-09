@@ -59,7 +59,11 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     /// <param name="depthTestEnabled">Controls whether depth testing is enabled.</param>
     /// <param name="depthWriteEnabled">Controls whether new depth values are written to the depth buffer.</param>
     /// <param name="comparisonKind">The <see cref="ComparisonKind"/> used when considering new depth values.</param>
-    public DepthStencilStateDescription(bool depthTestEnabled, bool depthWriteEnabled, ComparisonKind comparisonKind)
+    public DepthStencilStateDescription(
+        bool depthTestEnabled,
+        bool depthWriteEnabled,
+        ComparisonKind comparisonKind
+    )
     {
         DepthTestEnabled = depthTestEnabled;
         DepthWriteEnabled = depthWriteEnabled;
@@ -95,7 +99,8 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
         StencilBehaviorDescription stencilBack,
         byte stencilReadMask,
         byte stencilWriteMask,
-        uint stencilReference)
+        uint stencilReference
+    )
     {
         DepthTestEnabled = depthTestEnabled;
         DepthWriteEnabled = depthWriteEnabled;
@@ -121,7 +126,7 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     {
         DepthTestEnabled = true,
         DepthWriteEnabled = true,
-        DepthComparison = ComparisonKind.LessEqual
+        DepthComparison = ComparisonKind.LessEqual,
     };
 
     /// <summary>
@@ -136,7 +141,7 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     {
         DepthTestEnabled = true,
         DepthWriteEnabled = false,
-        DepthComparison = ComparisonKind.LessEqual
+        DepthComparison = ComparisonKind.LessEqual,
     };
 
     /// <summary>
@@ -151,7 +156,7 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     {
         DepthTestEnabled = true,
         DepthWriteEnabled = true,
-        DepthComparison = ComparisonKind.GreaterEqual
+        DepthComparison = ComparisonKind.GreaterEqual,
     };
 
     /// <summary>
@@ -166,7 +171,7 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     {
         DepthTestEnabled = true,
         DepthWriteEnabled = false,
-        DepthComparison = ComparisonKind.GreaterEqual
+        DepthComparison = ComparisonKind.GreaterEqual,
     };
 
     /// <summary>
@@ -181,7 +186,7 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     {
         DepthTestEnabled = false,
         DepthWriteEnabled = false,
-        DepthComparison = ComparisonKind.LessEqual
+        DepthComparison = ComparisonKind.LessEqual,
     };
 
     /// <summary>
@@ -192,14 +197,14 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     public bool Equals(DepthStencilStateDescription other)
     {
         return DepthTestEnabled.Equals(other.DepthTestEnabled)
-               && DepthWriteEnabled.Equals(other.DepthWriteEnabled)
-               && DepthComparison == other.DepthComparison
-               && StencilTestEnabled.Equals(other.StencilTestEnabled)
-               && StencilFront.Equals(other.StencilFront)
-               && StencilBack.Equals(other.StencilBack)
-               && StencilReadMask.Equals(other.StencilReadMask)
-               && StencilWriteMask.Equals(other.StencilWriteMask)
-               && StencilReference.Equals(other.StencilReference);
+            && DepthWriteEnabled.Equals(other.DepthWriteEnabled)
+            && DepthComparison == other.DepthComparison
+            && StencilTestEnabled.Equals(other.StencilTestEnabled)
+            && StencilFront.Equals(other.StencilFront)
+            && StencilBack.Equals(other.StencilBack)
+            && StencilReadMask.Equals(other.StencilReadMask)
+            && StencilWriteMask.Equals(other.StencilWriteMask)
+            && StencilReference.Equals(other.StencilReference);
     }
 
     /// <summary>
@@ -217,6 +222,7 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
             StencilBack.GetHashCode(),
             StencilReadMask.GetHashCode(),
             StencilWriteMask.GetHashCode(),
-            StencilReference.GetHashCode());
+            StencilReference.GetHashCode()
+        );
     }
 }

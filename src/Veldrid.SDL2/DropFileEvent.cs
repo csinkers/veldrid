@@ -2,10 +2,14 @@
 
 namespace Veldrid.Sdl2;
 
-public readonly ref struct DropFileEvent(ReadOnlySpan<byte> fileNameUtf8, uint timestamp, uint windowId)
+public readonly ref struct DropFileEvent(
+    ReadOnlySpan<byte> fileNameUtf8,
+    uint timestamp,
+    uint windowId
+)
 {
     /// <summary>
-    /// The dropped file name in UTF8. 
+    /// The dropped file name in UTF8.
     /// </summary>
     public ReadOnlySpan<byte> FileNameUtf8 { get; } = fileNameUtf8;
 

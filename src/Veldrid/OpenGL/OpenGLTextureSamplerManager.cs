@@ -1,7 +1,7 @@
-﻿using static Veldrid.OpenGLBinding.OpenGLNative;
-using static Veldrid.OpenGL.OpenGLUtil;
+﻿using System;
 using Veldrid.OpenGLBinding;
-using System;
+using static Veldrid.OpenGL.OpenGLUtil;
+using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -97,7 +97,10 @@ internal sealed unsafe class OpenGLTextureSamplerManager
 
     void EnsureSamplerMipmapState(uint textureUnit, bool mipmapped)
     {
-        if (_textureUnitSamplers[textureUnit].Sampler != null && _textureUnitSamplers[textureUnit].Mipmapped != mipmapped)
+        if (
+            _textureUnitSamplers[textureUnit].Sampler != null
+            && _textureUnitSamplers[textureUnit].Mipmapped != mipmapped
+        )
         {
             OpenGLSampler sampler = _textureUnitSamplers[textureUnit].Sampler;
             uint samplerID = mipmapped ? sampler.MipmapSampler : sampler.NoMipmapSampler;

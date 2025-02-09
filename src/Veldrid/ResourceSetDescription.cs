@@ -37,7 +37,8 @@ public struct ResourceSetDescription : IEquatable<ResourceSetDescription>
     /// <returns>True if all elements and all array elements are equal; false otherswise.</returns>
     public bool Equals(ResourceSetDescription other)
     {
-        return Layout.Equals(other.Layout) && Util.ArrayEqualsEquatable(BoundResources, other.BoundResources);
+        return Layout.Equals(other.Layout)
+            && Util.ArrayEqualsEquatable(BoundResources, other.BoundResources);
     }
 
     /// <summary>

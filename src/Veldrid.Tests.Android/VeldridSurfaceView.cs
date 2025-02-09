@@ -20,7 +20,12 @@ namespace Veldrid.Tests.Android
         public event Action? OnSwapchainChanged;
         public event Action? OnSwapchainDestroyed;
 
-        public VeldridSurfaceView(Context context, GraphicsBackend backend, GraphicsDeviceOptions deviceOptions) : base(context)
+        public VeldridSurfaceView(
+            Context context,
+            GraphicsBackend backend,
+            GraphicsDeviceOptions deviceOptions
+        )
+            : base(context)
         {
             if (!(backend == GraphicsBackend.Vulkan || backend == GraphicsBackend.OpenGLES))
             {
@@ -32,9 +37,7 @@ namespace Veldrid.Tests.Android
             Holder!.AddCallback(this);
         }
 
-        public void SurfaceCreated(ISurfaceHolder holder)
-        {
-        }
+        public void SurfaceCreated(ISurfaceHolder holder) { }
 
         public void SurfaceDestroyed(ISurfaceHolder holder)
         {
@@ -52,13 +55,17 @@ namespace Veldrid.Tests.Android
 
         private void HandleSurfaceChanged(Surface surface, Format format, int width, int height)
         {
-            SwapchainSource ss = SwapchainSource.CreateAndroidSurface(surface.Handle, JNIEnv.Handle);
+            SwapchainSource ss = SwapchainSource.CreateAndroidSurface(
+                surface.Handle,
+                JNIEnv.Handle
+            );
             SwapchainDescription sd = new(
                 ss,
                 (uint)width,
                 (uint)height,
                 DeviceOptions.SwapchainDepthFormat,
-                DeviceOptions.SyncToVerticalBlank);
+                DeviceOptions.SyncToVerticalBlank
+            );
 
             if (GraphicsDevice == null)
             {

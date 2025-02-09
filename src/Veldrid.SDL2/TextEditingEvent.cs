@@ -8,7 +8,8 @@ public readonly ref struct TextEditingEvent(
     uint windowId,
     ReadOnlySpan<Rune> runes,
     int offset,
-    int length)
+    int length
+)
 {
     public uint Timestamp { get; } = timestamp;
     public uint WindowID { get; } = windowId;

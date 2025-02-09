@@ -96,27 +96,52 @@ public class MtlParser
 
                 case "ka":
                     ExpectExactly(pieces, 3, "Ka");
-                    GetCurrentDefinition().AmbientReflectivity = ParseVector3(pieces[1], pieces[2], pieces[3], "Ka");
+                    GetCurrentDefinition().AmbientReflectivity = ParseVector3(
+                        pieces[1],
+                        pieces[2],
+                        pieces[3],
+                        "Ka"
+                    );
                     break;
 
                 case "kd":
                     ExpectExactly(pieces, 3, "Kd");
-                    GetCurrentDefinition().DiffuseReflectivity = ParseVector3(pieces[1], pieces[2], pieces[3], "Kd");
+                    GetCurrentDefinition().DiffuseReflectivity = ParseVector3(
+                        pieces[1],
+                        pieces[2],
+                        pieces[3],
+                        "Kd"
+                    );
                     break;
 
                 case "ks":
                     ExpectExactly(pieces, 3, "Ks");
-                    GetCurrentDefinition().SpecularReflectivity = ParseVector3(pieces[1], pieces[2], pieces[3], "Ks");
+                    GetCurrentDefinition().SpecularReflectivity = ParseVector3(
+                        pieces[1],
+                        pieces[2],
+                        pieces[3],
+                        "Ks"
+                    );
                     break;
 
                 case "ke": // Non-standard?
                     ExpectExactly(pieces, 3, "Ke");
-                    GetCurrentDefinition().EmissiveCoefficient = ParseVector3(pieces[1], pieces[2], pieces[3], "Ks");
+                    GetCurrentDefinition().EmissiveCoefficient = ParseVector3(
+                        pieces[1],
+                        pieces[2],
+                        pieces[3],
+                        "Ks"
+                    );
                     break;
 
                 case "tf":
                     ExpectExactly(pieces, 3, "Tf");
-                    GetCurrentDefinition().TransmissionFilter = ParseVector3(pieces[1], pieces[2], pieces[3], "Tf");
+                    GetCurrentDefinition().TransmissionFilter = ParseVector3(
+                        pieces[1],
+                        pieces[2],
+                        pieces[3],
+                        "Tf"
+                    );
                     break;
 
                 case "illum":
@@ -182,10 +207,13 @@ public class MtlParser
 
                 default:
                     throw new ObjParseException(
-                        string.Format("An unsupported line-type specifier, '{0}', was used on line {1}, \"{2}\"",
+                        string.Format(
+                            "An unsupported line-type specifier, '{0}', was used on line {1}, \"{2}\"",
                             pieces[0],
                             _currentLine,
-                            _currentLineText));
+                            _currentLineText
+                        )
+                    );
             }
         }
 
@@ -283,7 +311,8 @@ public class MtlParser
                     count,
                     name,
                     _currentLine,
-                    _currentLineText);
+                    _currentLineText
+                );
                 throw new MtlParseException(message);
             }
         }
@@ -297,14 +326,20 @@ public class MtlParser
                     count,
                     name,
                     _currentLine,
-                    _currentLineText);
+                    _currentLineText
+                );
                 throw new MtlParseException(message);
             }
         }
 
         MtlParseException CreateParseException(string location, Exception e)
         {
-            string message = string.Format("An error ocurred while parsing {0} on line {1}, \"{2}\"", location, _currentLine, _currentLineText);
+            string message = string.Format(
+                "An error ocurred while parsing {0} on line {1}, \"{2}\"",
+                location,
+                _currentLine,
+                _currentLineText
+            );
             return new MtlParseException(message, e);
         }
     }
@@ -312,13 +347,11 @@ public class MtlParser
 
 public class MtlParseException : Exception
 {
-    public MtlParseException(string message) : base(message)
-    {
-    }
+    public MtlParseException(string message)
+        : base(message) { }
 
-    public MtlParseException(string message, Exception innerException) : base(message, innerException)
-    {
-    }
+    public MtlParseException(string message, Exception innerException)
+        : base(message, innerException) { }
 }
 
 /// <summary>

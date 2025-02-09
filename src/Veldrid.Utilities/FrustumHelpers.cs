@@ -13,7 +13,8 @@ public static class FrustumHelpers
         float nearDistance,
         float farDistance,
         float aspectRatio,
-        out FrustumCorners corners)
+        out FrustumCorners corners
+    )
     {
         float nearHeight = MathF.Tan(fov / 2f) * nearDistance;
         float nearWidth = nearHeight * aspectRatio;
@@ -48,13 +49,21 @@ public static class FrustumHelpers
         Vector3 lightDir,
         float cameraFarDistance,
         out Matrix4x4 lightView,
-        out BoundingBox bounds)
+        out BoundingBox bounds
+    )
     {
         float nearClipOffset = 40.0f;
         Vector3 centroid =
-            (corners.NearTopLeft + corners.NearTopRight + corners.NearBottomLeft + corners.NearBottomRight
-             + corners.FarTopLeft + corners.FarTopRight + corners.FarBottomLeft + corners.FarBottomRight)
-            / 8f;
+            (
+                corners.NearTopLeft
+                + corners.NearTopRight
+                + corners.NearBottomLeft
+                + corners.NearBottomRight
+                + corners.FarTopLeft
+                + corners.FarTopRight
+                + corners.FarBottomLeft
+                + corners.FarBottomRight
+            ) / 8f;
         Vector3 lightOrigin = centroid - (lightDir * (cameraFarDistance + nearClipOffset));
         lightView = Matrix4x4.CreateLookAt(lightOrigin, centroid, Vector3.UnitY);
 

@@ -17,7 +17,8 @@ internal unsafe struct SetResourceSetEntry
         uint slot,
         Tracked<ResourceSet> rs,
         bool isGraphics,
-        ReadOnlySpan<uint> dynamicOffsets)
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         Slot = slot;
         ResourceSet = rs;
@@ -35,7 +36,8 @@ internal unsafe struct SetResourceSetEntry
         uint slot,
         Tracked<ResourceSet> rs,
         bool isGraphics,
-        StagingBlock dynamicOffsets)
+        StagingBlock dynamicOffsets
+    )
     {
         Slot = slot;
         ResourceSet = rs;

@@ -1,5 +1,5 @@
-﻿using Vortice.Direct3D11;
-using System;
+﻿using System;
+using Vortice.Direct3D11;
 
 namespace Veldrid.D3D11;
 
@@ -22,14 +22,15 @@ internal sealed class D3D11TextureView : TextureView
             description.MipLevels,
             description.BaseArrayLayer,
             description.ArrayLayers,
-            Format);
+            Format
+        );
         ShaderResourceView = device.CreateShaderResourceView(d3dTex.DeviceTexture, srvDesc);
 
         if ((d3dTex.Usage & TextureUsage.Storage) == TextureUsage.Storage)
         {
             UnorderedAccessViewDescription uavDesc = new()
             {
-                Format = D3D11Formats.GetViewFormat(d3dTex.DxgiFormat)
+                Format = D3D11Formats.GetViewFormat(d3dTex.DxgiFormat),
             };
 
             if ((d3dTex.Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap)

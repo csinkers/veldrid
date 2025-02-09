@@ -65,7 +65,8 @@ public struct BlendAttachmentDescription : IEquatable<BlendAttachmentDescription
         BlendFunction colorFunction,
         BlendFactor sourceAlphaFactor,
         BlendFactor destinationAlphaFactor,
-        BlendFunction alphaFunction)
+        BlendFunction alphaFunction
+    )
     {
         BlendEnabled = blendEnabled;
         SourceColorFactor = sourceColorFactor;
@@ -96,7 +97,8 @@ public struct BlendAttachmentDescription : IEquatable<BlendAttachmentDescription
         BlendFunction colorFunction,
         BlendFactor sourceAlphaFactor,
         BlendFactor destinationAlphaFactor,
-        BlendFunction alphaFunction)
+        BlendFunction alphaFunction
+    )
     {
         BlendEnabled = blendEnabled;
         ColorWriteMask = colorWriteMask;
@@ -208,11 +210,13 @@ public struct BlendAttachmentDescription : IEquatable<BlendAttachmentDescription
     public bool Equals(BlendAttachmentDescription other)
     {
         return BlendEnabled.Equals(other.BlendEnabled)
-               && ColorWriteMask.Equals(other.ColorWriteMask)
-               && SourceColorFactor == other.SourceColorFactor
-               && DestinationColorFactor == other.DestinationColorFactor && ColorFunction == other.ColorFunction
-               && SourceAlphaFactor == other.SourceAlphaFactor && DestinationAlphaFactor == other.DestinationAlphaFactor
-               && AlphaFunction == other.AlphaFunction;
+            && ColorWriteMask.Equals(other.ColorWriteMask)
+            && SourceColorFactor == other.SourceColorFactor
+            && DestinationColorFactor == other.DestinationColorFactor
+            && ColorFunction == other.ColorFunction
+            && SourceAlphaFactor == other.SourceAlphaFactor
+            && DestinationAlphaFactor == other.DestinationAlphaFactor
+            && AlphaFunction == other.AlphaFunction;
     }
 
     /// <summary>
@@ -229,6 +233,7 @@ public struct BlendAttachmentDescription : IEquatable<BlendAttachmentDescription
             (int)ColorFunction,
             (int)SourceAlphaFactor,
             (int)DestinationAlphaFactor,
-            (int)AlphaFunction);
+            (int)AlphaFunction
+        );
     }
 }

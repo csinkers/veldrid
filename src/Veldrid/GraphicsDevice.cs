@@ -49,7 +49,7 @@ public abstract class GraphicsDevice : IDisposable
 
     /// <summary>
     /// Gets a value identifying whether texture coordinates begin in the top left corner of a Texture.
-    /// If true, (0, 0) refers to the top-left texel of a Texture. If false, (0, 0) refers to the bottom-left 
+    /// If true, (0, 0) refers to the top-left texel of a Texture. If false, (0, 0) refers to the bottom-left
     /// texel of a Texture. This property is useful for determining how the output of a Framebuffer should be sampled.
     /// </summary>
     public bool IsUvOriginTopLeft { get; protected set; }
@@ -108,8 +108,9 @@ public abstract class GraphicsDevice : IDisposable
             if (MainSwapchain == null)
             {
                 throw new VeldridException(
-                    $"This {nameof(GraphicsDevice)} was created without a main {nameof(Swapchain)}. " +
-                    $"This property cannot be set.");
+                    $"This {nameof(GraphicsDevice)} was created without a main {nameof(Swapchain)}. "
+                        + $"This property cannot be set."
+                );
             }
 
             MainSwapchain.SyncToVerticalBlank = value;
@@ -155,11 +156,10 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="fence">
     /// A <see cref="Fence"/> which will become signaled after this submission fully completes execution.
     /// </param>
-    public void SubmitCommands(CommandList commandList, Fence? fence) => SubmitCommandsCore(commandList, fence);
+    public void SubmitCommands(CommandList commandList, Fence? fence) =>
+        SubmitCommandsCore(commandList, fence);
 
-    private protected abstract void SubmitCommandsCore(
-        CommandList commandList,
-        Fence? fence);
+    private protected abstract void SubmitCommandsCore(CommandList commandList, Fence? fence);
 
     /// <summary>
     /// Blocks the calling thread until the given <see cref="Fence"/> becomes signaled.
@@ -169,7 +169,9 @@ public abstract class GraphicsDevice : IDisposable
     {
         if (!WaitForFence(fence, ulong.MaxValue))
         {
-            throw new VeldridException($"The operation timed out before the {nameof(Fence)} was signaled.");
+            throw new VeldridException(
+                $"The operation timed out before the {nameof(Fence)} was signaled."
+            );
         }
     }
 
@@ -180,8 +182,8 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="fence">The <see cref="Fence"/> instance to wait on.</param>
     /// <param name="timeout">A TimeSpan indicating the maximum time to wait on the Fence.</param>
     /// <returns>True if the Fence was signaled. False if the timeout was reached instead.</returns>
-    public bool WaitForFence(Fence fence, TimeSpan timeout)
-        => WaitForFence(fence, (ulong)timeout.TotalMilliseconds * 1_000_000);
+    public bool WaitForFence(Fence fence, TimeSpan timeout) =>
+        WaitForFence(fence, (ulong)timeout.TotalMilliseconds * 1_000_000);
 
     /// <summary>
     /// Blocks the calling thread until the given <see cref="Fence"/> becomes signaled, or until a time greater than the
@@ -202,7 +204,9 @@ public abstract class GraphicsDevice : IDisposable
     {
         if (!WaitForFences(fences, waitAll, ulong.MaxValue))
         {
-            throw new VeldridException($"The operation timed out before the {nameof(Fence)}(s) were signaled.");
+            throw new VeldridException(
+                $"The operation timed out before the {nameof(Fence)}(s) were signaled."
+            );
         }
     }
 
@@ -215,8 +219,8 @@ public abstract class GraphicsDevice : IDisposable
     /// If false, then this method only waits until one of the Fences become signaled.</param>
     /// <param name="timeout">A TimeSpan indicating the maximum time to wait on the Fences.</param>
     /// <returns>True if the Fence was signaled. False if the timeout was reached instead.</returns>
-    public bool WaitForFences(Fence[] fences, bool waitAll, TimeSpan timeout)
-        => WaitForFences(fences, waitAll, (ulong)timeout.TotalMilliseconds * 1_000_000);
+    public bool WaitForFences(Fence[] fences, bool waitAll, TimeSpan timeout) =>
+        WaitForFences(fences, waitAll, (ulong)timeout.TotalMilliseconds * 1_000_000);
 
     /// <summary>
     /// Blocks the calling thread until one or all of the given <see cref="Fence"/> instances have become signaled,
@@ -248,8 +252,9 @@ public abstract class GraphicsDevice : IDisposable
         if (MainSwapchain == null)
         {
             throw new VeldridException(
-                $"This {nameof(GraphicsDevice)} was created without a main {nameof(Swapchain)}, " +
-                $"so the requested operation cannot be performed.");
+                $"This {nameof(GraphicsDevice)} was created without a main {nameof(Swapchain)}, "
+                    + $"so the requested operation cannot be performed."
+            );
         }
 
         SwapBuffers(MainSwapchain);
@@ -283,8 +288,9 @@ public abstract class GraphicsDevice : IDisposable
         if (MainSwapchain == null)
         {
             throw new VeldridException(
-                $"This {nameof(GraphicsDevice)} was created without a main {nameof(Swapchain)}, " +
-                $"so the requested operation cannot be performed.");
+                $"This {nameof(GraphicsDevice)} was created without a main {nameof(Swapchain)}, "
+                    + $"so the requested operation cannot be performed."
+            );
         }
 
         MainSwapchain.Resize(width, height);
@@ -355,7 +361,13 @@ public abstract class GraphicsDevice : IDisposable
     /// For <see cref="DeviceBuffer"/> resources, this parameter must be 0.
     /// </param>
     /// <returns>A <see cref="MappedResource"/> structure describing the mapped data region.</returns>
-    public MappedResource Map(MappableResource resource, uint offsetInBytes, uint sizeInBytes, MapMode mode, uint subresource)
+    public MappedResource Map(
+        MappableResource resource,
+        uint offsetInBytes,
+        uint sizeInBytes,
+        MapMode mode,
+        uint subresource
+    )
     {
 #if VALIDATE_USAGE
         if (resource is DeviceBuffer buffer)
@@ -363,33 +375,40 @@ public abstract class GraphicsDevice : IDisposable
             if (subresource != 0)
             {
                 throw new VeldridException(
-                    $"The {nameof(resource)} ({buffer}) cannot be mapped. " +
-                    $"The {nameof(subresource)} ({subresource}) must be 0 for {nameof(DeviceBuffer)} resources.");
+                    $"The {nameof(resource)} ({buffer}) cannot be mapped. "
+                        + $"The {nameof(subresource)} ({subresource}) must be 0 for {nameof(DeviceBuffer)} resources."
+                );
             }
 
             if ((mode & MapMode.Read) != 0)
             {
-                if ((buffer.Usage & BufferUsage.DynamicRead) == 0 &&
-                    (buffer.Usage & BufferUsage.StagingRead) == 0)
+                if (
+                    (buffer.Usage & BufferUsage.DynamicRead) == 0
+                    && (buffer.Usage & BufferUsage.StagingRead) == 0
+                )
                 {
                     throw new VeldridException(
-                        $"The {nameof(resource)} ({buffer}) cannot be mapped. " +
-                        $"{nameof(MapMode)}.{nameof(MapMode.Read)} can only be used on buffers created with the " +
-                        $"{nameof(BufferUsage)}.{nameof(BufferUsage.StagingRead)} and/or " +
-                        $"{nameof(BufferUsage)}.{nameof(BufferUsage.DynamicRead)} flags.");
+                        $"The {nameof(resource)} ({buffer}) cannot be mapped. "
+                            + $"{nameof(MapMode)}.{nameof(MapMode.Read)} can only be used on buffers created with the "
+                            + $"{nameof(BufferUsage)}.{nameof(BufferUsage.StagingRead)} and/or "
+                            + $"{nameof(BufferUsage)}.{nameof(BufferUsage.DynamicRead)} flags."
+                    );
                 }
             }
 
             if ((mode & MapMode.Write) != 0)
             {
-                if ((buffer.Usage & BufferUsage.DynamicWrite) == 0 &&
-                    (buffer.Usage & BufferUsage.StagingWrite) == 0)
+                if (
+                    (buffer.Usage & BufferUsage.DynamicWrite) == 0
+                    && (buffer.Usage & BufferUsage.StagingWrite) == 0
+                )
                 {
                     throw new VeldridException(
-                        $"The {nameof(resource)} ({buffer}) cannot be mapped. " +
-                        $"{nameof(MapMode)}.{nameof(MapMode.Write)} can only be used on buffers created with the " +
-                        $"{nameof(BufferUsage)}.{nameof(BufferUsage.StagingWrite)} and/or " +
-                        $"{nameof(BufferUsage)}.{nameof(BufferUsage.DynamicWrite)} flags.");
+                        $"The {nameof(resource)} ({buffer}) cannot be mapped. "
+                            + $"{nameof(MapMode)}.{nameof(MapMode.Write)} can only be used on buffers created with the "
+                            + $"{nameof(BufferUsage)}.{nameof(BufferUsage.StagingWrite)} and/or "
+                            + $"{nameof(BufferUsage)}.{nameof(BufferUsage.DynamicWrite)} flags."
+                    );
                 }
             }
         }
@@ -398,16 +417,18 @@ public abstract class GraphicsDevice : IDisposable
             if ((texture.Usage & TextureUsage.Staging) == 0)
             {
                 throw new VeldridException(
-                    $"The texture {nameof(resource)} ({texture}) must have been created with the " +
-                    $"{nameof(TextureUsage)}.{nameof(TextureUsage.Staging)} flag to be mapped.");
+                    $"The texture {nameof(resource)} ({texture}) must have been created with the "
+                        + $"{nameof(TextureUsage)}.{nameof(TextureUsage.Staging)} flag to be mapped."
+                );
             }
 
             if (subresource >= texture.ArrayLayers * texture.MipLevels)
             {
                 throw new VeldridException(
-                    $"The {nameof(resource)} ({texture}) cannot be mapped." +
-                    $"The {nameof(subresource)} ({subresource}) must be less than " +
-                    $"the number of subresources in the texture being mapped.");
+                    $"The {nameof(resource)} ({texture}) cannot be mapped."
+                        + $"The {nameof(subresource)} ({subresource}) must be less than "
+                        + $"the number of subresources in the texture being mapped."
+                );
             }
         }
 
@@ -415,7 +436,8 @@ public abstract class GraphicsDevice : IDisposable
         if (offsetInBytes + sizeInBytes > subresourceSizeInBytes)
         {
             throw new VeldridException(
-                $"The given offset {offsetInBytes} and size {sizeInBytes} exceed the subresource size {subresourceSizeInBytes}.");
+                $"The given offset {offsetInBytes} and size {sizeInBytes} exceed the subresource size {subresourceSizeInBytes}."
+            );
         }
 #endif
 
@@ -427,7 +449,8 @@ public abstract class GraphicsDevice : IDisposable
         uint bufferOffsetInBytes,
         uint sizeInBytes,
         MapMode mode,
-        uint subresource);
+        uint subresource
+    );
 
     /// <summary>
     /// Maps a <see cref="DeviceBuffer"/> or <see cref="Texture"/> into a CPU-accessible data region,
@@ -438,7 +461,8 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="mode">The <see cref="MapMode"/> to use.</param>
     /// <typeparam name="T">The blittable value type which mapped data is viewed as.</typeparam>
     /// <returns>A <see cref="MappedResource"/> structure describing the mapped data region.</returns>
-    public MappedResourceView<T> Map<T>(MappableResource resource, MapMode mode) where T : unmanaged
+    public MappedResourceView<T> Map<T>(MappableResource resource, MapMode mode)
+        where T : unmanaged
     {
         return Map<T>(resource, mode, 0);
     }
@@ -458,9 +482,21 @@ public abstract class GraphicsDevice : IDisposable
     /// <typeparam name="T">The blittable value type which mapped data is viewed as.</typeparam>
     /// <returns>A <see cref="MappedResource"/> structure describing the mapped data region.</returns>
     public MappedResourceView<T> Map<T>(
-        MappableResource resource, uint offsetInBytes, uint elementCount, MapMode mode, uint subresource) where T : unmanaged
+        MappableResource resource,
+        uint offsetInBytes,
+        uint elementCount,
+        MapMode mode,
+        uint subresource
+    )
+        where T : unmanaged
     {
-        MappedResource mappedResource = Map(resource, offsetInBytes, elementCount * (uint)Unsafe.SizeOf<T>(), mode, subresource);
+        MappedResource mappedResource = Map(
+            resource,
+            offsetInBytes,
+            elementCount * (uint)Unsafe.SizeOf<T>(),
+            mode,
+            subresource
+        );
         return new MappedResourceView<T>(mappedResource);
     }
 
@@ -473,7 +509,8 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="subresource">The subresource to map. Subresources are indexed first by mip slice, then by array layer.</param>
     /// <typeparam name="T">The blittable value type which mapped data is viewed as.</typeparam>
     /// <returns>A <see cref="MappedResource"/> structure describing the mapped data region.</returns>
-    public MappedResourceView<T> Map<T>(MappableResource resource, MapMode mode, uint subresource) where T : unmanaged
+    public MappedResourceView<T> Map<T>(MappableResource resource, MapMode mode, uint subresource)
+        where T : unmanaged
     {
         MappedResource mappedResource = Map(resource, mode, subresource);
         return new MappedResourceView<T>(mappedResource);
@@ -485,6 +522,7 @@ public abstract class GraphicsDevice : IDisposable
     /// </summary>
     /// <param name="resource">The resource to unmap.</param>
     public void Unmap(MappableResource resource) => Unmap(resource, 0);
+
     /// <summary>
     /// Invalidates a previously-mapped data region for the given <see cref="DeviceBuffer"/> or <see cref="Texture"/>.
     /// </summary>
@@ -528,14 +566,43 @@ public abstract class GraphicsDevice : IDisposable
         Texture texture,
         IntPtr source,
         uint sizeInBytes,
-        uint x, uint y, uint z,
-        uint width, uint height, uint depth,
-        uint mipLevel, uint arrayLayer)
+        uint x,
+        uint y,
+        uint z,
+        uint width,
+        uint height,
+        uint depth,
+        uint mipLevel,
+        uint arrayLayer
+    )
     {
 #if VALIDATE_USAGE
-        ValidateUpdateTextureParameters(texture, sizeInBytes, x, y, z, width, height, depth, mipLevel, arrayLayer);
+        ValidateUpdateTextureParameters(
+            texture,
+            sizeInBytes,
+            x,
+            y,
+            z,
+            width,
+            height,
+            depth,
+            mipLevel,
+            arrayLayer
+        );
 #endif
-        UpdateTextureCore(texture, source, sizeInBytes, x, y, z, width, height, depth, mipLevel, arrayLayer);
+        UpdateTextureCore(
+            texture,
+            source,
+            sizeInBytes,
+            x,
+            y,
+            z,
+            width,
+            height,
+            depth,
+            mipLevel,
+            arrayLayer
+        );
     }
 
     /// <summary>
@@ -561,11 +628,29 @@ public abstract class GraphicsDevice : IDisposable
     public void UpdateTexture<T>(
         Texture texture,
         T[] source,
-        uint x, uint y, uint z,
-        uint width, uint height, uint depth,
-        uint mipLevel, uint arrayLayer) where T : unmanaged
+        uint x,
+        uint y,
+        uint z,
+        uint width,
+        uint height,
+        uint depth,
+        uint mipLevel,
+        uint arrayLayer
+    )
+        where T : unmanaged
     {
-        UpdateTexture(texture, (ReadOnlySpan<T>)source, x, y, z, width, height, depth, mipLevel, arrayLayer);
+        UpdateTexture(
+            texture,
+            (ReadOnlySpan<T>)source,
+            x,
+            y,
+            z,
+            width,
+            height,
+            depth,
+            mipLevel,
+            arrayLayer
+        );
     }
 
     /// <summary>
@@ -591,13 +676,31 @@ public abstract class GraphicsDevice : IDisposable
     public unsafe void UpdateTexture<T>(
         Texture texture,
         ReadOnlySpan<T> source,
-        uint x, uint y, uint z,
-        uint width, uint height, uint depth,
-        uint mipLevel, uint arrayLayer) where T : unmanaged
+        uint x,
+        uint y,
+        uint z,
+        uint width,
+        uint height,
+        uint depth,
+        uint mipLevel,
+        uint arrayLayer
+    )
+        where T : unmanaged
     {
         uint sizeInBytes = (uint)(sizeof(T) * source.Length);
 #if VALIDATE_USAGE
-        ValidateUpdateTextureParameters(texture, sizeInBytes, x, y, z, width, height, depth, mipLevel, arrayLayer);
+        ValidateUpdateTextureParameters(
+            texture,
+            sizeInBytes,
+            x,
+            y,
+            z,
+            width,
+            height,
+            depth,
+            mipLevel,
+            arrayLayer
+        );
 #endif
 
         fixed (T* pin = source)
@@ -606,9 +709,15 @@ public abstract class GraphicsDevice : IDisposable
                 texture,
                 (IntPtr)pin,
                 sizeInBytes,
-                x, y, z,
-                width, height, depth,
-                mipLevel, arrayLayer);
+                x,
+                y,
+                z,
+                width,
+                height,
+                depth,
+                mipLevel,
+                arrayLayer
+            );
         }
     }
 
@@ -635,28 +744,58 @@ public abstract class GraphicsDevice : IDisposable
     public void UpdateTexture<T>(
         Texture texture,
         Span<T> source,
-        uint x, uint y, uint z,
-        uint width, uint height, uint depth,
-        uint mipLevel, uint arrayLayer) where T : unmanaged
+        uint x,
+        uint y,
+        uint z,
+        uint width,
+        uint height,
+        uint depth,
+        uint mipLevel,
+        uint arrayLayer
+    )
+        where T : unmanaged
     {
-        UpdateTexture(texture, (ReadOnlySpan<T>)source, x, y, z, width, height, depth, mipLevel, arrayLayer);
+        UpdateTexture(
+            texture,
+            (ReadOnlySpan<T>)source,
+            x,
+            y,
+            z,
+            width,
+            height,
+            depth,
+            mipLevel,
+            arrayLayer
+        );
     }
 
     private protected abstract void UpdateTextureCore(
         Texture texture,
         IntPtr source,
         uint sizeInBytes,
-        uint x, uint y, uint z,
-        uint width, uint height, uint depth,
-        uint mipLevel, uint arrayLayer);
+        uint x,
+        uint y,
+        uint z,
+        uint width,
+        uint height,
+        uint depth,
+        uint mipLevel,
+        uint arrayLayer
+    );
 
     [Conditional("VALIDATE_USAGE")]
     static void ValidateUpdateTextureParameters(
         Texture texture,
         uint sizeInBytes,
-        uint x, uint y, uint z,
-        uint width, uint height, uint depth,
-        uint mipLevel, uint arrayLayer)
+        uint x,
+        uint y,
+        uint z,
+        uint width,
+        uint height,
+        uint depth,
+        uint mipLevel,
+        uint arrayLayer
+    )
     {
         if (FormatHelpers.IsCompressedFormat(texture.Format))
         {
@@ -666,7 +805,8 @@ public abstract class GraphicsDevice : IDisposable
                 if (width != mipWidth && height != mipHeight)
                 {
                     throw new VeldridException(
-                        $"Updates to block-compressed textures must use a region that is block-size aligned and sized.");
+                        $"Updates to block-compressed textures must use a region that is block-size aligned and sized."
+                    );
                 }
             }
         }
@@ -675,13 +815,15 @@ public abstract class GraphicsDevice : IDisposable
         if (sizeInBytes < expectedSize)
         {
             throw new VeldridException(
-                $"The data size is less than expected for the given update region. " +
-                $"At least {expectedSize} bytes must be provided, but only {sizeInBytes} were.");
+                $"The data size is less than expected for the given update region. "
+                    + $"At least {expectedSize} bytes must be provided, but only {sizeInBytes} were."
+            );
         }
 
         // Compressed textures don't necessarily need to have a Texture.Width and Texture.Height that are a multiple of 4.
         // But the mipdata width and height *does* need to be a multiple of 4.
-        uint roundedTextureWidth, roundedTextureHeight;
+        uint roundedTextureWidth,
+            roundedTextureHeight;
         if (FormatHelpers.IsCompressedFormat(texture.Format))
         {
             roundedTextureWidth = (texture.Width + 3) / 4 * 4;
@@ -693,7 +835,11 @@ public abstract class GraphicsDevice : IDisposable
             roundedTextureHeight = texture.Height;
         }
 
-        if (x + width > roundedTextureWidth || y + height > roundedTextureHeight || z + depth > texture.Depth)
+        if (
+            x + width > roundedTextureWidth
+            || y + height > roundedTextureHeight
+            || z + depth > texture.Depth
+        )
         {
             throw new VeldridException($"The given region does not fit into the Texture.");
         }
@@ -701,7 +847,8 @@ public abstract class GraphicsDevice : IDisposable
         if (mipLevel >= texture.MipLevels)
         {
             throw new VeldridException(
-                $"{nameof(mipLevel)} ({mipLevel}) must be less than the Texture's mip level count ({texture.MipLevels}).");
+                $"{nameof(mipLevel)} ({mipLevel}) must be less than the Texture's mip level count ({texture.MipLevels})."
+            );
         }
 
         uint effectiveArrayLayers = texture.ArrayLayers;
@@ -712,8 +859,9 @@ public abstract class GraphicsDevice : IDisposable
         if (arrayLayer >= effectiveArrayLayers)
         {
             throw new VeldridException(
-                $"{nameof(arrayLayer)} ({arrayLayer}) must be less than " +
-                $"the Texture's effective array layer count ({effectiveArrayLayers}).");
+                $"{nameof(arrayLayer)} ({arrayLayer}) must be less than "
+                    + $"the Texture's effective array layer count ({effectiveArrayLayers})."
+            );
         }
     }
 
@@ -728,10 +876,8 @@ public abstract class GraphicsDevice : IDisposable
     /// which new data will be uploaded.
     /// </param>
     /// <param name="source">The value to upload.</param>
-    public unsafe void UpdateBuffer<T>(
-        DeviceBuffer buffer,
-        uint bufferOffsetInBytes,
-        T source) where T : unmanaged
+    public unsafe void UpdateBuffer<T>(DeviceBuffer buffer, uint bufferOffsetInBytes, T source)
+        where T : unmanaged
     {
         UpdateBuffer(buffer, bufferOffsetInBytes, (IntPtr)(&source), (uint)sizeof(T));
     }
@@ -747,10 +893,8 @@ public abstract class GraphicsDevice : IDisposable
     /// which new data will be uploaded.
     /// </param>
     /// <param name="source">A reference to the single value to upload.</param>
-    public unsafe void UpdateBuffer<T>(
-        DeviceBuffer buffer,
-        uint bufferOffsetInBytes,
-        ref T source) where T : unmanaged
+    public unsafe void UpdateBuffer<T>(DeviceBuffer buffer, uint bufferOffsetInBytes, ref T source)
+        where T : unmanaged
     {
         fixed (T* ptr = &source)
         {
@@ -774,7 +918,9 @@ public abstract class GraphicsDevice : IDisposable
         DeviceBuffer buffer,
         uint bufferOffsetInBytes,
         ref T source,
-        uint sizeInBytes) where T : unmanaged
+        uint sizeInBytes
+    )
+        where T : unmanaged
     {
         fixed (T* ptr = &source)
         {
@@ -793,10 +939,8 @@ public abstract class GraphicsDevice : IDisposable
     /// which new data will be uploaded.
     /// </param>
     /// <param name="source">An array containing the data to upload.</param>
-    public void UpdateBuffer<T>(
-        DeviceBuffer buffer,
-        uint bufferOffsetInBytes,
-        T[] source) where T : unmanaged
+    public void UpdateBuffer<T>(DeviceBuffer buffer, uint bufferOffsetInBytes, T[] source)
+        where T : unmanaged
     {
         UpdateBuffer(buffer, bufferOffsetInBytes, (ReadOnlySpan<T>)source);
     }
@@ -815,11 +959,18 @@ public abstract class GraphicsDevice : IDisposable
     public unsafe void UpdateBuffer<T>(
         DeviceBuffer buffer,
         uint bufferOffsetInBytes,
-        ReadOnlySpan<T> source) where T : unmanaged
+        ReadOnlySpan<T> source
+    )
+        where T : unmanaged
     {
         fixed (T* pin = source)
         {
-            UpdateBuffer(buffer, bufferOffsetInBytes, (IntPtr)pin, (uint)(sizeof(T) * source.Length));
+            UpdateBuffer(
+                buffer,
+                bufferOffsetInBytes,
+                (IntPtr)pin,
+                (uint)(sizeof(T) * source.Length)
+            );
         }
     }
 
@@ -834,10 +985,8 @@ public abstract class GraphicsDevice : IDisposable
     /// which new data will be uploaded.
     /// </param>
     /// <param name="source">A span containing the data to upload.</param>
-    public void UpdateBuffer<T>(
-        DeviceBuffer buffer,
-        uint bufferOffsetInBytes,
-        Span<T> source) where T : unmanaged
+    public void UpdateBuffer<T>(DeviceBuffer buffer, uint bufferOffsetInBytes, Span<T> source)
+        where T : unmanaged
     {
         UpdateBuffer(buffer, bufferOffsetInBytes, (ReadOnlySpan<T>)source);
     }
@@ -856,14 +1005,16 @@ public abstract class GraphicsDevice : IDisposable
         DeviceBuffer buffer,
         uint bufferOffsetInBytes,
         IntPtr source,
-        uint sizeInBytes)
+        uint sizeInBytes
+    )
     {
 #if VALIDATE_USAGE
         if (bufferOffsetInBytes + sizeInBytes > buffer.SizeInBytes)
         {
             throw new VeldridException(
-                $"The buffer ({buffer}) is not large enough to store the amount of " +
-                $"data specified ({sizeInBytes}) at the given offset ({bufferOffsetInBytes}).");
+                $"The buffer ({buffer}) is not large enough to store the amount of "
+                    + $"data specified ({sizeInBytes}) at the given offset ({bufferOffsetInBytes})."
+            );
         }
 #endif
         if (sizeInBytes == 0)
@@ -875,7 +1026,11 @@ public abstract class GraphicsDevice : IDisposable
     }
 
     private protected abstract void UpdateBufferCore(
-        DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes);
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr source,
+        uint sizeInBytes
+    );
 
     /// <summary>
     /// Gets whether or not the given <see cref="PixelFormat"/>, <see cref="TextureType"/>, and <see cref="TextureUsage"/>
@@ -885,10 +1040,7 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="type">The TextureType to query.</param>
     /// <param name="usage">The TextureUsage to query.</param>
     /// <returns>True if the given combination is supported; false otherwise.</returns>
-    public bool GetPixelFormatSupport(
-        PixelFormat format,
-        TextureType type,
-        TextureUsage usage)
+    public bool GetPixelFormatSupport(PixelFormat format, TextureType type, TextureUsage usage)
     {
         return GetPixelFormatSupportCore(format, type, usage, out _);
     }
@@ -908,7 +1060,8 @@ public abstract class GraphicsDevice : IDisposable
         PixelFormat format,
         TextureType type,
         TextureUsage usage,
-        out PixelFormatProperties properties)
+        out PixelFormatProperties properties
+    )
     {
         return GetPixelFormatSupportCore(format, type, usage, out properties);
     }
@@ -917,7 +1070,8 @@ public abstract class GraphicsDevice : IDisposable
         PixelFormat format,
         TextureType type,
         TextureUsage usage,
-        out PixelFormatProperties properties);
+        out PixelFormatProperties properties
+    );
 
     /// <summary>
     /// Adds the given object to a deferred disposal list,
@@ -926,7 +1080,9 @@ public abstract class GraphicsDevice : IDisposable
     /// but which will no longer be in use when the device is idle.
     /// </summary>
     /// <param name="disposable">An object to dispose when this instance becomes idle.</param>
-    [Obsolete($"Implementation detail: resource will not be disposed if {nameof(WaitForIdle)} is never called.")]
+    [Obsolete(
+        $"Implementation detail: resource will not be disposed if {nameof(WaitForIdle)} is never called."
+    )]
     public void DisposeWhenIdle(IDisposable disposable)
     {
         lock (_deferredDisposalLock)
@@ -963,25 +1119,33 @@ public abstract class GraphicsDevice : IDisposable
     [DoesNotReturn]
     protected static void ThrowMappedException(MappableResource resource, uint subresource)
     {
-        throw new VeldridMappedResourceException($"The resource ({resource}@{subresource}) is mapped.");
+        throw new VeldridMappedResourceException(
+            $"The resource ({resource}@{subresource}) is mapped."
+        );
     }
 
     [DoesNotReturn]
     protected static void ThrowNotMappedException(MappableResource resource, uint subresource)
     {
-        throw new VeldridMappedResourceException($"The resource ({resource}@{subresource}) is not mapped.");
+        throw new VeldridMappedResourceException(
+            $"The resource ({resource}@{subresource}) is not mapped."
+        );
     }
 
     [DoesNotReturn]
     protected static void ThrowCorruptMapException(MappableResource resource, uint subresource)
     {
-        throw new VeldridMappedResourceException($"The mapped resource ({resource}@{subresource}) is corrupted.");
+        throw new VeldridMappedResourceException(
+            $"The mapped resource ({resource}@{subresource}) is corrupted."
+        );
     }
 
     [DoesNotReturn]
     protected static void ThrowMapFailedException(MappableResource resource, uint subresource)
     {
-        throw new VeldridMappedResourceException($"Failed to map the resource ({resource}@{subresource}).");
+        throw new VeldridMappedResourceException(
+            $"Failed to map the resource ({resource}@{subresource})."
+        );
     }
 
     /// <summary>
@@ -1008,8 +1172,9 @@ public abstract class GraphicsDevice : IDisposable
             if (!Features.SamplerAnisotropy)
             {
                 throw new VeldridException(
-                    $"{nameof(GraphicsDevice)}.{nameof(Aniso4xSampler)} cannot be used unless " +
-                    $"{nameof(GraphicsDeviceFeatures)}.{nameof(GraphicsDeviceFeatures.SamplerAnisotropy)} is supported.");
+                    $"{nameof(GraphicsDevice)}.{nameof(Aniso4xSampler)} cannot be used unless "
+                        + $"{nameof(GraphicsDeviceFeatures)}.{nameof(GraphicsDeviceFeatures.SamplerAnisotropy)} is supported."
+                );
             }
 
             Debug.Assert(_aniso4xSampler != null);
@@ -1080,7 +1245,9 @@ public abstract class GraphicsDevice : IDisposable
     {
         if (!GetD3D11Info(out BackendInfoD3D11? info))
         {
-            throw new VeldridException($"{nameof(GetD3D11Info)} can only be used on a D3D11 {nameof(GraphicsDevice)}.");
+            throw new VeldridException(
+                $"{nameof(GetD3D11Info)} can only be used on a D3D11 {nameof(GraphicsDevice)}."
+            );
         }
         return info;
     }
@@ -1109,7 +1276,9 @@ public abstract class GraphicsDevice : IDisposable
     {
         if (!GetVulkanInfo(out BackendInfoVulkan? info))
         {
-            throw new VeldridException($"{nameof(GetVulkanInfo)} can only be used on a Vulkan {nameof(GraphicsDevice)}.");
+            throw new VeldridException(
+                $"{nameof(GetVulkanInfo)} can only be used on a Vulkan {nameof(GraphicsDevice)}."
+            );
         }
         return info;
     }
@@ -1138,7 +1307,9 @@ public abstract class GraphicsDevice : IDisposable
     {
         if (!GetOpenGLInfo(out BackendInfoOpenGL? info))
         {
-            throw new VeldridException($"{nameof(GetOpenGLInfo)} can only be used on an OpenGL {nameof(GraphicsDevice)}.");
+            throw new VeldridException(
+                $"{nameof(GetOpenGLInfo)} can only be used on an OpenGL {nameof(GraphicsDevice)}."
+            );
         }
         return info;
     }
@@ -1167,7 +1338,9 @@ public abstract class GraphicsDevice : IDisposable
     {
         if (!GetMetalInfo(out BackendInfoMetal? info))
         {
-            throw new VeldridException($"{nameof(GetMetalInfo)} can only be used on a Metal {nameof(GraphicsDevice)}.");
+            throw new VeldridException(
+                $"{nameof(GetMetalInfo)} can only be used on a Metal {nameof(GraphicsDevice)}."
+            );
         }
         return info;
     }
@@ -1178,7 +1351,11 @@ public abstract class GraphicsDevice : IDisposable
     /// </summary>
     /// <param name="backend">The GraphicsBackend to check.</param>
     /// <returns>True if the GraphicsBackend is supported; false otherwise.</returns>
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     public static bool IsBackendSupported(GraphicsBackend backend)
     {
         switch (backend)
@@ -1187,35 +1364,35 @@ public abstract class GraphicsDevice : IDisposable
 #if !EXCLUDE_D3D11_BACKEND
                 return OperatingSystem.IsWindows();
 #else
-                    return false;
+                return false;
 #endif
 
             case GraphicsBackend.Vulkan:
 #if !EXCLUDE_VULKAN_BACKEND
                 return VkGraphicsDevice.IsSupported();
 #else
-                    return false;
+                return false;
 #endif
 
             case GraphicsBackend.OpenGL:
 #if !EXCLUDE_OPENGL_BACKEND
                 return true;
 #else
-                    return false;
+                return false;
 #endif
 
             case GraphicsBackend.Metal:
 #if !EXCLUDE_METAL_BACKEND
                 return MTL.MTLGraphicsDevice.IsSupported();
 #else
-                    return false;
+                return false;
 #endif
 
             case GraphicsBackend.OpenGLES:
 #if !EXCLUDE_OPENGL_BACKEND
                 return !RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 #else
-                    return false;
+                return false;
 #endif
 
             default:
@@ -1240,9 +1417,16 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="options">Describes several common properties of the <see cref="GraphicsDevice"/>.</param>
     /// <param name="swapchainDescription">A description of the main <see cref="Swapchain"/> to create.</param>
     /// <returns>A new <see cref="GraphicsDevice"/> using the Direct3D 11 API.</returns>
-    public static GraphicsDevice CreateD3D11(GraphicsDeviceOptions options, SwapchainDescription swapchainDescription)
+    public static GraphicsDevice CreateD3D11(
+        GraphicsDeviceOptions options,
+        SwapchainDescription swapchainDescription
+    )
     {
-        return new D3D11.D3D11GraphicsDevice(options, new D3D11DeviceOptions(), swapchainDescription);
+        return new D3D11.D3D11GraphicsDevice(
+            options,
+            new D3D11DeviceOptions(),
+            swapchainDescription
+        );
     }
 
     /// <summary>
@@ -1251,7 +1435,10 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="options">Describes several common properties of the <see cref="GraphicsDevice"/>.</param>
     /// <param name="d3d11Options">The Direct3D11-specific options used to create the device.</param>
     /// <returns>A new <see cref="GraphicsDevice"/> using the Direct3D 11 API.</returns>
-    public static GraphicsDevice CreateD3D11(GraphicsDeviceOptions options, D3D11DeviceOptions d3d11Options)
+    public static GraphicsDevice CreateD3D11(
+        GraphicsDeviceOptions options,
+        D3D11DeviceOptions d3d11Options
+    )
     {
         return new D3D11.D3D11GraphicsDevice(options, d3d11Options, null);
     }
@@ -1264,7 +1451,10 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="swapchainDescription">A description of the main <see cref="Swapchain"/> to create.</param>
     /// <returns>A new <see cref="GraphicsDevice"/> using the Direct3D 11 API.</returns>
     public static GraphicsDevice CreateD3D11(
-        GraphicsDeviceOptions options, D3D11DeviceOptions d3d11Options, SwapchainDescription swapchainDescription)
+        GraphicsDeviceOptions options,
+        D3D11DeviceOptions d3d11Options,
+        SwapchainDescription swapchainDescription
+    )
     {
         return new D3D11.D3D11GraphicsDevice(options, d3d11Options, swapchainDescription);
     }
@@ -1277,16 +1467,27 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="width">The initial width of the window.</param>
     /// <param name="height">The initial height of the window.</param>
     /// <returns>A new <see cref="GraphicsDevice"/> using the Direct3D 11 API.</returns>
-    public static GraphicsDevice CreateD3D11(GraphicsDeviceOptions options, IntPtr hwnd, uint width, uint height)
+    public static GraphicsDevice CreateD3D11(
+        GraphicsDeviceOptions options,
+        IntPtr hwnd,
+        uint width,
+        uint height
+    )
     {
         SwapchainDescription swapchainDescription = new(
             SwapchainSource.CreateWin32(hwnd, IntPtr.Zero),
-            width, height,
+            width,
+            height,
             options.SwapchainDepthFormat,
             options.SyncToVerticalBlank,
-            options.SwapchainSrgbFormat);
+            options.SwapchainSrgbFormat
+        );
 
-        return new D3D11.D3D11GraphicsDevice(options, new D3D11DeviceOptions(), swapchainDescription);
+        return new D3D11.D3D11GraphicsDevice(
+            options,
+            new D3D11DeviceOptions(),
+            swapchainDescription
+        );
     }
 
     /// <summary>
@@ -1305,7 +1506,8 @@ public abstract class GraphicsDevice : IDisposable
         object swapChainPanel,
         double renderWidth,
         double renderHeight,
-        float logicalDpi)
+        float logicalDpi
+    )
     {
         SwapchainDescription swapchainDescription = new(
             SwapchainSource.CreateUwp(swapChainPanel, logicalDpi),
@@ -1313,9 +1515,14 @@ public abstract class GraphicsDevice : IDisposable
             (uint)renderHeight,
             options.SwapchainDepthFormat,
             options.SyncToVerticalBlank,
-            options.SwapchainSrgbFormat);
+            options.SwapchainSrgbFormat
+        );
 
-        return new D3D11.D3D11GraphicsDevice(options, new D3D11DeviceOptions(), swapchainDescription);
+        return new D3D11.D3D11GraphicsDevice(
+            options,
+            new D3D11DeviceOptions(),
+            swapchainDescription
+        );
     }
 #endif
 
@@ -1336,7 +1543,10 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="options">Describes several common properties of the <see cref="GraphicsDevice"/>.</param>
     /// <param name="vkOptions">The Vulkan-specific options used to create the device.</param>
     /// <returns>A new <see cref="GraphicsDevice"/> using the Vulkan API.</returns>
-    public static GraphicsDevice CreateVulkan(GraphicsDeviceOptions options, VulkanDeviceOptions vkOptions)
+    public static GraphicsDevice CreateVulkan(
+        GraphicsDeviceOptions options,
+        VulkanDeviceOptions vkOptions
+    )
     {
         return new VkGraphicsDevice(options, null, vkOptions);
     }
@@ -1347,7 +1557,10 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="options">Describes several common properties of the <see cref="GraphicsDevice"/>.</param>
     /// <param name="swapchainDescription">A description of the main <see cref="Swapchain"/> to create.</param>
     /// <returns>A new <see cref="GraphicsDevice"/> using the Vulkan API.</returns>
-    public static GraphicsDevice CreateVulkan(GraphicsDeviceOptions options, SwapchainDescription swapchainDescription)
+    public static GraphicsDevice CreateVulkan(
+        GraphicsDeviceOptions options,
+        SwapchainDescription swapchainDescription
+    )
     {
         return new VkGraphicsDevice(options, swapchainDescription);
     }
@@ -1362,7 +1575,8 @@ public abstract class GraphicsDevice : IDisposable
     public static GraphicsDevice CreateVulkan(
         GraphicsDeviceOptions options,
         SwapchainDescription swapchainDescription,
-        VulkanDeviceOptions vkOptions)
+        VulkanDeviceOptions vkOptions
+    )
     {
         return new VkGraphicsDevice(options, swapchainDescription, vkOptions);
     }
@@ -1375,14 +1589,21 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="width">The initial width of the window.</param>
     /// <param name="height">The initial height of the window.</param>
     /// <returns>A new <see cref="GraphicsDevice"/> using the Vulkan API.</returns>
-    public static GraphicsDevice CreateVulkan(GraphicsDeviceOptions options, VkSurfaceSource surfaceSource, uint width, uint height)
+    public static GraphicsDevice CreateVulkan(
+        GraphicsDeviceOptions options,
+        VkSurfaceSource surfaceSource,
+        uint width,
+        uint height
+    )
     {
         SwapchainDescription scDesc = new(
             surfaceSource.GetSurfaceSource(),
-            width, height,
+            width,
+            height,
             options.SwapchainDepthFormat,
             options.SyncToVerticalBlank,
-            options.SwapchainSrgbFormat);
+            options.SwapchainSrgbFormat
+        );
 
         return new VkGraphicsDevice(options, scDesc);
     }
@@ -1402,7 +1623,8 @@ public abstract class GraphicsDevice : IDisposable
         GraphicsDeviceOptions options,
         OpenGL.OpenGLPlatformInfo platformInfo,
         uint width,
-        uint height)
+        uint height
+    )
     {
         return new OpenGL.OpenGLGraphicsDevice(options, platformInfo, width, height);
     }
@@ -1418,7 +1640,8 @@ public abstract class GraphicsDevice : IDisposable
     /// <returns>A new <see cref="GraphicsDevice"/> using the OpenGL or OpenGL ES API.</returns>
     public static GraphicsDevice CreateOpenGLES(
         GraphicsDeviceOptions options,
-        SwapchainDescription swapchainDescription)
+        SwapchainDescription swapchainDescription
+    )
     {
         return new OpenGL.OpenGLGraphicsDevice(options, swapchainDescription);
     }
@@ -1441,7 +1664,10 @@ public abstract class GraphicsDevice : IDisposable
     /// <param name="options">Describes several common properties of the <see cref="GraphicsDevice"/>.</param>
     /// <param name="swapchainDescription">A description of the main <see cref="Swapchain"/> to create.</param>
     /// <returns>A new <see cref="GraphicsDevice"/> using the Metal API.</returns>
-    public static GraphicsDevice CreateMetal(GraphicsDeviceOptions options, SwapchainDescription swapchainDescription)
+    public static GraphicsDevice CreateMetal(
+        GraphicsDeviceOptions options,
+        SwapchainDescription swapchainDescription
+    )
     {
         return new MTL.MTLGraphicsDevice(options, swapchainDescription);
     }
@@ -1457,10 +1683,12 @@ public abstract class GraphicsDevice : IDisposable
     {
         SwapchainDescription swapchainDesc = new(
             new NSWindowSwapchainSource(nsWindow),
-            0, 0,
+            0,
+            0,
             options.SwapchainDepthFormat,
             options.SyncToVerticalBlank,
-            options.SwapchainSrgbFormat);
+            options.SwapchainSrgbFormat
+        );
 
         return new MTL.MTLGraphicsDevice(options, swapchainDesc);
     }

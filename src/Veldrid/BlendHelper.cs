@@ -7,5 +7,6 @@ internal static class BlendHelper
     /// </summary>
     /// <param name="mask">A nullable mask.</param>
     /// <returns>The non-nullable mask.</returns>
-    public static ColorWriteMask GetOrDefault(this ColorWriteMask? mask) => mask ?? ColorWriteMask.All;
+    public static ColorWriteMask GetOrDefault(this ColorWriteMask? mask) =>
+        mask ?? ColorWriteMask.All;
 }

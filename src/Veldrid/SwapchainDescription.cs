@@ -12,24 +12,29 @@ public struct SwapchainDescription : IEquatable<SwapchainDescription>
     /// This is a window-system-specific object which differs by platform.
     /// </summary>
     public SwapchainSource Source;
+
     /// <summary>
     /// The initial width of the Swapchain surface.
     /// </summary>
     public uint Width;
+
     /// <summary>
     /// The initial height of the Swapchain surface.
     /// </summary>
     public uint Height;
+
     /// <summary>
     /// The optional format of the depth target of the Swapchain's Framebuffer.
     /// If non-null, this must be a valid depth Texture format.
     /// If null, then no depth target will be created.
     /// </summary>
     public PixelFormat? DepthFormat;
+
     /// <summary>
     /// Indicates whether presentation of the Swapchain will be synchronized to the window system's vertical refresh rate.
     /// </summary>
     public bool SyncToVerticalBlank;
+
     /// <summary>
     /// Indicates whether the color target of the Swapchain will use an sRGB PixelFormat.
     /// </summary>
@@ -52,7 +57,8 @@ public struct SwapchainDescription : IEquatable<SwapchainDescription>
         uint width,
         uint height,
         PixelFormat? depthFormat,
-        bool syncToVerticalBlank)
+        bool syncToVerticalBlank
+    )
     {
         Source = source;
         Width = width;
@@ -81,7 +87,8 @@ public struct SwapchainDescription : IEquatable<SwapchainDescription>
         uint height,
         PixelFormat? depthFormat,
         bool syncToVerticalBlank,
-        bool colorSrgb)
+        bool colorSrgb
+    )
     {
         Source = source;
         Width = width;
@@ -99,11 +106,11 @@ public struct SwapchainDescription : IEquatable<SwapchainDescription>
     public bool Equals(SwapchainDescription other)
     {
         return Source.Equals(other.Source)
-               && Width.Equals(other.Width)
-               && Height.Equals(other.Height)
-               && DepthFormat == other.DepthFormat
-               && SyncToVerticalBlank.Equals(other.SyncToVerticalBlank)
-               && ColorSrgb.Equals(other.ColorSrgb);
+            && Width.Equals(other.Width)
+            && Height.Equals(other.Height)
+            && DepthFormat == other.DepthFormat
+            && SyncToVerticalBlank.Equals(other.SyncToVerticalBlank)
+            && ColorSrgb.Equals(other.ColorSrgb);
     }
 
     /// <summary>
@@ -118,6 +125,7 @@ public struct SwapchainDescription : IEquatable<SwapchainDescription>
             Height.GetHashCode(),
             DepthFormat.GetHashCode(),
             SyncToVerticalBlank.GetHashCode(),
-            ColorSrgb.GetHashCode());
+            ColorSrgb.GetHashCode()
+        );
     }
 }

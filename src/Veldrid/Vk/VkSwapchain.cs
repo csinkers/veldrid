@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using TerraFX.Interop.Vulkan;
-using static TerraFX.Interop.Vulkan.Vulkan;
 using static TerraFX.Interop.Vulkan.VkFormat;
+using static TerraFX.Interop.Vulkan.Vulkan;
 using static Veldrid.Vulkan.VulkanUtil;
 using VulkanFence = TerraFX.Interop.Vulkan.VkFence;
 
@@ -24,7 +24,15 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
     uint _currentImageIndex;
     string? _name;
 
-    public override string? Name { get => _name; set { _name = value; _gd.SetResourceName(this, value); } }
+    public override string? Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            _gd.SetResourceName(this, value);
+        }
+    }
 
     public override Framebuffer Framebuffer => _framebuffer;
 
@@ -51,11 +59,14 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
     public ResourceRefCount RefCount { get; }
     public object PresentLock { get; }
 
-    public VkSwapchain(VkGraphicsDevice gd, in SwapchainDescription description) : this(gd, description, default)
-    {
-    }
+    public VkSwapchain(VkGraphicsDevice gd, in SwapchainDescription description)
+        : this(gd, description, default) { }
 
-    public VkSwapchain(VkGraphicsDevice gd, in SwapchainDescription description, VkSurfaceKHR existingSurface)
+    public VkSwapchain(
+        VkGraphicsDevice gd,
+        in SwapchainDescription description,
+        VkSurfaceKHR existingSurface
+    )
     {
         _gd = gd;
         _syncToVBlank = description.SyncToVerticalBlank;
@@ -73,7 +84,9 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
 
         if (!GetPresentQueueIndex(out _presentQueueIndex))
         {
-            throw new VeldridException($"The system does not support presenting the given Vulkan surface.");
+            throw new VeldridException(
+                $"The system does not support presenting the given Vulkan surface."
+            );
         }
         VkQueue presentQueue;
         vkGetDeviceQueue(_gd.Device, _presentQueueIndex, 0, &presentQueue);
@@ -88,7 +101,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
 
         VkFenceCreateInfo fenceCI = new()
         {
-            sType = VkStructureType.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO
+            sType = VkStructureType.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
         };
 
         VulkanFence imageAvailableFence;
@@ -123,7 +136,8 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             ulong.MaxValue,
             semaphore,
             fence,
-            &imageIndex);
+            &imageIndex
+        );
         _framebuffer.SetImageIndex(imageIndex);
         _currentImageIndex = imageIndex;
 
@@ -147,7 +161,13 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             VulkanFence imageAvailableFence = _imageAvailableFence;
             if (AcquireNextImage(_gd.Device, default, imageAvailableFence))
             {
-                vkWaitForFences(_gd.Device, 1, &imageAvailableFence, (VkBool32)true, ulong.MaxValue);
+                vkWaitForFences(
+                    _gd.Device,
+                    1,
+                    &imageAvailableFence,
+                    (VkBool32)true,
+                    ulong.MaxValue
+                );
                 vkResetFences(_gd.Device, 1, &imageAvailableFence);
             }
         }
@@ -157,14 +177,22 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
     {
         // Obtain the surface capabilities first -- this will indicate whether the surface has been lost.
         VkSurfaceCapabilitiesKHR surfaceCapabilities;
-        VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_gd.PhysicalDevice, _surface, &surfaceCapabilities);
+        VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+            _gd.PhysicalDevice,
+            _surface,
+            &surfaceCapabilities
+        );
         if (result == VkResult.VK_ERROR_SURFACE_LOST_KHR)
         {
             throw new VeldridException($"The Swapchain's underlying surface has been lost.");
         }
 
-        if (surfaceCapabilities.minImageExtent.width == 0 && surfaceCapabilities.minImageExtent.height == 0
-                                                          && surfaceCapabilities.maxImageExtent.width == 0 && surfaceCapabilities.maxImageExtent.height == 0)
+        if (
+            surfaceCapabilities.minImageExtent.width == 0
+            && surfaceCapabilities.minImageExtent.height == 0
+            && surfaceCapabilities.maxImageExtent.width == 0
+            && surfaceCapabilities.maxImageExtent.height == 0
+        )
         {
             return false;
         }
@@ -176,18 +204,26 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
 
         _currentImageIndex = 0;
         uint surfaceFormatCount = 0;
-        result = vkGetPhysicalDeviceSurfaceFormatsKHR(_gd.PhysicalDevice, _surface, &surfaceFormatCount, null);
+        result = vkGetPhysicalDeviceSurfaceFormatsKHR(
+            _gd.PhysicalDevice,
+            _surface,
+            &surfaceFormatCount,
+            null
+        );
         CheckResult(result);
         VkSurfaceFormatKHR[] formats = new VkSurfaceFormatKHR[surfaceFormatCount];
         fixed (VkSurfaceFormatKHR* formatsPtr = formats)
         {
-            result = vkGetPhysicalDeviceSurfaceFormatsKHR(_gd.PhysicalDevice, _surface, &surfaceFormatCount, formatsPtr);
+            result = vkGetPhysicalDeviceSurfaceFormatsKHR(
+                _gd.PhysicalDevice,
+                _surface,
+                &surfaceFormatCount,
+                formatsPtr
+            );
             CheckResult(result);
         }
 
-        VkFormat desiredFormat = _colorSrgb
-            ? VK_FORMAT_B8G8R8A8_SRGB
-            : VK_FORMAT_B8G8R8A8_UNORM;
+        VkFormat desiredFormat = _colorSrgb ? VK_FORMAT_B8G8R8A8_SRGB : VK_FORMAT_B8G8R8A8_UNORM;
 
         VkSurfaceFormatKHR surfaceFormat = new();
         if (formats.Length == 1 && formats[0].format == VK_FORMAT_UNDEFINED)
@@ -199,7 +235,10 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         {
             foreach (VkSurfaceFormatKHR format in formats)
             {
-                if (format.colorSpace == VkColorSpaceKHR.VK_COLORSPACE_SRGB_NONLINEAR_KHR && format.format == desiredFormat)
+                if (
+                    format.colorSpace == VkColorSpaceKHR.VK_COLORSPACE_SRGB_NONLINEAR_KHR
+                    && format.format == desiredFormat
+                )
                 {
                     surfaceFormat = format;
                     break;
@@ -209,7 +248,9 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             {
                 if (_colorSrgb && surfaceFormat.format != VK_FORMAT_R8G8B8A8_SRGB)
                 {
-                    throw new VeldridException($"Unable to create an sRGB Swapchain for this surface.");
+                    throw new VeldridException(
+                        $"Unable to create an sRGB Swapchain for this surface."
+                    );
                 }
 
                 surfaceFormat = formats[0];
@@ -217,12 +258,22 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         }
 
         uint presentModeCount = 0;
-        result = vkGetPhysicalDeviceSurfacePresentModesKHR(_gd.PhysicalDevice, _surface, &presentModeCount, null);
+        result = vkGetPhysicalDeviceSurfacePresentModesKHR(
+            _gd.PhysicalDevice,
+            _surface,
+            &presentModeCount,
+            null
+        );
         CheckResult(result);
         VkPresentModeKHR[] presentModes = new VkPresentModeKHR[presentModeCount];
         fixed (VkPresentModeKHR* presentModesPtr = presentModes)
         {
-            result = vkGetPhysicalDeviceSurfacePresentModesKHR(_gd.PhysicalDevice, _surface, &presentModeCount, presentModesPtr);
+            result = vkGetPhysicalDeviceSurfacePresentModesKHR(
+                _gd.PhysicalDevice,
+                _surface,
+                &presentModeCount,
+                presentModesPtr
+            );
             CheckResult(result);
         }
 
@@ -247,11 +298,22 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             }
         }
 
-        uint maxImageCount = surfaceCapabilities.maxImageCount == 0 ? uint.MaxValue : surfaceCapabilities.maxImageCount;
+        uint maxImageCount =
+            surfaceCapabilities.maxImageCount == 0
+                ? uint.MaxValue
+                : surfaceCapabilities.maxImageCount;
         uint imageCount = Math.Min(maxImageCount, surfaceCapabilities.minImageCount + 1);
 
-        uint clampedWidth = Util.Clamp(width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
-        uint clampedHeight = Util.Clamp(height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height);
+        uint clampedWidth = Util.Clamp(
+            width,
+            surfaceCapabilities.minImageExtent.width,
+            surfaceCapabilities.maxImageExtent.width
+        );
+        uint clampedHeight = Util.Clamp(
+            height,
+            surfaceCapabilities.minImageExtent.height,
+            surfaceCapabilities.maxImageExtent.height
+        );
         VkSwapchainCreateInfoKHR swapchainCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
@@ -262,10 +324,13 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             imageExtent = new VkExtent2D() { width = clampedWidth, height = clampedHeight },
             minImageCount = imageCount,
             imageArrayLayers = 1,
-            imageUsage = VkImageUsageFlags.VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VkImageUsageFlags.VK_IMAGE_USAGE_TRANSFER_DST_BIT
+            imageUsage =
+                VkImageUsageFlags.VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
+                | VkImageUsageFlags.VK_IMAGE_USAGE_TRANSFER_DST_BIT,
         };
 
-        uint* queueFamilyIndices = stackalloc uint[] { _gd.GraphicsQueueIndex, _gd.PresentQueueIndex };
+        uint* queueFamilyIndices =
+            stackalloc uint[] { _gd.GraphicsQueueIndex, _gd.PresentQueueIndex };
 
         if (_gd.GraphicsQueueIndex != _gd.PresentQueueIndex)
         {
@@ -296,7 +361,13 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             vkDestroySwapchainKHR(_gd.Device, oldSwapchain, null);
         }
 
-        _framebuffer.SetNewSwapchain(_deviceSwapchain, width, height, surfaceFormat, swapchainCI.imageExtent);
+        _framebuffer.SetNewSwapchain(
+            _deviceSwapchain,
+            width,
+            height,
+            surfaceFormat,
+            swapchainCI.imageExtent
+        );
         return true;
     }
 
@@ -310,7 +381,10 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             queueFamilyIndex = graphicsQueueIndex;
             return true;
         }
-        else if (graphicsQueueIndex != presentQueueIndex && QueueSupportsPresent(presentQueueIndex, _surface))
+        else if (
+            graphicsQueueIndex != presentQueueIndex
+            && QueueSupportsPresent(presentQueueIndex, _surface)
+        )
         {
             queueFamilyIndex = presentQueueIndex;
             return true;
@@ -327,7 +401,8 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
             _gd.PhysicalDevice,
             queueFamilyIndex,
             surface,
-            &supported);
+            &supported
+        );
         CheckResult(result);
         return (VkBool32)supported;
     }

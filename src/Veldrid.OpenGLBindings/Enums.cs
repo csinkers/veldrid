@@ -36,7 +36,7 @@ public enum DrawBufferMode
     ColorAttachment12 = 36076,
     ColorAttachment13 = 36077,
     ColorAttachment14 = 36078,
-    ColorAttachment15 = 36079
+    ColorAttachment15 = 36079,
 }
 
 [Flags]
@@ -47,7 +47,7 @@ public enum ClearBufferMask
     AccumBufferBit = 512,
     StencilBufferBit = 1024,
     ColorBufferBit = 16384,
-    CoverageBufferBitNv = 32768
+    CoverageBufferBitNv = 32768,
 }
 
 public enum PrimitiveType
@@ -76,14 +76,14 @@ public enum PrimitiveType
     TriangleStripAdjacencyArb = 13,
     TriangleStripAdjacencyExt = 13,
     Patches = 14,
-    PatchesExt = 14
+    PatchesExt = 14,
 }
 
 public enum DrawElementsType
 {
     UnsignedByte = 5121,
     UnsignedShort = 5123,
-    UnsignedInt = 5125
+    UnsignedInt = 5125,
 }
 
 public enum TextureUnit
@@ -119,7 +119,7 @@ public enum TextureUnit
     Texture28 = 34012,
     Texture29 = 34013,
     Texture30 = 34014,
-    Texture31 = 34015
+    Texture31 = 34015,
 }
 
 public enum FramebufferTarget
@@ -127,12 +127,12 @@ public enum FramebufferTarget
     ReadFramebuffer = 36008,
     DrawFramebuffer = 36009,
     Framebuffer = 36160,
-    FramebufferExt = 36160
+    FramebufferExt = 36160,
 }
 
 public enum RenderbufferTarget
 {
-    Renderbuffer = 36161
+    Renderbuffer = 36161,
 }
 
 public enum GLFramebufferAttachment
@@ -184,7 +184,7 @@ public enum GLFramebufferAttachment
     DepthAttachment = 36096,
     DepthAttachmentExt = 36096,
     StencilAttachment = 36128,
-    StencilAttachmentExt = 36128
+    StencilAttachmentExt = 36128,
 }
 
 public enum TextureTarget
@@ -235,7 +235,7 @@ public enum TextureTarget
     Texture2DMultisample = 37120,
     ProxyTexture2DMultisample = 37121,
     Texture2DMultisampleArray = 37122,
-    ProxyTexture2DMultisampleArray = 37123
+    ProxyTexture2DMultisampleArray = 37123,
 }
 
 public enum DrawBuffersEnum
@@ -264,7 +264,7 @@ public enum DrawBuffersEnum
     ColorAttachment12 = 36076,
     ColorAttachment13 = 36077,
     ColorAttachment14 = 36078,
-    ColorAttachment15 = 36079
+    ColorAttachment15 = 36079,
 }
 
 public enum FramebufferErrorCode
@@ -286,7 +286,7 @@ public enum FramebufferErrorCode
     FramebufferUnsupportedExt = 36061,
     FramebufferIncompleteMultisample = 36182,
     FramebufferIncompleteLayerTargets = 36264,
-    FramebufferIncompleteLayerCount = 36265
+    FramebufferIncompleteLayerCount = 36265,
 }
 
 public enum BufferTarget
@@ -304,7 +304,7 @@ public enum BufferTarget
     ShaderStorageBuffer = 37074,
     DispatchIndirectBuffer = 37102,
     QueryBuffer = 37266,
-    AtomicCounterBuffer = 37568
+    AtomicCounterBuffer = 37568,
 }
 
 public enum GLPixelFormat
@@ -345,7 +345,7 @@ public enum GLPixelFormat
     RgbInteger = 36248,
     RgbaInteger = 36249,
     BgrInteger = 36250,
-    BgraInteger = 36251
+    BgraInteger = 36251,
 }
 
 public enum GLPixelType
@@ -379,7 +379,7 @@ public enum GLPixelType
     UnsignedInt248 = 34042,
     UnsignedInt10F11F11FRev = 35899,
     UnsignedInt5999Rev = 35902,
-    Float32UnsignedInt248Rev = 36269
+    Float32UnsignedInt248Rev = 36269,
 }
 
 public enum PixelInternalFormat
@@ -607,7 +607,7 @@ public enum PixelStoreParameter
     PackCompressedBlockWidth = 37163,
     PackCompressedBlockHeight = 37164,
     PackCompressedBlockDepth = 37165,
-    PackCompressedBlockSize = 37166
+    PackCompressedBlockSize = 37166,
 }
 
 public enum ShaderType
@@ -618,7 +618,7 @@ public enum ShaderType
     GeometryShaderExt = 36313,
     TessEvaluationShader = 36487,
     TessControlShader = 36488,
-    ComputeShader = 37305
+    ComputeShader = 37305,
 }
 
 public enum ShaderParameter
@@ -627,7 +627,7 @@ public enum ShaderParameter
     DeleteStatus = 35712,
     CompileStatus = 35713,
     InfoLogLength = 35716,
-    ShaderSourceLength = 35720
+    ShaderSourceLength = 35720,
 }
 
 public enum SamplerParameterName
@@ -643,7 +643,7 @@ public enum SamplerParameterName
     TextureMaxAnisotropyExt = 34046,
     TextureLodBias = 34049,
     TextureCompareMode = 34892,
-    TextureCompareFunc = 34893
+    TextureCompareFunc = 34893,
 }
 
 public enum TextureWrapMode
@@ -656,7 +656,7 @@ public enum TextureWrapMode
     ClampToBorderSgis = 33069,
     ClampToEdge = 33071,
     ClampToEdgeSgis = 33071,
-    MirroredRepeat = 33648
+    MirroredRepeat = 33648,
 }
 
 public enum TextureMinFilter
@@ -674,7 +674,7 @@ public enum TextureMinFilter
     PixelTexGenQFloorSgix = 33158,
     NearestClipmapNearestSgix = 33869,
     NearestClipmapLinearSgix = 33870,
-    LinearClipmapNearestSgix = 33871
+    LinearClipmapNearestSgix = 33871,
 }
 
 public enum TextureMagFilter
@@ -690,14 +690,14 @@ public enum TextureMagFilter
     Filter4Sgis = 33094,
     PixelTexGenQCeilingSgix = 33156,
     PixelTexGenQRoundSgix = 33157,
-    PixelTexGenQFloorSgix = 33158
+    PixelTexGenQFloorSgix = 33158,
 }
 
 public enum TextureCompareMode
 {
     None = 0,
     CompareRefToTexture = 34894,
-    CompareRToTexture = 34894
+    CompareRToTexture = 34894,
 }
 
 public enum DepthFunction
@@ -709,7 +709,7 @@ public enum DepthFunction
     Greater = 516,
     Notequal = 517,
     Gequal = 518,
-    Always = 519
+    Always = 519,
 }
 
 public enum BlendingFactorSrc
@@ -736,7 +736,7 @@ public enum BlendingFactorSrc
     Src1Alpha = 34185,
     Src1Color = 35065,
     OneMinusSrc1Color = 35066,
-    OneMinusSrc1Alpha = 35067
+    OneMinusSrc1Alpha = 35067,
 }
 
 public enum BlendingFactorDest
@@ -763,7 +763,7 @@ public enum BlendingFactorDest
     Src1Alpha = 34185,
     Src1Color = 35065,
     OneMinusSrc1Color = 35066,
-    OneMinusSrc1Alpha = 35067
+    OneMinusSrc1Alpha = 35067,
 }
 
 public enum EnableCap
@@ -912,7 +912,7 @@ public enum EnableCap
     FramebufferSrgb = 36281,
     SampleMask = 36433,
     PrimitiveRestart = 36765,
-    DebugOutput = 37600
+    DebugOutput = 37600,
 }
 
 public enum BlendEquationMode
@@ -921,28 +921,28 @@ public enum BlendEquationMode
     Min = 32775,
     Max = 32776,
     FuncSubtract = 32778,
-    FuncReverseSubtract = 32779
+    FuncReverseSubtract = 32779,
 }
 
 public enum CullFaceMode
 {
     Front = 1028,
     Back = 1029,
-    FrontAndBack = 1032
+    FrontAndBack = 1032,
 }
 
 public enum MaterialFace
 {
     Front = 1028,
     Back = 1029,
-    FrontAndBack = 1032
+    FrontAndBack = 1032,
 }
 
 public enum PolygonMode
 {
     Point = 6912,
     Line = 6913,
-    Fill = 6914
+    Fill = 6914,
 }
 
 public enum GetProgramParameterName
@@ -973,7 +973,7 @@ public enum GetProgramParameterName
     TessGenVertexOrder = 36472,
     TessGenPointMode = 36473,
     MaxComputeWorkGroupSize = 37311,
-    ActiveAtomicCounterBuffers = 37593
+    ActiveAtomicCounterBuffers = 37593,
 }
 
 public enum BufferRangeTarget
@@ -981,7 +981,7 @@ public enum BufferRangeTarget
     UniformBuffer = 35345,
     TransformFeedbackBuffer = 35982,
     ShaderStorageBuffer = 37074,
-    AtomicCounterBuffer = 37568
+    AtomicCounterBuffer = 37568,
 }
 
 public enum DebugSource
@@ -991,7 +991,7 @@ public enum DebugSource
     DebugSourceShaderCompiler = 33352,
     DebugSourceThirdParty = 33353,
     DebugSourceApplication = 33354,
-    DebugSourceOther = 33355
+    DebugSourceOther = 33355,
 }
 
 public enum DebugType
@@ -1004,7 +1004,7 @@ public enum DebugType
     DebugTypeOther = 33361,
     DebugTypeMarker = 33384,
     DebugTypePushGroup = 33385,
-    DebugTypePopGroup = 33386
+    DebugTypePopGroup = 33386,
 }
 
 public enum DebugSeverity
@@ -1012,7 +1012,7 @@ public enum DebugSeverity
     DebugSeverityNotification = 33387,
     DebugSeverityHigh = 37190,
     DebugSeverityMedium = 37191,
-    DebugSeverityLow = 37192
+    DebugSeverityLow = 37192,
 }
 
 public enum BufferUsageHint
@@ -1025,7 +1025,7 @@ public enum BufferUsageHint
     StaticCopy = 35046,
     DynamicDraw = 35048,
     DynamicRead = 35049,
-    DynamicCopy = 35050
+    DynamicCopy = 35050,
 }
 
 public enum VertexAttribPointerType
@@ -1041,13 +1041,13 @@ public enum VertexAttribPointerType
     HalfFloat = 5131,
     Fixed = 5132,
     UnsignedInt2101010Rev = 33640,
-    Int2101010Rev = 36255
+    Int2101010Rev = 36255,
 }
 
 public enum FrontFaceDirection
 {
     Cw = 2304,
-    Ccw = 2305
+    Ccw = 2305,
 }
 
 public enum GetPName
@@ -1670,7 +1670,7 @@ public enum GetPName
     MaxFragmentInputComponents = 37157,
     MaxComputeImageUniforms = 37309,
     ClipOrigin = 37724,
-    ClipDepthMode = 37725
+    ClipDepthMode = 37725,
 }
 
 public enum TextureParameterName
@@ -1724,7 +1724,7 @@ public enum TextureParameterName
     TextureSwizzleG = 36419,
     TextureSwizzleB = 36420,
     TextureSwizzleA = 36421,
-    TextureSwizzleRgba = 36422
+    TextureSwizzleRgba = 36422,
 }
 
 public enum StringName
@@ -1737,7 +1737,7 @@ public enum StringName
 
 public enum StringNameIndexed
 {
-    Extensions = 7939
+    Extensions = 7939,
 }
 
 public enum ObjectLabelIdentifier
@@ -1752,13 +1752,13 @@ public enum ObjectLabelIdentifier
     Sampler = 33510,
     Framebuffer = 36160,
     Renderbuffer = 36161,
-    TransformFeedback = 36386
+    TransformFeedback = 36386,
 }
 
 public enum BlitFramebufferFilter
 {
     Nearest = 9728,
-    Linear = 9729
+    Linear = 9729,
 }
 
 public enum ErrorCode : int
@@ -1872,7 +1872,6 @@ public enum MemoryBarrierFlags : int
     QueryBufferBarrierBit = 0x00008000,
     AllBarrierBits = unchecked((int)0xFFFFFFFF),
 }
-
 
 public enum BufferAccess : int
 {

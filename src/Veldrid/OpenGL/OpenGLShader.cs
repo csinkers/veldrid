@@ -1,7 +1,7 @@
-﻿using static Veldrid.OpenGLBinding.OpenGLNative;
-using static Veldrid.OpenGL.OpenGLUtil;
+﻿using System;
 using Veldrid.OpenGLBinding;
-using System;
+using static Veldrid.OpenGL.OpenGLUtil;
+using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -16,7 +16,15 @@ internal sealed unsafe class OpenGLShader : Shader, OpenGLDeferredResource
     string? _name;
     bool _nameChanged;
 
-    public override string? Name { get => _name; set { _name = value; _nameChanged = true; } }
+    public override string? Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            _nameChanged = true;
+        }
+    }
 
     public override bool IsDisposed => _disposeRequested;
 
@@ -24,7 +32,12 @@ internal sealed unsafe class OpenGLShader : Shader, OpenGLDeferredResource
 
     public uint Shader => _shader;
 
-    public OpenGLShader(OpenGLGraphicsDevice gd, ShaderStages stage, StagingBlock stagingBlock, string entryPoint)
+    public OpenGLShader(
+        OpenGLGraphicsDevice gd,
+        ShaderStages stage,
+        StagingBlock stagingBlock,
+        string entryPoint
+    )
         : base(stage, entryPoint)
     {
 #if VALIDATE_USAGE
@@ -36,7 +49,9 @@ internal sealed unsafe class OpenGLShader : Shader, OpenGLDeferredResource
             }
             else
             {
-                throw new VeldridException($"Compute shaders require OpenGL 4.3 or ARB_compute_shader.");
+                throw new VeldridException(
+                    $"Compute shaders require OpenGL 4.3 or ARB_compute_shader."
+                );
             }
         }
 #endif
@@ -100,7 +115,9 @@ internal sealed unsafe class OpenGLShader : Shader, OpenGLDeferredResource
             }
 
             string message = Util.UTF8.GetString(infoLog.Slice(0, (int)returnedInfoLength));
-            throw new VeldridException($"Unable to compile shader code for shader [{_name}] of type {_shaderType}: {message}");
+            throw new VeldridException(
+                $"Unable to compile shader code for shader [{_name}] of type {_shaderType}: {message}"
+            );
         }
 
         _gd.StagingMemoryPool.Free(_stagingBlock);

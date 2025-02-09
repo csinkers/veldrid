@@ -4,7 +4,8 @@ internal struct UpdateBufferEntry(
     Tracked<DeviceBuffer> buffer,
     uint bufferOffsetInBytes,
     StagingBlock stagingBlock,
-    uint stagingBlockSize)
+    uint stagingBlockSize
+)
 {
     public readonly Tracked<DeviceBuffer> Buffer = buffer;
     public readonly uint BufferOffsetInBytes = bufferOffsetInBytes;

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Vortice.Direct3D11;
 using Vortice;
+using Vortice.Direct3D11;
 using Vortice.Mathematics;
 
 namespace Veldrid.D3D11;
@@ -47,12 +47,14 @@ internal sealed class D3D11CommandList : CommandList
     new D3D11Pipeline? _graphicsPipeline;
 
     BoundResourceSetInfo[] _graphicsResourceSets = new BoundResourceSetInfo[1];
+
     // Resource sets are invalidated when a new resource set is bound with an incompatible SRV or UAV.
     bool[] _invalidatedGraphicsResourceSets = new bool[1];
 
     new D3D11Pipeline? _computePipeline;
 
     BoundResourceSetInfo[] _computeResourceSets = new BoundResourceSetInfo[1];
+
     // Resource sets are invalidated when a new resource set is bound with an incompatible SRV or UAV.
     bool[] _invalidatedComputeResourceSets = new bool[1];
     string? _name;
@@ -63,11 +65,19 @@ internal sealed class D3D11CommandList : CommandList
 
     // Cached resources
     const int MaxCachedUniformBuffers = 15;
-    readonly D3D11BufferRange[] _vertexBoundUniformBuffers = new D3D11BufferRange[MaxCachedUniformBuffers];
-    readonly D3D11BufferRange[] _fragmentBoundUniformBuffers = new D3D11BufferRange[MaxCachedUniformBuffers];
+    readonly D3D11BufferRange[] _vertexBoundUniformBuffers = new D3D11BufferRange[
+        MaxCachedUniformBuffers
+    ];
+    readonly D3D11BufferRange[] _fragmentBoundUniformBuffers = new D3D11BufferRange[
+        MaxCachedUniformBuffers
+    ];
     const int MaxCachedTextureViews = 16;
-    readonly D3D11TextureView?[] _vertexBoundTextureViews = new D3D11TextureView[MaxCachedTextureViews];
-    readonly D3D11TextureView?[] _fragmentBoundTextureViews = new D3D11TextureView[MaxCachedTextureViews];
+    readonly D3D11TextureView?[] _vertexBoundTextureViews = new D3D11TextureView[
+        MaxCachedTextureViews
+    ];
+    readonly D3D11TextureView?[] _fragmentBoundTextureViews = new D3D11TextureView[
+        MaxCachedTextureViews
+    ];
     const int MaxCachedSamplers = 4;
     readonly D3D11Sampler[] _vertexBoundSamplers = new D3D11Sampler[MaxCachedSamplers];
     readonly D3D11Sampler[] _fragmentBoundSamplers = new D3D11Sampler[MaxCachedSamplers];
@@ -87,7 +97,12 @@ internal sealed class D3D11CommandList : CommandList
     readonly List<D3D11Swapchain> _referencedSwapchains = [];
 
     public D3D11CommandList(D3D11GraphicsDevice gd, in CommandListDescription description)
-        : base(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
+        : base(
+            description,
+            gd.Features,
+            gd.UniformBufferMinOffsetAlignment,
+            gd.StructuredBufferMinOffsetAlignment
+        )
     {
         _gd = gd;
         _context = gd.Device.CreateDeferredContext();
@@ -99,7 +114,8 @@ internal sealed class D3D11CommandList : CommandList
 
     internal ID3D11DeviceContext DeviceContext => _context;
 
-    D3D11Framebuffer D3D11Framebuffer => Util.AssertSubtype<Framebuffer, D3D11Framebuffer>(_framebuffer!);
+    D3D11Framebuffer D3D11Framebuffer =>
+        Util.AssertSubtype<Framebuffer, D3D11Framebuffer>(_framebuffer!);
 
     public override bool IsDisposed => _disposed;
 
@@ -218,7 +234,11 @@ internal sealed class D3D11CommandList : CommandList
         _begun = false;
     }
 
-    private protected override void SetIndexBufferCore(DeviceBuffer buffer, IndexFormat format, uint offset)
+    private protected override void SetIndexBufferCore(
+        DeviceBuffer buffer,
+        IndexFormat format,
+        uint offset
+    )
     {
         if (_ib != buffer || _ibOffset != offset)
         {
@@ -226,7 +246,11 @@ internal sealed class D3D11CommandList : CommandList
             _ibOffset = offset;
             D3D11Buffer d3d11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(buffer);
             UnbindUAVBuffer(buffer);
-            _context.IASetIndexBuffer(d3d11Buffer.Buffer, D3D11Formats.ToDxgiFormat(format), (int)offset);
+            _context.IASetIndexBuffer(
+                d3d11Buffer.Buffer,
+                D3D11Formats.ToDxgiFormat(format),
+                (int)offset
+            );
         }
     }
 
@@ -248,7 +272,8 @@ internal sealed class D3D11CommandList : CommandList
 
                 _context.OMSetBlendState(
                     blendState!,
-                    Unsafe.BitCast<RgbaFloat, Color4>(blendFactor));
+                    Unsafe.BitCast<RgbaFloat, Color4>(blendFactor)
+                );
             }
 
             ID3D11DepthStencilState? depthStencilState = d3dPipeline.DepthStencilState;
@@ -324,8 +349,14 @@ internal sealed class D3D11CommandList : CommandList
                 Util.EnsureArrayMinimumSize(ref _vertexOffsets, (uint)vertexStridesCount);
             }
 
-            Util.EnsureArrayMinimumSize(ref _graphicsResourceSets, (uint)d3dPipeline.ResourceLayouts.Length);
-            Util.EnsureArrayMinimumSize(ref _invalidatedGraphicsResourceSets, (uint)d3dPipeline.ResourceLayouts.Length);
+            Util.EnsureArrayMinimumSize(
+                ref _graphicsResourceSets,
+                (uint)d3dPipeline.ResourceLayouts.Length
+            );
+            Util.EnsureArrayMinimumSize(
+                ref _invalidatedGraphicsResourceSets,
+                (uint)d3dPipeline.ResourceLayouts.Length
+            );
         }
         else if (pipeline.IsComputePipeline && _computePipeline != pipeline)
         {
@@ -336,12 +367,22 @@ internal sealed class D3D11CommandList : CommandList
 
             ID3D11ComputeShader? computeShader = d3dPipeline.ComputeShader;
             _context.CSSetShader(computeShader!);
-            Util.EnsureArrayMinimumSize(ref _computeResourceSets, (uint)d3dPipeline.ResourceLayouts.Length);
-            Util.EnsureArrayMinimumSize(ref _invalidatedComputeResourceSets, (uint)d3dPipeline.ResourceLayouts.Length);
+            Util.EnsureArrayMinimumSize(
+                ref _computeResourceSets,
+                (uint)d3dPipeline.ResourceLayouts.Length
+            );
+            Util.EnsureArrayMinimumSize(
+                ref _invalidatedComputeResourceSets,
+                (uint)d3dPipeline.ResourceLayouts.Length
+            );
         }
     }
 
-    protected override void SetGraphicsResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    protected override void SetGraphicsResourceSetCore(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         ref BoundResourceSetInfo set = ref _graphicsResourceSets[slot];
         if (!set.Equals(rs, dynamicOffsets))
@@ -352,7 +393,11 @@ internal sealed class D3D11CommandList : CommandList
         }
     }
 
-    protected override void SetComputeResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    protected override void SetComputeResourceSetCore(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         ref BoundResourceSetInfo set = ref _computeResourceSets[slot];
         if (!set.Equals(rs, dynamicOffsets))
@@ -370,7 +415,10 @@ internal sealed class D3D11CommandList : CommandList
         D3D11Pipeline? pipeline = graphics ? _graphicsPipeline : _computePipeline;
         Debug.Assert(pipeline != null);
 
-        ReadOnlySpan<D3D11ResourceLayout> pipelinelayouts = pipeline.ResourceLayouts.AsSpan(0, (int)slot);
+        ReadOnlySpan<D3D11ResourceLayout> pipelinelayouts = pipeline.ResourceLayouts.AsSpan(
+            0,
+            (int)slot
+        );
         int cbBase = 0;
         int uaBase = 0;
         int textureBase = 0;
@@ -417,14 +465,27 @@ internal sealed class D3D11CommandList : CommandList
                 case ResourceKind.StructuredBufferReadWrite:
                 {
                     D3D11BufferRange range = GetBufferRange(resource, bufferOffset);
-                    ID3D11UnorderedAccessView uav = range.Buffer.GetUnorderedAccessView(range.Offset, range.Size);
-                    BindUnorderedAccessView(null, range.Buffer, uav, uaBase + rbi.Slot, rbi.Stages, slot);
+                    ID3D11UnorderedAccessView uav = range.Buffer.GetUnorderedAccessView(
+                        range.Offset,
+                        range.Size
+                    );
+                    BindUnorderedAccessView(
+                        null,
+                        range.Buffer,
+                        uav,
+                        uaBase + rbi.Slot,
+                        rbi.Stages,
+                        slot
+                    );
                     break;
                 }
                 case ResourceKind.TextureReadOnly:
                 {
                     TextureView texView = Util.GetTextureView(_gd, resource);
-                    D3D11TextureView d3d11TexView = Util.AssertSubtype<TextureView, D3D11TextureView>(texView);
+                    D3D11TextureView d3d11TexView = Util.AssertSubtype<
+                        TextureView,
+                        D3D11TextureView
+                    >(texView);
                     UnbindUAVTexture(d3d11TexView.Target);
                     BindTextureView(d3d11TexView, textureBase + rbi.Slot, rbi.Stages, slot);
                     break;
@@ -432,14 +493,26 @@ internal sealed class D3D11CommandList : CommandList
                 case ResourceKind.TextureReadWrite:
                 {
                     TextureView rwTexView = Util.GetTextureView(_gd, resource);
-                    D3D11TextureView d3d11RWTexView = Util.AssertSubtype<TextureView, D3D11TextureView>(rwTexView);
+                    D3D11TextureView d3d11RWTexView = Util.AssertSubtype<
+                        TextureView,
+                        D3D11TextureView
+                    >(rwTexView);
                     UnbindSRVTexture(d3d11RWTexView.Target);
-                    BindUnorderedAccessView(d3d11RWTexView.Target, null, d3d11RWTexView.UnorderedAccessView, uaBase + rbi.Slot, rbi.Stages, slot);
+                    BindUnorderedAccessView(
+                        d3d11RWTexView.Target,
+                        null,
+                        d3d11RWTexView.UnorderedAccessView,
+                        uaBase + rbi.Slot,
+                        rbi.Stages,
+                        slot
+                    );
                     break;
                 }
                 case ResourceKind.Sampler:
                 {
-                    D3D11Sampler sampler = Util.AssertSubtype<Sampler, D3D11Sampler>(resource.GetSampler());
+                    D3D11Sampler sampler = Util.AssertSubtype<Sampler, D3D11Sampler>(
+                        resource.GetSampler()
+                    );
                     BindSampler(sampler, samplerBase + rbi.Slot, rbi.Stages);
                     break;
                 }
@@ -497,7 +570,14 @@ internal sealed class D3D11CommandList : CommandList
             {
                 foreach (BoundTextureInfo bti in btis)
                 {
-                    BindUnorderedAccessView(null, null, null, bti.Slot, bti.Stages, bti.ResourceSet);
+                    BindUnorderedAccessView(
+                        null,
+                        null,
+                        null,
+                        bti.Slot,
+                        bti.Stages,
+                        bti.ResourceSet
+                    );
                     if ((bti.Stages & ShaderStages.Compute) == ShaderStages.Compute)
                     {
                         _invalidatedComputeResourceSets[bti.ResourceSet] = true;
@@ -515,7 +595,11 @@ internal sealed class D3D11CommandList : CommandList
         }
     }
 
-    private protected override void SetVertexBufferCore(uint index, DeviceBuffer buffer, uint offset)
+    private protected override void SetVertexBufferCore(
+        uint index,
+        DeviceBuffer buffer,
+        uint offset
+    )
     {
         D3D11Buffer d3d11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(buffer);
         if (_vertexBindings[index] != d3d11Buffer.Buffer || _vertexOffsets[index] != offset)
@@ -528,7 +612,12 @@ internal sealed class D3D11CommandList : CommandList
         }
     }
 
-    private protected override void DrawCore(uint vertexCount, uint instanceCount, uint vertexStart, uint instanceStart)
+    private protected override void DrawCore(
+        uint vertexCount,
+        uint instanceCount,
+        uint vertexStart,
+        uint instanceStart
+    )
     {
         PreDrawCommand();
 
@@ -538,11 +627,22 @@ internal sealed class D3D11CommandList : CommandList
         }
         else
         {
-            _context.DrawInstanced((int)vertexCount, (int)instanceCount, (int)vertexStart, (int)instanceStart);
+            _context.DrawInstanced(
+                (int)vertexCount,
+                (int)instanceCount,
+                (int)vertexStart,
+                (int)instanceStart
+            );
         }
     }
 
-    private protected override void DrawIndexedCore(uint indexCount, uint instanceCount, uint indexStart, int vertexOffset, uint instanceStart)
+    private protected override void DrawIndexedCore(
+        uint indexCount,
+        uint instanceCount,
+        uint indexStart,
+        int vertexOffset,
+        uint instanceStart
+    )
     {
         PreDrawCommand();
 
@@ -553,11 +653,22 @@ internal sealed class D3D11CommandList : CommandList
         }
         else
         {
-            _context.DrawIndexedInstanced((int)indexCount, (int)instanceCount, (int)indexStart, vertexOffset, (int)instanceStart);
+            _context.DrawIndexedInstanced(
+                (int)indexCount,
+                (int)instanceCount,
+                (int)indexStart,
+                vertexOffset,
+                (int)instanceStart
+            );
         }
     }
 
-    protected override void DrawIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    protected override void DrawIndirectCore(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         PreDrawCommand();
 
@@ -570,7 +681,12 @@ internal sealed class D3D11CommandList : CommandList
         }
     }
 
-    protected override void DrawIndexedIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    protected override void DrawIndexedIndirectCore(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         PreDrawCommand();
 
@@ -604,7 +720,10 @@ internal sealed class D3D11CommandList : CommandList
         }
 
         int graphicsResourceCount = _graphicsPipeline!.ResourceLayouts.Length;
-        Span<bool> invalidatedSets = _invalidatedGraphicsResourceSets.AsSpan(0, graphicsResourceCount);
+        Span<bool> invalidatedSets = _invalidatedGraphicsResourceSets.AsSpan(
+            0,
+            graphicsResourceCount
+        );
         Span<BoundResourceSetInfo> sets = _graphicsResourceSets.AsSpan(0, graphicsResourceCount);
         for (int i = 0; i < graphicsResourceCount; i++)
         {
@@ -633,7 +752,10 @@ internal sealed class D3D11CommandList : CommandList
     void PreDispatchCommand()
     {
         int computeResourceCount = _computePipeline!.ResourceLayouts.Length;
-        Span<bool> invalidatedSets = _invalidatedComputeResourceSets.AsSpan(0, computeResourceCount);
+        Span<bool> invalidatedSets = _invalidatedComputeResourceSets.AsSpan(
+            0,
+            computeResourceCount
+        );
         Span<BoundResourceSetInfo> sets = _computeResourceSets.AsSpan(0, computeResourceCount);
         for (int i = 0; i < computeResourceCount; i++)
         {
@@ -654,7 +776,8 @@ internal sealed class D3D11CommandList : CommandList
             0,
             d3d11Source.DeviceTexture,
             0,
-            d3d11Destination.DxgiFormat);
+            d3d11Destination.DxgiFormat
+        );
     }
 
     void FlushViewports()
@@ -672,10 +795,12 @@ internal sealed class D3D11CommandList : CommandList
     void FlushVertexBindings()
     {
         _context.IASetVertexBuffers(
-            0, (int)_numVertexBindings,
+            0,
+            (int)_numVertexBindings,
             _vertexBindings,
             _vertexStrides!,
-            _vertexOffsets);
+            _vertexOffsets
+        );
     }
 
     public override void SetScissorRect(uint index, uint x, uint y, uint width, uint height)
@@ -700,7 +825,14 @@ internal sealed class D3D11CommandList : CommandList
                 list = GetNewOrCachedBoundTextureInfoList();
                 _boundSRVs.Add(texView.Target, list);
             }
-            list.Add(new BoundTextureInfo { Slot = slot, Stages = stages, ResourceSet = resourceSet });
+            list.Add(
+                new BoundTextureInfo
+                {
+                    Slot = slot,
+                    Stages = stages,
+                    ResourceSet = resourceSet,
+                }
+            );
         }
 
         if ((stages & ShaderStages.Vertex) == ShaderStages.Vertex)
@@ -816,8 +948,9 @@ internal sealed class D3D11CommandList : CommandList
             void Throw()
             {
                 throw new VeldridException(
-                    $"The range of the uniform buffer in slot {slot} ({range.Buffer}) does not " +
-                    $"meet the requirements of this device.");
+                    $"The range of the uniform buffer in slot {slot} ({range.Buffer}) does not "
+                        + $"meet the requirements of this device."
+                );
             }
             Throw();
         }
@@ -967,7 +1100,8 @@ internal sealed class D3D11CommandList : CommandList
         ID3D11UnorderedAccessView? uav,
         int slot,
         ShaderStages stages,
-        uint resourceSet)
+        uint resourceSet
+    )
     {
         bool compute = stages == ShaderStages.Compute;
         Debug.Assert(compute || ((stages & ShaderStages.Compute) == 0));
@@ -980,7 +1114,14 @@ internal sealed class D3D11CommandList : CommandList
                 list = GetNewOrCachedBoundTextureInfoList();
                 _boundUAVs.Add(texture, list);
             }
-            list.Add(new BoundTextureInfo { Slot = slot, Stages = stages, ResourceSet = resourceSet });
+            list.Add(
+                new BoundTextureInfo
+                {
+                    Slot = slot,
+                    Stages = stages,
+                    ResourceSet = resourceSet,
+                }
+            );
         }
 
         int baseSlot = 0;
@@ -1125,15 +1266,28 @@ internal sealed class D3D11CommandList : CommandList
 
     private protected override void ClearColorTargetCore(uint index, RgbaFloat clearColor)
     {
-        _context.ClearRenderTargetView(D3D11Framebuffer.RenderTargetViews[index], Unsafe.BitCast<RgbaFloat, Color4>(clearColor));
+        _context.ClearRenderTargetView(
+            D3D11Framebuffer.RenderTargetViews[index],
+            Unsafe.BitCast<RgbaFloat, Color4>(clearColor)
+        );
     }
 
     private protected override void ClearDepthStencilCore(float depth, byte stencil)
     {
-        _context.ClearDepthStencilView(D3D11Framebuffer.DepthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, depth, stencil);
+        _context.ClearDepthStencilView(
+            D3D11Framebuffer.DepthStencilView,
+            DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil,
+            depth,
+            stencil
+        );
     }
 
-    private protected unsafe override void UpdateBufferCore(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
+    private protected override unsafe void UpdateBufferCore(
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr source,
+        uint sizeInBytes
+    )
     {
         D3D11Buffer d3dBuffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(buffer);
 
@@ -1144,16 +1298,22 @@ internal sealed class D3D11CommandList : CommandList
         bool isFullBuffer = bufferOffsetInBytes == 0 && sizeInBytes == buffer.SizeInBytes;
 
         bool useUpdateSubresource =
-            (!isDynamic && !isStaging) &&
-            (!isUniformBuffer || isFullBuffer);
+            (!isDynamic && !isStaging) && (!isUniformBuffer || isFullBuffer);
 
         bool useMap =
-            ((usage & BufferUsage.DynamicWrite) != 0 && isFullBuffer) ||
-            (usage & BufferUsage.StagingWrite) != 0;
+            ((usage & BufferUsage.DynamicWrite) != 0 && isFullBuffer)
+            || (usage & BufferUsage.StagingWrite) != 0;
 
         if (useUpdateSubresource)
         {
-            Box? subregion = new Box((int)bufferOffsetInBytes, 0, 0, (int)(sizeInBytes + bufferOffsetInBytes), 1, 1);
+            Box? subregion = new Box(
+                (int)bufferOffsetInBytes,
+                0,
+                0,
+                (int)(sizeInBytes + bufferOffsetInBytes),
+                1,
+                1
+            );
             if (isUniformBuffer)
             {
                 subregion = null;
@@ -1174,7 +1334,8 @@ internal sealed class D3D11CommandList : CommandList
                 d3dBuffer.Buffer,
                 0,
                 D3D11Formats.VdToD3D11MapMode(isDynamic, MapMode.Write),
-                MapFlags.None);
+                MapFlags.None
+            );
 
             Unsafe.CopyBlock(msb.DataPointer.ToPointer(), source.ToPointer(), sizeInBytes);
 
@@ -1193,7 +1354,8 @@ internal sealed class D3D11CommandList : CommandList
         ID3D11Resource resource,
         int subresource,
         Box region,
-        IntPtr data)
+        IntPtr data
+    )
     {
         bool needWorkaround = !_gd.SupportsCommandLists;
         void* pAdjustedSrcData = data.ToPointer();
@@ -1205,7 +1367,6 @@ internal sealed class D3D11CommandList : CommandList
 
         _context.UpdateSubresource(resource, subresource, region, (IntPtr)pAdjustedSrcData, 0, 0);
     }
-
 
     D3D11Buffer GetFreeStagingBuffer(uint sizeInBytes)
     {
@@ -1219,12 +1380,17 @@ internal sealed class D3D11CommandList : CommandList
         }
 
         DeviceBuffer staging = _gd.ResourceFactory.CreateBuffer(
-            new BufferDescription(sizeInBytes, BufferUsage.StagingWrite));
+            new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)
+        );
 
         return Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(staging);
     }
 
-    protected override void CopyBufferCore(DeviceBuffer source, DeviceBuffer destination, ReadOnlySpan<BufferCopyCommand> commands)
+    protected override void CopyBufferCore(
+        DeviceBuffer source,
+        DeviceBuffer destination,
+        ReadOnlySpan<BufferCopyCommand> commands
+    )
     {
         D3D11Buffer srcD3D11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(source);
         D3D11Buffer dstD3D11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(destination);
@@ -1236,23 +1402,46 @@ internal sealed class D3D11CommandList : CommandList
                 continue;
             }
 
-            Box region = new((int)command.ReadOffset, 0, 0, (int)(command.ReadOffset + command.Length), 1, 1);
+            Box region = new(
+                (int)command.ReadOffset,
+                0,
+                0,
+                (int)(command.ReadOffset + command.Length),
+                1,
+                1
+            );
 
-            _context.CopySubresourceRegion(dstD3D11Buffer.Buffer, 0, (int)command.WriteOffset, 0, 0, srcD3D11Buffer.Buffer, 0, region);
+            _context.CopySubresourceRegion(
+                dstD3D11Buffer.Buffer,
+                0,
+                (int)command.WriteOffset,
+                0,
+                0,
+                srcD3D11Buffer.Buffer,
+                0,
+                region
+            );
         }
     }
 
     protected override void CopyTextureCore(
         Texture source,
-        uint srcX, uint srcY, uint srcZ,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
         uint srcMipLevel,
         uint srcBaseArrayLayer,
         Texture destination,
-        uint dstX, uint dstY, uint dstZ,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
         uint dstMipLevel,
         uint dstBaseArrayLayer,
-        uint width, uint height, uint depth,
-        uint layerCount)
+        uint width,
+        uint height,
+        uint depth,
+        uint layerCount
+    )
     {
         D3D11Texture srcD3D11Texture = Util.AssertSubtype<Texture, D3D11Texture>(source);
         D3D11Texture dstD3D11Texture = Util.AssertSubtype<Texture, D3D11Texture>(destination);
@@ -1262,8 +1451,14 @@ internal sealed class D3D11CommandList : CommandList
         uint clampedHeight = Math.Max(blockSize, height);
 
         Box? region = null;
-        if (srcX != 0 || srcY != 0 || srcZ != 0
-            || clampedWidth != source.Width || clampedHeight != source.Height || depth != source.Depth)
+        if (
+            srcX != 0
+            || srcY != 0
+            || srcZ != 0
+            || clampedWidth != source.Width
+            || clampedHeight != source.Height
+            || depth != source.Depth
+        )
         {
             region = new Box(
                 (int)srcX,
@@ -1271,13 +1466,22 @@ internal sealed class D3D11CommandList : CommandList
                 (int)srcZ,
                 (int)(srcX + clampedWidth),
                 (int)(srcY + clampedHeight),
-                (int)(srcZ + depth));
+                (int)(srcZ + depth)
+            );
         }
 
         for (uint i = 0; i < layerCount; i++)
         {
-            int srcSubresource = D3D11Util.ComputeSubresource(srcMipLevel, source.MipLevels, srcBaseArrayLayer + i);
-            int dstSubresource = D3D11Util.ComputeSubresource(dstMipLevel, destination.MipLevels, dstBaseArrayLayer + i);
+            int srcSubresource = D3D11Util.ComputeSubresource(
+                srcMipLevel,
+                source.MipLevels,
+                srcBaseArrayLayer + i
+            );
+            int dstSubresource = D3D11Util.ComputeSubresource(
+                dstMipLevel,
+                destination.MipLevels,
+                dstBaseArrayLayer + i
+            );
 
             _context.CopySubresourceRegion(
                 dstD3D11Texture.DeviceTexture,
@@ -1287,7 +1491,8 @@ internal sealed class D3D11CommandList : CommandList
                 (int)dstZ,
                 srcD3D11Texture.DeviceTexture,
                 srcSubresource,
-                region);
+                region
+            );
         }
     }
 
@@ -1378,7 +1583,8 @@ internal sealed class D3D11CommandList : CommandList
         public uint ResourceSet;
     }
 
-    readonly struct D3D11BufferRange(D3D11Buffer buffer, uint offset, uint size) : IEquatable<D3D11BufferRange>
+    readonly struct D3D11BufferRange(D3D11Buffer buffer, uint offset, uint size)
+        : IEquatable<D3D11BufferRange>
     {
         public readonly D3D11Buffer Buffer = buffer;
         public readonly uint Offset = offset;

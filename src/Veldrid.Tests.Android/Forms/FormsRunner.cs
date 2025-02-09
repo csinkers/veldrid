@@ -12,7 +12,10 @@ namespace Veldrid.Tests.Android.Forms
         readonly IReadOnlyCollection<Assembly> testAssemblies;
         readonly IResultChannel resultChannel;
 
-        public FormsRunner(IReadOnlyCollection<Assembly> testAssemblies, IResultChannel resultChannel)
+        public FormsRunner(
+            IReadOnlyCollection<Assembly> testAssemblies,
+            IResultChannel resultChannel
+        )
         {
             this.testAssemblies = testAssemblies;
             this.resultChannel = resultChannel;

@@ -23,7 +23,12 @@ public readonly unsafe struct NSString(IntPtr ptr)
         fixed (char* utf16Ptr = s)
         {
             UIntPtr length = (UIntPtr)s.Length;
-            IntPtr newString = IntPtr_objc_msgSend(nss, sel_initWithCharacters, (IntPtr)utf16Ptr, length);
+            IntPtr newString = IntPtr_objc_msgSend(
+                nss,
+                sel_initWithCharacters,
+                (IntPtr)utf16Ptr,
+                length
+            );
             return new NSString(newString);
         }
     }

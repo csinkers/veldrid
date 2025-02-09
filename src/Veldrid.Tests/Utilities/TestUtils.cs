@@ -46,7 +46,10 @@ public static class TestUtils
         return GraphicsDevice.CreateVulkan(new GraphicsDeviceOptions(true));
     }
 
-    public static void CreateVulkanDeviceWithSwapchain(out IDisposable? window, out GraphicsDevice? gd)
+    public static void CreateVulkanDeviceWithSwapchain(
+        out IDisposable? window,
+        out GraphicsDevice? gd
+    )
     {
         WindowCreateInfo wci = new()
         {
@@ -58,9 +61,15 @@ public static class TestUtils
         GraphicsDeviceOptions options = new(true, PixelFormat.R16_UNorm, false);
 
 #if ANDROID
-            // TODO: dependency inject this?
-            Android.Utilities.AndroidStartup.CreateWindowAndGraphicsDevice(
-                wci.WindowWidth, wci.WindowHeight, options, GraphicsBackend.Vulkan, out window, out gd);
+        // TODO: dependency inject this?
+        Android.Utilities.AndroidStartup.CreateWindowAndGraphicsDevice(
+            wci.WindowWidth,
+            wci.WindowHeight,
+            options,
+            GraphicsBackend.Vulkan,
+            out window,
+            out gd
+        );
 #else
         if (!InitializedSdl2)
         {
@@ -69,7 +78,13 @@ public static class TestUtils
             return;
         }
 
-        VeldridStartup.CreateWindowAndGraphicsDevice(wci, options, GraphicsBackend.Vulkan, out Sdl2Window sdlWindow, out gd);
+        VeldridStartup.CreateWindowAndGraphicsDevice(
+            wci,
+            options,
+            GraphicsBackend.Vulkan,
+            out Sdl2Window sdlWindow,
+            out gd
+        );
         window = new WindowClosable(sdlWindow);
 #endif
     }
@@ -79,7 +94,10 @@ public static class TestUtils
         return GraphicsDevice.CreateD3D11(new GraphicsDeviceOptions(true));
     }
 
-    public static void CreateD3D11DeviceWithSwapchain(out Sdl2Window? window, out GraphicsDevice? gd)
+    public static void CreateD3D11DeviceWithSwapchain(
+        out Sdl2Window? window,
+        out GraphicsDevice? gd
+    )
     {
         if (!InitializedSdl2)
         {
@@ -97,7 +115,13 @@ public static class TestUtils
 
         GraphicsDeviceOptions options = new(true, PixelFormat.R16_UNorm, false);
 
-        VeldridStartup.CreateWindowAndGraphicsDevice(wci, options, GraphicsBackend.Direct3D11, out window, out gd);
+        VeldridStartup.CreateWindowAndGraphicsDevice(
+            wci,
+            options,
+            GraphicsBackend.Direct3D11,
+            out window,
+            out gd
+        );
     }
 
     internal static void CreateOpenGLDevice(out Sdl2Window? window, out GraphicsDevice? gd)
@@ -118,7 +142,13 @@ public static class TestUtils
 
         GraphicsDeviceOptions options = new(true, PixelFormat.R16_UNorm, false);
 
-        VeldridStartup.CreateWindowAndGraphicsDevice(wci, options, GraphicsBackend.OpenGL, out window, out gd);
+        VeldridStartup.CreateWindowAndGraphicsDevice(
+            wci,
+            options,
+            GraphicsBackend.OpenGL,
+            out window,
+            out gd
+        );
     }
 
     internal static void CreateOpenGLESDevice(out IDisposable? window, out GraphicsDevice? gd)
@@ -133,9 +163,15 @@ public static class TestUtils
         GraphicsDeviceOptions options = new(true, PixelFormat.R16_UNorm, false);
 
 #if ANDROID
-            // TODO: dependency inject this?
-            Android.Utilities.AndroidStartup.CreateWindowAndGraphicsDevice(
-                wci.WindowWidth, wci.WindowHeight, options, GraphicsBackend.OpenGLES, out window, out gd);
+        // TODO: dependency inject this?
+        Android.Utilities.AndroidStartup.CreateWindowAndGraphicsDevice(
+            wci.WindowWidth,
+            wci.WindowHeight,
+            options,
+            GraphicsBackend.OpenGLES,
+            out window,
+            out gd
+        );
 #else
         if (!InitializedSdl2)
         {
@@ -144,7 +180,13 @@ public static class TestUtils
             return;
         }
 
-        VeldridStartup.CreateWindowAndGraphicsDevice(wci, options, GraphicsBackend.OpenGLES, out Sdl2Window sdlWindow, out gd);
+        VeldridStartup.CreateWindowAndGraphicsDevice(
+            wci,
+            options,
+            GraphicsBackend.OpenGLES,
+            out Sdl2Window sdlWindow,
+            out gd
+        );
         window = new WindowClosable(sdlWindow);
 #endif
     }
@@ -156,10 +198,15 @@ public static class TestUtils
             Console.WriteLine("Metal is not supported on this system.");
             return null;
         }
-        return GraphicsDevice.CreateMetal(new GraphicsDeviceOptions(true, null, false, ResourceBindingModel.Improved));
+        return GraphicsDevice.CreateMetal(
+            new GraphicsDeviceOptions(true, null, false, ResourceBindingModel.Improved)
+        );
     }
 
-    public static void CreateMetalDeviceWithSwapchain(out Sdl2Window? window, out GraphicsDevice? gd)
+    public static void CreateMetalDeviceWithSwapchain(
+        out Sdl2Window? window,
+        out GraphicsDevice? gd
+    )
     {
         if (!InitializedSdl2)
         {
@@ -175,9 +222,20 @@ public static class TestUtils
             WindowInitialState = WindowState.Hidden,
         };
 
-        GraphicsDeviceOptions options = new(true, PixelFormat.R16_UNorm, false, ResourceBindingModel.Improved);
+        GraphicsDeviceOptions options = new(
+            true,
+            PixelFormat.R16_UNorm,
+            false,
+            ResourceBindingModel.Improved
+        );
 
-        VeldridStartup.CreateWindowAndGraphicsDevice(wci, options, GraphicsBackend.Metal, out window, out gd);
+        VeldridStartup.CreateWindowAndGraphicsDevice(
+            wci,
+            options,
+            GraphicsBackend.Metal,
+            out window,
+            out gd
+        );
     }
 
     internal static unsafe string GetString(byte* stringStart)
@@ -216,8 +274,10 @@ public abstract class GraphicsDeviceTestBase<T> : IDisposable
 
     public GraphicsDeviceTestBase()
     {
-        if (Environment.GetEnvironmentVariable("VELDRID_TESTS_ENABLE_RENDERDOC") == "1"
-            && RenderDoc.Load(out _renderDoc))
+        if (
+            Environment.GetEnvironmentVariable("VELDRID_TESTS_ENABLE_RENDERDOC") == "1"
+            && RenderDoc.Load(out _renderDoc)
+        )
         {
             _renderDoc.APIValidation = true;
             _renderDoc.DebugOutputMute = false;
@@ -241,7 +301,9 @@ public abstract class GraphicsDeviceTestBase<T> : IDisposable
         }
         else
         {
-            readback = RF.CreateBuffer(new BufferDescription(buffer.SizeInBytes, BufferUsage.StagingReadWrite));
+            readback = RF.CreateBuffer(
+                new BufferDescription(buffer.SizeInBytes, BufferUsage.StagingReadWrite)
+            );
             readback.Name = $"Readback for ({buffer.Name})";
 
             CommandList cl = RF.CreateCommandList();
@@ -269,10 +331,15 @@ public abstract class GraphicsDeviceTestBase<T> : IDisposable
                 layers *= 6;
             }
             TextureDescription desc = new(
-                texture.Width, texture.Height, texture.Depth,
-                texture.MipLevels, layers,
+                texture.Width,
+                texture.Height,
+                texture.Depth,
+                texture.MipLevels,
+                layers,
                 texture.Format,
-                TextureUsage.Staging, texture.Type);
+                TextureUsage.Staging,
+                texture.Type
+            );
             Texture readback = RF.CreateTexture(desc);
             CommandList cl = RF.CreateCommandList();
             cl.Begin();

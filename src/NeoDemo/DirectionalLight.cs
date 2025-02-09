@@ -14,7 +14,15 @@ public class DirectionalLight
 
     public event Action<RgbaFloat> ColorChanged;
 
-    public RgbaFloat Color { get => _color; set { _color = value; ColorChanged?.Invoke(value); } }
+    public RgbaFloat Color
+    {
+        get => _color;
+        set
+        {
+            _color = value;
+            ColorChanged?.Invoke(value);
+        }
+    }
 
     public DirectionalLight()
     {
@@ -24,7 +32,11 @@ public class DirectionalLight
 
     internal DirectionalLightInfo GetInfo()
     {
-        return new DirectionalLightInfo { Direction = Transform.Forward, Color = Color.ToVector4() };
+        return new DirectionalLightInfo
+        {
+            Direction = Transform.Forward,
+            Color = Color.ToVector4(),
+        };
     }
 }
 

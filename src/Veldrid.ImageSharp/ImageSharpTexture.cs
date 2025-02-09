@@ -35,13 +35,27 @@ public class ImageSharpTexture
     /// </summary>
     public uint MipLevels => (uint)Images.Length;
 
-    public ImageSharpTexture(string path) : this(Image.Load<Rgba32>(path), true) { }
-    public ImageSharpTexture(string path, bool mipmap) : this(Image.Load<Rgba32>(path), mipmap) { }
-    public ImageSharpTexture(string path, bool mipmap, bool srgb) : this(Image.Load<Rgba32>(path), mipmap, srgb) { }
-    public ImageSharpTexture(Stream stream) : this(Image.Load<Rgba32>(stream), true) { }
-    public ImageSharpTexture(Stream stream, bool mipmap) : this(Image.Load<Rgba32>(stream), mipmap) { }
-    public ImageSharpTexture(Stream stream, bool mipmap, bool srgb) : this(Image.Load<Rgba32>(stream), mipmap, srgb) { }
-    public ImageSharpTexture(Image<Rgba32> image, bool mipmap = true) : this(image, mipmap, false) { }
+    public ImageSharpTexture(string path)
+        : this(Image.Load<Rgba32>(path), true) { }
+
+    public ImageSharpTexture(string path, bool mipmap)
+        : this(Image.Load<Rgba32>(path), mipmap) { }
+
+    public ImageSharpTexture(string path, bool mipmap, bool srgb)
+        : this(Image.Load<Rgba32>(path), mipmap, srgb) { }
+
+    public ImageSharpTexture(Stream stream)
+        : this(Image.Load<Rgba32>(stream), true) { }
+
+    public ImageSharpTexture(Stream stream, bool mipmap)
+        : this(Image.Load<Rgba32>(stream), mipmap) { }
+
+    public ImageSharpTexture(Stream stream, bool mipmap, bool srgb)
+        : this(Image.Load<Rgba32>(stream), mipmap, srgb) { }
+
+    public ImageSharpTexture(Image<Rgba32> image, bool mipmap = true)
+        : this(image, mipmap, false) { }
+
     public ImageSharpTexture(Image<Rgba32> image, bool mipmap, bool srgb)
     {
         Format = srgb ? PixelFormat.R8_G8_B8_A8_UNorm_SRgb : PixelFormat.R8_G8_B8_A8_UNorm;
@@ -63,10 +77,12 @@ public class ImageSharpTexture
     unsafe Texture CreateTextureViaStaging(GraphicsDevice gd, ResourceFactory factory)
     {
         Texture staging = factory.CreateTexture(
-            TextureDescription.Texture2D(Width, Height, MipLevels, 1, Format, TextureUsage.Staging));
+            TextureDescription.Texture2D(Width, Height, MipLevels, 1, Format, TextureUsage.Staging)
+        );
 
         Texture ret = factory.CreateTexture(
-            TextureDescription.Texture2D(Width, Height, MipLevels, 1, Format, TextureUsage.Sampled));
+            TextureDescription.Texture2D(Width, Height, MipLevels, 1, Format, TextureUsage.Sampled)
+        );
 
         CommandList cl = gd.ResourceFactory.CreateCommandList();
         cl.Begin();
@@ -83,7 +99,11 @@ public class ImageSharpTexture
                 uint rowWidth = (uint)(image.Width * 4);
                 if (rowWidth == map.RowPitch)
                 {
-                    Unsafe.CopyBlock(map.Data.ToPointer(), pixelPtr, (uint)(image.Width * image.Height * 4));
+                    Unsafe.CopyBlock(
+                        map.Data.ToPointer(),
+                        pixelPtr,
+                        (uint)(image.Width * image.Height * 4)
+                    );
                 }
                 else
                 {
@@ -97,10 +117,23 @@ public class ImageSharpTexture
                 gd.Unmap(staging, level);
 
                 cl.CopyTexture(
-                    staging, 0, 0, 0, level, 0,
-                    ret, 0, 0, 0, level, 0,
-                    (uint)image.Width, (uint)image.Height, 1, 1);
-
+                    staging,
+                    0,
+                    0,
+                    0,
+                    level,
+                    0,
+                    ret,
+                    0,
+                    0,
+                    0,
+                    level,
+                    0,
+                    (uint)image.Width,
+                    (uint)image.Height,
+                    1,
+                    1
+                );
             }
         }
         cl.End();
@@ -114,8 +147,9 @@ public class ImageSharpTexture
 
     unsafe Texture CreateTextureViaUpdate(GraphicsDevice gd, ResourceFactory factory)
     {
-        Texture tex = factory.CreateTexture(TextureDescription.Texture2D(
-            Width, Height, MipLevels, 1, Format, TextureUsage.Sampled));
+        Texture tex = factory.CreateTexture(
+            TextureDescription.Texture2D(Width, Height, MipLevels, 1, Format, TextureUsage.Sampled)
+        );
 
         for (int level = 0; level < MipLevels; level++)
         {
@@ -136,34 +170,38 @@ public class ImageSharpTexture
                         (uint)image.Height,
                         1,
                         (uint)level,
-                        0);
+                        0
+                    );
                 }
             }
             else
             {
-                image.ProcessPixelRows((pixels) =>
-                {
-                    for (int y = 0; y < pixels.Height; y++)
+                image.ProcessPixelRows(
+                    (pixels) =>
                     {
-                        Span<Rgba32> span = pixels.GetRowSpan(y);
-
-                        fixed (void* pixelPtr = span)
+                        for (int y = 0; y < pixels.Height; y++)
                         {
-                            gd.UpdateTexture(
-                                tex,
-                                (IntPtr)pixelPtr,
-                                (uint)(sizeof(Rgba32) * image.Width),
-                                0,
-                                (uint)y,
-                                0,
-                                (uint)pixels.Width,
-                                height: 1,
-                                depth: 1,
-                                (uint)level,
-                                0);
+                            Span<Rgba32> span = pixels.GetRowSpan(y);
+
+                            fixed (void* pixelPtr = span)
+                            {
+                                gd.UpdateTexture(
+                                    tex,
+                                    (IntPtr)pixelPtr,
+                                    (uint)(sizeof(Rgba32) * image.Width),
+                                    0,
+                                    (uint)y,
+                                    0,
+                                    (uint)pixels.Width,
+                                    height: 1,
+                                    depth: 1,
+                                    (uint)level,
+                                    0
+                                );
+                            }
                         }
                     }
-                });
+                );
             }
         }
 

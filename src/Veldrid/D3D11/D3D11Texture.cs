@@ -27,7 +27,7 @@ internal sealed class D3D11Texture : Texture
         SampleCount = description.SampleCount;
 
         DxgiFormat = D3D11Formats.ToDxgiFormat(description.Format, description.Usage);
-            
+
         CpuAccessFlags cpuFlags = CpuAccessFlags.None;
         ResourceUsage resourceUsage = ResourceUsage.Default;
         BindFlags bindFlags = BindFlags.None;
@@ -87,7 +87,7 @@ internal sealed class D3D11Texture : Texture
                 BindFlags = bindFlags,
                 CPUAccessFlags = cpuFlags,
                 Usage = resourceUsage,
-                MiscFlags= optionFlags,
+                MiscFlags = optionFlags,
             };
 
             DeviceTexture = device.CreateTexture1D(desc1D);
@@ -104,7 +104,10 @@ internal sealed class D3D11Texture : Texture
                 BindFlags = bindFlags,
                 CPUAccessFlags = cpuFlags,
                 Usage = resourceUsage,
-                SampleDescription = new Vortice.DXGI.SampleDescription((int)FormatHelpers.GetSampleCountUInt32(SampleCount), 0),
+                SampleDescription = new Vortice.DXGI.SampleDescription(
+                    (int)FormatHelpers.GetSampleCountUInt32(SampleCount),
+                    0
+                ),
                 MiscFlags = optionFlags,
             };
 
@@ -139,12 +142,15 @@ internal sealed class D3D11Texture : Texture
         MipLevels = (uint)existingTexture.Description.MipLevels;
         ArrayLayers = (uint)existingTexture.Description.ArraySize;
         Format = format;
-        SampleCount = FormatHelpers.GetSampleCount((uint)existingTexture.Description.SampleDescription.Count);
+        SampleCount = FormatHelpers.GetSampleCount(
+            (uint)existingTexture.Description.SampleDescription.Count
+        );
         Type = type;
         Usage = D3D11Formats.GetVdUsage(
             existingTexture.Description.BindFlags,
             existingTexture.Description.CPUAccessFlags,
-            existingTexture.Description.MiscFlags);
+            existingTexture.Description.MiscFlags
+        );
 
         DxgiFormat = D3D11Formats.ToDxgiFormat(format, Usage);
     }

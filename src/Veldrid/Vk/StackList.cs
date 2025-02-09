@@ -8,7 +8,8 @@ namespace Veldrid.Vulkan;
 /// A super-dangerous stack-only list which can hold up to 256 bytes of blittable data.
 /// </summary>
 /// <typeparam name="T">The type of element held in the list. Must be blittable.</typeparam>
-internal unsafe struct StackList<T> where T : struct
+internal unsafe struct StackList<T>
+    where T : struct
 {
     public const int CapacityInBytes = 256;
 
@@ -56,7 +57,9 @@ internal unsafe struct StackList<T> where T : struct
 /// </summary>
 /// <typeparam name="T">The type of element held in the list. Must be blittable.</typeparam>
 /// <typeparam name="TSize">A type parameter dictating the capacity of the list.</typeparam>
-internal unsafe struct StackList<T, TSize> where T : struct where TSize : struct
+internal unsafe struct StackList<T, TSize>
+    where T : struct
+    where TSize : struct
 {
 #pragma warning disable 0169 // Unused field. This is used implicity because it controls the size of the structure on the stack.
     TSize _storage;
@@ -82,13 +85,49 @@ internal unsafe struct StackList<T, TSize> where T : struct where TSize : struct
     public ref T this[uint index] => ref Unsafe.Add(ref Unsafe.AsRef<T>(Data), (int)index);
 }
 
-internal unsafe struct Size16Bytes { public fixed byte Data[16]; }
-internal unsafe struct Size64Bytes { public fixed byte Data[64]; }
-internal unsafe struct Size128Bytes { public fixed byte Data[64]; }
-internal unsafe struct Size512Bytes { public fixed byte Data[1024]; }
-internal unsafe struct Size1024Bytes { public fixed byte Data[1024]; }
-internal unsafe struct Size2048Bytes { public fixed byte Data[2048]; }
+internal unsafe struct Size16Bytes
+{
+    public fixed byte Data[16];
+}
+
+internal unsafe struct Size64Bytes
+{
+    public fixed byte Data[64];
+}
+
+internal unsafe struct Size128Bytes
+{
+    public fixed byte Data[64];
+}
+
+internal unsafe struct Size512Bytes
+{
+    public fixed byte Data[1024];
+}
+
+internal unsafe struct Size1024Bytes
+{
+    public fixed byte Data[1024];
+}
+
+internal unsafe struct Size2048Bytes
+{
+    public fixed byte Data[2048];
+}
 #pragma warning disable 0649 // Fields are not assigned directly -- expected.
-internal unsafe struct Size2IntPtr { public IntPtr First; public IntPtr Second; }
-internal unsafe struct Size6IntPtr { public IntPtr First; public IntPtr Second; public IntPtr Third; public IntPtr Fourth; public IntPtr Fifth; public IntPtr Sixth; }
+internal unsafe struct Size2IntPtr
+{
+    public IntPtr First;
+    public IntPtr Second;
+}
+
+internal unsafe struct Size6IntPtr
+{
+    public IntPtr First;
+    public IntPtr Second;
+    public IntPtr Third;
+    public IntPtr Fourth;
+    public IntPtr Fifth;
+    public IntPtr Sixth;
+}
 #pragma warning restore 0649

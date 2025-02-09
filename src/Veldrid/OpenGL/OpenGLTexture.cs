@@ -1,8 +1,8 @@
-﻿using static Veldrid.OpenGLBinding.OpenGLNative;
-using static Veldrid.OpenGL.OpenGLUtil;
-using Veldrid.OpenGLBinding;
-using System;
+﻿using System;
 using System.Diagnostics;
+using Veldrid.OpenGLBinding;
+using static Veldrid.OpenGL.OpenGLUtil;
+using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -19,7 +19,15 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
     string? _name;
     bool _nameChanged;
 
-    public override string? Name { get => _name; set { _name = value; _nameChanged = true; } }
+    public override string? Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            _nameChanged = true;
+        }
+    }
 
     public uint Texture => _texture;
 
@@ -47,21 +55,29 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
 
         if ((Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap)
         {
-            TextureTarget = ArrayLayers == 1 ? TextureTarget.TextureCubeMap : TextureTarget.TextureCubeMapArray;
+            TextureTarget =
+                ArrayLayers == 1 ? TextureTarget.TextureCubeMap : TextureTarget.TextureCubeMapArray;
         }
         else if (Type == TextureType.Texture1D)
         {
-            TextureTarget = ArrayLayers == 1 ? TextureTarget.Texture1D : TextureTarget.Texture1DArray;
+            TextureTarget =
+                ArrayLayers == 1 ? TextureTarget.Texture1D : TextureTarget.Texture1DArray;
         }
         else if (Type == TextureType.Texture2D)
         {
             if (ArrayLayers == 1)
             {
-                TextureTarget = SampleCount == TextureSampleCount.Count1 ? TextureTarget.Texture2D : TextureTarget.Texture2DMultisample;
+                TextureTarget =
+                    SampleCount == TextureSampleCount.Count1
+                        ? TextureTarget.Texture2D
+                        : TextureTarget.Texture2DMultisample;
             }
             else
             {
-                TextureTarget = SampleCount == TextureSampleCount.Count1 ? TextureTarget.Texture2DArray : TextureTarget.Texture2DMultisampleArray;
+                TextureTarget =
+                    SampleCount == TextureSampleCount.Count1
+                        ? TextureTarget.Texture2DArray
+                        : TextureTarget.Texture2DMultisampleArray;
             }
         }
         else
@@ -71,7 +87,11 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
         }
     }
 
-    public OpenGLTexture(OpenGLGraphicsDevice gd, uint nativeTexture, in TextureDescription description)
+    public OpenGLTexture(
+        OpenGLGraphicsDevice gd,
+        uint nativeTexture,
+        in TextureDescription description
+    )
     {
         _gd = gd;
         _texture = nativeTexture;
@@ -95,21 +115,29 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
 
         if ((Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap)
         {
-            TextureTarget = ArrayLayers == 1 ? TextureTarget.TextureCubeMap : TextureTarget.TextureCubeMapArray;
+            TextureTarget =
+                ArrayLayers == 1 ? TextureTarget.TextureCubeMap : TextureTarget.TextureCubeMapArray;
         }
         else if (Type == TextureType.Texture1D)
         {
-            TextureTarget = ArrayLayers == 1 ? TextureTarget.Texture1D : TextureTarget.Texture1DArray;
+            TextureTarget =
+                ArrayLayers == 1 ? TextureTarget.Texture1D : TextureTarget.Texture1DArray;
         }
         else if (Type == TextureType.Texture2D)
         {
             if (ArrayLayers == 1)
             {
-                TextureTarget = SampleCount == TextureSampleCount.Count1 ? TextureTarget.Texture2D : TextureTarget.Texture2DMultisample;
+                TextureTarget =
+                    SampleCount == TextureSampleCount.Count1
+                        ? TextureTarget.Texture2D
+                        : TextureTarget.Texture2DMultisample;
             }
             else
             {
-                TextureTarget = SampleCount == TextureSampleCount.Count1 ? TextureTarget.Texture2DArray : TextureTarget.Texture2DMultisampleArray;
+                TextureTarget =
+                    SampleCount == TextureSampleCount.Count1
+                        ? TextureTarget.Texture2DArray
+                        : TextureTarget.Texture2DMultisampleArray;
             }
         }
         else
@@ -174,7 +202,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     _texture,
                     MipLevels,
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
-                    Width);
+                    Width
+                );
                 CheckLastError();
             }
             else if (_gd.Extensions.TextureStorage)
@@ -183,7 +212,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     TextureTarget.Texture1D,
                     MipLevels,
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
-                    Width);
+                    Width
+                );
                 CheckLastError();
             }
             else
@@ -200,16 +230,21 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                         0, // border
                         GLPixelFormat,
                         GLPixelType,
-                        null);
+                        null
+                    );
                     CheckLastError();
 
                     levelWidth = Math.Max(1, levelWidth / 2);
                 }
             }
         }
-        else if (TextureTarget == TextureTarget.Texture2D || TextureTarget == TextureTarget.Texture1DArray)
+        else if (
+            TextureTarget == TextureTarget.Texture2D
+            || TextureTarget == TextureTarget.Texture1DArray
+        )
         {
-            uint heightOrArrayLayers = TextureTarget == TextureTarget.Texture2D ? Height : ArrayLayers;
+            uint heightOrArrayLayers =
+                TextureTarget == TextureTarget.Texture2D ? Height : ArrayLayers;
             if (dsa)
             {
                 glTextureStorage2D(
@@ -217,7 +252,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     MipLevels,
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
-                    heightOrArrayLayers);
+                    heightOrArrayLayers
+                );
                 CheckLastError();
             }
             else if (_gd.Extensions.TextureStorage)
@@ -227,7 +263,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     MipLevels,
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
-                    heightOrArrayLayers);
+                    heightOrArrayLayers
+                );
                 CheckLastError();
             }
             else
@@ -246,7 +283,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                         0, // border
                         GLPixelFormat,
                         GLPixelType,
-                        null);
+                        null
+                    );
                     CheckLastError();
 
                     levelWidth = Math.Max(1, levelWidth / 2);
@@ -267,7 +305,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
                     Height,
-                    ArrayLayers);
+                    ArrayLayers
+                );
                 CheckLastError();
             }
             else if (_gd.Extensions.TextureStorage)
@@ -278,7 +317,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
                     Height,
-                    ArrayLayers);
+                    ArrayLayers
+                );
                 CheckLastError();
             }
             else
@@ -297,7 +337,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                         0, // border
                         GLPixelFormat,
                         GLPixelType,
-                        null);
+                        null
+                    );
                     CheckLastError();
 
                     levelWidth = Math.Max(1, levelWidth / 2);
@@ -315,7 +356,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
                     Height,
-                    false);
+                    false
+                );
                 CheckLastError();
             }
             else
@@ -328,7 +370,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                         OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                         Width,
                         Height,
-                        false);
+                        false
+                    );
                     CheckLastError();
                 }
                 else
@@ -339,7 +382,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                         GLInternalFormat,
                         Width,
                         Height,
-                        false);
+                        false
+                    );
                 }
                 CheckLastError();
             }
@@ -355,7 +399,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     Width,
                     Height,
                     ArrayLayers,
-                    false);
+                    false
+                );
                 CheckLastError();
             }
             else
@@ -369,7 +414,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                         Width,
                         Height,
                         ArrayLayers,
-                        false);
+                        false
+                    );
                 }
                 else
                 {
@@ -380,7 +426,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                         Width,
                         Height,
                         ArrayLayers,
-                        false);
+                        false
+                    );
                     CheckLastError();
                 }
             }
@@ -394,7 +441,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     MipLevels,
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
-                    Height);
+                    Height
+                );
                 CheckLastError();
             }
             else if (_gd.Extensions.TextureStorage)
@@ -404,7 +452,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     MipLevels,
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
-                    Height);
+                    Height
+                );
                 CheckLastError();
             }
             else
@@ -425,7 +474,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                             0, // border
                             GLPixelFormat,
                             GLPixelType,
-                            null);
+                            null
+                        );
                         CheckLastError();
                     }
 
@@ -444,7 +494,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
                     Height,
-                    ArrayLayers * 6);
+                    ArrayLayers * 6
+                );
                 CheckLastError();
             }
             else if (_gd.Extensions.TextureStorage)
@@ -455,7 +506,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
                     Height,
-                    ArrayLayers * 6);
+                    ArrayLayers * 6
+                );
                 CheckLastError();
             }
             else
@@ -477,7 +529,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                             0, // border
                             GLPixelFormat,
                             GLPixelType,
-                            null);
+                            null
+                        );
                         CheckLastError();
                     }
 
@@ -496,7 +549,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
                     Height,
-                    Depth);
+                    Depth
+                );
                 CheckLastError();
             }
             else if (_gd.Extensions.TextureStorage)
@@ -507,7 +561,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                     OpenGLFormats.VdToGLSizedInternalFormat(Format, Usage),
                     Width,
                     Height,
-                    Depth);
+                    Depth
+                );
                 CheckLastError();
             }
             else
@@ -530,7 +585,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                             0, // border
                             GLPixelFormat,
                             GLPixelType,
-                            null);
+                            null
+                        );
                         CheckLastError();
                     }
 
@@ -556,9 +612,10 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
         uint subresource = CalculateSubresource(mipLevel, arrayLayer);
         if (_framebuffers[subresource] == 0)
         {
-            FramebufferTarget framebufferTarget = SampleCount == TextureSampleCount.Count1
-                ? FramebufferTarget.DrawFramebuffer
-                : FramebufferTarget.ReadFramebuffer;
+            FramebufferTarget framebufferTarget =
+                SampleCount == TextureSampleCount.Count1
+                    ? FramebufferTarget.DrawFramebuffer
+                    : FramebufferTarget.ReadFramebuffer;
 
             uint fb;
             glGenFramebuffers(1, &fb);
@@ -570,26 +627,33 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
 
             _gd.TextureSamplerManager.SetTextureTransient(TextureTarget, Texture);
 
-            if (TextureTarget == TextureTarget.Texture2D || TextureTarget == TextureTarget.Texture2DMultisample)
+            if (
+                TextureTarget == TextureTarget.Texture2D
+                || TextureTarget == TextureTarget.Texture2DMultisample
+            )
             {
                 glFramebufferTexture2D(
                     framebufferTarget,
                     GLFramebufferAttachment.ColorAttachment0,
                     TextureTarget,
                     Texture,
-                    (int)mipLevel);
+                    (int)mipLevel
+                );
                 CheckLastError();
             }
-            else if (TextureTarget == TextureTarget.Texture2DArray
-                     || TextureTarget == TextureTarget.Texture2DMultisampleArray
-                     || TextureTarget == TextureTarget.Texture3D)
+            else if (
+                TextureTarget == TextureTarget.Texture2DArray
+                || TextureTarget == TextureTarget.Texture2DMultisampleArray
+                || TextureTarget == TextureTarget.Texture3D
+            )
             {
                 glFramebufferTextureLayer(
                     framebufferTarget,
                     GLFramebufferAttachment.ColorAttachment0,
                     Texture,
                     (int)mipLevel,
-                    (int)arrayLayer);
+                    (int)arrayLayer
+                );
                 CheckLastError();
             }
 
@@ -621,7 +685,8 @@ internal sealed unsafe class OpenGLTexture : Texture, OpenGLDeferredResource
                 BufferTarget.CopyWriteBuffer,
                 (UIntPtr)dataSize,
                 null,
-                BufferUsageHint.StaticCopy);
+                BufferUsageHint.StaticCopy
+            );
             CheckLastError();
             _pboSizes[subresource] = dataSize;
         }

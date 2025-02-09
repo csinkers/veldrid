@@ -12,12 +12,16 @@ public class ObjFile(
     Vector3[] normals,
     Vector2[] texCoords,
     ObjFile.MeshGroup[] meshGroups,
-    string? materialLibName)
+    string? materialLibName
+)
 {
-    public Vector3[] Positions { get; } = positions ?? throw new ArgumentNullException(nameof(positions));
+    public Vector3[] Positions { get; } =
+        positions ?? throw new ArgumentNullException(nameof(positions));
     public Vector3[] Normals { get; } = normals ?? throw new ArgumentNullException(nameof(normals));
-    public Vector2[] TexCoords { get; } = texCoords ?? throw new ArgumentNullException(nameof(texCoords));
-    public MeshGroup[] MeshGroups { get; } = meshGroups ?? throw new ArgumentNullException(nameof(meshGroups));
+    public Vector2[] TexCoords { get; } =
+        texCoords ?? throw new ArgumentNullException(nameof(texCoords));
+    public MeshGroup[] MeshGroups { get; } =
+        meshGroups ?? throw new ArgumentNullException(nameof(meshGroups));
     public string? MaterialLibName { get; } = materialLibName;
 
     /// <summary>
@@ -41,9 +45,27 @@ public class ObjFile(
 
             if (reduce)
             {
-                index0 = GetOrCreate16(vertexMap, vertices, face.Vertex0, face.Vertex1, face.Vertex2);
-                index1 = GetOrCreate16(vertexMap, vertices, face.Vertex1, face.Vertex2, face.Vertex0);
-                index2 = GetOrCreate16(vertexMap, vertices, face.Vertex2, face.Vertex0, face.Vertex1);
+                index0 = GetOrCreate16(
+                    vertexMap,
+                    vertices,
+                    face.Vertex0,
+                    face.Vertex1,
+                    face.Vertex2
+                );
+                index1 = GetOrCreate16(
+                    vertexMap,
+                    vertices,
+                    face.Vertex1,
+                    face.Vertex2,
+                    face.Vertex0
+                );
+                index2 = GetOrCreate16(
+                    vertexMap,
+                    vertices,
+                    face.Vertex2,
+                    face.Vertex0,
+                    face.Vertex1
+                );
             }
             else
             {
@@ -85,9 +107,27 @@ public class ObjFile(
 
             if (reduce)
             {
-                index0 = GetOrCreate32(vertexMap, vertices, face.Vertex0, face.Vertex1, face.Vertex2);
-                index1 = GetOrCreate32(vertexMap, vertices, face.Vertex1, face.Vertex2, face.Vertex0);
-                index2 = GetOrCreate32(vertexMap, vertices, face.Vertex2, face.Vertex0, face.Vertex1);
+                index0 = GetOrCreate32(
+                    vertexMap,
+                    vertices,
+                    face.Vertex0,
+                    face.Vertex1,
+                    face.Vertex2
+                );
+                index1 = GetOrCreate32(
+                    vertexMap,
+                    vertices,
+                    face.Vertex1,
+                    face.Vertex2,
+                    face.Vertex0
+                );
+                index2 = GetOrCreate32(
+                    vertexMap,
+                    vertices,
+                    face.Vertex2,
+                    face.Vertex0,
+                    face.Vertex1
+                );
             }
             else
             {
@@ -113,7 +153,8 @@ public class ObjFile(
         List<VertexPositionNormalTexture> vertices,
         FaceVertex key,
         FaceVertex adjacent1,
-        FaceVertex adjacent2)
+        FaceVertex adjacent2
+    )
     {
         if (!vertexMap.TryGetValue(key, out ushort index))
         {
@@ -131,7 +172,8 @@ public class ObjFile(
         List<VertexPositionNormalTexture> vertices,
         FaceVertex key,
         FaceVertex adjacent1,
-        FaceVertex adjacent2)
+        FaceVertex adjacent2
+    )
     {
         if (!vertexMap.TryGetValue(key, out uint index))
         {
@@ -144,7 +186,11 @@ public class ObjFile(
         return index;
     }
 
-    VertexPositionNormalTexture ConstructVertex(FaceVertex key, FaceVertex adjacent1, FaceVertex adjacent2)
+    VertexPositionNormalTexture ConstructVertex(
+        FaceVertex key,
+        FaceVertex adjacent1,
+        FaceVertex adjacent2
+    )
     {
         Vector3 position = Positions[key.PositionIndex - 1];
         Vector3 normal;
@@ -157,8 +203,8 @@ public class ObjFile(
             normal = Normals[key.NormalIndex - 1];
         }
 
-
-        Vector2 texCoord = key.TexCoordIndex == -1 ? Vector2.Zero : TexCoords[key.TexCoordIndex - 1];
+        Vector2 texCoord =
+            key.TexCoordIndex == -1 ? Vector2.Zero : TexCoords[key.TexCoordIndex - 1];
 
         return new VertexPositionNormalTexture(position, normal, texCoord);
     }
@@ -209,7 +255,8 @@ public class ObjFile(
     /// <summary>
     /// An OBJ file construct describing the indices of vertex components.
     /// </summary>
-    public struct FaceVertex(int positionIndex, int normalIndex, int texCoordIndex) : IEquatable<FaceVertex>
+    public struct FaceVertex(int positionIndex, int normalIndex, int texCoordIndex)
+        : IEquatable<FaceVertex>
     {
         /// <summary>
         /// The index of the position component.
@@ -229,8 +276,8 @@ public class ObjFile(
         public readonly bool Equals(FaceVertex other)
         {
             return PositionIndex == other.PositionIndex
-                   && NormalIndex == other.NormalIndex
-                   && TexCoordIndex == other.TexCoordIndex;
+                && NormalIndex == other.NormalIndex
+                && TexCoordIndex == other.TexCoordIndex;
         }
 
         public override readonly bool Equals(object? obj)
@@ -254,7 +301,12 @@ public class ObjFile(
 
         public override readonly string ToString()
         {
-            return string.Format("Pos:{0}, Normal:{1}, TexCoord:{2}", PositionIndex, NormalIndex, TexCoordIndex);
+            return string.Format(
+                "Pos:{0}, Normal:{1}, TexCoord:{2}",
+                PositionIndex,
+                NormalIndex,
+                TexCoordIndex
+            );
         }
     }
 

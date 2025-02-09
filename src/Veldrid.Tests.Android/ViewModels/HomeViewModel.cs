@@ -31,7 +31,9 @@ namespace Veldrid.Tests.Android.ViewModels
             OptionsCommand = new DelegateCommand(OptionsExecute);
             CreditsCommand = new DelegateCommand(CreditsExecute);
             runEverythingCommand = new DelegateCommand(RunEverythingExecute, () => !isBusy);
-            NavigateToTestAssemblyCommand = new DelegateCommand<object>(async vm => await navigator.NavigateToAsync(NavigationPage.AssemblyTestList, vm));
+            NavigateToTestAssemblyCommand = new DelegateCommand<object>(async vm =>
+                await navigator.NavigateToAsync(NavigationPage.AssemblyTestList, vm)
+            );
 
             runner.OnDiagnosticMessage += RunnerOnOnDiagnosticMessage;
 
@@ -75,7 +77,6 @@ namespace Veldrid.Tests.Android.ViewModels
             }
         }
 
-
         public ICommand OptionsCommand { get; private set; }
         public ICommand CreditsCommand { get; private set; }
 
@@ -109,7 +110,6 @@ namespace Veldrid.Tests.Android.ViewModels
                 }
 
                 ScanComplete?.Invoke(this, EventArgs.Empty);
-
             }
             finally
             {
@@ -133,7 +133,10 @@ namespace Veldrid.Tests.Android.ViewModels
             {
                 DiagnosticMessages += $"-----------{Environment.NewLine}";
             }
-            return _runner.RunAsync(TestAssemblies.Select(t => t.RunInfo).ToList(), "Run Everything");
+            return _runner.RunAsync(
+                TestAssemblies.Select(t => t.RunInfo).ToList(),
+                "Run Everything"
+            );
         }
     }
 }

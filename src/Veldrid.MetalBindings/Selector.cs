@@ -14,9 +14,8 @@ public readonly unsafe struct Selector
 
     [SkipLocalsInit]
     [Obsolete(MTLUtil.ObsoleteUtf16Message)]
-    public Selector(string name) : this(MTLUtil.GetNullTerminatedUtf8Bytes(name, stackalloc byte[1024]))
-    {
-    }
+    public Selector(string name)
+        : this(MTLUtil.GetNullTerminatedUtf8Bytes(name, stackalloc byte[1024])) { }
 
     public Selector(ReadOnlySpan<byte> nameUtf8)
     {

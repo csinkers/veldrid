@@ -5,6 +5,6 @@
         Home,
         AssemblyTestList,
         TestResult,
-        Credits
+        Credits,
     }
 }

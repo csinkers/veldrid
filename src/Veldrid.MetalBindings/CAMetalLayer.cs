@@ -1,5 +1,5 @@
-using static Veldrid.MetalBindings.ObjectiveCRuntime;
 using System;
+using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
@@ -59,7 +59,8 @@ public readonly struct CAMetalLayer(IntPtr ptr)
         set => objc_msgSend(NativePtr, "setOpaque:"u8, value);
     }
 
-    public CAMetalDrawable nextDrawable() => objc_msgSend<CAMetalDrawable>(NativePtr, sel_nextDrawable);
+    public CAMetalDrawable nextDrawable() =>
+        objc_msgSend<CAMetalDrawable>(NativePtr, sel_nextDrawable);
 
     public Bool8 displaySyncEnabled
     {

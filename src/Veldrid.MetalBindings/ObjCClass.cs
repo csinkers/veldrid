@@ -11,9 +11,8 @@ public unsafe struct ObjCClass
 
     [SkipLocalsInit]
     [Obsolete(MTLUtil.ObsoleteUtf16Message)]
-    public ObjCClass(string name) : this(MTLUtil.GetNullTerminatedUtf8Bytes(name, stackalloc byte[1024]))
-    {
-    }
+    public ObjCClass(string name)
+        : this(MTLUtil.GetNullTerminatedUtf8Bytes(name, stackalloc byte[1024])) { }
 
     public ObjCClass(ReadOnlySpan<byte> nameUtf8)
     {
@@ -27,7 +26,10 @@ public unsafe struct ObjCClass
     [Obsolete(MTLUtil.ObsoleteUtf16Message)]
     public IntPtr GetProperty(string propertyName)
     {
-        Span<byte> utf8Bytes = MTLUtil.GetNullTerminatedUtf8Bytes(propertyName, stackalloc byte[1024]);
+        Span<byte> utf8Bytes = MTLUtil.GetNullTerminatedUtf8Bytes(
+            propertyName,
+            stackalloc byte[1024]
+        );
         return GetProperty(utf8Bytes);
     }
 
@@ -41,13 +43,15 @@ public unsafe struct ObjCClass
 
     public string Name => MTLUtil.GetUtf8String(ObjectiveCRuntime.class_getName(this));
 
-    public T Alloc<T>() where T : unmanaged
+    public T Alloc<T>()
+        where T : unmanaged
     {
         IntPtr value = ObjectiveCRuntime.IntPtr_objc_msgSend(NativePtr, Selectors.alloc);
         return Unsafe.BitCast<IntPtr, T>(value);
     }
 
-    public T AllocInit<T>() where T : unmanaged
+    public T AllocInit<T>()
+        where T : unmanaged
     {
         IntPtr value = ObjectiveCRuntime.IntPtr_objc_msgSend(NativePtr, Selectors.alloc);
         ObjectiveCRuntime.objc_msgSend(value, Selectors.init);

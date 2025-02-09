@@ -12,7 +12,8 @@ namespace Veldrid.Tests.Android.Utilities
             GraphicsDeviceOptions options,
             GraphicsBackend backend,
             out IDisposable? window,
-            out GraphicsDevice? gd)
+            out GraphicsDevice? gd
+        )
         {
             MainActivity activity = MainActivity.Current;
 

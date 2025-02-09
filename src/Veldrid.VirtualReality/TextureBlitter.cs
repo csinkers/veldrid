@@ -20,40 +20,72 @@ internal class TextureBlitter : IDisposable
         GraphicsDevice gd,
         ResourceFactory factory,
         OutputDescription outputDesc,
-        bool srgbOutput)
+        bool srgbOutput
+    )
     {
         SpecializationConstant[] specConstants =
         [
             new SpecializationConstant(0, srgbOutput),
-            new SpecializationConstant(1, gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES)
+            new SpecializationConstant(
+                1,
+                gd.BackendType == GraphicsBackend.OpenGL
+                    || gd.BackendType == GraphicsBackend.OpenGLES
+            ),
         ];
 
         Shader[] shaders = factory.CreateFromSpirv(
             new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
-            new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"),
-            new CrossCompileOptions(false, false, specConstants));
+            new ShaderDescription(
+                ShaderStages.Fragment,
+                Encoding.ASCII.GetBytes(fragmentGlsl),
+                "main"
+            ),
+            new CrossCompileOptions(false, false, specConstants)
+        );
 
-        _rl = factory.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("Input", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-            new ResourceLayoutElementDescription("InputSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+        _rl = factory.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "Input",
+                    ResourceKind.TextureReadOnly,
+                    ShaderStages.Fragment
+                ),
+                new ResourceLayoutElementDescription(
+                    "InputSampler",
+                    ResourceKind.Sampler,
+                    ShaderStages.Fragment
+                )
+            )
+        );
 
-        _sampleRegionLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("SampleRegionInfo", ResourceKind.UniformBuffer, ShaderStages.Fragment)));
+        _sampleRegionLayout = factory.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "SampleRegionInfo",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment
+                )
+            )
+        );
 
-        _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-            BlendStateDescription.SingleOverrideBlend,
-            DepthStencilStateDescription.Disabled,
-            RasterizerStateDescription.CullNone,
-            PrimitiveTopology.TriangleStrip,
-            new ShaderSetDescription(
-                [],
-                [shaders[0], shaders[1]],
-                specConstants),
-            [_rl, _sampleRegionLayout],
-            outputDesc));
+        _pipeline = factory.CreateGraphicsPipeline(
+            new GraphicsPipelineDescription(
+                BlendStateDescription.SingleOverrideBlend,
+                DepthStencilStateDescription.Disabled,
+                RasterizerStateDescription.CullNone,
+                PrimitiveTopology.TriangleStrip,
+                new ShaderSetDescription([], [shaders[0], shaders[1]], specConstants),
+                [_rl, _sampleRegionLayout],
+                outputDesc
+            )
+        );
 
-        _sampleRegionUB = factory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));
-        _sampleRegionSet = factory.CreateResourceSet(new ResourceSetDescription(_sampleRegionLayout, _sampleRegionUB));
+        _sampleRegionUB = factory.CreateBuffer(
+            new BufferDescription(16, BufferUsage.UniformBuffer)
+        );
+        _sampleRegionSet = factory.CreateResourceSet(
+            new ResourceSetDescription(_sampleRegionLayout, _sampleRegionUB)
+        );
 
         _lastMinMaxUV = new Vector4(0, 0, 1, 1);
         gd.UpdateBuffer(_sampleRegionUB, 0, _lastMinMaxUV);

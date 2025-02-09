@@ -71,9 +71,9 @@ public struct ShaderDescription : IEquatable<ShaderDescription>
     public bool Equals(ShaderDescription other)
     {
         return Stage == other.Stage
-               && ShaderBytes == other.ShaderBytes
-               && EntryPoint.Equals(other.EntryPoint)
-               && Debug.Equals(other.Debug);
+            && ShaderBytes == other.ShaderBytes
+            && EntryPoint.Equals(other.EntryPoint)
+            && Debug.Equals(other.Debug);
     }
 
     /// <summary>
@@ -86,6 +86,7 @@ public struct ShaderDescription : IEquatable<ShaderDescription>
             (int)Stage,
             ShaderBytes.GetHashCode(),
             EntryPoint.GetHashCode(),
-            Debug.GetHashCode());
+            Debug.GetHashCode()
+        );
     }
 }

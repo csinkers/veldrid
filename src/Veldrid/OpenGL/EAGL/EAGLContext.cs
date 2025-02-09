@@ -12,11 +12,11 @@ internal readonly struct EAGLContext
 
     public readonly IntPtr NativePtr;
 
-    public Bool8 renderBufferStorage(UIntPtr target, IntPtr drawable)
-        => bool8_objc_msgSend(NativePtr, sel_renderBufferStorage, target, drawable);
+    public Bool8 renderBufferStorage(UIntPtr target, IntPtr drawable) =>
+        bool8_objc_msgSend(NativePtr, sel_renderBufferStorage, target, drawable);
 
-    public Bool8 presentRenderBuffer(UIntPtr target)
-        => bool8_objc_msgSend(NativePtr, sel_presentRenderBuffer, target);
+    public Bool8 presentRenderBuffer(UIntPtr target) =>
+        bool8_objc_msgSend(NativePtr, sel_presentRenderBuffer, target);
 
     public static EAGLContext Create(EAGLRenderingAPI api)
     {
@@ -25,11 +25,11 @@ internal readonly struct EAGLContext
         return ret;
     }
 
-    public static Bool8 setCurrentContext(IntPtr context)
-        => bool8_objc_msgSend(s_class, sel_setCurrentContext, context);
+    public static Bool8 setCurrentContext(IntPtr context) =>
+        bool8_objc_msgSend(s_class, sel_setCurrentContext, context);
 
-    public static EAGLContext currentContext
-        => objc_msgSend<EAGLContext>(s_class, sel_currentContext);
+    public static EAGLContext currentContext =>
+        objc_msgSend<EAGLContext>(s_class, sel_currentContext);
 
     public void Release() => release(NativePtr);
 

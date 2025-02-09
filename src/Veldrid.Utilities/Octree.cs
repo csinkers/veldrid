@@ -94,7 +94,9 @@ public class Octree<T>(BoundingBox boundingBox, int maxChildren)
     {
         if (!_currentRoot.TryGetContainedOctreeItem(item, out OctreeItem<T>? octreeItem))
         {
-            throw new VeldridException(item + " is not contained in the octree. It cannot be moved.");
+            throw new VeldridException(
+                item + " is not contained in the octree. It cannot be moved."
+            );
         }
         else
         {
@@ -142,9 +144,17 @@ public class OctreeNode<T>
     OctreeNode<T>[] _children = [];
     BoundingBox _bounds;
 
-    public BoundingBox Bounds { get { return _bounds; } set { _bounds = value; } }
+    public BoundingBox Bounds
+    {
+        get { return _bounds; }
+        set { _bounds = value; }
+    }
     public int MaxChildren { get; private set; }
-    public OctreeNode<T>[] Children { get => _children; private set => _children = value; }
+    public OctreeNode<T>[] Children
+    {
+        get => _children;
+        private set => _children = value;
+    }
     public OctreeNode<T>? Parent { get; private set; }
 
     const int NumChildNodes = 8;
@@ -207,7 +217,9 @@ public class OctreeNode<T>
 
         if (!container._items.Contains(item))
         {
-            throw new VeldridException("Can't move item " + item + ", its container does not contain it.");
+            throw new VeldridException(
+                "Can't move item " + item + ", its container does not contain it."
+            );
         }
 
         item.Bounds = newBounds;
@@ -258,7 +270,9 @@ public class OctreeNode<T>
     {
         if (!_items.Contains(octreeItem))
         {
-            throw new VeldridException("Cannot mark item as moved which doesn't belong to this OctreeNode.");
+            throw new VeldridException(
+                "Cannot mark item as moved which doesn't belong to this OctreeNode."
+            );
         }
         if (newBounds.ContainsNaN())
         {
@@ -343,7 +357,11 @@ public class OctreeNode<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void GetContainedObjects(ref BoundingFrustum frustum, List<T> results, Func<T, bool> filter)
+    public void GetContainedObjects(
+        ref BoundingFrustum frustum,
+        List<T> results,
+        Func<T, bool> filter
+    )
     {
         Debug.Assert(results != null);
         CoreGetContainedObjects(ref frustum, results, filter);
@@ -420,7 +438,11 @@ public class OctreeNode<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void CoreGetContainedObjects(ref BoundingFrustum frustum, List<T> results, Func<T, bool>? filter)
+    void CoreGetContainedObjects(
+        ref BoundingFrustum frustum,
+        List<T> results,
+        Func<T, bool>? filter
+    )
     {
         ContainmentType ct = frustum.Contains(_bounds);
         if (ct == ContainmentType.Contains)
@@ -527,7 +549,10 @@ public class OctreeNode<T>
             if (newNode != null)
             {
                 bool succeeded = newNode.CoreAddItem(item);
-                Debug.Assert(succeeded, "Octree node returned from SplitChildren must fit the item given to it.");
+                Debug.Assert(
+                    succeeded,
+                    "Octree node returned from SplitChildren must fit the item given to it."
+                );
                 return true;
             }
         }
@@ -559,7 +584,10 @@ public class OctreeNode<T>
     // Splits the node into 8 children
     OctreeNode<T>? SplitChildren(BoundingBox itemBounds, OctreeNode<T>? existingChild)
     {
-        Debug.Assert(_children.Length == 0, "Children must be empty before SplitChildren is called.");
+        Debug.Assert(
+            _children.Length == 0,
+            "Children must be empty before SplitChildren is called."
+        );
 
         OctreeNode<T>? childBigEnough = null;
         _children = _nodeCache.GetChildrenArray();
@@ -634,7 +662,9 @@ public class OctreeNode<T>
         {
             for (int c = 0; c < _children.Length; c++)
             {
-                Debug.Assert(_children[c].Bounds.Contains(_items[i].Bounds) != ContainmentType.Contains);
+                Debug.Assert(
+                    _children[c].Bounds.Contains(_items[i].Bounds) != ContainmentType.Contains
+                );
             }
         }
 #endif
@@ -675,13 +705,19 @@ public class OctreeNode<T>
             newCenter.Z -= oldRootHalfExtents.Z;
         }
 
-        BoundingBox newRootBounds = new(newCenter - oldRootHalfExtents * 2f, newCenter + oldRootHalfExtents * 2f);
+        BoundingBox newRootBounds = new(
+            newCenter - oldRootHalfExtents * 2f,
+            newCenter + oldRootHalfExtents * 2f
+        );
         OctreeNode<T> newRoot = _nodeCache.GetNode(ref newRootBounds);
         OctreeNode<T>? fittingNode = newRoot.SplitChildren(octreeItem.Bounds, oldRoot);
         if (fittingNode != null)
         {
             bool succeeded = fittingNode.CoreAddItem(octreeItem);
-            Debug.Assert(succeeded, "Octree node returned from SplitChildren must fit the item given to it.");
+            Debug.Assert(
+                succeeded,
+                "Octree node returned from SplitChildren must fit the item given to it."
+            );
             return newRoot;
         }
         else
@@ -691,11 +727,14 @@ public class OctreeNode<T>
     }
 
     public OctreeNode(BoundingBox box, int maxChildren)
-        : this(ref box, maxChildren, new OctreeNodeCache(maxChildren), null)
-    {
-    }
+        : this(ref box, maxChildren, new OctreeNodeCache(maxChildren), null) { }
 
-    OctreeNode(ref BoundingBox bounds, int maxChildren, OctreeNodeCache nodeCache, OctreeNode<T>? parent)
+    OctreeNode(
+        ref BoundingBox bounds,
+        int maxChildren,
+        OctreeNodeCache nodeCache,
+        OctreeNode<T>? parent
+    )
     {
         Bounds = bounds;
         MaxChildren = maxChildren;
@@ -723,7 +762,10 @@ public class OctreeNode<T>
     /// <param name="item">The item to find.</param>
     /// <param name="octreeItem">The contained OctreeItem.</param>
     /// <returns>true if the item was contained in the Octree; false otherwise.</returns>
-    internal bool TryGetContainedOctreeItem([MaybeNull] T item, [MaybeNullWhen(false)] out OctreeItem<T> octreeItem)
+    internal bool TryGetContainedOctreeItem(
+        [MaybeNull] T item,
+        [MaybeNullWhen(false)] out OctreeItem<T> octreeItem
+    )
     {
         for (int i = 0; i < _items.Count; i++)
         {
@@ -816,10 +858,7 @@ public class OctreeNode<T>
 
     string DebuggerDisplayString
     {
-        get
-        {
-            return string.Format("{0} - {1}, Items:{2}", Bounds.Min, Bounds.Max, _items.Count);
-        }
+        get { return string.Format("{0} - {1}, Items:{2}", Bounds.Min, Bounds.Max, _items.Count); }
     }
 
     class OctreeNodeCache(int maxChildren)

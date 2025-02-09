@@ -68,7 +68,7 @@ public enum BufferUsage : ushort
 
     /// <summary>
     /// The <see cref="DeviceBuffer"/> will be used as a writable staging buffer,
-    /// which can be used to transfer data to the GPU by mapping with <see cref="MapMode.Write"/>. 
+    /// which can be used to transfer data to the GPU by mapping with <see cref="MapMode.Write"/>.
     /// This flag can only be combined with <see cref="StagingRead"/>.
     /// </summary>
     /// <seealso cref="GraphicsDevice.Map(MappableResource, MapMode)"/>
@@ -76,7 +76,7 @@ public enum BufferUsage : ushort
 
     /// <summary>
     /// The <see cref="DeviceBuffer"/> will be used as a readable staging buffer,
-    /// which can be used to transfer data from the GPU by mapping with <see cref="MapMode.Read"/>. 
+    /// which can be used to transfer data from the GPU by mapping with <see cref="MapMode.Read"/>.
     /// This flag can only be combined with <see cref="StagingWrite"/>.
     /// </summary>
     /// <seealso cref="GraphicsDevice.Map(MappableResource, MapMode)"/>

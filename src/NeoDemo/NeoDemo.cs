@@ -1,14 +1,14 @@
-﻿using ImGuiNET;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using ImGuiNET;
 using Veldrid.ImageSharp;
 using Veldrid.NeoDemo.Objects;
+using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using Veldrid.Utilities;
-using Veldrid.Sdl2;
 
 namespace Veldrid.NeoDemo;
 
@@ -55,9 +55,17 @@ public class NeoDemo
             WindowWidth = 960,
             WindowHeight = 540,
             WindowInitialState = WindowState.Normal,
-            WindowTitle = "Veldrid NeoDemo"
+            WindowTitle = "Veldrid NeoDemo",
         };
-        GraphicsDeviceOptions gdOptions = new(false, null, false, ResourceBindingModel.Improved, true, true, _colorSrgb);
+        GraphicsDeviceOptions gdOptions = new(
+            false,
+            null,
+            false,
+            ResourceBindingModel.Improved,
+            true,
+            true,
+            _colorSrgb
+        );
 #if DEBUG
         gdOptions.Debug = true;
 #endif
@@ -70,7 +78,8 @@ public class NeoDemo
             //GraphicsBackend.OpenGL,
             //GraphicsBackend.OpenGLES,
             out _window,
-            out _gd);
+            out _gd
+        );
         _window.Resized += () => _windowResized = true;
 
         Sdl2Native.SDL_Init(SDLInitFlags.GameController);
@@ -127,13 +136,21 @@ public class NeoDemo
     {
         Console.WriteLine("Loading sponza objects");
         ObjFile atriumFile;
-        using (FileStream objStream = File.OpenRead(AssetHelper.GetPath("Models/SponzaAtrium/sponza.obj")))
+        using (
+            FileStream objStream = File.OpenRead(
+                AssetHelper.GetPath("Models/SponzaAtrium/sponza.obj")
+            )
+        )
         {
             atriumFile = new ObjParser().Parse(objStream);
         }
 
         MtlFile atriumMtls;
-        using (FileStream mtlStream = File.OpenRead(AssetHelper.GetPath("Models/SponzaAtrium/sponza.mtl")))
+        using (
+            FileStream mtlStream = File.OpenRead(
+                AssetHelper.GetPath("Models/SponzaAtrium/sponza.mtl")
+            )
+        )
         {
             atriumMtls = new MtlParser().Parse(mtlStream);
         }
@@ -144,7 +161,9 @@ public class NeoDemo
         int loadedAlphaMaps = 0;
         foreach (ObjFile.MeshGroup group in atriumFile.MeshGroups)
         {
-            double progress = Math.Floor((groupOffset + 1.0) / atriumFile.MeshGroups.Length * 100.0);
+            double progress = Math.Floor(
+                (groupOffset + 1.0) / atriumFile.MeshGroups.Length * 100.0
+            );
             Console.WriteLine($"[{progress:0}%] Group {groupOffset++}: " + group.Name);
 
             Vector3 scale = new(0.1f);
@@ -155,7 +174,9 @@ public class NeoDemo
             MaterialPropsAndBuffer materialProps = CommonMaterials.Brick;
             if (materialDef.DiffuseTexture != null)
             {
-                string texturePath = AssetHelper.GetPath("Models/SponzaAtrium/" + materialDef.DiffuseTexture);
+                string texturePath = AssetHelper.GetPath(
+                    "Models/SponzaAtrium/" + materialDef.DiffuseTexture
+                );
                 if (!_textures.ContainsKey(texturePath))
                 {
                     Console.WriteLine("Loading diffuse: " + materialDef.DiffuseTexture);
@@ -165,7 +186,9 @@ public class NeoDemo
             }
             if (materialDef.AlphaMap != null)
             {
-                string texturePath = AssetHelper.GetPath("Models/SponzaAtrium/" + materialDef.AlphaMap);
+                string texturePath = AssetHelper.GetPath(
+                    "Models/SponzaAtrium/" + materialDef.AlphaMap
+                );
                 if (!_textures.ContainsKey(texturePath))
                 {
                     Console.WriteLine("Loading alpha map: " + materialDef.AlphaMap);
@@ -182,7 +205,8 @@ public class NeoDemo
                 MirrorMesh.Plane = Plane.CreateFromVertices(
                     atriumFile.Positions[group.Faces[0].Vertex0.PositionIndex] * scale.X,
                     atriumFile.Positions[group.Faces[0].Vertex1.PositionIndex] * scale.Y,
-                    atriumFile.Positions[group.Faces[0].Vertex2.PositionIndex] * scale.Z);
+                    atriumFile.Positions[group.Faces[0].Vertex2.PositionIndex] * scale.Z
+                );
                 materialProps = CommonMaterials.Reflective;
             }
 
@@ -194,7 +218,8 @@ public class NeoDemo
                 Vector3.Zero,
                 Quaternion.Identity,
                 scale,
-                group.Name);
+                group.Name
+            );
         }
 
         Console.WriteLine($"Loaded {loadedDiffuses} diffuse textures");
@@ -220,9 +245,16 @@ public class NeoDemo
         Vector3 position,
         Quaternion rotation,
         Vector3 scale,
-        string name)
+        string name
+    )
     {
-        TexturedMesh mesh = new(name, meshData, texData, alphaTexData, materialProps ?? CommonMaterials.Brick);
+        TexturedMesh mesh = new(
+            name,
+            meshData,
+            texData,
+            alphaTexData,
+            materialProps ?? CommonMaterials.Brick
+        );
         mesh.Transform.Position = position;
         mesh.Transform.Rotation = rotation;
         mesh.Transform.Scale = scale;
@@ -237,12 +269,14 @@ public class NeoDemo
         while (_window.Exists)
         {
             long currentFrameTicks = sw.ElapsedTicks;
-            double deltaSeconds = (currentFrameTicks - previousFrameTicks) / (double) Stopwatch.Frequency;
+            double deltaSeconds =
+                (currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
 
             while (_limitFrameRate && deltaSeconds < _desiredFrameLengthSeconds)
             {
                 currentFrameTicks = sw.ElapsedTicks;
-                deltaSeconds = (currentFrameTicks - previousFrameTicks) / (double) Stopwatch.Frequency;
+                deltaSeconds =
+                    (currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
             }
 
             previousFrameTicks = currentFrameTicks;
@@ -250,7 +284,7 @@ public class NeoDemo
             Sdl2Events.ProcessEvents();
             InputSnapshot snapshot = _window.PumpEvents();
             InputTracker.UpdateFrameInput(snapshot, _window);
-            Update((float) deltaSeconds);
+            Update((float)deltaSeconds);
             if (!_window.Exists)
             {
                 break;
@@ -274,24 +308,58 @@ public class NeoDemo
             {
                 if (ImGui.BeginMenu("Graphics Backend"))
                 {
-
-                    if (ImGui.MenuItem("Vulkan", string.Empty, _gd.BackendType == GraphicsBackend.Vulkan, GraphicsDevice.IsBackendSupported(GraphicsBackend.Vulkan)))
+                    if (
+                        ImGui.MenuItem(
+                            "Vulkan",
+                            string.Empty,
+                            _gd.BackendType == GraphicsBackend.Vulkan,
+                            GraphicsDevice.IsBackendSupported(GraphicsBackend.Vulkan)
+                        )
+                    )
                     {
                         ChangeBackend(GraphicsBackend.Vulkan);
                     }
-                    if (ImGui.MenuItem("OpenGL", string.Empty, _gd.BackendType == GraphicsBackend.OpenGL, GraphicsDevice.IsBackendSupported(GraphicsBackend.OpenGL)))
+                    if (
+                        ImGui.MenuItem(
+                            "OpenGL",
+                            string.Empty,
+                            _gd.BackendType == GraphicsBackend.OpenGL,
+                            GraphicsDevice.IsBackendSupported(GraphicsBackend.OpenGL)
+                        )
+                    )
                     {
                         ChangeBackend(GraphicsBackend.OpenGL);
                     }
-                    if (ImGui.MenuItem("OpenGL ES", string.Empty, _gd.BackendType == GraphicsBackend.OpenGLES, GraphicsDevice.IsBackendSupported(GraphicsBackend.OpenGLES)))
+                    if (
+                        ImGui.MenuItem(
+                            "OpenGL ES",
+                            string.Empty,
+                            _gd.BackendType == GraphicsBackend.OpenGLES,
+                            GraphicsDevice.IsBackendSupported(GraphicsBackend.OpenGLES)
+                        )
+                    )
                     {
                         ChangeBackend(GraphicsBackend.OpenGLES);
                     }
-                    if (ImGui.MenuItem("Direct3D 11", string.Empty, _gd.BackendType == GraphicsBackend.Direct3D11, GraphicsDevice.IsBackendSupported(GraphicsBackend.Direct3D11)))
+                    if (
+                        ImGui.MenuItem(
+                            "Direct3D 11",
+                            string.Empty,
+                            _gd.BackendType == GraphicsBackend.Direct3D11,
+                            GraphicsDevice.IsBackendSupported(GraphicsBackend.Direct3D11)
+                        )
+                    )
                     {
                         ChangeBackend(GraphicsBackend.Direct3D11);
                     }
-                    if (ImGui.MenuItem("Metal", string.Empty, _gd.BackendType == GraphicsBackend.Metal, GraphicsDevice.IsBackendSupported(GraphicsBackend.Metal)))
+                    if (
+                        ImGui.MenuItem(
+                            "Metal",
+                            string.Empty,
+                            _gd.BackendType == GraphicsBackend.Metal,
+                            GraphicsDevice.IsBackendSupported(GraphicsBackend.Metal)
+                        )
+                    )
                     {
                         ChangeBackend(GraphicsBackend.Metal);
                     }
@@ -308,15 +376,26 @@ public class NeoDemo
                 }
                 if (ImGui.BeginMenu("Color mask"))
                 {
-                    if (ImGui.Checkbox("Red", ref _colorRedMask)) UpdateColorMask();
-                    if (ImGui.Checkbox("Green", ref _colorGreenMask)) UpdateColorMask();
-                    if (ImGui.Checkbox("Blue", ref _colorBlueMask)) UpdateColorMask();
-                    if (ImGui.Checkbox("Alpha", ref _colorAlphaMask)) UpdateColorMask();
+                    if (ImGui.Checkbox("Red", ref _colorRedMask))
+                        UpdateColorMask();
+                    if (ImGui.Checkbox("Green", ref _colorGreenMask))
+                        UpdateColorMask();
+                    if (ImGui.Checkbox("Blue", ref _colorBlueMask))
+                        UpdateColorMask();
+                    if (ImGui.Checkbox("Alpha", ref _colorAlphaMask))
+                        UpdateColorMask();
 
                     ImGui.EndMenu();
                 }
                 bool threadedRendering = _scene.ThreadedRendering;
-                if (ImGui.MenuItem("Render with multiple threads", string.Empty, threadedRendering, true))
+                if (
+                    ImGui.MenuItem(
+                        "Render with multiple threads",
+                        string.Empty,
+                        threadedRendering,
+                        true
+                    )
+                )
                 {
                     _scene.ThreadedRendering = !_scene.ThreadedRendering;
                 }
@@ -335,14 +414,22 @@ public class NeoDemo
                 {
                     ToggleFullscreenState();
                 }
-                if (ImGui.MenuItem("Always Recreate Sdl2Window", string.Empty, _recreateWindow, true))
+                if (
+                    ImGui.MenuItem(
+                        "Always Recreate Sdl2Window",
+                        string.Empty,
+                        _recreateWindow,
+                        true
+                    )
+                )
                 {
                     _recreateWindow = !_recreateWindow;
                 }
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.SetTooltip(
-                        "Causes a new OS window to be created whenever the graphics backend is switched. This is much safer, and is the default.");
+                        "Causes a new OS window to be created whenever the graphics backend is switched. This is much safer, and is the default."
+                    );
                 }
                 if (ImGui.MenuItem("sRGB Swapchain Format", string.Empty, _colorSrgb, true))
                 {
@@ -454,11 +541,11 @@ public class NeoDemo
                         {
                             _renderDoc.APIValidation = validation;
                         }
-                        int delayForDebugger = (int) _renderDoc.DelayForDebugger;
+                        int delayForDebugger = (int)_renderDoc.DelayForDebugger;
                         if (ImGui.InputInt("Debugger Delay", ref delayForDebugger))
                         {
                             delayForDebugger = Math.Clamp(delayForDebugger, 0, int.MaxValue);
-                            _renderDoc.DelayForDebugger = (uint) delayForDebugger;
+                            _renderDoc.DelayForDebugger = (uint)delayForDebugger;
                         }
                         bool verifyBufferAccess = _renderDoc.VerifyBufferAccess;
                         if (ImGui.Checkbox("Verify Buffer Access", ref verifyBufferAccess))
@@ -497,19 +584,28 @@ public class NeoDemo
 
             if (_controllerDebugMenu)
             {
-                if (ImGui.Begin("Controller State", ref _controllerDebugMenu, ImGuiWindowFlags.NoCollapse))
+                if (
+                    ImGui.Begin(
+                        "Controller State",
+                        ref _controllerDebugMenu,
+                        ImGuiWindowFlags.NoCollapse
+                    )
+                )
                 {
-
                     if (_controllerTracker != null)
                     {
                         ImGui.Columns(2);
                         ImGui.Text($"Name: {_controllerTracker.ControllerName}");
-                        foreach (SDL_GameControllerAxis axis in Enum.GetValues<SDL_GameControllerAxis>())
+                        foreach (
+                            SDL_GameControllerAxis axis in Enum.GetValues<SDL_GameControllerAxis>()
+                        )
                         {
                             ImGui.Text($"{axis}: {_controllerTracker.GetAxis(axis)}");
                         }
                         ImGui.NextColumn();
-                        foreach (SDL_GameControllerButton button in Enum.GetValues<SDL_GameControllerButton>())
+                        foreach (
+                            SDL_GameControllerButton button in Enum.GetValues<SDL_GameControllerButton>()
+                        )
                         {
                             ImGui.Text($"{button}: {_controllerTracker.IsPressed(button)}");
                         }
@@ -522,7 +618,10 @@ public class NeoDemo
                 ImGui.End();
             }
 
-            ImGui.Text(_fta.CurrentAverageFramesPerSecond.ToString("000.0 fps / ") + _fta.CurrentAverageFrameTimeMilliseconds.ToString("#00.00 ms"));
+            ImGui.Text(
+                _fta.CurrentAverageFramesPerSecond.ToString("000.0 fps / ")
+                    + _fta.CurrentAverageFrameTimeMilliseconds.ToString("#00.00 ms")
+            );
 
             ImGui.EndMainMenuBar();
         }
@@ -559,7 +658,7 @@ public class NeoDemo
 
     void ChangeMsaa(int msaaOption)
     {
-        TextureSampleCount sampleCount = (TextureSampleCount) msaaOption;
+        TextureSampleCount sampleCount = (TextureSampleCount)msaaOption;
         _newSampleCount = sampleCount;
     }
 
@@ -567,10 +666,14 @@ public class NeoDemo
     {
         ColorWriteMask mask = ColorWriteMask.None;
 
-        if (_colorRedMask) mask |= ColorWriteMask.Red;
-        if (_colorGreenMask) mask |= ColorWriteMask.Green;
-        if (_colorBlueMask) mask |= ColorWriteMask.Blue;
-        if (_colorAlphaMask) mask |= ColorWriteMask.Alpha;
+        if (_colorRedMask)
+            mask |= ColorWriteMask.Red;
+        if (_colorGreenMask)
+            mask |= ColorWriteMask.Green;
+        if (_colorBlueMask)
+            mask |= ColorWriteMask.Blue;
+        if (_colorAlphaMask)
+            mask |= ColorWriteMask.Alpha;
 
         _newMask = mask;
     }
@@ -584,15 +687,37 @@ public class NeoDemo
             CreateAllObjects();
         }
         sw.Stop();
-        Console.WriteLine($"Refreshing resources {numTimes} times took {sw.Elapsed.TotalSeconds} seconds.");
+        Console.WriteLine(
+            $"Refreshing resources {numTimes} times took {sw.Elapsed.TotalSeconds} seconds."
+        );
     }
 
     void DrawIndexedMaterialMenu(MaterialPropsAndBuffer propsAndBuffer)
     {
         MaterialProperties props = propsAndBuffer.Properties;
-        if (ImGui.SliderFloat("Intensity", ref props.SpecularIntensity.X, 0f, 10f, props.SpecularIntensity.X.ToString())
-            | ImGui.SliderFloat("Power", ref props.SpecularPower, 0f, 1000f, props.SpecularPower.ToString())
-            | ImGui.SliderFloat("Reflectivity", ref props.Reflectivity, 0f, 1f, props.Reflectivity.ToString()))
+        if (
+            ImGui.SliderFloat(
+                "Intensity",
+                ref props.SpecularIntensity.X,
+                0f,
+                10f,
+                props.SpecularIntensity.X.ToString()
+            )
+            | ImGui.SliderFloat(
+                "Power",
+                ref props.SpecularPower,
+                0f,
+                1000f,
+                props.SpecularPower.ToString()
+            )
+            | ImGui.SliderFloat(
+                "Reflectivity",
+                ref props.Reflectivity,
+                0f,
+                1f,
+                props.Reflectivity.ToString()
+            )
+        )
         {
             props.SpecularIntensity = new Vector3(props.SpecularIntensity.X);
             propsAndBuffer.Properties = props;
@@ -615,7 +740,7 @@ public class NeoDemo
         {
             _windowResized = false;
 
-            _gd.ResizeMainWindow((uint) width, (uint) height);
+            _gd.ResizeMainWindow((uint)width, (uint)height);
             _scene.Camera.WindowResized(width, height);
             _resizeHandled?.Invoke(width, height);
             CommandList cl = _gd.ResourceFactory.CreateCommandList();
@@ -660,7 +785,6 @@ public class NeoDemo
 
         if (_recreateWindow || forceRecreateWindow)
         {
-
             WindowCreateInfo windowCI = new()
             {
                 X = _window.X,
@@ -668,7 +792,7 @@ public class NeoDemo
                 WindowWidth = _window.Width,
                 WindowHeight = _window.Height,
                 WindowInitialState = _window.WindowState,
-                WindowTitle = "Veldrid NeoDemo"
+                WindowTitle = "Veldrid NeoDemo",
             };
 
             _window.Close();
@@ -677,7 +801,15 @@ public class NeoDemo
             _window.Resized += () => _windowResized = true;
         }
 
-        GraphicsDeviceOptions gdOptions = new(false, null, syncToVBlank, ResourceBindingModel.Improved, true, true, _colorSrgb);
+        GraphicsDeviceOptions gdOptions = new(
+            false,
+            null,
+            syncToVBlank,
+            ResourceBindingModel.Improved,
+            true,
+            true,
+            _colorSrgb
+        );
 #if DEBUG
         gdOptions.Debug = true;
 #endif

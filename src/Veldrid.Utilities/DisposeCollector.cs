@@ -38,7 +38,8 @@ public class DisposeCollector
         IDisposable second,
         IDisposable third,
         IDisposable fourth,
-        IDisposable fifth)
+        IDisposable fifth
+    )
     {
         _disposables.Add(first);
         _disposables.Add(second);
@@ -47,14 +48,14 @@ public class DisposeCollector
         _disposables.Add(fifth);
     }
 
-
     public void Add(
         IDisposable first,
         IDisposable second,
         IDisposable third,
         IDisposable fourth,
         IDisposable fifth,
-        IDisposable sixth)
+        IDisposable sixth
+    )
     {
         _disposables.Add(first);
         _disposables.Add(second);
@@ -64,7 +65,6 @@ public class DisposeCollector
         _disposables.Add(sixth);
     }
 
-
     public void Add(
         IDisposable first,
         IDisposable second,
@@ -72,7 +72,8 @@ public class DisposeCollector
         IDisposable fourth,
         IDisposable fifth,
         IDisposable sixth,
-        IDisposable seventh)
+        IDisposable seventh
+    )
     {
         _disposables.Add(first);
         _disposables.Add(second);
@@ -83,7 +84,6 @@ public class DisposeCollector
         _disposables.Add(seventh);
     }
 
-
     public void Add(
         IDisposable first,
         IDisposable second,
@@ -92,7 +92,8 @@ public class DisposeCollector
         IDisposable fifth,
         IDisposable sixth,
         IDisposable seventh,
-        IDisposable eighth)
+        IDisposable eighth
+    )
     {
         _disposables.Add(first);
         _disposables.Add(second);
@@ -113,7 +114,8 @@ public class DisposeCollector
         IDisposable sixth,
         IDisposable seventh,
         IDisposable eighth,
-        IDisposable ninth)
+        IDisposable ninth
+    )
     {
         _disposables.Add(first);
         _disposables.Add(second);
@@ -136,7 +138,8 @@ public class DisposeCollector
         IDisposable seventh,
         IDisposable eighth,
         IDisposable ninth,
-        IDisposable tenth)
+        IDisposable tenth
+    )
     {
         _disposables.Add(first);
         _disposables.Add(second);
@@ -150,7 +153,8 @@ public class DisposeCollector
         _disposables.Add(tenth);
     }
 
-    public void Add<T>(T[] array) where T : IDisposable
+    public void Add<T>(T[] array)
+        where T : IDisposable
     {
         foreach (T item in array)
         {
@@ -162,7 +166,9 @@ public class DisposeCollector
     {
         if (!_disposables.Remove(disposable))
         {
-            throw new InvalidOperationException("Unable to untrack " + disposable + ". It was not previously tracked.");
+            throw new InvalidOperationException(
+                "Unable to untrack " + disposable + ". It was not previously tracked."
+            );
         }
     }
 

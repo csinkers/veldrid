@@ -6,7 +6,8 @@ public struct WindowCreateInfo(
     int windowWidth,
     int windowHeight,
     WindowState windowInitialState,
-    string windowTitle)
+    string windowTitle
+)
 {
     public int X = x;
     public int Y = y;

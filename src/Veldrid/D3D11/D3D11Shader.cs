@@ -16,11 +16,13 @@ internal sealed class D3D11Shader : Shader
     public D3D11Shader(ID3D11Device device, ShaderDescription description)
         : base(description.Stage, description.EntryPoint)
     {
-        if (description.ShaderBytes.Length > 4
+        if (
+            description.ShaderBytes.Length > 4
             && description.ShaderBytes[0] == 0x44
             && description.ShaderBytes[1] == 0x58
             && description.ShaderBytes[2] == 0x42
-            && description.ShaderBytes[3] == 0x43)
+            && description.ShaderBytes[3] == 0x43
+        )
         {
             Bytecode = Util.ShallowClone(description.ShaderBytes);
         }
@@ -64,11 +66,14 @@ internal sealed class D3D11Shader : Shader
             profile,
             flags,
             out Blob result,
-            out Blob error);
+            out Blob error
+        );
 
         if (result == null)
         {
-            throw new VeldridException($"Failed to compile HLSL code: {Encoding.ASCII.GetString(error.AsBytes())}");
+            throw new VeldridException(
+                $"Failed to compile HLSL code: {Encoding.ASCII.GetString(error.AsBytes())}"
+            );
         }
 
         return result.AsBytes();

@@ -17,17 +17,23 @@ internal sealed class MTLTextureView : TextureView
         : base(description)
     {
         MTLTexture targetMTLTexture = Util.AssertSubtype<Texture, MTLTexture>(description.Target);
-        if (BaseMipLevel != 0 || MipLevels != Target.MipLevels
-                              || BaseArrayLayer != 0 || ArrayLayers != Target.ArrayLayers
-                              || Format != Target.Format)
+        if (
+            BaseMipLevel != 0
+            || MipLevels != Target.MipLevels
+            || BaseArrayLayer != 0
+            || ArrayLayers != Target.ArrayLayers
+            || Format != Target.Format
+        )
         {
             _hasTextureView = true;
-            uint effectiveArrayLayers = (Target.Usage & TextureUsage.Cubemap) != 0 ? ArrayLayers * 6 : ArrayLayers;
+            uint effectiveArrayLayers =
+                (Target.Usage & TextureUsage.Cubemap) != 0 ? ArrayLayers * 6 : ArrayLayers;
             TargetDeviceTexture = targetMTLTexture.DeviceTexture.newTextureView(
                 MTLFormats.VdToMTLPixelFormat(Format, description.Target.Usage),
                 targetMTLTexture.MTLTextureType,
                 new NSRange(BaseMipLevel, MipLevels),
-                new NSRange(BaseArrayLayer, effectiveArrayLayers));
+                new NSRange(BaseArrayLayer, effectiveArrayLayers)
+            );
         }
         else
         {

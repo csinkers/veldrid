@@ -6,13 +6,18 @@ namespace Veldrid.NeoDemo;
 
 internal static class Util
 {
-    internal static uint SizeInBytes<T>(this T[] array) where T : struct
+    internal static uint SizeInBytes<T>(this T[] array)
+        where T : struct
     {
         return (uint)(array.Length * Unsafe.SizeOf<T>());
     }
 
     // Code adapted from https://bitbucket.org/sinbad/ogre/src/9db75e3ba05c/OgreMain/include/OgreVector3.h
-    internal static Quaternion FromToRotation(Vector3 from, Vector3 to, Vector3 fallbackAxis = default)
+    internal static Quaternion FromToRotation(
+        Vector3 from,
+        Vector3 to,
+        Vector3 fallbackAxis = default
+    )
     {
         // Based on Stan Melax's article in Game Programming Gems
         Quaternion q;
@@ -66,7 +71,11 @@ internal static class Util
 
     // modifies projection matrix in place
     // clipPlane is in camera space
-    public static void CalculateObliqueMatrixPerspective(ref Matrix4x4 projection, Matrix4x4 view, Plane clipPlane)
+    public static void CalculateObliqueMatrixPerspective(
+        ref Matrix4x4 projection,
+        Matrix4x4 view,
+        Plane clipPlane
+    )
     {
         Matrix4x4.Invert(view, out Matrix4x4 invertedView);
         Matrix4x4 invTransposeView = Matrix4x4.Transpose(invertedView);
@@ -77,7 +86,8 @@ internal static class Util
             (Math.Sign(clipV4.X) + projection.M13) / projection.M11,
             (Math.Sign(clipV4.Y) + projection.M23) / projection.M22,
             -1f,
-            (1 + projection.M33) / projection.M34);
+            (1 + projection.M33) / projection.M34
+        );
 
         Vector4 c = clipV4 * (1f / Vector4.Dot(clipV4, q));
 
@@ -92,7 +102,9 @@ internal static class Util
         bool useReverseDepth,
         float fov,
         float aspectRatio,
-        float near, float far)
+        float near,
+        float far
+    )
     {
         Matrix4x4 persp;
         if (useReverseDepth)
@@ -105,11 +117,7 @@ internal static class Util
         }
         if (gd.IsClipSpaceYInverted)
         {
-            persp *= new Matrix4x4(
-                1, 0, 0, 0,
-                0, -1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
+            persp *= new Matrix4x4(1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         }
 
         return persp;
@@ -151,9 +159,13 @@ internal static class Util
     internal static Matrix4x4 CreateOrtho(
         GraphicsDevice gd,
         bool useReverseDepth,
-        float left, float right,
-        float bottom, float top,
-        float near, float far)
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float near,
+        float far
+    )
     {
         Matrix4x4 ortho;
         if (useReverseDepth)
@@ -166,11 +178,7 @@ internal static class Util
         }
         if (gd.IsClipSpaceYInverted)
         {
-            ortho *= new Matrix4x4(
-                1, 0, 0, 0,
-                0, -1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
+            ortho *= new Matrix4x4(1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         }
 
         return ortho;
@@ -180,23 +188,11 @@ internal static class Util
     {
         if (gd.IsClipSpaceYInverted)
         {
-            return
-            [
-                -1, -1, 0, 0,
-                1, -1, 1, 0,
-                1, 1, 1, 1,
-                -1, 1, 0, 1
-            ];
+            return [-1, -1, 0, 0, 1, -1, 1, 0, 1, 1, 1, 1, -1, 1, 0, 1];
         }
         else
         {
-            return
-            [
-                -1, 1, 0, 0,
-                1, 1, 1, 0,
-                1, -1, 1, 1,
-                -1, -1, 0, 1
-            ];
+            return [-1, 1, 0, 0, 1, 1, 1, 0, 1, -1, 1, 1, -1, -1, 0, 1];
         }
     }
 }

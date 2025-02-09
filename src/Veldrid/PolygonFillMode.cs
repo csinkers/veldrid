@@ -9,6 +9,7 @@ public enum PolygonFillMode : byte
     /// Polygons are filled completely.
     /// </summary>
     Solid,
+
     /// <summary>
     /// Polygons are outlined in a "wireframe" style.
     /// </summary>

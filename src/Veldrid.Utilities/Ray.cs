@@ -51,7 +51,8 @@ public struct Ray(Vector3 origin, Vector3 direction)
     {
         return new Ray(
             Vector3.Transform(ray.Origin, mat),
-            Vector3.Normalize(Vector3.TransformNormal(ray.Direction, mat)));
+            Vector3.Normalize(Vector3.TransformNormal(ray.Direction, mat))
+        );
     }
 
     /// <summary>
@@ -64,9 +65,15 @@ public struct Ray(Vector3 origin, Vector3 direction)
     {
         const float EPSILON = 1E-6f;
 
-        Vector3 e1, e2;  //Edge1, Edge2
-        Vector3 P, Q, T;
-        float det, inv_det, u, v;
+        Vector3 e1,
+            e2; //Edge1, Edge2
+        Vector3 P,
+            Q,
+            T;
+        float det,
+            inv_det,
+            u,
+            v;
         float t;
 
         //Find vectors for two edges sharing V1

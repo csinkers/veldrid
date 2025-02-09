@@ -37,9 +37,8 @@ public struct ShaderSetDescription : IEquatable<ShaderSetDescription>
     /// <param name="shaders">An array of <see cref="Shader"/> objects, one for each shader stage which is to be active
     /// in the <see cref="Pipeline"/>. At a minimum, every graphics Pipeline must include a Vertex and Fragment shader. All
     /// other stages are optional, but if either Tessellation stage is present, then the other must also be.</param>
-    public ShaderSetDescription(VertexLayoutDescription[]? vertexLayouts, Shader[] shaders) : this(vertexLayouts, shaders, null)
-    {
-    }
+    public ShaderSetDescription(VertexLayoutDescription[]? vertexLayouts, Shader[] shaders)
+        : this(vertexLayouts, shaders, null) { }
 
     /// <summary>
     /// Constructs a new ShaderSetDescription.
@@ -56,7 +55,8 @@ public struct ShaderSetDescription : IEquatable<ShaderSetDescription>
     public ShaderSetDescription(
         VertexLayoutDescription[]? vertexLayouts,
         Shader[] shaders,
-        SpecializationConstant[]? specializations)
+        SpecializationConstant[]? specializations
+    )
     {
         VertexLayouts = vertexLayouts;
         Shaders = shaders;
@@ -71,8 +71,8 @@ public struct ShaderSetDescription : IEquatable<ShaderSetDescription>
     public bool Equals(ShaderSetDescription other)
     {
         return Util.ArrayEqualsEquatable(VertexLayouts, other.VertexLayouts)
-               && Util.ArrayEquals(Shaders, other.Shaders)
-               && Util.ArrayEqualsEquatable(Specializations, other.Specializations);
+            && Util.ArrayEquals(Shaders, other.Shaders)
+            && Util.ArrayEqualsEquatable(Specializations, other.Specializations);
     }
 
     /// <summary>
@@ -84,6 +84,7 @@ public struct ShaderSetDescription : IEquatable<ShaderSetDescription>
         return HashHelper.Combine(
             HashHelper.Array(VertexLayouts),
             HashHelper.Array(Shaders),
-            HashHelper.Array(Specializations));
+            HashHelper.Array(Specializations)
+        );
     }
 }

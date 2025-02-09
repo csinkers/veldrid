@@ -21,10 +21,13 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
 
     string? _name;
 
-    public override TerraFX.Interop.Vulkan.VkFramebuffer CurrentFramebuffer => _scFramebuffers[_currentImageIndex].CurrentFramebuffer;
+    public override TerraFX.Interop.Vulkan.VkFramebuffer CurrentFramebuffer =>
+        _scFramebuffers[_currentImageIndex].CurrentFramebuffer;
 
-    public override VkRenderPass RenderPassNoClear_Init => _scFramebuffers[0].RenderPassNoClear_Init;
-    public override VkRenderPass RenderPassNoClear_Load => _scFramebuffers[0].RenderPassNoClear_Load;
+    public override VkRenderPass RenderPassNoClear_Init =>
+        _scFramebuffers[0].RenderPassNoClear_Init;
+    public override VkRenderPass RenderPassNoClear_Load =>
+        _scFramebuffers[0].RenderPassNoClear_Load;
     public override VkRenderPass RenderPassClear => _scFramebuffers[0].RenderPassClear;
 
     public override VkExtent2D RenderableExtent => _scExtent;
@@ -37,7 +40,8 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
         VkGraphicsDevice gd,
         VkSwapchain swapchain,
         VkSurfaceKHR surface,
-        in SwapchainDescription description)
+        in SwapchainDescription description
+    )
         : base()
     {
         swapchain.RefCount.Increment();
@@ -61,7 +65,8 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
         uint width,
         uint height,
         VkSurfaceFormatKHR surfaceFormat,
-        VkExtent2D swapchainExtent)
+        VkExtent2D swapchainExtent
+    )
     {
         Width = width;
         Height = height;
@@ -76,7 +81,12 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
         }
         fixed (VkImage* scImagesPtr = _scImages)
         {
-            result = vkGetSwapchainImagesKHR(_gd.Device, deviceSwapchain, &scImageCount, scImagesPtr);
+            result = vkGetSwapchainImagesKHR(
+                _gd.Device,
+                deviceSwapchain,
+                &scImageCount,
+                scImagesPtr
+            );
             CheckResult(result);
         }
 
@@ -113,13 +123,17 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
         {
             Debug.Assert(!_depthTarget.HasValue);
 
-            VkTexture depthTexture = (VkTexture)_gd.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
-                Math.Max(1, _scExtent.width),
-                Math.Max(1, _scExtent.height),
-                1,
-                1,
-                _depthFormat.Value,
-                TextureUsage.DepthStencil));
+            VkTexture depthTexture = (VkTexture)
+                _gd.ResourceFactory.CreateTexture(
+                    TextureDescription.Texture2D(
+                        Math.Max(1, _scExtent.width),
+                        Math.Max(1, _scExtent.height),
+                        1,
+                        1,
+                        _depthFormat.Value,
+                        TextureUsage.DepthStencil
+                    )
+                );
             _depthTarget = new FramebufferAttachment(depthTexture, 0);
         }
     }
@@ -145,7 +159,8 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
                 TextureSampleCount.Count1,
                 _scImages[i],
                 true,
-                true);
+                true
+            );
             FramebufferDescription desc = new(_depthTarget?.Target, colorTex);
             VkFramebuffer fb = new(_gd, desc, true);
             _scFramebuffers[i] = fb;
@@ -159,7 +174,11 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
         foreach (ref readonly FramebufferAttachment ca in ColorTargets)
         {
             VkTexture vkTex = Util.AssertSubtype<Texture, VkTexture>(ca.Target);
-            vkTex.SetImageLayout(0, ca.ArrayLayer, VkImageLayout.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            vkTex.SetImageLayout(
+                0,
+                ca.ArrayLayer,
+                VkImageLayout.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+            );
         }
     }
 

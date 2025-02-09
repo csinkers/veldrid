@@ -1,7 +1,7 @@
-﻿using ImGuiNET;
-using System;
+﻿using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using ImGuiNET;
 using Veldrid.Sdl2;
 
 namespace Veldrid.NeoDemo;
@@ -59,7 +59,15 @@ public class Camera : IUpdateable
     public Matrix4x4 ViewMatrix => _viewMatrix;
     public Matrix4x4 ProjectionMatrix => _projectionMatrix;
 
-    public Vector3 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
+    public Vector3 Position
+    {
+        get => _position;
+        set
+        {
+            _position = value;
+            UpdateViewMatrix();
+        }
+    }
     public Vector3 LookDirection => _lookDirection;
 
     public float FarDistance => _far;
@@ -69,18 +77,37 @@ public class Camera : IUpdateable
 
     public float AspectRatio => _windowWidth / _windowHeight;
 
-    public float Yaw { get => _yaw; set { _yaw = value; UpdateViewMatrix(); } }
-    public float Pitch { get => _pitch; set { _pitch = value; UpdateViewMatrix(); } }
+    public float Yaw
+    {
+        get => _yaw;
+        set
+        {
+            _yaw = value;
+            UpdateViewMatrix();
+        }
+    }
+    public float Pitch
+    {
+        get => _pitch;
+        set
+        {
+            _pitch = value;
+            UpdateViewMatrix();
+        }
+    }
 
-    public Sdl2ControllerTracker? Controller { get => _controller; set => _controller = value; }
+    public Sdl2ControllerTracker? Controller
+    {
+        get => _controller;
+        set => _controller = value;
+    }
 
     public void Update(float deltaSeconds)
     {
-        float sprintFactor = InputTracker.GetKey(Key.LeftControl)
-            ? 0.1f
-            : InputTracker.GetKey(Key.LeftShift)
-                ? 2.5f
-                : 1f;
+        float sprintFactor =
+            InputTracker.GetKey(Key.LeftControl) ? 0.1f
+            : InputTracker.GetKey(Key.LeftShift) ? 2.5f
+            : 1f;
         Vector3 motionDir = Vector3.Zero;
         if (InputTracker.GetKey(Key.A))
         {
@@ -139,24 +166,37 @@ public class Camera : IUpdateable
             UpdateViewMatrix();
         }
 
-        if (!ImGui.GetIO().WantCaptureMouse
-            && (InputTracker.GetMouseButton(MouseButton.Left) || InputTracker.GetMouseButton(MouseButton.Right)))
+        if (
+            !ImGui.GetIO().WantCaptureMouse
+            && (
+                InputTracker.GetMouseButton(MouseButton.Left)
+                || InputTracker.GetMouseButton(MouseButton.Right)
+            )
+        )
         {
             if (!_mousePressed)
             {
                 _mousePressed = true;
                 _mousePressedPos = InputTracker.MousePosition;
                 Sdl2Native.SDL_ShowCursor(0);
-                Sdl2Native.SDL_SetWindowGrab(_window.SdlWindowHandle, true); 
+                Sdl2Native.SDL_SetWindowGrab(_window.SdlWindowHandle, true);
             }
             Vector2 mouseDelta = _mousePressedPos - InputTracker.MousePosition;
-            Sdl2Native.SDL_WarpMouseInWindow(_window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+            Sdl2Native.SDL_WarpMouseInWindow(
+                _window.SdlWindowHandle,
+                (int)_mousePressedPos.X,
+                (int)_mousePressedPos.Y
+            );
             Yaw += mouseDelta.X * 0.002f;
             Pitch += mouseDelta.Y * 0.002f;
         }
-        else if(_mousePressed)
+        else if (_mousePressed)
         {
-            Sdl2Native.SDL_WarpMouseInWindow(_window.SdlWindowHandle, (int)_mousePressedPos.X, (int)_mousePressedPos.Y);
+            Sdl2Native.SDL_WarpMouseInWindow(
+                _window.SdlWindowHandle,
+                (int)_mousePressedPos.X,
+                (int)_mousePressedPos.Y
+            );
             Sdl2Native.SDL_SetWindowGrab(_window.SdlWindowHandle, false);
             Sdl2Native.SDL_ShowCursor(1);
             _mousePressed = false;
@@ -195,7 +235,8 @@ public class Camera : IUpdateable
             _fov,
             _windowWidth / _windowHeight,
             _near,
-            _far);
+            _far
+        );
         ProjectionChanged?.Invoke(_projectionMatrix);
     }
 
@@ -208,11 +249,8 @@ public class Camera : IUpdateable
         ViewChanged?.Invoke(_viewMatrix);
     }
 
-    public CameraInfo GetCameraInfo() => new()
-    {
-        CameraPosition_WorldSpace = _position,
-        CameraLookDirection = _lookDirection
-    };
+    public CameraInfo GetCameraInfo() =>
+        new() { CameraPosition_WorldSpace = _position, CameraLookDirection = _lookDirection };
 }
 
 [StructLayout(LayoutKind.Sequential)]

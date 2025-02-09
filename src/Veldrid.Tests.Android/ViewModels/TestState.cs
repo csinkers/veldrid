@@ -6,6 +6,6 @@
         Passed,
         Failed,
         Skipped,
-        NotRun
+        NotRun,
     }
 }

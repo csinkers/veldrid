@@ -39,7 +39,7 @@ public class BackendInfoD3D11
     /// </summary>
     /// <returns>A pointer to the Veldrid Texture's underlying ID3D11Texture1D, ID3D11Texture2D, or ID3D11Texture3D. The type
     /// of this object depends on the parameter's TextureType.</returns>
-    public IntPtr GetTexturePointer(Texture texture)
-        => Util.AssertSubtype<Texture, D3D11Texture>(texture).DeviceTexture.NativePointer;
+    public IntPtr GetTexturePointer(Texture texture) =>
+        Util.AssertSubtype<Texture, D3D11Texture>(texture).DeviceTexture.NativePointer;
 }
 #endif

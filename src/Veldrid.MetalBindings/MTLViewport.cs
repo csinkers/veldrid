@@ -1,6 +1,13 @@
 namespace Veldrid.MetalBindings;
 
-public struct MTLViewport(double originX, double originY, double width, double height, double znear, double zfar)
+public struct MTLViewport(
+    double originX,
+    double originY,
+    double width,
+    double height,
+    double znear,
+    double zfar
+)
 {
     public double originX = originX;
     public double originY = originY;

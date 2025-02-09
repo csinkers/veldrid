@@ -26,19 +26,19 @@ internal unsafe delegate int pRENDERDOC_GetAPI(RENDERDOC_Version version, void**
 
 internal enum RENDERDOC_Version
 {
-    API_Version_1_0_0 = 10000,    // RENDERDOC_API_1_0_0 = 1 00 00
-    API_Version_1_0_1 = 10001,    // RENDERDOC_API_1_0_1 = 1 00 01
-    API_Version_1_0_2 = 10002,    // RENDERDOC_API_1_0_2 = 1 00 02
-    API_Version_1_1_0 = 10100,    // RENDERDOC_API_1_1_0 = 1 01 00
-    API_Version_1_1_1 = 10101,    // RENDERDOC_API_1_1_1 = 1 01 01
-    API_Version_1_1_2 = 10102,    // RENDERDOC_API_1_1_2 = 1 01 02
-    API_Version_1_2_0 = 10200,    // RENDERDOC_API_1_2_0 = 1 02 00
-    API_Version_1_3_0 = 10300,    // RENDERDOC_API_1_3_0 = 1 03 00
-    API_Version_1_4_0 = 10400,    // RENDERDOC_API_1_4_0 = 1 04 00
-    API_Version_1_4_1 = 10401,    // RENDERDOC_API_1_4_1 = 1 04 01
-    API_Version_1_4_2 = 10402,    // RENDERDOC_API_1_4_2 = 1 04 02
-    API_Version_1_5_0 = 10500,    // RENDERDOC_API_1_5_0 = 1 05 00
-    API_Version_1_6_0 = 10600,    // RENDERDOC_API_1_6_0 = 1 06 00
+    API_Version_1_0_0 = 10000, // RENDERDOC_API_1_0_0 = 1 00 00
+    API_Version_1_0_1 = 10001, // RENDERDOC_API_1_0_1 = 1 00 01
+    API_Version_1_0_2 = 10002, // RENDERDOC_API_1_0_2 = 1 00 02
+    API_Version_1_1_0 = 10100, // RENDERDOC_API_1_1_0 = 1 01 00
+    API_Version_1_1_1 = 10101, // RENDERDOC_API_1_1_1 = 1 01 01
+    API_Version_1_1_2 = 10102, // RENDERDOC_API_1_1_2 = 1 01 02
+    API_Version_1_2_0 = 10200, // RENDERDOC_API_1_2_0 = 1 02 00
+    API_Version_1_3_0 = 10300, // RENDERDOC_API_1_3_0 = 1 03 00
+    API_Version_1_4_0 = 10400, // RENDERDOC_API_1_4_0 = 1 04 00
+    API_Version_1_4_1 = 10401, // RENDERDOC_API_1_4_1 = 1 04 01
+    API_Version_1_4_2 = 10402, // RENDERDOC_API_1_4_2 = 1 04 02
+    API_Version_1_5_0 = 10500, // RENDERDOC_API_1_5_0 = 1 05 00
+    API_Version_1_6_0 = 10600, // RENDERDOC_API_1_6_0 = 1 06 00
 }
 
 /// <summary>
@@ -77,7 +77,7 @@ internal enum RENDERDOC_CaptureOption
 
 #pragma warning disable CA1069 // Enums values should not be duplicated
     [EditorBrowsable(EditorBrowsableState.Never)]
-    DebugDeviceMode = 2,    // deprecated name of this enum
+    DebugDeviceMode = 2, // deprecated name of this enum
 #pragma warning restore CA1069 // Enums values should not be duplicated
 
     // Capture CPU callstacks for API events
@@ -342,6 +342,7 @@ internal enum RENDERDOC_OverlayBits : uint
 
 // returns the overlay bits that have been set
 internal unsafe delegate uint pRENDERDOC_GetOverlayBits();
+
 // sets the overlay bits with an and & or mask
 internal unsafe delegate void pRENDERDOC_MaskOverlayBits(uint And, uint Or);
 
@@ -399,7 +400,12 @@ internal unsafe delegate uint pRENDERDOC_GetNumCaptures();
 //
 // Note: when captures are deleted in the UI they will remain in this list, so the
 // capture path may not exist anymore.
-internal unsafe delegate uint pRENDERDOC_GetCapture(uint idx, char* filename, uint* pathlength, ulong* timestamp);
+internal unsafe delegate uint pRENDERDOC_GetCapture(
+    uint idx,
+    char* filename,
+    uint* pathlength,
+    ulong* timestamp
+);
 
 // Sets the comments associated with a capture file. These comments are displayed in the
 // UI program when opening.
@@ -521,6 +527,7 @@ internal struct RENDERDOC_API_1_4_0
 
     // new function in 1.2.0
     public pRENDERDOC_SetCaptureFileComments SetCaptureFileComments;
+
     // new function in 1.4.0
     public pRENDERDOC_DiscardFrameCapture DiscardFrameCapture;
 }

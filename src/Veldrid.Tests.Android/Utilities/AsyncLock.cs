@@ -35,10 +35,13 @@ namespace Veldrid.Tests.Android.Utilities
         public Task<Releaser> LockAsync(
             [CallerMemberName] string? callingMethod = null,
             [CallerFilePath] string? path = null,
-            [CallerLineNumber] int line = 0)
+            [CallerLineNumber] int line = 0
+        )
         {
 #if DEBUG
-            Debug.WriteLine($"AsyncLock.LockAsync called by: {callingMethod} in file: {path} : {line}");
+            Debug.WriteLine(
+                $"AsyncLock.LockAsync called by: {callingMethod} in file: {path} : {line}"
+            );
 #endif
 
             Task wait = semaphore.WaitAsync();
@@ -52,7 +55,8 @@ namespace Veldrid.Tests.Android.Utilities
                 this,
                 CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously,
-                TaskScheduler.Default);
+                TaskScheduler.Default
+            );
         }
     }
 }

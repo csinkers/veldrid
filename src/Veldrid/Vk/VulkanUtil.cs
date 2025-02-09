@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using TerraFX.Interop.Vulkan;
-using static TerraFX.Interop.Vulkan.Vulkan;
-using static TerraFX.Interop.Vulkan.VkImageLayout;
 using static TerraFX.Interop.Vulkan.VkAccessFlags;
+using static TerraFX.Interop.Vulkan.VkImageLayout;
 using static TerraFX.Interop.Vulkan.VkPipelineStageFlags;
+using static TerraFX.Interop.Vulkan.Vulkan;
 
 namespace Veldrid.Vulkan;
 
-internal unsafe static class VulkanUtil
+internal static unsafe class VulkanUtil
 {
     public static void CheckResult(VkResult result)
     {
@@ -20,8 +20,10 @@ internal unsafe static class VulkanUtil
 
     public static void ThrowResult(VkResult result)
     {
-        if (result == VkResult.VK_ERROR_OUT_OF_DEVICE_MEMORY ||
-            result == VkResult.VK_ERROR_OUT_OF_HOST_MEMORY)
+        if (
+            result == VkResult.VK_ERROR_OUT_OF_DEVICE_MEMORY
+            || result == VkResult.VK_ERROR_OUT_OF_HOST_MEMORY
+        )
         {
             throw new VeldridOutOfMemoryException(GetExceptionMessage(result));
         }
@@ -37,12 +39,18 @@ internal unsafe static class VulkanUtil
     }
 
     public static bool TryFindMemoryType(
-        VkPhysicalDeviceMemoryProperties memProperties, uint typeFilter, VkMemoryPropertyFlags properties, out uint typeIndex)
+        VkPhysicalDeviceMemoryProperties memProperties,
+        uint typeFilter,
+        VkMemoryPropertyFlags properties,
+        out uint typeIndex
+    )
     {
         for (uint i = 0; i < memProperties.memoryTypeCount; i++)
         {
-            if (((typeFilter & (1u << (int)i)) != 0)
-                && (memProperties.memoryTypes[(int)i].propertyFlags & properties) == properties)
+            if (
+                ((typeFilter & (1u << (int)i)) != 0)
+                && (memProperties.memoryTypes[(int)i].propertyFlags & properties) == properties
+            )
             {
                 typeIndex = i;
                 return true;
@@ -131,7 +139,8 @@ internal unsafe static class VulkanUtil
         uint layerCount,
         VkImageAspectFlags aspectMask,
         VkImageLayout oldLayout,
-        VkImageLayout newLayout)
+        VkImageLayout newLayout
+    )
     {
         Debug.Assert(oldLayout != newLayout);
         VkImageMemoryBarrier barrier = new()
@@ -148,8 +157,8 @@ internal unsafe static class VulkanUtil
                 baseMipLevel = baseMipLevel,
                 levelCount = levelCount,
                 baseArrayLayer = baseArrayLayer,
-                layerCount = layerCount
-            }
+                layerCount = layerCount,
+            },
         };
 
         VkPipelineStageFlags srcStageFlags = VK_PIPELINE_STAGE_NONE_KHR;
@@ -164,8 +173,10 @@ internal unsafe static class VulkanUtil
                 break;
 
             case VK_IMAGE_LAYOUT_GENERAL:
-                if (newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL ||
-                    newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+                if (
+                    newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+                    || newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+                )
                 {
                     barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
                     srcStageFlags = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
@@ -223,8 +234,10 @@ internal unsafe static class VulkanUtil
         switch (newLayout)
         {
             case VK_IMAGE_LAYOUT_GENERAL:
-                if (oldLayout == VK_IMAGE_LAYOUT_PREINITIALIZED ||
-                    oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+                if (
+                    oldLayout == VK_IMAGE_LAYOUT_PREINITIALIZED
+                    || oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+                )
                 {
                     barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
                     dstStageFlags = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
@@ -283,20 +296,16 @@ internal unsafe static class VulkanUtil
                 break;
         }
 
-        vkCmdPipelineBarrier(
-            cb,
-            srcStageFlags,
-            dstStageFlags,
-            0,
-            0, null,
-            0, null,
-            1, &barrier);
+        vkCmdPipelineBarrier(cb, srcStageFlags, dstStageFlags, 0, 0, null, 0, null, 1, &barrier);
     }
 }
 
-internal unsafe static class VkPhysicalDeviceMemoryPropertiesEx
+internal static unsafe class VkPhysicalDeviceMemoryPropertiesEx
 {
-    public static VkMemoryType GetMemoryType(this VkPhysicalDeviceMemoryProperties memoryProperties, uint index)
+    public static VkMemoryType GetMemoryType(
+        this VkPhysicalDeviceMemoryProperties memoryProperties,
+        uint index
+    )
     {
         return memoryProperties.memoryTypes[(int)index];
     }

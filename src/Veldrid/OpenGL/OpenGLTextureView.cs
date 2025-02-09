@@ -17,7 +17,15 @@ internal sealed class OpenGLTextureView : TextureView, OpenGLDeferredResource
     string? _name;
     bool _nameChanged;
 
-    public override string? Name { get => _name; set { _name = value; _nameChanged = true; } }
+    public override string? Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            _nameChanged = true;
+        }
+    }
 
     public new OpenGLTexture Target { get; }
     public TextureTarget TextureTarget { get; private set; }
@@ -47,17 +55,22 @@ internal sealed class OpenGLTextureView : TextureView, OpenGLDeferredResource
         _gd = gd;
         Target = Util.AssertSubtype<Texture, OpenGLTexture>(description.Target);
 
-        if (BaseMipLevel != 0 || MipLevels != Target.MipLevels
-                              || BaseArrayLayer != 0 || ArrayLayers != Target.ArrayLayers
-                              || Format != Target.Format)
+        if (
+            BaseMipLevel != 0
+            || MipLevels != Target.MipLevels
+            || BaseArrayLayer != 0
+            || ArrayLayers != Target.ArrayLayers
+            || Format != Target.Format
+        )
         {
             if (_gd.BackendType == GraphicsBackend.OpenGL)
             {
                 if (!_gd.Extensions.ARB_TextureView)
                 {
                     throw new VeldridException(
-                        "TextureView objects covering a subset of a Texture's dimensions or using a different PixelFormat " +
-                        "require OpenGL 4.3, or ARB_texture_view.");
+                        "TextureView objects covering a subset of a Texture's dimensions or using a different PixelFormat "
+                            + "require OpenGL 4.3, or ARB_texture_view."
+                    );
                 }
             }
             else
@@ -65,8 +78,9 @@ internal sealed class OpenGLTextureView : TextureView, OpenGLDeferredResource
                 if (!_gd.Extensions.ARB_TextureView)
                 {
                     throw new VeldridException(
-                        "TextureView objects covering a subset of a Texture's dimensions or using a different PixelFormat are " +
-                        "not supported on OpenGL ES.");
+                        "TextureView objects covering a subset of a Texture's dimensions or using a different PixelFormat are "
+                            + "not supported on OpenGL ES."
+                    );
                 }
             }
             _needsTextureView = true;
@@ -101,12 +115,14 @@ internal sealed class OpenGLTextureView : TextureView, OpenGLDeferredResource
             PixelFormat.R32_G32_UInt => SizedInternalFormat.Rg32ui,
             PixelFormat.R32_G32_SInt => SizedInternalFormat.Rg32i,
             PixelFormat.R32_G32_Float => SizedInternalFormat.Rg32f,
-            PixelFormat.R8_G8_B8_A8_UNorm or PixelFormat.B8_G8_R8_A8_UNorm => SizedInternalFormat.Rgba8,
+            PixelFormat.R8_G8_B8_A8_UNorm or PixelFormat.B8_G8_R8_A8_UNorm =>
+                SizedInternalFormat.Rgba8,
             PixelFormat.R8_G8_B8_A8_SNorm => (SizedInternalFormat)PixelInternalFormat.Rgba8Snorm,
             PixelFormat.R8_G8_B8_A8_UInt => SizedInternalFormat.Rgba8ui,
             PixelFormat.R8_G8_B8_A8_SInt => SizedInternalFormat.Rgba16i,
             PixelFormat.R16_G16_B16_A16_UNorm => SizedInternalFormat.Rgba16,
-            PixelFormat.R16_G16_B16_A16_SNorm => (SizedInternalFormat)PixelInternalFormat.Rgba16Snorm,
+            PixelFormat.R16_G16_B16_A16_SNorm => (SizedInternalFormat)
+                PixelInternalFormat.Rgba16Snorm,
             PixelFormat.R16_G16_B16_A16_UInt => SizedInternalFormat.Rgba16ui,
             PixelFormat.R16_G16_B16_A16_SInt => SizedInternalFormat.Rgba16i,
             PixelFormat.R16_G16_B16_A16_Float => SizedInternalFormat.Rgba16f,
@@ -216,11 +232,13 @@ internal sealed class OpenGLTextureView : TextureView, OpenGLDeferredResource
         }
         else
         {
-            throw new VeldridException("The given TextureView parameters are not supported with the OpenGL backend.");
+            throw new VeldridException(
+                "The given TextureView parameters are not supported with the OpenGL backend."
+            );
         }
 
-        PixelInternalFormat internalFormat = (PixelInternalFormat)OpenGLFormats.VdToGLSizedInternalFormat(
-            Format, Target.Usage);
+        PixelInternalFormat internalFormat = (PixelInternalFormat)
+            OpenGLFormats.VdToGLSizedInternalFormat(Format, Target.Usage);
         Debug.Assert(Target.Created);
         glTextureView(
             _textureView,
@@ -230,7 +248,8 @@ internal sealed class OpenGLTextureView : TextureView, OpenGLDeferredResource
             BaseMipLevel,
             MipLevels,
             BaseArrayLayer,
-            effectiveArrayLayers);
+            effectiveArrayLayers
+        );
         CheckLastError();
     }
 

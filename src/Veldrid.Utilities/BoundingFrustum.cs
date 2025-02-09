@@ -3,7 +3,14 @@ using System.Runtime.CompilerServices;
 
 namespace Veldrid.Utilities;
 
-public struct BoundingFrustum(Plane left, Plane right, Plane bottom, Plane top, Plane near, Plane far)
+public struct BoundingFrustum(
+    Plane left,
+    Plane right,
+    Plane bottom,
+    Plane top,
+    Plane near,
+    Plane far
+)
 {
     public Plane Left = left;
     public Plane Right = right;
@@ -12,37 +19,15 @@ public struct BoundingFrustum(Plane left, Plane right, Plane bottom, Plane top, 
     public Plane Near = near;
     public Plane Far = far;
 
-    public BoundingFrustum(in Matrix4x4 m) : this(Plane.Normalize(
-        new Plane(
-            m.M14 + m.M11,
-            m.M24 + m.M21,
-            m.M34 + m.M31,
-            m.M44 + m.M41)), Plane.Normalize(
-        new Plane(
-            m.M14 - m.M11,
-            m.M24 - m.M21,
-            m.M34 - m.M31,
-            m.M44 - m.M41)), Plane.Normalize(
-        new Plane(
-            m.M14 + m.M12,
-            m.M24 + m.M22,
-            m.M34 + m.M32,
-            m.M44 + m.M42)), Plane.Normalize(
-        new Plane(
-            m.M14 - m.M12,
-            m.M24 - m.M22,
-            m.M34 - m.M32,
-            m.M44 - m.M42)), Plane.Normalize(
-        new Plane(
-            m.M13,
-            m.M23,
-            m.M33,
-            m.M43)), Plane.Normalize(
-        new Plane(
-            m.M14 - m.M13,
-            m.M24 - m.M23,
-            m.M34 - m.M33,
-            m.M44 - m.M43)))
+    public BoundingFrustum(in Matrix4x4 m)
+        : this(
+            Plane.Normalize(new Plane(m.M14 + m.M11, m.M24 + m.M21, m.M34 + m.M31, m.M44 + m.M41)),
+            Plane.Normalize(new Plane(m.M14 - m.M11, m.M24 - m.M21, m.M34 - m.M31, m.M44 - m.M41)),
+            Plane.Normalize(new Plane(m.M14 + m.M12, m.M24 + m.M22, m.M34 + m.M32, m.M44 + m.M42)),
+            Plane.Normalize(new Plane(m.M14 - m.M12, m.M24 - m.M22, m.M34 - m.M32, m.M44 - m.M42)),
+            Plane.Normalize(new Plane(m.M13, m.M23, m.M33, m.M43)),
+            Plane.Normalize(new Plane(m.M14 - m.M13, m.M24 - m.M23, m.M34 - m.M33, m.M44 - m.M43))
+        )
     {
         // Plane computations: http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
     }
@@ -185,9 +170,10 @@ public struct BoundingFrustum(Plane left, Plane right, Plane bottom, Plane top, 
         // The formula assumes that there is only a single intersection point.
         // Because of the way the frustum planes are constructed, this should be guaranteed.
         intersection =
-            (-(p1.D * Vector3.Cross(p2.Normal, p3.Normal))
-             - (p2.D * Vector3.Cross(p3.Normal, p1.Normal))
-             - (p3.D * Vector3.Cross(p1.Normal, p2.Normal)))
-            / Vector3.Dot(p1.Normal, Vector3.Cross(p2.Normal, p3.Normal));
+            (
+                -(p1.D * Vector3.Cross(p2.Normal, p3.Normal))
+                - (p2.D * Vector3.Cross(p3.Normal, p1.Normal))
+                - (p3.D * Vector3.Cross(p1.Normal, p2.Normal))
+            ) / Vector3.Dot(p1.Normal, Vector3.Cross(p2.Normal, p3.Normal));
     }
 }

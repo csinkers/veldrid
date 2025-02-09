@@ -2,16 +2,16 @@ using System;
 
 namespace Veldrid.Utilities;
 
-public class DisposeCollectorResourceFactory(ResourceFactory factory, DisposeCollector disposeCollector)
-    : ResourceFactory(factory.Features)
+public class DisposeCollectorResourceFactory(
+    ResourceFactory factory,
+    DisposeCollector disposeCollector
+) : ResourceFactory(factory.Features)
 {
     public ResourceFactory Factory { get; } = factory;
     public DisposeCollector DisposeCollector { get; } = disposeCollector;
 
     public DisposeCollectorResourceFactory(ResourceFactory factory)
-        : this(factory, new DisposeCollector())
-    {
-    }
+        : this(factory, new DisposeCollector()) { }
 
     public override GraphicsBackend BackendType => Factory.BackendType;
 

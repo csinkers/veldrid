@@ -3,7 +3,7 @@
 namespace Veldrid;
 
 /// <summary>
-/// A device resource encapsulating all state in a graphics pipeline. Used in 
+/// A device resource encapsulating all state in a graphics pipeline. Used in
 /// <see cref="CommandList.SetPipeline(Pipeline)"/> to prepare a <see cref="CommandList"/> for draw commands.
 /// See <see cref="GraphicsPipelineDescription"/>.
 /// </summary>
@@ -18,9 +18,7 @@ public abstract class Pipeline : DeviceResource, IDisposable
     }
 
     internal Pipeline(in ComputePipelineDescription computeDescription)
-        : this(computeDescription.ResourceLayouts)
-    {
-    }
+        : this(computeDescription.ResourceLayouts) { }
 
     internal Pipeline(ResourceLayout[] resourceLayouts)
     {

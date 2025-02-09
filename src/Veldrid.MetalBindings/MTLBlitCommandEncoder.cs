@@ -14,11 +14,17 @@ public readonly struct MTLBlitCommandEncoder
         UIntPtr sourceOffset,
         MTLBuffer destinationBuffer,
         UIntPtr destinationOffset,
-        UIntPtr size)
-        => objc_msgSend(
+        UIntPtr size
+    ) =>
+        objc_msgSend(
             NativePtr,
             sel_copyFromBuffer0,
-            sourceBuffer, sourceOffset, destinationBuffer, destinationOffset, size);
+            sourceBuffer,
+            sourceOffset,
+            destinationBuffer,
+            destinationOffset,
+            size
+        );
 
     public void copyFromBuffer(
         MTLBuffer sourceBuffer,
@@ -29,8 +35,9 @@ public readonly struct MTLBlitCommandEncoder
         MTLTexture destinationTexture,
         UIntPtr destinationSlice,
         UIntPtr destinationLevel,
-        MTLOrigin destinationOrigin)
-        => objc_msgSend(
+        MTLOrigin destinationOrigin
+    ) =>
+        objc_msgSend(
             NativePtr,
             sel_copyFromBuffer1,
             sourceBuffer.NativePtr,
@@ -41,7 +48,8 @@ public readonly struct MTLBlitCommandEncoder
             destinationTexture.NativePtr,
             destinationSlice,
             destinationLevel,
-            destinationOrigin);
+            destinationOrigin
+        );
 
     public void copyTextureToBuffer(
         MTLTexture sourceTexture,
@@ -52,8 +60,11 @@ public readonly struct MTLBlitCommandEncoder
         MTLBuffer destinationBuffer,
         UIntPtr destinationOffset,
         UIntPtr destinationBytesPerRow,
-        UIntPtr destinationBytesPerImage)
-        => objc_msgSend(NativePtr, sel_copyFromTexture0,
+        UIntPtr destinationBytesPerImage
+    ) =>
+        objc_msgSend(
+            NativePtr,
+            sel_copyFromTexture0,
             sourceTexture,
             sourceSlice,
             sourceLevel,
@@ -62,21 +73,24 @@ public readonly struct MTLBlitCommandEncoder
             destinationBuffer,
             destinationOffset,
             destinationBytesPerRow,
-            destinationBytesPerImage);
+            destinationBytesPerImage
+        );
 
-    public void generateMipmapsForTexture(MTLTexture texture)
-        => objc_msgSend(NativePtr, sel_generateMipmapsForTexture, texture.NativePtr);
+    public void generateMipmapsForTexture(MTLTexture texture) =>
+        objc_msgSend(NativePtr, sel_generateMipmapsForTexture, texture.NativePtr);
 
-    public void synchronizeResource(IntPtr resource) => objc_msgSend(NativePtr, sel_synchronizeResource, resource);
+    public void synchronizeResource(IntPtr resource) =>
+        objc_msgSend(NativePtr, sel_synchronizeResource, resource);
 
     public void endEncoding() => objc_msgSend(NativePtr, sel_endEncoding);
 
-    public void pushDebugGroup(NSString @string) => objc_msgSend(NativePtr, Selectors.pushDebugGroup, @string.NativePtr);
+    public void pushDebugGroup(NSString @string) =>
+        objc_msgSend(NativePtr, Selectors.pushDebugGroup, @string.NativePtr);
 
     public void popDebugGroup() => objc_msgSend(NativePtr, Selectors.popDebugGroup);
 
-    public void insertDebugSignpost(NSString @string)
-        => objc_msgSend(NativePtr, Selectors.insertDebugSignpost, @string.NativePtr);
+    public void insertDebugSignpost(NSString @string) =>
+        objc_msgSend(NativePtr, Selectors.insertDebugSignpost, @string.NativePtr);
 
     public void copyFromTexture(
         MTLTexture sourceTexture,
@@ -87,8 +101,11 @@ public readonly struct MTLBlitCommandEncoder
         MTLTexture destinationTexture,
         UIntPtr destinationSlice,
         UIntPtr destinationLevel,
-        MTLOrigin destinationOrigin)
-        => objc_msgSend(NativePtr, sel_copyFromTexture1,
+        MTLOrigin destinationOrigin
+    ) =>
+        objc_msgSend(
+            NativePtr,
+            sel_copyFromTexture1,
             sourceTexture,
             sourceSlice,
             sourceLevel,
@@ -97,12 +114,17 @@ public readonly struct MTLBlitCommandEncoder
             destinationTexture,
             destinationSlice,
             destinationLevel,
-            destinationOrigin);
+            destinationOrigin
+        );
 
-    static readonly Selector sel_copyFromBuffer0 = "copyFromBuffer:sourceOffset:toBuffer:destinationOffset:size:"u8;
-    static readonly Selector sel_copyFromBuffer1 = "copyFromBuffer:sourceOffset:sourceBytesPerRow:sourceBytesPerImage:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:"u8;
-    static readonly Selector sel_copyFromTexture0 = "copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toBuffer:destinationOffset:destinationBytesPerRow:destinationBytesPerImage:"u8;
-    static readonly Selector sel_copyFromTexture1 = "copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:"u8;
+    static readonly Selector sel_copyFromBuffer0 =
+        "copyFromBuffer:sourceOffset:toBuffer:destinationOffset:size:"u8;
+    static readonly Selector sel_copyFromBuffer1 =
+        "copyFromBuffer:sourceOffset:sourceBytesPerRow:sourceBytesPerImage:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:"u8;
+    static readonly Selector sel_copyFromTexture0 =
+        "copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toBuffer:destinationOffset:destinationBytesPerRow:destinationBytesPerImage:"u8;
+    static readonly Selector sel_copyFromTexture1 =
+        "copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:"u8;
     static readonly Selector sel_generateMipmapsForTexture = "generateMipmapsForTexture:"u8;
     static readonly Selector sel_synchronizeResource = "synchronizeResource:"u8;
     static readonly Selector sel_endEncoding = "endEncoding"u8;

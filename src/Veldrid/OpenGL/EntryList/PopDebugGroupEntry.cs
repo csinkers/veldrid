@@ -1,5 +1,3 @@
 ﻿namespace Veldrid.OpenGL.EntryList;
 
-internal struct PopDebugGroupEntry
-{
-}
+internal struct PopDebugGroupEntry { }

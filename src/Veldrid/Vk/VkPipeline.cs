@@ -39,12 +39,13 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
 
         VkGraphicsPipelineCreateInfo pipelineCI = new()
         {
-            sType = VkStructureType.VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO
+            sType = VkStructureType.VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         };
 
         // Blend State
         int attachmentsCount = description.BlendState.AttachmentStates.Length;
-        VkPipelineColorBlendAttachmentState* attachmentsPtr = stackalloc VkPipelineColorBlendAttachmentState[attachmentsCount];
+        VkPipelineColorBlendAttachmentState* attachmentsPtr =
+            stackalloc VkPipelineColorBlendAttachmentState[attachmentsCount];
         for (int i = 0; i < attachmentsCount; i++)
         {
             BlendAttachmentDescription vdDesc = description.BlendState.AttachmentStates[i];
@@ -57,7 +58,9 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 dstAlphaBlendFactor = VkFormats.VdToVkBlendFactor(vdDesc.DestinationAlphaFactor),
                 alphaBlendOp = VkFormats.VdToVkBlendOp(vdDesc.AlphaFunction),
                 blendEnable = (VkBool32)vdDesc.BlendEnabled,
-                colorWriteMask = VkFormats.VdToVkColorWriteMask(vdDesc.ColorWriteMask.GetOrDefault()),
+                colorWriteMask = VkFormats.VdToVkColorWriteMask(
+                    vdDesc.ColorWriteMask.GetOrDefault()
+                ),
             };
             attachmentsPtr[i] = attachmentState;
         }
@@ -66,7 +69,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
             attachmentCount = (uint)attachmentsCount,
-            pAttachments = attachmentsPtr
+            pAttachments = attachmentsPtr,
         };
 
         RgbaFloat blendFactor = description.BlendState.BlendFactor;
@@ -85,10 +88,11 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             cullMode = VkFormats.VdToVkCullMode(rsDesc.CullMode),
             polygonMode = VkFormats.VdToVkPolygonMode(rsDesc.FillMode),
             depthClampEnable = (VkBool32)!rsDesc.DepthClipEnabled,
-            frontFace = rsDesc.FrontFace == FrontFace.Clockwise
-                ? VkFrontFace.VK_FRONT_FACE_CLOCKWISE
-                : VkFrontFace.VK_FRONT_FACE_COUNTER_CLOCKWISE,
-            lineWidth = 1f
+            frontFace =
+                rsDesc.FrontFace == FrontFace.Clockwise
+                    ? VkFrontFace.VK_FRONT_FACE_CLOCKWISE
+                    : VkFrontFace.VK_FRONT_FACE_COUNTER_CLOCKWISE,
+            lineWidth = 1f,
         };
 
         pipelineCI.pRasterizationState = &rsCI;
@@ -103,7 +107,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
             dynamicStateCount = 2,
-            pDynamicStates = dynamicStates
+            pDynamicStates = dynamicStates,
         };
 
         pipelineCI.pDynamicState = &dynamicStateCI;
@@ -125,7 +129,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 compareOp = VkFormats.VdToVkCompareOp(vdDssDesc.StencilFront.Comparison),
                 compareMask = vdDssDesc.StencilReadMask,
                 writeMask = vdDssDesc.StencilWriteMask,
-                reference = vdDssDesc.StencilReference
+                reference = vdDssDesc.StencilReference,
             },
             back = new VkStencilOpState()
             {
@@ -135,19 +139,21 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 compareOp = VkFormats.VdToVkCompareOp(vdDssDesc.StencilBack.Comparison),
                 compareMask = vdDssDesc.StencilReadMask,
                 writeMask = vdDssDesc.StencilWriteMask,
-                reference = vdDssDesc.StencilReference
-            }
+                reference = vdDssDesc.StencilReference,
+            },
         };
 
         pipelineCI.pDepthStencilState = &dssCI;
 
         // Multisample
-        VkSampleCountFlags vkSampleCount = VkFormats.VdToVkSampleCount(description.Outputs.SampleCount);
+        VkSampleCountFlags vkSampleCount = VkFormats.VdToVkSampleCount(
+            description.Outputs.SampleCount
+        );
         VkPipelineMultisampleStateCreateInfo multisampleCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
             rasterizationSamples = vkSampleCount,
-            alphaToCoverageEnable = (VkBool32)description.BlendState.AlphaToCoverageEnabled
+            alphaToCoverageEnable = (VkBool32)description.BlendState.AlphaToCoverageEnabled,
         };
 
         pipelineCI.pMultisampleState = &multisampleCI;
@@ -156,22 +162,26 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-            topology = VkFormats.VdToVkPrimitiveTopology(description.PrimitiveTopology)
+            topology = VkFormats.VdToVkPrimitiveTopology(description.PrimitiveTopology),
         };
 
         pipelineCI.pInputAssemblyState = &inputAssemblyCI;
 
         // Vertex Input State
 
-        ReadOnlySpan<VertexLayoutDescription> inputDescriptions = description.ShaderSet.VertexLayouts;
+        ReadOnlySpan<VertexLayoutDescription> inputDescriptions = description
+            .ShaderSet
+            .VertexLayouts;
         uint bindingCount = (uint)inputDescriptions.Length;
         uint attributeCount = 0;
         for (int i = 0; i < inputDescriptions.Length; i++)
         {
             attributeCount += (uint)inputDescriptions[i].Elements.Length;
         }
-        VkVertexInputBindingDescription* bindingDescs = stackalloc VkVertexInputBindingDescription[(int)bindingCount];
-        VkVertexInputAttributeDescription* attributeDescs = stackalloc VkVertexInputAttributeDescription[(int)attributeCount];
+        VkVertexInputBindingDescription* bindingDescs =
+            stackalloc VkVertexInputBindingDescription[(int)bindingCount];
+        VkVertexInputAttributeDescription* attributeDescs =
+            stackalloc VkVertexInputAttributeDescription[(int)attributeCount];
 
         int targetIndex = 0;
         int targetLocation = 0;
@@ -181,10 +191,11 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             bindingDescs[binding] = new VkVertexInputBindingDescription()
             {
                 binding = (uint)binding,
-                inputRate = (inputDesc.InstanceStepRate != 0)
-                    ? VkVertexInputRate.VK_VERTEX_INPUT_RATE_INSTANCE
-                    : VkVertexInputRate.VK_VERTEX_INPUT_RATE_VERTEX,
-                stride = inputDesc.Stride
+                inputRate =
+                    (inputDesc.InstanceStepRate != 0)
+                        ? VkVertexInputRate.VK_VERTEX_INPUT_RATE_INSTANCE
+                        : VkVertexInputRate.VK_VERTEX_INPUT_RATE_VERTEX,
+                stride = inputDesc.Stride,
             };
 
             uint currentOffset = 0;
@@ -197,7 +208,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                     format = VkFormats.VdToVkVertexElementFormat(inputElement.Format),
                     binding = (uint)binding,
                     location = (uint)(targetLocation + location),
-                    offset = inputElement.Offset != 0 ? inputElement.Offset : currentOffset
+                    offset = inputElement.Offset != 0 ? inputElement.Offset : currentOffset,
                 };
 
                 targetIndex += 1;
@@ -213,7 +224,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             vertexBindingDescriptionCount = bindingCount,
             pVertexBindingDescriptions = bindingDescs,
             vertexAttributeDescriptionCount = attributeCount,
-            pVertexAttributeDescriptions = attributeDescs
+            pVertexAttributeDescriptions = attributeDescs,
         };
 
         pipelineCI.pVertexInputState = &vertexInputCI;
@@ -231,7 +242,8 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             }
             byte* fullSpecData = stackalloc byte[(int)specDataSize];
             int specializationCount = specDescs.Length;
-            VkSpecializationMapEntry* mapEntries = stackalloc VkSpecializationMapEntry[specializationCount];
+            VkSpecializationMapEntry* mapEntries =
+                stackalloc VkSpecializationMapEntry[specializationCount];
             uint specOffset = 0;
             for (int i = 0; i < specializationCount; i++)
             {
@@ -260,8 +272,11 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
                 module = vkShader.ShaderModule,
                 stage = VkFormats.VdToVkShaderStages(shader.Stage),
-                pName = shader.EntryPoint == "main" ? CommonStrings.main : new FixedUtf8String(shader.EntryPoint),
-                pSpecializationInfo = &specializationInfo
+                pName =
+                    shader.EntryPoint == "main"
+                        ? CommonStrings.main
+                        : new FixedUtf8String(shader.EntryPoint),
+                pSpecializationInfo = &specializationInfo,
             };
             stages.Add(stageCI);
         }
@@ -274,7 +289,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
             viewportCount = 1,
-            scissorCount = 1
+            scissorCount = 1,
         };
 
         pipelineCI.pViewportState = &viewportStateCI;
@@ -284,13 +299,15 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         VkDescriptorSetLayout* dsls = stackalloc VkDescriptorSetLayout[resourceLayouts.Length];
         for (int i = 0; i < resourceLayouts.Length; i++)
         {
-            dsls[i] = Util.AssertSubtype<ResourceLayout, VkResourceLayout>(resourceLayouts[i]).DescriptorSetLayout;
+            dsls[i] = Util.AssertSubtype<ResourceLayout, VkResourceLayout>(
+                resourceLayouts[i]
+            ).DescriptorSetLayout;
         }
         VkPipelineLayoutCreateInfo pipelineLayoutCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             setLayoutCount = (uint)resourceLayouts.Length,
-            pSetLayouts = dsls
+            pSetLayouts = dsls,
         };
 
         VkPipelineLayout pipelineLayout;
@@ -309,11 +326,15 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         StackList<VkAttachmentDescription> colorAttachmentDescs = new();
         StackList<VkAttachmentReference> colorAttachmentRefs = new();
 
-        ReadOnlySpan<OutputAttachmentDescription> outputColorAttachmentDescs = outputDesc.ColorAttachments;
+        ReadOnlySpan<OutputAttachmentDescription> outputColorAttachmentDescs =
+            outputDesc.ColorAttachments;
         for (int i = 0; i < outputColorAttachmentDescs.Length; i++)
         {
             ref VkAttachmentDescription desc = ref colorAttachmentDescs[i];
-            desc.format = VkFormats.VdToVkPixelFormat(outputColorAttachmentDescs[i].Format, default);
+            desc.format = VkFormats.VdToVkPixelFormat(
+                outputColorAttachmentDescs[i].Format,
+                default
+            );
             desc.samples = vkSampleCount;
             desc.loadOp = VkAttachmentLoadOp.VK_ATTACHMENT_LOAD_OP_DONT_CARE;
             desc.storeOp = VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_STORE;
@@ -333,7 +354,10 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         {
             PixelFormat depthFormat = outputDesc.DepthAttachment.GetValueOrDefault().Format;
             bool hasStencil = FormatHelpers.IsStencilFormat(depthFormat);
-            depthAttachmentDesc.format = VkFormats.VdToVkPixelFormat(depthFormat, TextureUsage.DepthStencil);
+            depthAttachmentDesc.format = VkFormats.VdToVkPixelFormat(
+                depthFormat,
+                TextureUsage.DepthStencil
+            );
             depthAttachmentDesc.samples = vkSampleCount;
             depthAttachmentDesc.loadOp = VkAttachmentLoadOp.VK_ATTACHMENT_LOAD_OP_DONT_CARE;
             depthAttachmentDesc.storeOp = VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_STORE;
@@ -342,17 +366,19 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 ? VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_STORE
                 : VkAttachmentStoreOp.VK_ATTACHMENT_STORE_OP_DONT_CARE;
             depthAttachmentDesc.initialLayout = VkImageLayout.VK_IMAGE_LAYOUT_UNDEFINED;
-            depthAttachmentDesc.finalLayout = VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            depthAttachmentDesc.finalLayout =
+                VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
             depthAttachmentRef.attachment = (uint)outputColorAttachmentDescs.Length;
-            depthAttachmentRef.layout = VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            depthAttachmentRef.layout =
+                VkImageLayout.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
         }
 
         VkSubpassDescription subpass = new()
         {
             pipelineBindPoint = VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,
             colorAttachmentCount = (uint)outputColorAttachmentDescs.Length,
-            pColorAttachments = (VkAttachmentReference*)colorAttachmentRefs.Data
+            pColorAttachments = (VkAttachmentReference*)colorAttachmentRefs.Data,
         };
 
         for (int i = 0; i < colorAttachmentDescs.Count; i++)
@@ -371,7 +397,9 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             srcSubpass = VK_SUBPASS_EXTERNAL,
             srcStageMask = VkPipelineStageFlags.VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             dstStageMask = VkPipelineStageFlags.VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-            dstAccessMask = VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+            dstAccessMask =
+                VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_READ_BIT
+                | VkAccessFlags.VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
         };
 
         VkRenderPassCreateInfo renderPassCI = new()
@@ -382,7 +410,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             subpassCount = 1,
             pSubpasses = &subpass,
             dependencyCount = 1,
-            pDependencies = &subpassDependency
+            pDependencies = &subpassDependency,
         };
 
         VkRenderPass renderPass;
@@ -393,7 +421,14 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         pipelineCI.renderPass = _renderPass;
 
         VulkanPipeline devicePipeline;
-        VkResult result = vkCreateGraphicsPipelines(_gd.Device, default, 1, &pipelineCI, null, &devicePipeline);
+        VkResult result = vkCreateGraphicsPipelines(
+            _gd.Device,
+            default,
+            1,
+            &pipelineCI,
+            null,
+            &devicePipeline
+        );
         CheckResult(result);
         _devicePipeline = devicePipeline;
 
@@ -418,14 +453,16 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         VkDescriptorSetLayout* dsls = stackalloc VkDescriptorSetLayout[resourceLayouts.Length];
         for (int i = 0; i < resourceLayouts.Length; i++)
         {
-            dsls[i] = Util.AssertSubtype<ResourceLayout, VkResourceLayout>(resourceLayouts[i]).DescriptorSetLayout;
+            dsls[i] = Util.AssertSubtype<ResourceLayout, VkResourceLayout>(
+                resourceLayouts[i]
+            ).DescriptorSetLayout;
         }
 
         VkPipelineLayoutCreateInfo pipelineLayoutCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             setLayoutCount = (uint)resourceLayouts.Length,
-            pSetLayouts = dsls
+            pSetLayouts = dsls,
         };
 
         VkPipelineLayout pipelineLayout;
@@ -445,7 +482,8 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             }
             byte* fullSpecData = stackalloc byte[(int)specDataSize];
             int specializationCount = specDescs.Length;
-            VkSpecializationMapEntry* mapEntries = stackalloc VkSpecializationMapEntry[specializationCount];
+            VkSpecializationMapEntry* mapEntries =
+                stackalloc VkSpecializationMapEntry[specializationCount];
             uint specOffset = 0;
             for (int i = 0; i < specializationCount; i++)
             {
@@ -471,15 +509,18 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             module = vkShader.ShaderModule,
             stage = VkFormats.VdToVkShaderStages(shader.Stage),
-            pName = shader.EntryPoint == "main" ? CommonStrings.main : new FixedUtf8String(shader.EntryPoint),
-            pSpecializationInfo = &specializationInfo
+            pName =
+                shader.EntryPoint == "main"
+                    ? CommonStrings.main
+                    : new FixedUtf8String(shader.EntryPoint),
+            pSpecializationInfo = &specializationInfo,
         };
 
         VkComputePipelineCreateInfo pipelineCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
             stage = stageCI,
-            layout = _pipelineLayout
+            layout = _pipelineLayout,
         };
 
         VulkanPipeline devicePipeline;
@@ -489,7 +530,8 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
             1,
             &pipelineCI,
             null,
-            &devicePipeline);
+            &devicePipeline
+        );
         CheckResult(result);
         _devicePipeline = devicePipeline;
 

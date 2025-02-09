@@ -1,6 +1,6 @@
-﻿using Vortice.Direct3D11;
+﻿using System;
 using System.Diagnostics;
-using System;
+using Vortice.Direct3D11;
 
 namespace Veldrid.D3D11;
 
@@ -74,7 +74,8 @@ internal sealed class D3D11Pipeline : Pipeline
             out ID3D11BlendState blendState,
             out ID3D11DepthStencilState depthStencilState,
             out ID3D11RasterizerState rasterizerState,
-            out ID3D11InputLayout? inputLayout);
+            out ID3D11InputLayout? inputLayout
+        );
 
         BlendState = blendState;
         BlendFactor = description.BlendState.BlendFactor;
@@ -87,7 +88,9 @@ internal sealed class D3D11Pipeline : Pipeline
         ResourceLayouts = new D3D11ResourceLayout[genericLayouts.Length];
         for (int i = 0; i < ResourceLayouts.Length; i++)
         {
-            ResourceLayouts[i] = Util.AssertSubtype<ResourceLayout, D3D11ResourceLayout>(genericLayouts[i]);
+            ResourceLayouts[i] = Util.AssertSubtype<ResourceLayout, D3D11ResourceLayout>(
+                genericLayouts[i]
+            );
         }
 
         Debug.Assert(vsBytecode != null || ComputeShader != null);
@@ -116,7 +119,9 @@ internal sealed class D3D11Pipeline : Pipeline
         ResourceLayouts = new D3D11ResourceLayout[genericLayouts.Length];
         for (int i = 0; i < ResourceLayouts.Length; i++)
         {
-            ResourceLayouts[i] = Util.AssertSubtype<ResourceLayout, D3D11ResourceLayout>(genericLayouts[i]);
+            ResourceLayouts[i] = Util.AssertSubtype<ResourceLayout, D3D11ResourceLayout>(
+                genericLayouts[i]
+            );
         }
     }
 

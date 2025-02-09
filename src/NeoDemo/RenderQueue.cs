@@ -72,8 +72,9 @@ public class RenderQueue : IEnumerable<Renderable>
     public void Sort(Comparer<RenderOrderKey> keyComparer)
     {
         _indices.Sort(
-            (RenderItemIndex first, RenderItemIndex second)
-                => keyComparer.Compare(first.Key, second.Key));
+            (RenderItemIndex first, RenderItemIndex second) =>
+                keyComparer.Compare(first.Key, second.Key)
+        );
     }
 
     public void Sort(Comparer<RenderItemIndex> comparer)
@@ -87,6 +88,7 @@ public class RenderQueue : IEnumerable<Renderable>
     }
 
     IEnumerator<Renderable> IEnumerable<Renderable>.GetEnumerator() => GetEnumerator();
+
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public struct Enumerator(List<RenderItemIndex> indices, List<Renderable> renderables)
@@ -98,9 +100,7 @@ public class RenderQueue : IEnumerable<Renderable>
         public Renderable Current => _currentItem;
         object IEnumerator.Current => _currentItem;
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         public bool MoveNext()
         {

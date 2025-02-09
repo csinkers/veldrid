@@ -5,5 +5,9 @@ using Xunit;
 
 namespace Veldrid.Tests.Android
 {
-    public record AssemblyRunInfo(Assembly Assembly, TestAssemblyConfiguration Configuration, List<TestCaseViewModel> TestCases);
+    public record AssemblyRunInfo(
+        Assembly Assembly,
+        TestAssemblyConfiguration Configuration,
+        List<TestCaseViewModel> TestCases
+    );
 }

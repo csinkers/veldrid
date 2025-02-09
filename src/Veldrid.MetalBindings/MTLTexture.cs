@@ -1,6 +1,6 @@
-using static Veldrid.MetalBindings.ObjectiveCRuntime;
 using System;
 using System.Runtime.InteropServices;
+using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
@@ -17,28 +17,41 @@ public readonly unsafe struct MTLTexture(IntPtr ptr)
         UIntPtr slice,
         void* pixelBytes,
         UIntPtr bytesPerRow,
-        UIntPtr bytesPerImage)
+        UIntPtr bytesPerImage
+    )
     {
-        objc_msgSend(NativePtr, sel_replaceRegion,
+        objc_msgSend(
+            NativePtr,
+            sel_replaceRegion,
             region,
             mipmapLevel,
             slice,
             (IntPtr)pixelBytes,
             bytesPerRow,
-            bytesPerImage);
+            bytesPerImage
+        );
     }
 
     public MTLTexture newTextureView(
         MTLPixelFormat pixelFormat,
         MTLTextureType textureType,
         NSRange levelRange,
-        NSRange sliceRange)
+        NSRange sliceRange
+    )
     {
-        IntPtr ret = IntPtr_objc_msgSend(NativePtr, sel_newTextureView,
-            (uint)pixelFormat, (uint)textureType, levelRange, sliceRange);
+        IntPtr ret = IntPtr_objc_msgSend(
+            NativePtr,
+            sel_newTextureView,
+            (uint)pixelFormat,
+            (uint)textureType,
+            levelRange,
+            sliceRange
+        );
         return new MTLTexture(ret);
     }
 
-    static readonly Selector sel_replaceRegion = "replaceRegion:mipmapLevel:slice:withBytes:bytesPerRow:bytesPerImage:"u8;
-    static readonly Selector sel_newTextureView = "newTextureViewWithPixelFormat:textureType:levels:slices:"u8;
+    static readonly Selector sel_replaceRegion =
+        "replaceRegion:mipmapLevel:slice:withBytes:bytesPerRow:bytesPerImage:"u8;
+    static readonly Selector sel_newTextureView =
+        "newTextureViewWithPixelFormat:textureType:levels:slices:"u8;
 }

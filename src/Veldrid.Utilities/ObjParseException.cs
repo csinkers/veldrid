@@ -7,11 +7,9 @@ namespace Veldrid.Utilities;
 /// </summary>
 public class ObjParseException : Exception
 {
-    public ObjParseException(string message) : base(message)
-    {
-    }
+    public ObjParseException(string message)
+        : base(message) { }
 
-    public ObjParseException(string message, Exception innerException) : base(message, innerException)
-    {
-    }
+    public ObjParseException(string message, Exception innerException)
+        : base(message, innerException) { }
 }

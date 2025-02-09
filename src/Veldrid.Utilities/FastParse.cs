@@ -50,7 +50,12 @@ internal static class FastParse
         return false;
     }
 
-    public static bool TryParseDouble(ReadOnlySpan<char> s, out double result, out bool hasFraction, char decimalSeparator = '.')
+    public static bool TryParseDouble(
+        ReadOnlySpan<char> s,
+        out double result,
+        out bool hasFraction,
+        char decimalSeparator = '.'
+    )
     {
         hasFraction = false;
 

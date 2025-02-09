@@ -7,7 +7,8 @@ internal struct DescriptorResourceCounts(
     uint samplerCount,
     uint storageBufferCount,
     uint storageBufferDynamicCount,
-    uint storageImageCount)
+    uint storageImageCount
+)
 {
     public readonly uint UniformBufferCount = uniformBufferCount;
     public readonly uint SampledImageCount = sampledImageCount;

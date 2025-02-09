@@ -21,7 +21,8 @@ internal sealed class MTLSwapchainFramebuffer : MTLFramebufferBase
         uint width,
         uint height,
         PixelFormat? depthFormat,
-        PixelFormat colorFormat)
+        PixelFormat colorFormat
+    )
         : base()
     {
         _gd = gd;
@@ -55,8 +56,17 @@ internal sealed class MTLSwapchainFramebuffer : MTLFramebufferBase
         }
 
         _depthTexture = Util.AssertSubtype<Texture, MTLTexture>(
-            _gd.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
-                width, height, 1, 1, _depthFormat.Value, TextureUsage.DepthStencil)));
+            _gd.ResourceFactory.CreateTexture(
+                TextureDescription.Texture2D(
+                    width,
+                    height,
+                    1,
+                    1,
+                    _depthFormat.Value,
+                    TextureUsage.DepthStencil
+                )
+            )
+        );
     }
 
     public void Resize(uint width, uint height)

@@ -8,8 +8,7 @@ internal class OpenVRMirrorTexture : IDisposable
 {
     readonly List<IDisposable> _disposables = new();
 
-    readonly Dictionary<OutputDescription, TextureBlitter> _blitters
-        = new();
+    readonly Dictionary<OutputDescription, TextureBlitter> _blitters = new();
 
     OpenVRContext _context;
     ResourceSet _leftSet;
@@ -47,24 +46,40 @@ internal class OpenVRMirrorTexture : IDisposable
 
     void BlitLeftEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
     {
-        GetSampleRatio(_context.LeftEyeFramebuffer, viewportAspect, out Vector2 minUV, out Vector2 maxUV);
+        GetSampleRatio(
+            _context.LeftEyeFramebuffer,
+            viewportAspect,
+            out Vector2 minUV,
+            out Vector2 maxUV
+        );
         ResourceSet leftEyeSet = GetLeftEyeSet(blitter.ResourceLayout);
         blitter.Render(cl, leftEyeSet, minUV, maxUV);
     }
 
     void BlitRightEye(CommandList cl, TextureBlitter blitter, float viewportAspect)
     {
-        GetSampleRatio(_context.RightEyeFramebuffer, viewportAspect, out Vector2 minUV, out Vector2 maxUV);
+        GetSampleRatio(
+            _context.RightEyeFramebuffer,
+            viewportAspect,
+            out Vector2 minUV,
+            out Vector2 maxUV
+        );
         ResourceSet rightEyeSet = GetRightEyeSet(blitter.ResourceLayout);
         blitter.Render(cl, rightEyeSet, minUV, maxUV);
     }
 
-    void GetSampleRatio(Framebuffer eyeFB, float viewportAspect, out Vector2 minUV, out Vector2 maxUV)
+    void GetSampleRatio(
+        Framebuffer eyeFB,
+        float viewportAspect,
+        out Vector2 minUV,
+        out Vector2 maxUV
+    )
     {
         uint eyeWidth = eyeFB.Width;
         uint eyeHeight = eyeFB.Height;
 
-        uint sampleWidth, sampleHeight;
+        uint sampleWidth,
+            sampleHeight;
         if (viewportAspect > 1)
         {
             sampleWidth = eyeWidth;
@@ -113,7 +128,9 @@ internal class OpenVRMirrorTexture : IDisposable
         Texture target = fb.ColorTargets[0].Target;
         TextureView view = factory.CreateTextureView(target);
         _disposables.Add(view);
-        ResourceSet rs = factory.CreateResourceSet(new ResourceSetDescription(rl, view, _context.GraphicsDevice.PointSampler));
+        ResourceSet rs = factory.CreateResourceSet(
+            new ResourceSetDescription(rl, view, _context.GraphicsDevice.PointSampler)
+        );
         _disposables.Add(rs);
 
         return rs;
@@ -127,7 +144,8 @@ internal class OpenVRMirrorTexture : IDisposable
                 _context.GraphicsDevice,
                 _context.GraphicsDevice.ResourceFactory,
                 outputDescription,
-                srgbOutput: false);
+                srgbOutput: false
+            );
 
             _blitters.Add(outputDescription, ret);
         }

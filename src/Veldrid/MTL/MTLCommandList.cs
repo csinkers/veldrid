@@ -4,8 +4,16 @@ using Veldrid.MetalBindings;
 
 namespace Veldrid.MTL;
 
-internal sealed unsafe class MTLCommandList(in CommandListDescription description, MTLGraphicsDevice gd)
-    : CommandList(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
+internal sealed unsafe class MTLCommandList(
+    in CommandListDescription description,
+    MTLGraphicsDevice gd
+)
+    : CommandList(
+        description,
+        gd.Features,
+        gd.UniformBufferMinOffsetAlignment,
+        gd.StructuredBufferMinOffsetAlignment
+    )
 {
     MTLCommandBuffer _cb;
     MTLFramebufferBase? _mtlFramebuffer;
@@ -87,10 +95,16 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
         PreComputeCommand();
         _cce.dispatchThreadGroups(
             new MTLSize(groupCountX, groupCountY, groupCountZ),
-            _computePipeline.ThreadsPerThreadgroup);
+            _computePipeline.ThreadsPerThreadgroup
+        );
     }
 
-    private protected override void DrawCore(uint vertexCount, uint instanceCount, uint vertexStart, uint instanceStart)
+    private protected override void DrawCore(
+        uint vertexCount,
+        uint instanceCount,
+        uint vertexStart,
+        uint instanceStart
+    )
     {
         if (PreDrawCommand())
         {
@@ -100,7 +114,8 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     _graphicsPipeline.PrimitiveType,
                     vertexStart,
                     vertexCount,
-                    instanceCount);
+                    instanceCount
+                );
             }
             else
             {
@@ -109,13 +124,19 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     vertexStart,
                     vertexCount,
                     instanceCount,
-                    instanceStart);
-
+                    instanceStart
+                );
             }
         }
     }
 
-    private protected override void DrawIndexedCore(uint indexCount, uint instanceCount, uint indexStart, int vertexOffset, uint instanceStart)
+    private protected override void DrawIndexedCore(
+        uint indexCount,
+        uint instanceCount,
+        uint indexStart,
+        int vertexOffset,
+        uint instanceStart
+    )
     {
         if (PreDrawCommand())
         {
@@ -130,7 +151,8 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     _indexType,
                     _indexBuffer.DeviceBuffer,
                     indexBufferOffset,
-                    instanceCount);
+                    instanceCount
+                );
             }
             else
             {
@@ -142,7 +164,8 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     indexBufferOffset,
                     instanceCount,
                     vertexOffset,
-                    instanceStart);
+                    instanceStart
+                );
             }
         }
     }
@@ -179,7 +202,10 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
             }
 
             int graphicsSetCount = (int)_graphicsResourceSetCount;
-            Span<BoundResourceSetInfo> graphicsSets = _graphicsResourceSets.AsSpan(0, graphicsSetCount);
+            Span<BoundResourceSetInfo> graphicsSets = _graphicsResourceSets.AsSpan(
+                0,
+                graphicsSetCount
+            );
             Span<bool> graphicsSetsActive = _graphicsResourceSetsActive.AsSpan(0, graphicsSetCount);
             for (int i = 0; i < graphicsSetCount; i++)
             {
@@ -194,20 +220,17 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
             {
                 if (!_vertexBuffersActive[i])
                 {
-                    UIntPtr index = _graphicsPipeline.ResourceBindingModel == ResourceBindingModel.Improved
-                        ? _nonVertexBufferCount + i
-                        : i;
-                    _rce.setVertexBuffer(
-                        _vertexBuffers[i].DeviceBuffer,
-                        _vbOffsets[i],
-                        index);
+                    UIntPtr index =
+                        _graphicsPipeline.ResourceBindingModel == ResourceBindingModel.Improved
+                            ? _nonVertexBufferCount + i
+                            : i;
+                    _rce.setVertexBuffer(_vertexBuffers[i].DeviceBuffer, _vbOffsets[i], index);
                 }
             }
             return true;
         }
         return false;
     }
-
 
     void FlushViewports()
     {
@@ -318,19 +341,33 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
             viewport.Width,
             viewport.Height,
             viewport.MinDepth,
-            viewport.MaxDepth);
+            viewport.MaxDepth
+        );
     }
 
-    private protected override void UpdateBufferCore(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
+    private protected override void UpdateBufferCore(
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr source,
+        uint sizeInBytes
+    )
     {
-        bool useComputeCopy = (bufferOffsetInBytes % 4 != 0)
-                              || (sizeInBytes % 4 != 0 && bufferOffsetInBytes != 0 && sizeInBytes != buffer.SizeInBytes);
+        bool useComputeCopy =
+            (bufferOffsetInBytes % 4 != 0)
+            || (
+                sizeInBytes % 4 != 0
+                && bufferOffsetInBytes != 0
+                && sizeInBytes != buffer.SizeInBytes
+            );
 
         MTLBuffer dstMTLBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(buffer);
 
         // TODO: Cache these, and rely on the command buffer's completion callback to add them back to a shared pool.
         using MTLBuffer copySrc = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(
-            gd.ResourceFactory.CreateBuffer(new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)));
+            gd.ResourceFactory.CreateBuffer(
+                new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)
+            )
+        );
 
         gd.UpdateBuffer(copySrc, 0, source, sizeInBytes);
 
@@ -345,16 +382,20 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
             uint sizeRoundFactor = (4 - (sizeInBytes % 4)) % 4;
             EnsureBlitEncoder();
             _bce.copy(
-                copySrc.DeviceBuffer, UIntPtr.Zero,
-                dstMTLBuffer.DeviceBuffer, bufferOffsetInBytes,
-                sizeInBytes + sizeRoundFactor);
+                copySrc.DeviceBuffer,
+                UIntPtr.Zero,
+                dstMTLBuffer.DeviceBuffer,
+                bufferOffsetInBytes,
+                sizeInBytes + sizeRoundFactor
+            );
         }
     }
 
     protected override void CopyBufferCore(
         DeviceBuffer source,
         DeviceBuffer destination,
-        ReadOnlySpan<BufferCopyCommand> commands)
+        ReadOnlySpan<BufferCopyCommand> commands
+    )
     {
         MTLBuffer mtlSrc = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(source);
         MTLBuffer mtlDst = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(destination);
@@ -363,7 +404,11 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
 
         foreach (ref readonly BufferCopyCommand command in commands)
         {
-            if (command.ReadOffset % 4 != 0 || command.WriteOffset % 4 != 0 || command.Length % 4 != 0)
+            if (
+                command.ReadOffset % 4 != 0
+                || command.WriteOffset % 4 != 0
+                || command.Length % 4 != 0
+            )
             {
                 useComputeCopy = true;
                 break;
@@ -386,14 +431,21 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                 }
 
                 _bce.copy(
-                    mtlSrc.DeviceBuffer, (UIntPtr)command.ReadOffset,
-                    mtlDst.DeviceBuffer, (UIntPtr)command.WriteOffset,
-                    (UIntPtr)command.Length);
+                    mtlSrc.DeviceBuffer,
+                    (UIntPtr)command.ReadOffset,
+                    mtlDst.DeviceBuffer,
+                    (UIntPtr)command.WriteOffset,
+                    (UIntPtr)command.Length
+                );
             }
         }
     }
 
-    void CopyBufferUnaligned(MTLBuffer mtlSrc, MTLBuffer mtlDst, ReadOnlySpan<BufferCopyCommand> commands)
+    void CopyBufferUnaligned(
+        MTLBuffer mtlSrc,
+        MTLBuffer mtlDst,
+        ReadOnlySpan<BufferCopyCommand> commands
+    )
     {
         // Unaligned copy -- use special compute shader.
         EnsureComputeEncoder();
@@ -419,9 +471,23 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
     }
 
     protected override void CopyTextureCore(
-        Texture source, uint srcX, uint srcY, uint srcZ, uint srcMipLevel, uint srcBaseArrayLayer,
-        Texture destination, uint dstX, uint dstY, uint dstZ, uint dstMipLevel, uint dstBaseArrayLayer,
-        uint width, uint height, uint depth, uint layerCount)
+        Texture source,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
+        uint srcMipLevel,
+        uint srcBaseArrayLayer,
+        Texture destination,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
+        uint dstMipLevel,
+        uint dstBaseArrayLayer,
+        uint width,
+        uint height,
+        uint depth,
+        uint layerCount
+    )
     {
         EnsureBlitEncoder();
         MTLTexture srcMTLTexture = Util.AssertSubtype<Texture, MTLTexture>(source);
@@ -435,37 +501,43 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
             MetalBindings.MTLBuffer srcBuffer = srcMTLTexture.StagingBuffer;
             MetalBindings.MTLTexture dstTexture = dstMTLTexture.DeviceTexture;
 
-            Util.GetMipDimensions(srcMTLTexture, srcMipLevel, out uint mipWidth, out uint mipHeight, out _);
+            Util.GetMipDimensions(
+                srcMTLTexture,
+                srcMipLevel,
+                out uint mipWidth,
+                out uint mipHeight,
+                out _
+            );
             for (uint layer = 0; layer < layerCount; layer++)
             {
                 uint blockSize = FormatHelpers.IsCompressedFormat(srcMTLTexture.Format) ? 4u : 1u;
                 uint compressedSrcX = srcX / blockSize;
                 uint compressedSrcY = srcY / blockSize;
-                uint blockSizeInBytes = blockSize == 1
-                    ? FormatSizeHelpers.GetSizeInBytes(srcMTLTexture.Format)
-                    : FormatHelpers.GetBlockSizeInBytes(srcMTLTexture.Format);
+                uint blockSizeInBytes =
+                    blockSize == 1
+                        ? FormatSizeHelpers.GetSizeInBytes(srcMTLTexture.Format)
+                        : FormatHelpers.GetBlockSizeInBytes(srcMTLTexture.Format);
 
                 ulong srcSubresourceBase = Util.ComputeSubresourceOffset(
                     srcMTLTexture,
                     srcMipLevel,
-                    layer + srcBaseArrayLayer);
+                    layer + srcBaseArrayLayer
+                );
                 srcMTLTexture.GetSubresourceLayout(
                     srcMipLevel,
                     srcBaseArrayLayer + layer,
                     out uint srcRowPitch,
-                    out uint srcDepthPitch);
-                ulong sourceOffset = srcSubresourceBase
-                                     + srcDepthPitch * srcZ
-                                     + srcRowPitch * compressedSrcY
-                                     + blockSizeInBytes * compressedSrcX;
+                    out uint srcDepthPitch
+                );
+                ulong sourceOffset =
+                    srcSubresourceBase
+                    + srcDepthPitch * srcZ
+                    + srcRowPitch * compressedSrcY
+                    + blockSizeInBytes * compressedSrcX;
 
-                uint copyWidth = width > mipWidth && width <= blockSize
-                    ? mipWidth
-                    : width;
+                uint copyWidth = width > mipWidth && width <= blockSize ? mipWidth : width;
 
-                uint copyHeight = height > mipHeight && height <= blockSize
-                    ? mipHeight
-                    : height;
+                uint copyHeight = height > mipHeight && height <= blockSize ? mipHeight : height;
 
                 MTLSize sourceSize = new(copyWidth, copyHeight, depth);
                 if (dstMTLTexture.Type != TextureType.Texture3D)
@@ -481,7 +553,8 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     dstTexture,
                     dstBaseArrayLayer + layer,
                     dstMipLevel,
-                    new MTLOrigin(dstX, dstY, dstZ));
+                    new MTLOrigin(dstX, dstY, dstZ)
+                );
             }
         }
         else if (srcIsStaging && dstIsStaging)
@@ -492,22 +565,26 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                 ulong srcSubresourceBase = Util.ComputeSubresourceOffset(
                     srcMTLTexture,
                     srcMipLevel,
-                    layer + srcBaseArrayLayer);
+                    layer + srcBaseArrayLayer
+                );
                 srcMTLTexture.GetSubresourceLayout(
                     srcMipLevel,
                     srcBaseArrayLayer + layer,
                     out uint srcRowPitch,
-                    out uint srcDepthPitch);
+                    out uint srcDepthPitch
+                );
 
                 ulong dstSubresourceBase = Util.ComputeSubresourceOffset(
                     dstMTLTexture,
                     dstMipLevel,
-                    layer + dstBaseArrayLayer);
+                    layer + dstBaseArrayLayer
+                );
                 dstMTLTexture.GetSubresourceLayout(
                     dstMipLevel,
                     dstBaseArrayLayer + layer,
                     out uint dstRowPitch,
-                    out uint dstDepthPitch);
+                    out uint dstDepthPitch
+                );
 
                 uint blockSize = FormatHelpers.IsCompressedFormat(dstMTLTexture.Format) ? 4u : 1u;
                 if (blockSize == 1)
@@ -517,20 +594,23 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     for (uint zz = 0; zz < depth; zz++)
                     for (uint yy = 0; yy < height; yy++)
                     {
-                        ulong srcRowOffset = srcSubresourceBase
-                                             + srcDepthPitch * (zz + srcZ)
-                                             + srcRowPitch * (yy + srcY)
-                                             + pixelSize * srcX;
-                        ulong dstRowOffset = dstSubresourceBase
-                                             + dstDepthPitch * (zz + dstZ)
-                                             + dstRowPitch * (yy + dstY)
-                                             + pixelSize * dstX;
+                        ulong srcRowOffset =
+                            srcSubresourceBase
+                            + srcDepthPitch * (zz + srcZ)
+                            + srcRowPitch * (yy + srcY)
+                            + pixelSize * srcX;
+                        ulong dstRowOffset =
+                            dstSubresourceBase
+                            + dstDepthPitch * (zz + dstZ)
+                            + dstRowPitch * (yy + dstY)
+                            + pixelSize * dstX;
                         _bce.copy(
                             srcMTLTexture.StagingBuffer,
                             (UIntPtr)srcRowOffset,
                             dstMTLTexture.StagingBuffer,
                             (UIntPtr)dstRowOffset,
-                            copySize);
+                            copySize
+                        );
                     }
                 }
                 else // blockSize != 1
@@ -549,20 +629,23 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     for (uint zz = 0; zz < depth; zz++)
                     for (uint row = 0; row < numRows; row++)
                     {
-                        ulong srcRowOffset = srcSubresourceBase
-                                             + srcDepthPitch * (zz + srcZ)
-                                             + srcRowPitch * (row + compressedSrcY)
-                                             + blockSizeInBytes * compressedSrcX;
-                        ulong dstRowOffset = dstSubresourceBase
-                                             + dstDepthPitch * (zz + dstZ)
-                                             + dstRowPitch * (row + compressedDstY)
-                                             + blockSizeInBytes * compressedDstX;
+                        ulong srcRowOffset =
+                            srcSubresourceBase
+                            + srcDepthPitch * (zz + srcZ)
+                            + srcRowPitch * (row + compressedSrcY)
+                            + blockSizeInBytes * compressedSrcX;
+                        ulong dstRowOffset =
+                            dstSubresourceBase
+                            + dstDepthPitch * (zz + dstZ)
+                            + dstRowPitch * (row + compressedDstY)
+                            + blockSizeInBytes * compressedDstX;
                         _bce.copy(
                             srcMTLTexture.StagingBuffer,
                             (UIntPtr)srcRowOffset,
                             dstMTLTexture.StagingBuffer,
                             (UIntPtr)dstRowOffset,
-                            rowPitch);
+                            rowPitch
+                        );
                     }
                 }
             }
@@ -578,24 +661,41 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     dstMipLevel,
                     dstBaseArrayLayer + layer,
                     out uint dstBytesPerRow,
-                    out uint dstBytesPerImage);
+                    out uint dstBytesPerImage
+                );
 
-                Util.GetMipDimensions(srcMTLTexture, dstMipLevel, out uint mipWidth, out uint mipHeight, out _);
+                Util.GetMipDimensions(
+                    srcMTLTexture,
+                    dstMipLevel,
+                    out uint mipWidth,
+                    out uint mipHeight,
+                    out _
+                );
                 uint blockSize = FormatHelpers.IsCompressedFormat(srcMTLTexture.Format) ? 4u : 1u;
                 uint bufferRowLength = Math.Max(mipWidth, blockSize);
                 uint bufferImageHeight = Math.Max(mipHeight, blockSize);
                 uint compressedDstX = dstX / blockSize;
                 uint compressedDstY = dstY / blockSize;
-                uint blockSizeInBytes = blockSize == 1
-                    ? FormatSizeHelpers.GetSizeInBytes(srcMTLTexture.Format)
-                    : FormatHelpers.GetBlockSizeInBytes(srcMTLTexture.Format);
+                uint blockSizeInBytes =
+                    blockSize == 1
+                        ? FormatSizeHelpers.GetSizeInBytes(srcMTLTexture.Format)
+                        : FormatHelpers.GetBlockSizeInBytes(srcMTLTexture.Format);
                 uint rowPitch = FormatHelpers.GetRowPitch(bufferRowLength, srcMTLTexture.Format);
-                uint depthPitch = FormatHelpers.GetDepthPitch(rowPitch, bufferImageHeight, srcMTLTexture.Format);
+                uint depthPitch = FormatHelpers.GetDepthPitch(
+                    rowPitch,
+                    bufferImageHeight,
+                    srcMTLTexture.Format
+                );
 
-                ulong dstOffset = Util.ComputeSubresourceOffset(dstMTLTexture, dstMipLevel, dstBaseArrayLayer + layer)
-                                  + (dstZ * depthPitch)
-                                  + (compressedDstY * rowPitch)
-                                  + (compressedDstX * blockSizeInBytes);
+                ulong dstOffset =
+                    Util.ComputeSubresourceOffset(
+                        dstMTLTexture,
+                        dstMipLevel,
+                        dstBaseArrayLayer + layer
+                    )
+                    + (dstZ * depthPitch)
+                    + (compressedDstY * rowPitch)
+                    + (compressedDstX * blockSizeInBytes);
 
                 _bce.copyTextureToBuffer(
                     srcMTLTexture.DeviceTexture,
@@ -606,7 +706,8 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     dstMTLTexture.StagingBuffer,
                     (UIntPtr)dstOffset,
                     dstBytesPerRow,
-                    dstBytesPerImage);
+                    dstBytesPerImage
+                );
             }
         }
         else
@@ -623,7 +724,8 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     dstMTLTexture.DeviceTexture,
                     dstBaseArrayLayer + layer,
                     dstMipLevel,
-                    new MTLOrigin(dstX, dstY, dstZ));
+                    new MTLOrigin(dstX, dstY, dstZ)
+                );
             }
         }
     }
@@ -643,10 +745,16 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
         _cce.dispatchThreadgroupsWithIndirectBuffer(
             mtlBuffer.DeviceBuffer,
             offset,
-            _computePipeline.ThreadsPerThreadgroup);
+            _computePipeline.ThreadsPerThreadgroup
+        );
     }
 
-    protected override void DrawIndexedIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    protected override void DrawIndexedIndirectCore(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         if (PreDrawCommand())
         {
@@ -660,12 +768,18 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                     _indexBuffer.DeviceBuffer,
                     _ibOffset,
                     mtlBuffer.DeviceBuffer,
-                    currentOffset);
+                    currentOffset
+                );
             }
         }
     }
 
-    protected override void DrawIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    protected override void DrawIndirectCore(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         if (PreDrawCommand())
         {
@@ -673,7 +787,11 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
             for (uint i = 0; i < drawCount; i++)
             {
                 uint currentOffset = i * stride + offset;
-                _rce.drawPrimitives(_graphicsPipeline.PrimitiveType, mtlBuffer.DeviceBuffer, currentOffset);
+                _rce.drawPrimitives(
+                    _graphicsPipeline.PrimitiveType,
+                    mtlBuffer.DeviceBuffer,
+                    currentOffset
+                );
             }
         }
     }
@@ -703,7 +821,11 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
         ObjectiveCRuntime.release(rpDesc.NativePtr);
     }
 
-    protected override void SetComputeResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    protected override void SetComputeResourceSetCore(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         ref BoundResourceSetInfo set = ref _computeResourceSets[slot];
         if (!set.Equals(rs, dynamicOffsets))
@@ -737,7 +859,11 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
         _currentFramebufferEverActive = false;
     }
 
-    protected override void SetGraphicsResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    protected override void SetGraphicsResourceSetCore(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets
+    )
     {
         ref BoundResourceSetInfo set = ref _graphicsResourceSets[slot];
         if (!set.Equals(rs, dynamicOffsets))
@@ -775,16 +901,22 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                 }
                 case ResourceKind.TextureReadOnly:
                     TextureView texView = Util.GetTextureView(gd, resource);
-                    MTLTextureView mtlTexView = Util.AssertSubtype<TextureView, MTLTextureView>(texView);
+                    MTLTextureView mtlTexView = Util.AssertSubtype<TextureView, MTLTextureView>(
+                        texView
+                    );
                     BindTexture(mtlTexView, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
                 case ResourceKind.TextureReadWrite:
                     TextureView texViewRW = Util.GetTextureView(gd, resource);
-                    MTLTextureView mtlTexViewRW = Util.AssertSubtype<TextureView, MTLTextureView>(texViewRW);
+                    MTLTextureView mtlTexViewRW = Util.AssertSubtype<TextureView, MTLTextureView>(
+                        texViewRW
+                    );
                     BindTexture(mtlTexViewRW, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
                 case ResourceKind.Sampler:
-                    MTLSampler mtlSampler = Util.AssertSubtype<Sampler, MTLSampler>(resource.GetSampler());
+                    MTLSampler mtlSampler = Util.AssertSubtype<Sampler, MTLSampler>(
+                        resource.GetSampler()
+                    );
                     BindSampler(mtlSampler, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
                 case ResourceKind.StructuredBufferReadOnly:
@@ -834,16 +966,22 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
                 }
                 case ResourceKind.TextureReadOnly:
                     TextureView texView = Util.GetTextureView(gd, resource);
-                    MTLTextureView mtlTexView = Util.AssertSubtype<TextureView, MTLTextureView>(texView);
+                    MTLTextureView mtlTexView = Util.AssertSubtype<TextureView, MTLTextureView>(
+                        texView
+                    );
                     BindTexture(mtlTexView, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
                 case ResourceKind.TextureReadWrite:
                     TextureView texViewRW = Util.GetTextureView(gd, resource);
-                    MTLTextureView mtlTexViewRW = Util.AssertSubtype<TextureView, MTLTextureView>(texViewRW);
+                    MTLTextureView mtlTexViewRW = Util.AssertSubtype<TextureView, MTLTextureView>(
+                        texViewRW
+                    );
                     BindTexture(mtlTexViewRW, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
                 case ResourceKind.Sampler:
-                    MTLSampler mtlSampler = Util.AssertSubtype<Sampler, MTLSampler>(resource.GetSampler());
+                    MTLSampler mtlSampler = Util.AssertSubtype<Sampler, MTLSampler>(
+                        resource.GetSampler()
+                    );
                     BindSampler(mtlSampler, slot, bindingInfo.Slot, bindingInfo.Stages);
                     break;
                 case ResourceKind.StructuredBufferReadOnly:
@@ -877,9 +1015,10 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
         {
             if ((stages & ShaderStages.Vertex) == ShaderStages.Vertex)
             {
-                UIntPtr index = _graphicsPipeline.ResourceBindingModel == ResourceBindingModel.Improved
-                    ? slot + baseBuffer
-                    : slot + _vertexBufferCount + baseBuffer;
+                UIntPtr index =
+                    _graphicsPipeline.ResourceBindingModel == ResourceBindingModel.Improved
+                        ? slot + baseBuffer
+                        : slot + _vertexBufferCount + baseBuffer;
                 _rce.setVertexBuffer(mtlBuffer.DeviceBuffer, range.Offset, index);
             }
             if ((stages & ShaderStages.Fragment) == ShaderStages.Fragment)
@@ -925,7 +1064,9 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
 
     uint GetBufferBase(uint set, bool graphics)
     {
-        MTLResourceLayout[] layouts = graphics ? _graphicsPipeline.ResourceLayouts : _computePipeline.ResourceLayouts;
+        MTLResourceLayout[] layouts = graphics
+            ? _graphicsPipeline.ResourceLayouts
+            : _computePipeline.ResourceLayouts;
         uint ret = 0;
         for (int i = 0; i < set; i++)
         {
@@ -938,7 +1079,9 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
 
     uint GetTextureBase(uint set, bool graphics)
     {
-        MTLResourceLayout[] layouts = graphics ? _graphicsPipeline.ResourceLayouts : _computePipeline.ResourceLayouts;
+        MTLResourceLayout[] layouts = graphics
+            ? _graphicsPipeline.ResourceLayouts
+            : _computePipeline.ResourceLayouts;
         uint ret = 0;
         for (int i = 0; i < set; i++)
         {
@@ -951,7 +1094,9 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
 
     uint GetSamplerBase(uint set, bool graphics)
     {
-        MTLResourceLayout[] layouts = graphics ? _graphicsPipeline.ResourceLayouts : _computePipeline.ResourceLayouts;
+        MTLResourceLayout[] layouts = graphics
+            ? _graphicsPipeline.ResourceLayouts
+            : _computePipeline.ResourceLayouts;
         uint ret = 0;
         for (int i = 0; i < set; i++)
         {
@@ -1004,7 +1149,8 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
 
             if (FormatHelpers.IsStencilFormat(_mtlFramebuffer.DepthTarget!.Value.Target.Format))
             {
-                MTLRenderPassStencilAttachmentDescriptor stencilAttachment = rpDesc.stencilAttachment;
+                MTLRenderPassStencilAttachmentDescriptor stencilAttachment =
+                    rpDesc.stencilAttachment;
                 stencilAttachment.loadAction = MTLLoadAction.Clear;
                 stencilAttachment.clearStencil = _clearDepth.GetValueOrDefault().stencil;
             }
@@ -1108,14 +1254,22 @@ internal sealed unsafe class MTLCommandList(in CommandListDescription descriptio
         Debug.Assert(!ComputeEncoderActive);
     }
 
-    private protected override void SetIndexBufferCore(DeviceBuffer buffer, IndexFormat format, uint offset)
+    private protected override void SetIndexBufferCore(
+        DeviceBuffer buffer,
+        IndexFormat format,
+        uint offset
+    )
     {
         _indexBuffer = Util.AssertSubtype<DeviceBuffer, MTLBuffer>(buffer);
         _ibOffset = offset;
         _indexType = MTLFormats.VdToMTLIndexFormat(format);
     }
 
-    private protected override void SetVertexBufferCore(uint index, DeviceBuffer buffer, uint offset)
+    private protected override void SetVertexBufferCore(
+        uint index,
+        DeviceBuffer buffer,
+        uint offset
+    )
     {
         Util.EnsureArrayMinimumSize(ref _vertexBuffers, index + 1);
         Util.EnsureArrayMinimumSize(ref _vbOffsets, index + 1);

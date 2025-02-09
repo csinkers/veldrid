@@ -60,7 +60,8 @@ public readonly struct MappedResource
         uint sizeInBytes,
         uint subresource,
         uint rowPitch,
-        uint depthPitch)
+        uint depthPitch
+    )
     {
         Resource = resource;
         Mode = mode;
@@ -72,7 +73,13 @@ public readonly struct MappedResource
         DepthPitch = depthPitch;
     }
 
-    internal MappedResource(MappableResource resource, MapMode mode, IntPtr data, uint offsetInBytes, uint sizeInBytes)
+    internal MappedResource(
+        MappableResource resource,
+        MapMode mode,
+        IntPtr data,
+        uint offsetInBytes,
+        uint sizeInBytes
+    )
     {
         Resource = resource;
         Mode = mode;
@@ -100,7 +107,8 @@ public readonly struct MappedResource
 /// mapped resource.
 /// </summary>
 /// <typeparam name="T">The blittable value type which mapped data is viewed as.</typeparam>
-public unsafe readonly struct MappedResourceView<T> where T : unmanaged
+public unsafe readonly struct MappedResourceView<T>
+    where T : unmanaged
 {
     /// <summary>
     /// The <see cref="Veldrid.MappedResource"/> that this instance views.
@@ -166,7 +174,10 @@ public unsafe readonly struct MappedResourceView<T> where T : unmanaged
     {
         get
         {
-            byte* ptr = (byte*)MappedResource.Data + (y * MappedResource.RowPitch) + (x * Unsafe.SizeOf<T>());
+            byte* ptr =
+                (byte*)MappedResource.Data
+                + (y * MappedResource.RowPitch)
+                + (x * Unsafe.SizeOf<T>());
             return ref Unsafe.AsRef<T>(ptr);
         }
     }
@@ -181,7 +192,10 @@ public unsafe readonly struct MappedResourceView<T> where T : unmanaged
     {
         get
         {
-            byte* ptr = (byte*)MappedResource.Data + (y * MappedResource.RowPitch) + (x * Unsafe.SizeOf<T>());
+            byte* ptr =
+                (byte*)MappedResource.Data
+                + (y * MappedResource.RowPitch)
+                + (x * Unsafe.SizeOf<T>());
             return ref Unsafe.AsRef<T>(ptr);
         }
     }
@@ -197,10 +211,11 @@ public unsafe readonly struct MappedResourceView<T> where T : unmanaged
     {
         get
         {
-            byte* ptr = (byte*)MappedResource.Data
-                        + (z * MappedResource.DepthPitch)
-                        + (y * MappedResource.RowPitch)
-                        + (x * Unsafe.SizeOf<T>());
+            byte* ptr =
+                (byte*)MappedResource.Data
+                + (z * MappedResource.DepthPitch)
+                + (y * MappedResource.RowPitch)
+                + (x * Unsafe.SizeOf<T>());
             return ref Unsafe.AsRef<T>(ptr);
         }
     }
@@ -216,10 +231,11 @@ public unsafe readonly struct MappedResourceView<T> where T : unmanaged
     {
         get
         {
-            byte* ptr = (byte*)MappedResource.Data
-                        + (z * MappedResource.DepthPitch)
-                        + (y * MappedResource.RowPitch)
-                        + (x * Unsafe.SizeOf<T>());
+            byte* ptr =
+                (byte*)MappedResource.Data
+                + (z * MappedResource.DepthPitch)
+                + (y * MappedResource.RowPitch)
+                + (x * Unsafe.SizeOf<T>());
             return ref Unsafe.AsRef<T>(ptr);
         }
     }

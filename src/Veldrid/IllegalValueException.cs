@@ -16,11 +16,7 @@ internal static class Illegal
         throw new IllegalValueException<T, R>();
     }
 
-    internal class IllegalValueException<T> : VeldridException
-    {
-    }
+    internal class IllegalValueException<T> : VeldridException { }
 
-    internal class IllegalValueException<T, R> : IllegalValueException<T>
-    {
-    }
+    internal class IllegalValueException<T, R> : IllegalValueException<T> { }
 }

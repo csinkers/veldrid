@@ -21,9 +21,12 @@ internal sealed class D3D11Framebuffer : Framebuffer
     {
         if (description.DepthTarget != null)
         {
-            FramebufferAttachmentDescription depthTarget = description.DepthTarget.GetValueOrDefault();
+            FramebufferAttachmentDescription depthTarget =
+                description.DepthTarget.GetValueOrDefault();
 
-            D3D11Texture d3dDepthTarget = Util.AssertSubtype<Texture, D3D11Texture>(depthTarget.Target);
+            D3D11Texture d3dDepthTarget = Util.AssertSubtype<Texture, D3D11Texture>(
+                depthTarget.Target
+            );
             DepthStencilViewDescription dsvDesc = new()
             {
                 Format = D3D11Formats.GetDepthFormat(d3dDepthTarget.Format),
@@ -66,12 +69,17 @@ internal sealed class D3D11Framebuffer : Framebuffer
             RenderTargetViews = new ID3D11RenderTargetView[colorTargets.Length];
             for (int i = 0; i < RenderTargetViews.Length; i++)
             {
-                D3D11Texture d3dColorTarget = Util.AssertSubtype<Texture, D3D11Texture>(colorTargets[i].Target);
+                D3D11Texture d3dColorTarget = Util.AssertSubtype<Texture, D3D11Texture>(
+                    colorTargets[i].Target
+                );
                 RenderTargetViewDescription rtvDesc = new()
                 {
                     Format = D3D11Formats.ToDxgiFormat(d3dColorTarget.Format, default),
                 };
-                if (d3dColorTarget.ArrayLayers > 1 || (d3dColorTarget.Usage & TextureUsage.Cubemap) != 0)
+                if (
+                    d3dColorTarget.ArrayLayers > 1
+                    || (d3dColorTarget.Usage & TextureUsage.Cubemap) != 0
+                )
                 {
                     if (d3dColorTarget.SampleCount == TextureSampleCount.Count1)
                     {
@@ -80,16 +88,17 @@ internal sealed class D3D11Framebuffer : Framebuffer
                         {
                             ArraySize = 1,
                             FirstArraySlice = (int)colorTargets[i].ArrayLayer,
-                            MipSlice = (int)colorTargets[i].MipLevel
+                            MipSlice = (int)colorTargets[i].MipLevel,
                         };
                     }
                     else
                     {
-                        rtvDesc.ViewDimension = RenderTargetViewDimension.Texture2DMultisampledArray;
+                        rtvDesc.ViewDimension =
+                            RenderTargetViewDimension.Texture2DMultisampledArray;
                         rtvDesc.Texture2DMSArray = new Texture2DMultisampledArrayRenderTargetView
                         {
                             ArraySize = 1,
-                            FirstArraySlice = (int)colorTargets[i].ArrayLayer
+                            FirstArraySlice = (int)colorTargets[i].ArrayLayer,
                         };
                     }
                 }
@@ -105,7 +114,10 @@ internal sealed class D3D11Framebuffer : Framebuffer
                         rtvDesc.ViewDimension = RenderTargetViewDimension.Texture2DMultisampled;
                     }
                 }
-                RenderTargetViews[i] = device.CreateRenderTargetView(d3dColorTarget.DeviceTexture, rtvDesc);
+                RenderTargetViews[i] = device.CreateRenderTargetView(
+                    d3dColorTarget.DeviceTexture,
+                    rtvDesc
+                );
             }
         }
         else

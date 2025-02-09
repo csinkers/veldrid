@@ -15,42 +15,70 @@ internal class ScreenDuplicator : Renderable
         DisposeCollectorResourceFactory factory = new(gd.ResourceFactory);
         _disposeCollector = factory.DisposeCollector;
 
-        ResourceLayout resourceLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("SourceTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-            new ResourceLayoutElementDescription("SourceSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+        ResourceLayout resourceLayout = factory.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "SourceTexture",
+                    ResourceKind.TextureReadOnly,
+                    ShaderStages.Fragment
+                ),
+                new ResourceLayoutElementDescription(
+                    "SourceSampler",
+                    ResourceKind.Sampler,
+                    ShaderStages.Fragment
+                )
+            )
+        );
 
-        (Shader vs, Shader fs) = StaticResourceCache.GetShaders(gd, gd.ResourceFactory, "ScreenDuplicator");
+        (Shader vs, Shader fs) = StaticResourceCache.GetShaders(
+            gd,
+            gd.ResourceFactory,
+            "ScreenDuplicator"
+        );
 
         BlendAttachmentDescription blend = BlendAttachmentDescription.OverrideBlend;
         blend.ColorWriteMask = sc.MainSceneMask;
 
         GraphicsPipelineDescription pd = new(
-            new BlendStateDescription(
-                RgbaFloat.Black,
-                blend, 
-                blend),
-            gd.IsDepthRangeZeroToOne ? DepthStencilStateDescription.DepthOnlyGreaterEqual : DepthStencilStateDescription.DepthOnlyLessEqual,
+            new BlendStateDescription(RgbaFloat.Black, blend, blend),
+            gd.IsDepthRangeZeroToOne
+                ? DepthStencilStateDescription.DepthOnlyGreaterEqual
+                : DepthStencilStateDescription.DepthOnlyLessEqual,
             RasterizerStateDescription.Default,
             PrimitiveTopology.TriangleList,
             new ShaderSetDescription(
                 [
                     new VertexLayoutDescription(
-                        new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                        new VertexElementDescription("TexCoords", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2))
+                        new VertexElementDescription(
+                            "Position",
+                            VertexElementSemantic.TextureCoordinate,
+                            VertexElementFormat.Float2
+                        ),
+                        new VertexElementDescription(
+                            "TexCoords",
+                            VertexElementSemantic.TextureCoordinate,
+                            VertexElementFormat.Float2
+                        )
+                    ),
                 ],
                 [vs, fs],
-                ShaderHelper.GetSpecializations(gd)),
+                ShaderHelper.GetSpecializations(gd)
+            ),
             [resourceLayout],
-            sc.DuplicatorFramebuffer.OutputDescription);
+            sc.DuplicatorFramebuffer.OutputDescription
+        );
         _pipeline = factory.CreateGraphicsPipeline(pd);
 
         float[] verts = Util.GetFullScreenQuadVerts(gd);
 
-        _vb = factory.CreateBuffer(new BufferDescription(verts.SizeInBytes(), BufferUsage.VertexBuffer));
+        _vb = factory.CreateBuffer(
+            new BufferDescription(verts.SizeInBytes(), BufferUsage.VertexBuffer)
+        );
         cl.UpdateBuffer(_vb, 0, verts);
 
         _ib = factory.CreateBuffer(
-            new BufferDescription(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer));
+            new BufferDescription(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer)
+        );
         cl.UpdateBuffer(_ib, 0, s_quadIndices);
     }
 
@@ -64,7 +92,12 @@ internal class ScreenDuplicator : Renderable
         return new RenderOrderKey();
     }
 
-    public override void Render(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass)
+    public override void Render(
+        GraphicsDevice gd,
+        CommandList cl,
+        SceneContext sc,
+        RenderPasses renderPass
+    )
     {
         cl.SetPipeline(_pipeline);
         cl.SetGraphicsResourceSet(0, sc.MainSceneViewResourceSet);
@@ -75,9 +108,11 @@ internal class ScreenDuplicator : Renderable
 
     public override RenderPasses RenderPasses => RenderPasses.Duplicator;
 
-    public override void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl, SceneContext sc)
-    {
-    }
+    public override void UpdatePerFrameResources(
+        GraphicsDevice gd,
+        CommandList cl,
+        SceneContext sc
+    ) { }
 
     static ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
 }

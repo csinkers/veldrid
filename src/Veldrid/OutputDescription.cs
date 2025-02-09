@@ -27,7 +27,10 @@ public struct OutputDescription : IEquatable<OutputDescription>
     /// </summary>
     /// <param name="depthAttachment">A description of the depth attachment.</param>
     /// <param name="colorAttachments">An array of descriptions of each color attachment.</param>
-    public OutputDescription(OutputAttachmentDescription? depthAttachment, params OutputAttachmentDescription[]? colorAttachments)
+    public OutputDescription(
+        OutputAttachmentDescription? depthAttachment,
+        params OutputAttachmentDescription[]? colorAttachments
+    )
     {
         DepthAttachment = depthAttachment;
         ColorAttachments = colorAttachments;
@@ -43,7 +46,8 @@ public struct OutputDescription : IEquatable<OutputDescription>
     public OutputDescription(
         OutputAttachmentDescription? depthAttachment,
         OutputAttachmentDescription[]? colorAttachments,
-        TextureSampleCount sampleCount)
+        TextureSampleCount sampleCount
+    )
     {
         DepthAttachment = depthAttachment;
         ColorAttachments = colorAttachments;
@@ -58,15 +62,21 @@ public struct OutputDescription : IEquatable<OutputDescription>
         OutputAttachmentDescription? depthAttachment = null;
         if (fbDepthAttachment != null)
         {
-            depthAttachment = new OutputAttachmentDescription(fbDepthAttachment.GetValueOrDefault().Target.Format);
+            depthAttachment = new OutputAttachmentDescription(
+                fbDepthAttachment.GetValueOrDefault().Target.Format
+            );
             sampleCount = fbDepthAttachment.GetValueOrDefault().Target.SampleCount;
         }
 
         ReadOnlySpan<FramebufferAttachment> fbColorAttachments = fb.ColorTargets;
-        OutputAttachmentDescription[] colorAttachments = new OutputAttachmentDescription[fbColorAttachments.Length];
+        OutputAttachmentDescription[] colorAttachments = new OutputAttachmentDescription[
+            fbColorAttachments.Length
+        ];
         for (int i = 0; i < colorAttachments.Length; i++)
         {
-            colorAttachments[i] = new OutputAttachmentDescription(fbColorAttachments[i].Target.Format);
+            colorAttachments[i] = new OutputAttachmentDescription(
+                fbColorAttachments[i].Target.Format
+            );
             sampleCount = fbColorAttachments[i].Target.SampleCount;
         }
 
@@ -81,8 +91,8 @@ public struct OutputDescription : IEquatable<OutputDescription>
     public bool Equals(OutputDescription other)
     {
         return DepthAttachment.GetValueOrDefault().Equals(other.DepthAttachment.GetValueOrDefault())
-               && Util.ArrayEqualsEquatable(ColorAttachments, other.ColorAttachments)
-               && SampleCount == other.SampleCount;
+            && Util.ArrayEqualsEquatable(ColorAttachments, other.ColorAttachments)
+            && SampleCount == other.SampleCount;
     }
 
     /// <summary>
@@ -94,6 +104,7 @@ public struct OutputDescription : IEquatable<OutputDescription>
         return HashHelper.Combine(
             DepthAttachment.GetHashCode(),
             HashHelper.Array(ColorAttachments),
-            (int)SampleCount);
+            (int)SampleCount
+        );
     }
 }

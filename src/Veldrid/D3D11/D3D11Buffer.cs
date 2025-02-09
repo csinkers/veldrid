@@ -1,8 +1,8 @@
 ﻿using System;
-using Vortice.Direct3D11;
 using System.Collections.Generic;
-using Vortice.DXGI;
 using Vortice.Direct3D;
+using Vortice.Direct3D11;
+using Vortice.DXGI;
 
 namespace Veldrid.D3D11;
 
@@ -21,7 +21,8 @@ internal sealed class D3D11Buffer : DeviceBuffer
 
     public ID3D11Buffer Buffer => _buffer;
 
-    public unsafe D3D11Buffer(ID3D11Device device, in BufferDescription desc) : base(desc)
+    public unsafe D3D11Buffer(ID3D11Device device, in BufferDescription desc)
+        : base(desc)
     {
         _device = device;
         _structureByteStride = desc.StructureByteStride;
@@ -30,10 +31,15 @@ internal sealed class D3D11Buffer : DeviceBuffer
         Vortice.Direct3D11.BufferDescription bd = new(
             (int)desc.SizeInBytes,
             D3D11Formats.VdToD3D11BindFlags(desc.Usage),
-            ResourceUsage.Default);
+            ResourceUsage.Default
+        );
 
-        if ((desc.Usage & BufferUsage.StructuredBufferReadOnly) == BufferUsage.StructuredBufferReadOnly
-            || (desc.Usage & BufferUsage.StructuredBufferReadWrite) == BufferUsage.StructuredBufferReadWrite)
+        if (
+            (desc.Usage & BufferUsage.StructuredBufferReadOnly)
+                == BufferUsage.StructuredBufferReadOnly
+            || (desc.Usage & BufferUsage.StructuredBufferReadWrite)
+                == BufferUsage.StructuredBufferReadWrite
+        )
         {
             if (desc.RawBuffer)
             {
@@ -149,7 +155,8 @@ internal sealed class D3D11Buffer : DeviceBuffer
                 Format.R32_Typeless,
                 (int)offset / 4,
                 (int)size / 4,
-                BufferExtendedShaderResourceViewFlags.Raw);
+                BufferExtendedShaderResourceViewFlags.Raw
+            );
 
             return _device.CreateShaderResourceView(_buffer, srvDesc);
         }
@@ -157,7 +164,7 @@ internal sealed class D3D11Buffer : DeviceBuffer
         {
             ShaderResourceViewDescription srvDesc = new()
             {
-                ViewDimension = ShaderResourceViewDimension.Buffer
+                ViewDimension = ShaderResourceViewDimension.Buffer,
             };
             srvDesc.Buffer.NumElements = (int)(size / _structureByteStride);
             srvDesc.Buffer.ElementOffset = (int)(offset / _structureByteStride);
@@ -174,7 +181,8 @@ internal sealed class D3D11Buffer : DeviceBuffer
                 Format.R32_Typeless,
                 (int)offset / 4,
                 (int)size / 4,
-                BufferUnorderedAccessViewFlags.Raw);
+                BufferUnorderedAccessViewFlags.Raw
+            );
 
             return _device.CreateUnorderedAccessView(_buffer, uavDesc);
         }
@@ -184,7 +192,8 @@ internal sealed class D3D11Buffer : DeviceBuffer
                 _buffer,
                 Format.Unknown,
                 (int)(offset / _structureByteStride),
-                (int)(size / _structureByteStride));
+                (int)(size / _structureByteStride)
+            );
 
             return _device.CreateUnorderedAccessView(_buffer, uavDesc);
         }
@@ -195,7 +204,10 @@ internal sealed class D3D11Buffer : DeviceBuffer
         public readonly uint Offset = offset;
         public readonly uint Size = size;
 
-        public bool Equals(OffsetSizePair other) => Offset.Equals(other.Offset) && Size.Equals(other.Size);
-        public override int GetHashCode() => HashHelper.Combine(Offset.GetHashCode(), Size.GetHashCode());
+        public bool Equals(OffsetSizePair other) =>
+            Offset.Equals(other.Offset) && Size.Equals(other.Size);
+
+        public override int GetHashCode() =>
+            HashHelper.Combine(Offset.GetHashCode(), Size.GetHashCode());
     }
 }

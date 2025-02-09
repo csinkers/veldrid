@@ -8,9 +8,7 @@ namespace Veldrid.Vulkan;
 /// </summary>
 public abstract class VkSurfaceSource
 {
-    internal VkSurfaceSource()
-    {
-    }
+    internal VkSurfaceSource() { }
 
     /// <summary>
     /// Creates a new <see cref="VkSurfaceKHR"/> attached to this source.

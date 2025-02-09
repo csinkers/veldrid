@@ -69,32 +69,38 @@ internal class OculusMirrorTexture : IDisposable
         desc.Width = (int)width;
         desc.Height = (int)height;
         desc.MiscFlags = ovrTextureMiscFlags.DX_Typeless;
-        desc.MirrorOptions = source == MirrorTextureEyeSource.LeftEye
-            ? ovrMirrorOptions.LeftEyeOnly
-            : source == MirrorTextureEyeSource.RightEye
-                ? ovrMirrorOptions.RightEyeOnly
-                : ovrMirrorOptions.Default;
+        desc.MirrorOptions =
+            source == MirrorTextureEyeSource.LeftEye ? ovrMirrorOptions.LeftEyeOnly
+            : source == MirrorTextureEyeSource.RightEye ? ovrMirrorOptions.RightEyeOnly
+            : ovrMirrorOptions.Default;
 
-        gd.GetOpenGLInfo().ExecuteOnGLThread(() =>
-        {
-            ovrMirrorTextureDesc localDesc = desc;
-            localDesc.MiscFlags &= ~(ovrTextureMiscFlags.DX_Typeless | ovrTextureMiscFlags.AllowGenerateMips);
-            ovrMirrorTexture localTex;
-            ovrResult result = ovr_CreateMirrorTextureWithOptionsGL(_context.Session, &localDesc, &localTex);
-            if (result != ovrResult.Success)
+        gd.GetOpenGLInfo()
+            .ExecuteOnGLThread(() =>
             {
-                return;
-            }
-            _ovrMirrorTex = localTex;
+                ovrMirrorTextureDesc localDesc = desc;
+                localDesc.MiscFlags &= ~(
+                    ovrTextureMiscFlags.DX_Typeless | ovrTextureMiscFlags.AllowGenerateMips
+                );
+                ovrMirrorTexture localTex;
+                ovrResult result = ovr_CreateMirrorTextureWithOptionsGL(
+                    _context.Session,
+                    &localDesc,
+                    &localTex
+                );
+                if (result != ovrResult.Success)
+                {
+                    return;
+                }
+                _ovrMirrorTex = localTex;
 
-            uint localID;
-            result = ovr_GetMirrorTextureBufferGL(_context.Session, _ovrMirrorTex, &localID);
-            if (result != ovrResult.Success)
-            {
-                return;
-            }
-            glID = localID;
-        });
+                uint localID;
+                result = ovr_GetMirrorTextureBufferGL(_context.Session, _ovrMirrorTex, &localID);
+                if (result != ovrResult.Success)
+                {
+                    return;
+                }
+                glID = localID;
+            });
 
         if (_ovrMirrorTex.IsNull)
         {
@@ -103,7 +109,8 @@ internal class OculusMirrorTexture : IDisposable
 
         _vdMirrorTex = gd.ResourceFactory.CreateTexture(
             glID,
-            OculusUtil.GetVeldridTextureDescription(desc));
+            OculusUtil.GetVeldridTextureDescription(desc)
+        );
         _vdMirrorTexView = _context.GraphicsDevice.ResourceFactory.CreateTextureView(_vdMirrorTex);
     }
 
@@ -116,11 +123,10 @@ internal class OculusMirrorTexture : IDisposable
         desc.Width = (int)width;
         desc.Height = (int)height;
         desc.MiscFlags = ovrTextureMiscFlags.DX_Typeless;
-        desc.MirrorOptions = source == MirrorTextureEyeSource.LeftEye
-            ? ovrMirrorOptions.LeftEyeOnly
-            : source == MirrorTextureEyeSource.RightEye
-                ? ovrMirrorOptions.RightEyeOnly
-                : ovrMirrorOptions.Default;
+        desc.MirrorOptions =
+            source == MirrorTextureEyeSource.LeftEye ? ovrMirrorOptions.LeftEyeOnly
+            : source == MirrorTextureEyeSource.RightEye ? ovrMirrorOptions.RightEyeOnly
+            : ovrMirrorOptions.Default;
 
         desc.MiscFlags &= ~(ovrTextureMiscFlags.DX_Typeless);
 
@@ -129,7 +135,8 @@ internal class OculusMirrorTexture : IDisposable
             _context.Session,
             gd.GetVulkanInfo().Device,
             &desc,
-            &mirrorTex);
+            &mirrorTex
+        );
         if (result != ovrResult.Success)
         {
             throw new VeldridException($"Failed to create Vulkan mirror texture: {result}");
@@ -145,17 +152,24 @@ internal class OculusMirrorTexture : IDisposable
 
         _vkTrueMirrorTex = gd.ResourceFactory.CreateTexture(
             vkImage,
-            OculusUtil.GetVeldridTextureDescription(desc));
-        gd.GetVulkanInfo().OverrideImageLayout(
-            _vkTrueMirrorTex,
-            (uint)VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+            OculusUtil.GetVeldridTextureDescription(desc)
+        );
+        gd.GetVulkanInfo()
+            .OverrideImageLayout(
+                _vkTrueMirrorTex,
+                (uint)VkImageLayout.VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+            );
 
         _vdMirrorTex = gd.ResourceFactory.CreateTexture(
             TextureDescription.Texture2D(
-                _vkTrueMirrorTex.Width, _vkTrueMirrorTex.Height,
-                _vkTrueMirrorTex.MipLevels, _vkTrueMirrorTex.ArrayLayers,
+                _vkTrueMirrorTex.Width,
+                _vkTrueMirrorTex.Height,
+                _vkTrueMirrorTex.MipLevels,
+                _vkTrueMirrorTex.ArrayLayers,
                 _vkTrueMirrorTex.Format,
-                TextureUsage.Sampled));
+                TextureUsage.Sampled
+            )
+        );
         _vdMirrorTexView = _context.GraphicsDevice.ResourceFactory.CreateTextureView(_vdMirrorTex);
     }
 
@@ -166,18 +180,18 @@ internal class OculusMirrorTexture : IDisposable
         desc.Width = (int)width;
         desc.Height = (int)height;
         desc.MiscFlags = ovrTextureMiscFlags.DX_Typeless;
-        desc.MirrorOptions = source == MirrorTextureEyeSource.LeftEye
-            ? ovrMirrorOptions.LeftEyeOnly
-            : source == MirrorTextureEyeSource.RightEye
-                ? ovrMirrorOptions.RightEyeOnly
-                : ovrMirrorOptions.Default;
+        desc.MirrorOptions =
+            source == MirrorTextureEyeSource.LeftEye ? ovrMirrorOptions.LeftEyeOnly
+            : source == MirrorTextureEyeSource.RightEye ? ovrMirrorOptions.RightEyeOnly
+            : ovrMirrorOptions.Default;
 
         ovrMirrorTexture mirrorTexture;
         ovrResult result = ovr_CreateMirrorTextureWithOptionsDX(
             _context.Session,
             _context.GraphicsDevice.GetD3D11Info().Device,
             &desc,
-            &mirrorTexture);
+            &mirrorTexture
+        );
         if (result != ovrResult.Success)
         {
             throw new VeldridException($"Failed to create DX mirror texture: {result}");
@@ -185,7 +199,12 @@ internal class OculusMirrorTexture : IDisposable
         _ovrMirrorTex = mirrorTexture;
 
         IntPtr mirrord3d11Tex;
-        result = ovr_GetMirrorTextureBufferDX(_context.Session, mirrorTexture, s_d3d11Tex2DGuid, &mirrord3d11Tex);
+        result = ovr_GetMirrorTextureBufferDX(
+            _context.Session,
+            mirrorTexture,
+            s_d3d11Tex2DGuid,
+            &mirrord3d11Tex
+        );
         if (result != ovrResult.Success)
         {
             throw new VeldridException($"Failed to get D3D11 mirror texture handle: {result}");
@@ -193,7 +212,8 @@ internal class OculusMirrorTexture : IDisposable
 
         _vdMirrorTex = _context.GraphicsDevice.ResourceFactory.CreateTexture(
             (ulong)mirrord3d11Tex,
-            OculusUtil.GetVeldridTextureDescription(desc));
+            OculusUtil.GetVeldridTextureDescription(desc)
+        );
         _vdMirrorTexView = _context.GraphicsDevice.ResourceFactory.CreateTextureView(_vdMirrorTex);
     }
 
@@ -225,7 +245,12 @@ internal class OculusMirrorTexture : IDisposable
         if (_set == null)
         {
             _set = _context.GraphicsDevice.ResourceFactory.CreateResourceSet(
-                new ResourceSetDescription(blitter.ResourceLayout, _vdMirrorTexView, _context.GraphicsDevice.PointSampler));
+                new ResourceSetDescription(
+                    blitter.ResourceLayout,
+                    _vdMirrorTexView,
+                    _context.GraphicsDevice.PointSampler
+                )
+            );
         }
 
         return _set;
@@ -239,7 +264,8 @@ internal class OculusMirrorTexture : IDisposable
                 _context.GraphicsDevice,
                 _context.GraphicsDevice.ResourceFactory,
                 outputDescription,
-                srgbOutput: false);
+                srgbOutput: false
+            );
 
             _blitters.Add(outputDescription, ret);
         }

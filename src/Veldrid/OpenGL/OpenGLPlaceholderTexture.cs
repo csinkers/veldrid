@@ -9,7 +9,8 @@ internal sealed class OpenGLPlaceholderTexture : Texture
         uint height,
         PixelFormat format,
         TextureUsage usage,
-        TextureSampleCount sampleCount)
+        TextureSampleCount sampleCount
+    )
     {
         Width = width;
         Height = height;

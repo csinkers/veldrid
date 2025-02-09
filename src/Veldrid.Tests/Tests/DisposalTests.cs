@@ -16,7 +16,16 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Dispose_Texture()
     {
-        Texture t = RF.CreateTexture(TextureDescription.Texture2D(1, 1, 1, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.Sampled));
+        Texture t = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                1,
+                1,
+                1,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.Sampled
+            )
+        );
         TextureView tv = RF.CreateTextureView(t);
         tv.Dispose();
         Assert.True(tv.IsDisposed);
@@ -28,7 +37,16 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Dispose_Framebuffer()
     {
-        Texture t = RF.CreateTexture(TextureDescription.Texture2D(1, 1, 1, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget));
+        Texture t = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                1,
+                1,
+                1,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.RenderTarget
+            )
+        );
         Framebuffer fb = RF.CreateFramebuffer(new FramebufferDescription(null, t));
         fb.Dispose();
         Assert.True(fb.IsDisposed);
@@ -60,14 +78,35 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
         ShaderSetDescription shaderSet = new(
             [
                 new VertexLayoutDescription(
-                    new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                    new VertexElementDescription("Color_UInt", VertexElementSemantic.TextureCoordinate, VertexElementFormat.UInt4))
+                    new VertexElementDescription(
+                        "Position",
+                        VertexElementSemantic.TextureCoordinate,
+                        VertexElementFormat.Float2
+                    ),
+                    new VertexElementDescription(
+                        "Color_UInt",
+                        VertexElementSemantic.TextureCoordinate,
+                        VertexElementFormat.UInt4
+                    )
+                ),
             ],
-            shaders);
+            shaders
+        );
 
-        ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("InfoBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-            new ResourceLayoutElementDescription("Ortho", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
+        ResourceLayout layout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "InfoBuffer",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                ),
+                new ResourceLayoutElementDescription(
+                    "Ortho",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                )
+            )
+        );
 
         GraphicsPipelineDescription gpd = new(
             BlendStateDescription.SingleOverrideBlend,
@@ -76,7 +115,11 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
             PrimitiveTopology.PointList,
             shaderSet,
             layout,
-            new OutputDescription(null, new OutputAttachmentDescription(PixelFormat.R32_G32_B32_A32_Float)));
+            new OutputDescription(
+                null,
+                new OutputAttachmentDescription(PixelFormat.R32_G32_B32_A32_Float)
+            )
+        );
         Pipeline pipeline = RF.CreateGraphicsPipeline(gpd);
         pipeline.Dispose();
         Assert.True(pipeline.IsDisposed);
@@ -96,9 +139,20 @@ public abstract class DisposalTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Dispose_ResourceSet()
     {
-        ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("InfoBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-            new ResourceLayoutElementDescription("Ortho", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
+        ResourceLayout layout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "InfoBuffer",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                ),
+                new ResourceLayoutElementDescription(
+                    "Ortho",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                )
+            )
+        );
 
         DeviceBuffer ub0 = RF.CreateBuffer(new BufferDescription(256, BufferUsage.UniformBuffer));
         DeviceBuffer ub1 = RF.CreateBuffer(new BufferDescription(256, BufferUsage.UniformBuffer));
@@ -129,8 +183,8 @@ public class VulkanDisposalTests : DisposalTestBase<VulkanDeviceCreator> { }
 public class D3D11DisposalTests : DisposalTestBase<D3D11DeviceCreator> { }
 #endif
 #if TEST_METAL
-    [Trait("Backend", "Metal")]
-    public class MetalDisposalTests : DisposalTestBase<MetalDeviceCreator> { }
+[Trait("Backend", "Metal")]
+public class MetalDisposalTests : DisposalTestBase<MetalDeviceCreator> { }
 #endif
 #if TEST_OPENGL
 [Trait("Backend", "OpenGL")]

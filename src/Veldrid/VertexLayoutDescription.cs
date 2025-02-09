@@ -48,7 +48,11 @@ public struct VertexLayoutDescription : IEquatable<VertexLayoutDescription>
     /// per-vertex elements, this value should be 0.
     /// For example, an InstanceStepRate of 3 indicates that 3 instances will be drawn with the same value for this element.
     /// The next 3 instances will be drawn with the next value for this element, and so on.</param>
-    public VertexLayoutDescription(uint stride, uint instanceStepRate, params VertexElementDescription[] elements)
+    public VertexLayoutDescription(
+        uint stride,
+        uint instanceStepRate,
+        params VertexElementDescription[] elements
+    )
     {
         Stride = stride;
         Elements = elements;
@@ -89,8 +93,8 @@ public struct VertexLayoutDescription : IEquatable<VertexLayoutDescription>
     public bool Equals(VertexLayoutDescription other)
     {
         return Stride.Equals(other.Stride)
-               && Util.ArrayEqualsEquatable(Elements, other.Elements)
-               && InstanceStepRate.Equals(other.InstanceStepRate);
+            && Util.ArrayEqualsEquatable(Elements, other.Elements)
+            && InstanceStepRate.Equals(other.InstanceStepRate);
     }
 
     /// <summary>
@@ -99,6 +103,10 @@ public struct VertexLayoutDescription : IEquatable<VertexLayoutDescription>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
     public override int GetHashCode()
     {
-        return HashHelper.Combine(Stride.GetHashCode(), HashHelper.Array(Elements), InstanceStepRate.GetHashCode());
+        return HashHelper.Combine(
+            Stride.GetHashCode(),
+            HashHelper.Array(Elements),
+            InstanceStepRate.GetHashCode()
+        );
     }
 }

@@ -27,7 +27,9 @@ internal static unsafe class VkSurfaceUtil
         {
             if (!instanceExtensions.Contains(name))
             {
-                throw new VeldridException($"The required instance extension was not available: {name}");
+                throw new VeldridException(
+                    $"The required instance extension was not available: {name}"
+                );
             }
         }
 
@@ -37,110 +39,188 @@ internal static unsafe class VkSurfaceUtil
         {
             case XlibSwapchainSource xlibSource:
                 ThrowIfMissing(KHR_XLIB_SURFACE_EXTENSION_NAME);
-                return CreateXlib(GetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR"), instance, xlibSource);
+                return CreateXlib(
+                    GetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR"),
+                    instance,
+                    xlibSource
+                );
 
             case WaylandSwapchainSource waylandSource:
                 ThrowIfMissing(KHR_WAYLAND_SURFACE_EXTENSION_NAME);
-                return CreateWayland(GetInstanceProcAddr(instance, "vkCreateWaylandSurfaceKHR"), instance, waylandSource);
+                return CreateWayland(
+                    GetInstanceProcAddr(instance, "vkCreateWaylandSurfaceKHR"),
+                    instance,
+                    waylandSource
+                );
 
             case Win32SwapchainSource win32Source:
                 ThrowIfMissing(KHR_WIN32_SURFACE_EXTENSION_NAME);
-                return CreateWin32(GetInstanceProcAddr(instance, "vkCreateWin32SurfaceKHR"), instance, win32Source);
+                return CreateWin32(
+                    GetInstanceProcAddr(instance, "vkCreateWin32SurfaceKHR"),
+                    instance,
+                    win32Source
+                );
 
             case AndroidSurfaceSwapchainSource androidSource:
                 ThrowIfMissing(KHR_ANDROID_SURFACE_EXTENSION_NAME);
-                IntPtr aNativeWindow = AndroidRuntime.ANativeWindow_fromSurface(androidSource.JniEnv, androidSource.Surface);
-                return CreateAndroidSurface(GetInstanceProcAddr(instance, "vkCreateAndroidSurfaceKHR"), instance, aNativeWindow);
+                IntPtr aNativeWindow = AndroidRuntime.ANativeWindow_fromSurface(
+                    androidSource.JniEnv,
+                    androidSource.Surface
+                );
+                return CreateAndroidSurface(
+                    GetInstanceProcAddr(instance, "vkCreateAndroidSurfaceKHR"),
+                    instance,
+                    aNativeWindow
+                );
 
             case AndroidWindowSwapchainSource aWindowSource:
                 ThrowIfMissing(KHR_ANDROID_SURFACE_EXTENSION_NAME);
-                return CreateAndroidSurface(GetInstanceProcAddr(instance, "vkCreateAndroidSurfaceKHR"), instance, aWindowSource.ANativeWindow);
+                return CreateAndroidSurface(
+                    GetInstanceProcAddr(instance, "vkCreateAndroidSurfaceKHR"),
+                    instance,
+                    aWindowSource.ANativeWindow
+                );
 
             case NSWindowSwapchainSource nsWindowSource:
                 if (instanceExtensions.Contains(EXT_METAL_SURFACE_EXTENSION_NAME))
                 {
-                    return CreateNSWindowSurfaceExt(GetInstanceProcAddr(instance, "vkCreateMetalSurfaceEXT"), instance, nsWindowSource);
+                    return CreateNSWindowSurfaceExt(
+                        GetInstanceProcAddr(instance, "vkCreateMetalSurfaceEXT"),
+                        instance,
+                        nsWindowSource
+                    );
                 }
                 if (instanceExtensions.Contains(MVK_MACOS_SURFACE_EXTENSION_NAME))
                 {
-                    return CreateNSWindowSurfaceMvk(GetInstanceProcAddr(instance, "vkCreateMacOSSurfaceMVK"), instance, nsWindowSource);
+                    return CreateNSWindowSurfaceMvk(
+                        GetInstanceProcAddr(instance, "vkCreateMacOSSurfaceMVK"),
+                        instance,
+                        nsWindowSource
+                    );
                 }
-                throw new VeldridException($"Neither macOS surface extension was available: " +
-                                           $"{EXT_METAL_SURFACE_EXTENSION_NAME}, {MVK_MACOS_SURFACE_EXTENSION_NAME}");
+                throw new VeldridException(
+                    $"Neither macOS surface extension was available: "
+                        + $"{EXT_METAL_SURFACE_EXTENSION_NAME}, {MVK_MACOS_SURFACE_EXTENSION_NAME}"
+                );
 
             case NSViewSwapchainSource nsViewSource:
                 if (instanceExtensions.Contains(EXT_METAL_SURFACE_EXTENSION_NAME))
                 {
-                    return CreateNSViewSurfaceExt(GetInstanceProcAddr(instance, "vkCreateMetalSurfaceEXT"), instance, nsViewSource);
+                    return CreateNSViewSurfaceExt(
+                        GetInstanceProcAddr(instance, "vkCreateMetalSurfaceEXT"),
+                        instance,
+                        nsViewSource
+                    );
                 }
                 if (instanceExtensions.Contains(MVK_MACOS_SURFACE_EXTENSION_NAME))
                 {
-                    return CreateNSViewSurfaceMvk(GetInstanceProcAddr(instance, "vkCreateMacOSSurfaceMVK"), instance, nsViewSource);
+                    return CreateNSViewSurfaceMvk(
+                        GetInstanceProcAddr(instance, "vkCreateMacOSSurfaceMVK"),
+                        instance,
+                        nsViewSource
+                    );
                 }
-                throw new VeldridException($"Neither macOS surface extension was available: " +
-                                           $"{EXT_METAL_SURFACE_EXTENSION_NAME}, {MVK_MACOS_SURFACE_EXTENSION_NAME}");
+                throw new VeldridException(
+                    $"Neither macOS surface extension was available: "
+                        + $"{EXT_METAL_SURFACE_EXTENSION_NAME}, {MVK_MACOS_SURFACE_EXTENSION_NAME}"
+                );
 
             case UIViewSwapchainSource uiViewSource:
                 if (instanceExtensions.Contains(EXT_METAL_SURFACE_EXTENSION_NAME))
                 {
-                    return CreateUIViewSurfaceExt(GetInstanceProcAddr(instance, "vkCreateMetalSurfaceEXT"), instance, uiViewSource);
+                    return CreateUIViewSurfaceExt(
+                        GetInstanceProcAddr(instance, "vkCreateMetalSurfaceEXT"),
+                        instance,
+                        uiViewSource
+                    );
                 }
                 if (instanceExtensions.Contains(MVK_IOS_SURFACE_EXTENSION_NAME))
                 {
-                    return CreateUIViewSurfaceMvk(GetInstanceProcAddr(instance, "vkCreateIOSSurfaceMVK"), instance, uiViewSource);
+                    return CreateUIViewSurfaceMvk(
+                        GetInstanceProcAddr(instance, "vkCreateIOSSurfaceMVK"),
+                        instance,
+                        uiViewSource
+                    );
                 }
-                throw new VeldridException($"Neither macOS surface extension was available: " +
-                                           $"{EXT_METAL_SURFACE_EXTENSION_NAME}, {MVK_IOS_SURFACE_EXTENSION_NAME}");
+                throw new VeldridException(
+                    $"Neither macOS surface extension was available: "
+                        + $"{EXT_METAL_SURFACE_EXTENSION_NAME}, {MVK_IOS_SURFACE_EXTENSION_NAME}"
+                );
 
             default:
-                throw new VeldridException($"The provided SwapchainSource cannot be used to create a Vulkan surface.");
+                throw new VeldridException(
+                    $"The provided SwapchainSource cannot be used to create a Vulkan surface."
+                );
         }
     }
 
     static VkSurfaceKHR CreateWin32(
-        IntPtr khr, VkInstance instance, Win32SwapchainSource win32Source)
+        IntPtr khr,
+        VkInstance instance,
+        Win32SwapchainSource win32Source
+    )
     {
         VkWin32SurfaceCreateInfoKHR surfaceCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
             hwnd = (void*)win32Source.Hwnd,
-            hinstance = (void*)win32Source.Hinstance
+            hinstance = (void*)win32Source.Hinstance,
         };
         VkSurfaceKHR surface;
-        VkResult result = ((delegate* unmanaged<VkInstance, VkWin32SurfaceCreateInfoKHR*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)khr)(
-            instance, &surfaceCI, null, &surface);
+        VkResult result = (
+            (delegate* unmanaged<
+                VkInstance,
+                VkWin32SurfaceCreateInfoKHR*,
+                VkAllocationCallbacks*,
+                VkSurfaceKHR*,
+                VkResult>)khr
+        )(instance, &surfaceCI, null, &surface);
         CheckResult(result);
         return surface;
     }
 
-    static VkSurfaceKHR CreateXlib(
-        IntPtr khr, VkInstance instance, XlibSwapchainSource xlibSource)
+    static VkSurfaceKHR CreateXlib(IntPtr khr, VkInstance instance, XlibSwapchainSource xlibSource)
     {
         VkXlibSurfaceCreateInfoKHR xsci = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
             dpy = (void*)xlibSource.Display,
-            window = (nuint)xlibSource.Window
+            window = (nuint)xlibSource.Window,
         };
         VkSurfaceKHR surface;
-        VkResult result = ((delegate* unmanaged<VkInstance, VkXlibSurfaceCreateInfoKHR*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)khr)(
-            instance, &xsci, null, &surface);
+        VkResult result = (
+            (delegate* unmanaged<
+                VkInstance,
+                VkXlibSurfaceCreateInfoKHR*,
+                VkAllocationCallbacks*,
+                VkSurfaceKHR*,
+                VkResult>)khr
+        )(instance, &xsci, null, &surface);
         CheckResult(result);
         return surface;
     }
 
     static VkSurfaceKHR CreateWayland(
-        IntPtr khr, VkInstance instance, WaylandSwapchainSource waylandSource)
+        IntPtr khr,
+        VkInstance instance,
+        WaylandSwapchainSource waylandSource
+    )
     {
         VkWaylandSurfaceCreateInfoKHR wsci = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR,
             display = (void*)waylandSource.Display,
-            surface = (void*)waylandSource.Surface
+            surface = (void*)waylandSource.Surface,
         };
         VkSurfaceKHR surface;
-        VkResult result = ((delegate* unmanaged<VkInstance, VkWaylandSurfaceCreateInfoKHR*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)khr)(
-            instance, &wsci, null, &surface);
+        VkResult result = (
+            (delegate* unmanaged<
+                VkInstance,
+                VkWaylandSurfaceCreateInfoKHR*,
+                VkAllocationCallbacks*,
+                VkSurfaceKHR*,
+                VkResult>)khr
+        )(instance, &wsci, null, &surface);
         CheckResult(result);
         return surface;
     }
@@ -150,25 +230,47 @@ internal static unsafe class VkSurfaceUtil
         VkAndroidSurfaceCreateInfoKHR androidSurfaceCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR,
-            window = (void*)aNativeWindow
+            window = (void*)aNativeWindow,
         };
         VkSurfaceKHR surface;
-        VkResult result = ((delegate* unmanaged<VkInstance, VkAndroidSurfaceCreateInfoKHR*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)khr)(
-            instance, &androidSurfaceCI, null, &surface);
+        VkResult result = (
+            (delegate* unmanaged<
+                VkInstance,
+                VkAndroidSurfaceCreateInfoKHR*,
+                VkAllocationCallbacks*,
+                VkSurfaceKHR*,
+                VkResult>)khr
+        )(instance, &androidSurfaceCI, null, &surface);
         CheckResult(result);
         return surface;
     }
 
-    static unsafe VkSurfaceKHR CreateNSWindowSurfaceExt(IntPtr ext, VkInstance instance, NSWindowSwapchainSource nsWindowSource)
+    static unsafe VkSurfaceKHR CreateNSWindowSurfaceExt(
+        IntPtr ext,
+        VkInstance instance,
+        NSWindowSwapchainSource nsWindowSource
+    )
     {
         NSWindow nswindow = new(nsWindowSource.NSWindow);
-        return CreateNSViewSurfaceExt(ext, instance, new NSViewSwapchainSource(nswindow.contentView.NativePtr));
+        return CreateNSViewSurfaceExt(
+            ext,
+            instance,
+            new NSViewSwapchainSource(nswindow.contentView.NativePtr)
+        );
     }
 
-    static unsafe VkSurfaceKHR CreateNSWindowSurfaceMvk(IntPtr mvk, VkInstance instance, NSWindowSwapchainSource nsWindowSource)
+    static unsafe VkSurfaceKHR CreateNSWindowSurfaceMvk(
+        IntPtr mvk,
+        VkInstance instance,
+        NSWindowSwapchainSource nsWindowSource
+    )
     {
-        NSWindow nswindow = new (nsWindowSource.NSWindow);
-        return CreateNSViewSurfaceMvk(mvk, instance, new NSViewSwapchainSource(nswindow.contentView.NativePtr));
+        NSWindow nswindow = new(nsWindowSource.NSWindow);
+        return CreateNSViewSurfaceMvk(
+            mvk,
+            instance,
+            new NSViewSwapchainSource(nswindow.contentView.NativePtr)
+        );
     }
 
     static void GetMetalLayerFromNSView(NSView contentView, out CAMetalLayer metalLayer)
@@ -182,7 +284,10 @@ internal static unsafe class VkSurfaceUtil
     }
 
     static unsafe VkSurfaceKHR CreateNSViewSurfaceExt(
-        IntPtr ext, VkInstance instance, NSViewSwapchainSource nsViewSource)
+        IntPtr ext,
+        VkInstance instance,
+        NSViewSwapchainSource nsViewSource
+    )
     {
         NSView contentView = new(nsViewSource.NSView);
         GetMetalLayerFromNSView(contentView, out CAMetalLayer metalLayer);
@@ -190,17 +295,26 @@ internal static unsafe class VkSurfaceUtil
         VkMetalSurfaceCreateInfoEXT surfaceCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT,
-            pLayer = (nint*)metalLayer.NativePtr
+            pLayer = (nint*)metalLayer.NativePtr,
         };
         VkSurfaceKHR surface;
-        VkResult result = ((delegate* unmanaged<VkInstance, VkMetalSurfaceCreateInfoEXT*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)ext)(
-            instance, &surfaceCI, null, &surface);
+        VkResult result = (
+            (delegate* unmanaged<
+                VkInstance,
+                VkMetalSurfaceCreateInfoEXT*,
+                VkAllocationCallbacks*,
+                VkSurfaceKHR*,
+                VkResult>)ext
+        )(instance, &surfaceCI, null, &surface);
         CheckResult(result);
         return surface;
     }
 
     static unsafe VkSurfaceKHR CreateNSViewSurfaceMvk(
-        IntPtr mvk, VkInstance instance, NSViewSwapchainSource nsViewSource)
+        IntPtr mvk,
+        VkInstance instance,
+        NSViewSwapchainSource nsViewSource
+    )
     {
         NSView contentView = new(nsViewSource.NSView);
         GetMetalLayerFromNSView(contentView, out _);
@@ -208,11 +322,17 @@ internal static unsafe class VkSurfaceUtil
         VkMacOSSurfaceCreateInfoMVK surfaceCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK,
-            pView = (void*)contentView.NativePtr
+            pView = (void*)contentView.NativePtr,
         };
         VkSurfaceKHR surface;
-        VkResult result = ((delegate* unmanaged<VkInstance, VkMacOSSurfaceCreateInfoMVK*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)mvk)(
-            instance, &surfaceCI, null, &surface);
+        VkResult result = (
+            (delegate* unmanaged<
+                VkInstance,
+                VkMacOSSurfaceCreateInfoMVK*,
+                VkAllocationCallbacks*,
+                VkSurfaceKHR*,
+                VkResult>)mvk
+        )(instance, &surfaceCI, null, &surface);
         CheckResult(result);
         return surface;
     }
@@ -229,7 +349,10 @@ internal static unsafe class VkSurfaceUtil
     }
 
     static VkSurfaceKHR CreateUIViewSurfaceExt(
-        IntPtr ext, VkInstance instance, UIViewSwapchainSource uiViewSource)
+        IntPtr ext,
+        VkInstance instance,
+        UIViewSwapchainSource uiViewSource
+    )
     {
         UIView uiView = new(uiViewSource.UIView);
         GetMetalLayerFromUIView(uiView, out CAMetalLayer metalLayer);
@@ -237,17 +360,26 @@ internal static unsafe class VkSurfaceUtil
         VkMetalSurfaceCreateInfoEXT surfaceCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT,
-            pLayer = (nint*)metalLayer.NativePtr
+            pLayer = (nint*)metalLayer.NativePtr,
         };
         VkSurfaceKHR surface;
-        VkResult result = ((delegate* unmanaged<VkInstance, VkMetalSurfaceCreateInfoEXT*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)ext)(
-            instance, &surfaceCI, null, &surface);
+        VkResult result = (
+            (delegate* unmanaged<
+                VkInstance,
+                VkMetalSurfaceCreateInfoEXT*,
+                VkAllocationCallbacks*,
+                VkSurfaceKHR*,
+                VkResult>)ext
+        )(instance, &surfaceCI, null, &surface);
         CheckResult(result);
         return surface;
     }
 
     static VkSurfaceKHR CreateUIViewSurfaceMvk(
-        IntPtr mvk, VkInstance instance, UIViewSwapchainSource uiViewSource)
+        IntPtr mvk,
+        VkInstance instance,
+        UIViewSwapchainSource uiViewSource
+    )
     {
         UIView uiView = new(uiViewSource.UIView);
         GetMetalLayerFromUIView(uiView, out _);
@@ -255,11 +387,17 @@ internal static unsafe class VkSurfaceUtil
         VkIOSSurfaceCreateInfoMVK surfaceCI = new()
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK,
-            pView = uiView.NativePtr.ToPointer()
+            pView = uiView.NativePtr.ToPointer(),
         };
         VkSurfaceKHR surface;
-        VkResult result = ((delegate* unmanaged<VkInstance, VkIOSSurfaceCreateInfoMVK*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)mvk)(
-            instance, &surfaceCI, null, &surface);
+        VkResult result = (
+            (delegate* unmanaged<
+                VkInstance,
+                VkIOSSurfaceCreateInfoMVK*,
+                VkAllocationCallbacks*,
+                VkSurfaceKHR*,
+                VkResult>)mvk
+        )(instance, &surfaceCI, null, &surface);
         CheckResult(result);
         return surface;
     }

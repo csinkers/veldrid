@@ -40,33 +40,28 @@ public class FormatSizeHelpersTests : IDisposable
         PixelFormat.BC1_Rgba_UNorm_SRgb,
         PixelFormat.BC1_Rgb_UNorm,
         PixelFormat.BC1_Rgb_UNorm_SRgb,
-
         PixelFormat.BC2_UNorm,
         PixelFormat.BC2_UNorm_SRgb,
-
         PixelFormat.BC3_UNorm,
         PixelFormat.BC3_UNorm_SRgb,
-
         PixelFormat.BC4_SNorm,
         PixelFormat.BC4_UNorm,
-
         PixelFormat.BC5_SNorm,
         PixelFormat.BC5_UNorm,
-
         PixelFormat.BC7_UNorm,
         PixelFormat.BC7_UNorm_SRgb,
-
         PixelFormat.ETC2_R8_G8_B8_A1_UNorm,
         PixelFormat.ETC2_R8_G8_B8_A8_UNorm,
-        PixelFormat.ETC2_R8_G8_B8_UNorm
+        PixelFormat.ETC2_R8_G8_B8_UNorm,
     ];
 
-    static IEnumerable<PixelFormat> UncompressedPixelFormats
-        = Enum.GetValues<PixelFormat>()
-            .Where(format => !CompressedPixelFormats.Contains(format));
+    static IEnumerable<PixelFormat> UncompressedPixelFormats = Enum.GetValues<PixelFormat>()
+        .Where(format => !CompressedPixelFormats.Contains(format));
 
-    public static IEnumerable<object[]> CompressedPixelFormatMemberData => CompressedPixelFormats.Select(format => new object[] { format });
-    public static IEnumerable<object[]> UncompressedPixelFormatMemberData => UncompressedPixelFormats.Select(format => new object[] { format });
+    public static IEnumerable<object[]> CompressedPixelFormatMemberData =>
+        CompressedPixelFormats.Select(format => new object[] { format });
+    public static IEnumerable<object[]> UncompressedPixelFormatMemberData =>
+        UncompressedPixelFormats.Select(format => new object[] { format });
 
     [Theory]
     [MemberData(nameof(UncompressedPixelFormatMemberData))]

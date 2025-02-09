@@ -35,9 +35,7 @@ public struct FramebufferAttachmentDescription : IEquatable<FramebufferAttachmen
     /// <param name="arrayLayer">The array layer to render to. This value must be less than <see cref="Texture.ArrayLayers"/>
     /// in the target <see cref="Texture"/>.</param>
     public FramebufferAttachmentDescription(Texture target, uint arrayLayer)
-        : this(target, arrayLayer, 0)
-    {
-    }
+        : this(target, arrayLayer, 0) { }
 
     /// <summary>
     /// Constructs a new FramebufferAttachmentDescription.
@@ -61,12 +59,14 @@ public struct FramebufferAttachmentDescription : IEquatable<FramebufferAttachmen
         if (arrayLayer >= effectiveArrayLayers)
         {
             throw new VeldridException(
-                $"{nameof(arrayLayer)} must be less than {nameof(target)}.{nameof(Texture.ArrayLayers)}.");
+                $"{nameof(arrayLayer)} must be less than {nameof(target)}.{nameof(Texture.ArrayLayers)}."
+            );
         }
         if (mipLevel >= target.MipLevels)
         {
             throw new VeldridException(
-                $"{nameof(mipLevel)} must be less than {nameof(target)}.{nameof(Texture.MipLevels)}.");
+                $"{nameof(mipLevel)} must be less than {nameof(target)}.{nameof(Texture.MipLevels)}."
+            );
         }
 #endif
         Target = target;
@@ -81,7 +81,9 @@ public struct FramebufferAttachmentDescription : IEquatable<FramebufferAttachmen
     /// <returns>True if all elements and all array elements are equal; false otherswise.</returns>
     public bool Equals(FramebufferAttachmentDescription other)
     {
-        return Target.Equals(other.Target) && ArrayLayer.Equals(other.ArrayLayer) && MipLevel.Equals(other.MipLevel);
+        return Target.Equals(other.Target)
+            && ArrayLayer.Equals(other.ArrayLayer)
+            && MipLevel.Equals(other.MipLevel);
     }
 
     /// <summary>
@@ -90,6 +92,10 @@ public struct FramebufferAttachmentDescription : IEquatable<FramebufferAttachmen
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
     public override int GetHashCode()
     {
-        return HashHelper.Combine(Target.GetHashCode(), ArrayLayer.GetHashCode(), MipLevel.GetHashCode());
+        return HashHelper.Combine(
+            Target.GetHashCode(),
+            ArrayLayer.GetHashCode(),
+            MipLevel.GetHashCode()
+        );
     }
 }

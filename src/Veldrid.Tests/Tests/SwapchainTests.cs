@@ -18,11 +18,25 @@ public abstract class SwapchainTests<T> : GraphicsDeviceTestBase<T>
     {
         TestUtils.SkipIfNotSdl();
 
-        Sdl2Window window = new("SwapchainTestWindow", 0, 0, 100, 100, SDL_WindowFlags.Hidden, false);
+        Sdl2Window window = new(
+            "SwapchainTestWindow",
+            0,
+            0,
+            100,
+            100,
+            SDL_WindowFlags.Hidden,
+            false
+        );
         try
         {
             SwapchainSource source = VeldridStartup.GetSwapchainSource(window);
-            SwapchainDescription swapchainDesc = new(source, 100, 100, depthFormat, syncToVerticalBlank);
+            SwapchainDescription swapchainDesc = new(
+                source,
+                100,
+                100,
+                depthFormat,
+                syncToVerticalBlank
+            );
             Swapchain swapchain = RF.CreateSwapchain(swapchainDesc);
 
             if (depthFormat == null)
@@ -75,20 +89,23 @@ public abstract class MainSwapchainTests<T> : GraphicsDeviceTestBase<T>
 #if TEST_VULKAN
 [Trait("Backend", "Vulkan")]
 public class VulkanSwapchainTests : SwapchainTests<VulkanDeviceCreator> { }
+
 [Trait("Backend", "Vulkan")]
 public class VulkanMainSwapchainTests : MainSwapchainTests<VulkanDeviceCreatorWithMainSwapchain> { }
 #endif
 #if TEST_D3D11
 [Trait("Backend", "D3D11")]
 public class D3D11SwapchainTests : SwapchainTests<D3D11DeviceCreator> { }
+
 [Trait("Backend", "D3D11")]
 public class D3D11MainSwapchainTests : MainSwapchainTests<D3D11DeviceCreatorWithMainSwapchain> { }
 #endif
 #if TEST_METAL
-    [Trait("Backend", "Metal")]
-    public class MetalSwapchainTests : SwapchainTests<MetalDeviceCreator> { }
-    [Trait("Backend", "Metal")]
-    public class MetalMainSwapchainTests : SwapchainTests<MetalDeviceCreatorWithMainSwapchain> { }
+[Trait("Backend", "Metal")]
+public class MetalSwapchainTests : SwapchainTests<MetalDeviceCreator> { }
+
+[Trait("Backend", "Metal")]
+public class MetalMainSwapchainTests : SwapchainTests<MetalDeviceCreatorWithMainSwapchain> { }
 #endif
 #if TEST_OPENGL
 [Trait("Backend", "OpenGL")]

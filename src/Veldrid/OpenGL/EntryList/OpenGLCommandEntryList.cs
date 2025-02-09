@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Veldrid.OpenGL.EntryList;
 
-internal unsafe sealed class OpenGLCommandEntryList : IDisposable
+internal sealed unsafe class OpenGLCommandEntryList : IDisposable
 {
     readonly StagingMemoryPool _memoryPool;
     readonly List<EntryStorageBlock> _blocks = [];
@@ -123,7 +123,8 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
         return ref _currentBlock.Bytes[offset];
     }
 
-    public void AddEntry<T>(byte id, ref T entry) where T : unmanaged
+    public void AddEntry<T>(byte id, ref T entry)
+        where T : unmanaged
     {
         uint storageSize = (uint)Unsafe.SizeOf<T>() + 1; // Include ID
         ref byte storagePtr = ref GetStorageChunk(storageSize, out bool shouldTerminate);
@@ -169,54 +170,89 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
                     break;
 
                 case ClearColorTargetID:
-                    ClearColorTargetEntry ccte = Unsafe.ReadUnaligned<ClearColorTargetEntry>(ref entryBasePtr);
+                    ClearColorTargetEntry ccte = Unsafe.ReadUnaligned<ClearColorTargetEntry>(
+                        ref entryBasePtr
+                    );
                     executor.ClearColorTarget(ccte.Index, ccte.ClearColor);
                     currentOffset += (uint)Unsafe.SizeOf<ClearColorTargetEntry>();
                     break;
 
                 case ClearDepthTargetID:
-                    ClearDepthTargetEntry cdte = Unsafe.ReadUnaligned<ClearDepthTargetEntry>(ref entryBasePtr);
+                    ClearDepthTargetEntry cdte = Unsafe.ReadUnaligned<ClearDepthTargetEntry>(
+                        ref entryBasePtr
+                    );
                     executor.ClearDepthStencil(cdte.Depth, cdte.Stencil);
                     currentOffset += (uint)Unsafe.SizeOf<ClearDepthTargetEntry>();
                     break;
 
                 case DrawEntryID:
                     DrawEntry de = Unsafe.ReadUnaligned<DrawEntry>(ref entryBasePtr);
-                    executor.Draw(de.VertexCount, de.InstanceCount, de.VertexStart, de.InstanceStart);
+                    executor.Draw(
+                        de.VertexCount,
+                        de.InstanceCount,
+                        de.VertexStart,
+                        de.InstanceStart
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<DrawEntry>();
                     break;
 
                 case DrawIndexedEntryID:
                     DrawIndexedEntry die = Unsafe.ReadUnaligned<DrawIndexedEntry>(ref entryBasePtr);
-                    executor.DrawIndexed(die.IndexCount, die.InstanceCount, die.IndexStart, die.VertexOffset, die.InstanceStart);
+                    executor.DrawIndexed(
+                        die.IndexCount,
+                        die.InstanceCount,
+                        die.IndexStart,
+                        die.VertexOffset,
+                        die.InstanceStart
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<DrawIndexedEntry>();
                     break;
 
                 case DrawIndirectEntryID:
-                    DrawIndirectEntry drawIndirectEntry = Unsafe.ReadUnaligned<DrawIndirectEntry>(ref entryBasePtr);
+                    DrawIndirectEntry drawIndirectEntry = Unsafe.ReadUnaligned<DrawIndirectEntry>(
+                        ref entryBasePtr
+                    );
                     executor.DrawIndirect(
                         drawIndirectEntry.IndirectBuffer.Get(_resourceList),
                         drawIndirectEntry.Offset,
                         drawIndirectEntry.DrawCount,
-                        drawIndirectEntry.Stride);
+                        drawIndirectEntry.Stride
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<DrawIndirectEntry>();
                     break;
 
                 case DrawIndexedIndirectEntryID:
-                    DrawIndexedIndirectEntry diie = Unsafe.ReadUnaligned<DrawIndexedIndirectEntry>(ref entryBasePtr);
-                    executor.DrawIndexedIndirect(diie.IndirectBuffer.Get(_resourceList), diie.Offset, diie.DrawCount, diie.Stride);
+                    DrawIndexedIndirectEntry diie = Unsafe.ReadUnaligned<DrawIndexedIndirectEntry>(
+                        ref entryBasePtr
+                    );
+                    executor.DrawIndexedIndirect(
+                        diie.IndirectBuffer.Get(_resourceList),
+                        diie.Offset,
+                        diie.DrawCount,
+                        diie.Stride
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<DrawIndexedIndirectEntry>();
                     break;
 
                 case DispatchEntryID:
-                    DispatchEntry dispatchEntry = Unsafe.ReadUnaligned<DispatchEntry>(ref entryBasePtr);
-                    executor.Dispatch(dispatchEntry.GroupCountX, dispatchEntry.GroupCountY, dispatchEntry.GroupCountZ);
+                    DispatchEntry dispatchEntry = Unsafe.ReadUnaligned<DispatchEntry>(
+                        ref entryBasePtr
+                    );
+                    executor.Dispatch(
+                        dispatchEntry.GroupCountX,
+                        dispatchEntry.GroupCountY,
+                        dispatchEntry.GroupCountZ
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<DispatchEntry>();
                     break;
 
                 case DispatchIndirectEntryID:
-                    DispatchIndirectEntry dispatchIndir = Unsafe.ReadUnaligned<DispatchIndirectEntry>(ref entryBasePtr);
-                    executor.DispatchIndirect(dispatchIndir.IndirectBuffer.Get(_resourceList), dispatchIndir.Offset);
+                    DispatchIndirectEntry dispatchIndir =
+                        Unsafe.ReadUnaligned<DispatchIndirectEntry>(ref entryBasePtr);
+                    executor.DispatchIndirect(
+                        dispatchIndir.IndirectBuffer.Get(_resourceList),
+                        dispatchIndir.Offset
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<DispatchIndirectEntry>();
                     break;
 
@@ -226,14 +262,22 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
                     break;
 
                 case SetFramebufferEntryID:
-                    SetFramebufferEntry sfbe = Unsafe.ReadUnaligned<SetFramebufferEntry>(ref entryBasePtr);
+                    SetFramebufferEntry sfbe = Unsafe.ReadUnaligned<SetFramebufferEntry>(
+                        ref entryBasePtr
+                    );
                     executor.SetFramebuffer(sfbe.Framebuffer.Get(_resourceList));
                     currentOffset += (uint)Unsafe.SizeOf<SetFramebufferEntry>();
                     break;
 
                 case SetIndexBufferEntryID:
-                    SetIndexBufferEntry sibe = Unsafe.ReadUnaligned<SetIndexBufferEntry>(ref entryBasePtr);
-                    executor.SetIndexBuffer(sibe.Buffer.Get(_resourceList), sibe.Format, sibe.Offset);
+                    SetIndexBufferEntry sibe = Unsafe.ReadUnaligned<SetIndexBufferEntry>(
+                        ref entryBasePtr
+                    );
+                    executor.SetIndexBuffer(
+                        sibe.Buffer.Get(_resourceList),
+                        sibe.Format,
+                        sibe.Offset
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<SetIndexBufferEntry>();
                     break;
 
@@ -244,53 +288,72 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
                     break;
 
                 case SetResourceSetEntryID:
-                    SetResourceSetEntry srse = Unsafe.ReadUnaligned<SetResourceSetEntry>(ref entryBasePtr);
+                    SetResourceSetEntry srse = Unsafe.ReadUnaligned<SetResourceSetEntry>(
+                        ref entryBasePtr
+                    );
                     ResourceSet rs = srse.ResourceSet.Get(_resourceList);
-                    uint* dynamicOffsetsPtr = srse.DynamicOffsetCount > SetResourceSetEntry.MaxInlineDynamicOffsets
-                        ? (uint*)srse.DynamicOffsets_Block.Data
-                        : srse.DynamicOffsets_Inline;
+                    uint* dynamicOffsetsPtr =
+                        srse.DynamicOffsetCount > SetResourceSetEntry.MaxInlineDynamicOffsets
+                            ? (uint*)srse.DynamicOffsets_Block.Data
+                            : srse.DynamicOffsets_Inline;
                     if (srse.IsGraphics)
                     {
                         executor.SetGraphicsResourceSet(
                             srse.Slot,
                             rs,
-                            new ReadOnlySpan<uint>(dynamicOffsetsPtr, srse.DynamicOffsetCount));
+                            new ReadOnlySpan<uint>(dynamicOffsetsPtr, srse.DynamicOffsetCount)
+                        );
                     }
                     else
                     {
                         executor.SetComputeResourceSet(
                             srse.Slot,
                             rs,
-                            new ReadOnlySpan<uint>(dynamicOffsetsPtr, srse.DynamicOffsetCount));
+                            new ReadOnlySpan<uint>(dynamicOffsetsPtr, srse.DynamicOffsetCount)
+                        );
                     }
                     currentOffset += (uint)Unsafe.SizeOf<SetResourceSetEntry>();
                     break;
 
                 case SetScissorRectEntryID:
-                    SetScissorRectEntry ssre = Unsafe.ReadUnaligned<SetScissorRectEntry>(ref entryBasePtr);
+                    SetScissorRectEntry ssre = Unsafe.ReadUnaligned<SetScissorRectEntry>(
+                        ref entryBasePtr
+                    );
                     executor.SetScissorRect(ssre.Index, ssre.X, ssre.Y, ssre.Width, ssre.Height);
                     currentOffset += (uint)Unsafe.SizeOf<SetScissorRectEntry>();
                     break;
 
                 case SetVertexBufferEntryID:
-                    SetVertexBufferEntry svbe = Unsafe.ReadUnaligned<SetVertexBufferEntry>(ref entryBasePtr);
-                    executor.SetVertexBuffer(svbe.Index, svbe.Buffer.Get(_resourceList), svbe.Offset);
+                    SetVertexBufferEntry svbe = Unsafe.ReadUnaligned<SetVertexBufferEntry>(
+                        ref entryBasePtr
+                    );
+                    executor.SetVertexBuffer(
+                        svbe.Index,
+                        svbe.Buffer.Get(_resourceList),
+                        svbe.Offset
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<SetVertexBufferEntry>();
                     break;
 
                 case SetViewportEntryID:
-                    SetViewportEntry svpe = Unsafe.ReadUnaligned<SetViewportEntry>(ref entryBasePtr);
+                    SetViewportEntry svpe = Unsafe.ReadUnaligned<SetViewportEntry>(
+                        ref entryBasePtr
+                    );
                     executor.SetViewport(svpe.Index, ref svpe.Viewport);
                     currentOffset += (uint)Unsafe.SizeOf<SetViewportEntry>();
                     break;
 
                 case UpdateBufferEntryID:
-                    UpdateBufferEntry ube = Unsafe.ReadUnaligned<UpdateBufferEntry>(ref entryBasePtr);
+                    UpdateBufferEntry ube = Unsafe.ReadUnaligned<UpdateBufferEntry>(
+                        ref entryBasePtr
+                    );
                     byte* dataPtr = (byte*)ube.StagingBlock.Data;
                     executor.UpdateBuffer(
                         ube.Buffer.Get(_resourceList),
                         ube.BufferOffsetInBytes,
-                        (IntPtr)dataPtr, ube.StagingBlockSize);
+                        (IntPtr)dataPtr,
+                        ube.StagingBlockSize
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<UpdateBufferEntry>();
                     break;
 
@@ -301,7 +364,8 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
                         cbe.SourceOffset,
                         cbe.Destination.Get(_resourceList),
                         cbe.DestinationOffset,
-                        cbe.SizeInBytes);
+                        cbe.SizeInBytes
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<CopyBufferEntry>();
                     break;
 
@@ -309,32 +373,48 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
                     CopyTextureEntry cte = Unsafe.ReadUnaligned<CopyTextureEntry>(ref entryBasePtr);
                     executor.CopyTexture(
                         cte.Source.Get(_resourceList),
-                        cte.SrcX, cte.SrcY, cte.SrcZ,
+                        cte.SrcX,
+                        cte.SrcY,
+                        cte.SrcZ,
                         cte.SrcMipLevel,
                         cte.SrcBaseArrayLayer,
                         cte.Destination.Get(_resourceList),
-                        cte.DstX, cte.DstY, cte.DstZ,
+                        cte.DstX,
+                        cte.DstY,
+                        cte.DstZ,
                         cte.DstMipLevel,
                         cte.DstBaseArrayLayer,
-                        cte.Width, cte.Height, cte.Depth,
-                        cte.LayerCount);
+                        cte.Width,
+                        cte.Height,
+                        cte.Depth,
+                        cte.LayerCount
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<CopyTextureEntry>();
                     break;
 
                 case ResolveTextureEntryID:
-                    ResolveTextureEntry rte = Unsafe.ReadUnaligned<ResolveTextureEntry>(ref entryBasePtr);
-                    executor.ResolveTexture(rte.Source.Get(_resourceList), rte.Destination.Get(_resourceList));
+                    ResolveTextureEntry rte = Unsafe.ReadUnaligned<ResolveTextureEntry>(
+                        ref entryBasePtr
+                    );
+                    executor.ResolveTexture(
+                        rte.Source.Get(_resourceList),
+                        rte.Destination.Get(_resourceList)
+                    );
                     currentOffset += (uint)Unsafe.SizeOf<ResolveTextureEntry>();
                     break;
 
                 case GenerateMipmapsEntryID:
-                    GenerateMipmapsEntry gme = Unsafe.ReadUnaligned<GenerateMipmapsEntry>(ref entryBasePtr);
+                    GenerateMipmapsEntry gme = Unsafe.ReadUnaligned<GenerateMipmapsEntry>(
+                        ref entryBasePtr
+                    );
                     executor.GenerateMipmaps(gme.Texture.Get(_resourceList));
                     currentOffset += (uint)Unsafe.SizeOf<GenerateMipmapsEntry>();
                     break;
 
                 case PushDebugGroupEntryID:
-                    PushDebugGroupEntry pdge = Unsafe.ReadUnaligned<PushDebugGroupEntry>(ref entryBasePtr);
+                    PushDebugGroupEntry pdge = Unsafe.ReadUnaligned<PushDebugGroupEntry>(
+                        ref entryBasePtr
+                    );
                     executor.PushDebugGroup(pdge.Name.Get(_resourceList));
                     currentOffset += (uint)Unsafe.SizeOf<PushDebugGroupEntry>();
                     break;
@@ -345,7 +425,9 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
                     break;
 
                 case InsertDebugMarkerEntryID:
-                    InsertDebugMarkerEntry idme = Unsafe.ReadUnaligned<InsertDebugMarkerEntry>(ref entryBasePtr);
+                    InsertDebugMarkerEntry idme = Unsafe.ReadUnaligned<InsertDebugMarkerEntry>(
+                        ref entryBasePtr
+                    );
                     executor.InsertDebugMarker(idme.Name.Get(_resourceList));
                     currentOffset += (uint)Unsafe.SizeOf<InsertDebugMarkerEntry>();
                     break;
@@ -385,9 +467,21 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
         AddEntry(DrawEntryID, ref entry);
     }
 
-    public void DrawIndexed(uint indexCount, uint instanceCount, uint indexStart, int vertexOffset, uint instanceStart)
+    public void DrawIndexed(
+        uint indexCount,
+        uint instanceCount,
+        uint indexStart,
+        int vertexOffset,
+        uint instanceStart
+    )
     {
-        DrawIndexedEntry entry = new(indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
+        DrawIndexedEntry entry = new(
+            indexCount,
+            instanceCount,
+            indexStart,
+            vertexOffset,
+            instanceStart
+        );
         AddEntry(DrawIndexedEntryID, ref entry);
     }
 
@@ -397,7 +491,12 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
         AddEntry(DrawIndirectEntryID, ref entry);
     }
 
-    public void DrawIndexedIndirect(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    public void DrawIndexedIndirect(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         DrawIndexedIndirectEntry entry = new(Track(indirectBuffer), offset, drawCount, stride);
         AddEntry(DrawIndexedIndirectEntryID, ref entry);
@@ -444,13 +543,20 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
         SetResourceSet(slot, rs, dynamicOffsets, isGraphics: true);
     }
 
-    void SetResourceSet(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets, bool isGraphics)
+    void SetResourceSet(
+        uint slot,
+        ResourceSet rs,
+        ReadOnlySpan<uint> dynamicOffsets,
+        bool isGraphics
+    )
     {
         SetResourceSetEntry entry;
 
         if (dynamicOffsets.Length > SetResourceSetEntry.MaxInlineDynamicOffsets)
         {
-            StagingBlock block = _memoryPool.GetStagingBlock((uint)dynamicOffsets.Length * sizeof(uint));
+            StagingBlock block = _memoryPool.GetStagingBlock(
+                (uint)dynamicOffsets.Length * sizeof(uint)
+            );
             _stagingBlocks.Add(block);
             for (int i = 0; i < dynamicOffsets.Length; i++)
             {
@@ -496,15 +602,29 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
         AddEntry(ResolveTextureEntryID, ref entry);
     }
 
-    public void UpdateBuffer(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
+    public void UpdateBuffer(
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr source,
+        uint sizeInBytes
+    )
     {
         StagingBlock stagingBlock = _memoryPool.Stage(source, sizeInBytes);
         _stagingBlocks.Add(stagingBlock);
-        UpdateBufferEntry entry = new(Track(buffer), bufferOffsetInBytes, stagingBlock, sizeInBytes);
+        UpdateBufferEntry entry = new(
+            Track(buffer),
+            bufferOffsetInBytes,
+            stagingBlock,
+            sizeInBytes
+        );
         AddEntry(UpdateBufferEntryID, ref entry);
     }
 
-    public void CopyBuffer(DeviceBuffer source, DeviceBuffer destination, ReadOnlySpan<BufferCopyCommand> commands)
+    public void CopyBuffer(
+        DeviceBuffer source,
+        DeviceBuffer destination,
+        ReadOnlySpan<BufferCopyCommand> commands
+    )
     {
         Tracked<DeviceBuffer> trackedSrc = Track(source);
         Tracked<DeviceBuffer> trackedDst = Track(destination);
@@ -521,34 +641,49 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
                 (uint)command.ReadOffset,
                 trackedDst,
                 (uint)command.WriteOffset,
-                (uint)command.Length);
+                (uint)command.Length
+            );
             AddEntry(CopyBufferEntryID, ref entry);
         }
     }
 
     public void CopyTexture(
         Texture source,
-        uint srcX, uint srcY, uint srcZ,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
         uint srcMipLevel,
         uint srcBaseArrayLayer,
         Texture destination,
-        uint dstX, uint dstY, uint dstZ,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
         uint dstMipLevel,
         uint dstBaseArrayLayer,
-        uint width, uint height, uint depth,
-        uint layerCount)
+        uint width,
+        uint height,
+        uint depth,
+        uint layerCount
+    )
     {
         CopyTextureEntry entry = new(
             Track(source),
-            srcX, srcY, srcZ,
+            srcX,
+            srcY,
+            srcZ,
             srcMipLevel,
             srcBaseArrayLayer,
             Track(destination),
-            dstX, dstY, dstZ,
+            dstX,
+            dstY,
+            dstZ,
             dstMipLevel,
             dstBaseArrayLayer,
-            width, height, depth,
-            layerCount);
+            width,
+            height,
+            depth,
+            layerCount
+        );
         AddEntry(CopyTextureEntryID, ref entry);
     }
 
@@ -576,7 +711,8 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
         AddEntry(InsertDebugMarkerEntryID, ref entry);
     }
 
-    Tracked<T> Track<T>(T item) where T : class
+    Tracked<T> Track<T>(T item)
+        where T : class
     {
         return new Tracked<T>(_resourceList, item);
     }
@@ -634,7 +770,8 @@ internal unsafe sealed class OpenGLCommandEntryList : IDisposable
 /// A handle for an object stored in some List.
 /// </summary>
 /// <typeparam name="T">The type of object to track.</typeparam>
-internal struct Tracked<T> where T : class
+internal struct Tracked<T>
+    where T : class
 {
     readonly int _index;
 

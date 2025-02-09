@@ -17,6 +17,7 @@ namespace Veldrid.Tests.Android
         public int HostPort { get; set; }
         public bool TerminateAfterExecution { get; set; }
 
-        public bool UseNetworkLogger => EnableNetwork && !string.IsNullOrWhiteSpace(HostName) && HostPort > 0;
+        public bool UseNetworkLogger =>
+            EnableNetwork && !string.IsNullOrWhiteSpace(HostName) && HostPort > 0;
     }
 }

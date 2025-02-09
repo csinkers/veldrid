@@ -13,7 +13,7 @@ public struct GLboolean : IEquatable<GLboolean>
     public byte Value;
 
     /// <summary>
-    /// Constructs a new <see cref="GLboolean"/> with the given raw value. 
+    /// Constructs a new <see cref="GLboolean"/> with the given raw value.
     /// </summary>
     /// <param name="value"></param>
     public GLboolean(byte value)

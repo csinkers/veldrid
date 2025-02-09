@@ -15,14 +15,17 @@ public readonly struct RgbaFloat : IEquatable<RgbaFloat>
     /// The red component.
     /// </summary>
     public float R => _channels.X;
+
     /// <summary>
     /// The green component.
     /// </summary>
     public float G => _channels.Y;
+
     /// <summary>
     /// The blue component.
     /// </summary>
     public float B => _channels.Z;
+
     /// <summary>
     /// The alpha component.
     /// </summary>
@@ -58,54 +61,67 @@ public readonly struct RgbaFloat : IEquatable<RgbaFloat>
     /// Red (1, 0, 0, 1)
     /// </summary>
     public static readonly RgbaFloat Red = new(1, 0, 0, 1);
+
     /// <summary>
     /// Dark Red (0.6f, 0, 0, 1)
     /// </summary>
     public static readonly RgbaFloat DarkRed = new(0.6f, 0, 0, 1);
+
     /// <summary>
     /// Green (0, 1, 0, 1)
     /// </summary>
     public static readonly RgbaFloat Green = new(0, 1, 0, 1);
+
     /// <summary>
     /// Blue (0, 0, 1, 1)
     /// </summary>
     public static readonly RgbaFloat Blue = new(0, 0, 1, 1);
+
     /// <summary>
     /// Yellow (1, 1, 0, 1)
     /// </summary>
     public static readonly RgbaFloat Yellow = new(1, 1, 0, 1);
+
     /// <summary>
     /// Grey (0.25f, 0.25f, 0.25f, 1)
     /// </summary>
     public static readonly RgbaFloat Grey = new(.25f, .25f, .25f, 1);
+
     /// <summary>
     /// Light Grey (0.65f, 0.65f, 0.65f, 1)
     /// </summary>
     public static readonly RgbaFloat LightGrey = new(.65f, .65f, .65f, 1);
+
     /// <summary>
     /// Cyan (0, 1, 1, 1)
     /// </summary>
     public static readonly RgbaFloat Cyan = new(0, 1, 1, 1);
+
     /// <summary>
     /// White (1, 1, 1, 1)
     /// </summary>
     public static readonly RgbaFloat White = new(1, 1, 1, 1);
+
     /// <summary>
     /// Cornflower Blue (0.3921f, 0.5843f, 0.9294f, 1)
     /// </summary>
     public static readonly RgbaFloat CornflowerBlue = new(0.3921f, 0.5843f, 0.9294f, 1);
+
     /// <summary>
     /// Clear (0, 0, 0, 0)
     /// </summary>
     public static readonly RgbaFloat Clear = new(0, 0, 0, 0);
+
     /// <summary>
     /// Black (0, 0, 0, 1)
     /// </summary>
     public static readonly RgbaFloat Black = new(0, 0, 0, 1);
+
     /// <summary>
     /// Pink (1, 0.45f, 0.75f, 1)
     /// </summary>
     public static readonly RgbaFloat Pink = new(1f, 0.45f, 0.75f, 1);
+
     /// <summary>
     /// Orange (1, 0.36f, 0, 1)
     /// </summary>
@@ -149,7 +165,12 @@ public readonly struct RgbaFloat : IEquatable<RgbaFloat>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
-        return HashHelper.Combine(R.GetHashCode(), G.GetHashCode(), B.GetHashCode(), A.GetHashCode());
+        return HashHelper.Combine(
+            R.GetHashCode(),
+            G.GetHashCode(),
+            B.GetHashCode(),
+            A.GetHashCode()
+        );
     }
 
     /// <summary>

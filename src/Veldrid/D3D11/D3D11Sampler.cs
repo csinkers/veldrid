@@ -12,22 +12,26 @@ internal sealed class D3D11Sampler : Sampler
 
     public D3D11Sampler(ID3D11Device device, in SamplerDescription description)
     {
-        ComparisonFunction comparision = description.ComparisonKind == null
-            ? ComparisonFunction.Never
-            : D3D11Formats.VdToD3D11ComparisonFunc(description.ComparisonKind.Value);
+        ComparisonFunction comparision =
+            description.ComparisonKind == null
+                ? ComparisonFunction.Never
+                : D3D11Formats.VdToD3D11ComparisonFunc(description.ComparisonKind.Value);
 
         Vortice.Direct3D11.SamplerDescription samplerStateDesc = new()
         {
             AddressU = D3D11Formats.VdToD3D11AddressMode(description.AddressModeU),
             AddressV = D3D11Formats.VdToD3D11AddressMode(description.AddressModeV),
             AddressW = D3D11Formats.VdToD3D11AddressMode(description.AddressModeW),
-            Filter = D3D11Formats.ToD3D11Filter(description.Filter, description.ComparisonKind.HasValue),
+            Filter = D3D11Formats.ToD3D11Filter(
+                description.Filter,
+                description.ComparisonKind.HasValue
+            ),
             MinLOD = description.MinimumLod,
             MaxLOD = description.MaximumLod,
             MaxAnisotropy = (int)description.MaximumAnisotropy,
             ComparisonFunc = comparision,
             MipLODBias = description.LodBias,
-            BorderColor = ToRawColor4(description.BorderColor)
+            BorderColor = ToRawColor4(description.BorderColor),
         };
 
         DeviceSampler = device.CreateSamplerState(samplerStateDesc);

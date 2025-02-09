@@ -13,13 +13,21 @@ public class MaterialPropsAndBuffer(MaterialProperties mp)
     public MaterialProperties Properties
     {
         get => _properties;
-        set { _properties = value; _newProperties = true; }
+        set
+        {
+            _properties = value;
+            _newProperties = true;
+        }
     }
 
     public void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
         UniformBuffer = gd.ResourceFactory.CreateBuffer(
-            new BufferDescription((uint)Unsafe.SizeOf<MaterialProperties>(), BufferUsage.UniformBuffer));
+            new BufferDescription(
+                (uint)Unsafe.SizeOf<MaterialProperties>(),
+                BufferUsage.UniformBuffer
+            )
+        );
         cl.UpdateBuffer(UniformBuffer, 0, ref _properties);
     }
 

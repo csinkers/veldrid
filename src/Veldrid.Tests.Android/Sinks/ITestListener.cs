@@ -6,6 +6,9 @@ namespace Veldrid.Tests.Android.Sinks
 {
     public interface ITestListener
     {
-        ValueTask RecordResultAsync(TestResultViewModel result, CancellationToken cancellationToken);
+        ValueTask RecordResultAsync(
+            TestResultViewModel result,
+            CancellationToken cancellationToken
+        );
     }
 }

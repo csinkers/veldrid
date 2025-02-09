@@ -1,13 +1,12 @@
-﻿using Assimp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Assimp;
 using Veldrid.ImageSharp;
 using Veldrid.SPIRV;
-
 using Matrix4x4 = System.Numerics.Matrix4x4;
 
 namespace Veldrid.VirtualReality.Sample;
@@ -23,46 +22,89 @@ internal class AssimpMesh : IDisposable
     readonly TextureView _view;
     readonly ResourceSet _rs;
 
-    public AssimpMesh(GraphicsDevice gd, OutputDescription outputs, string meshPath, string texturePath)
+    public AssimpMesh(
+        GraphicsDevice gd,
+        OutputDescription outputs,
+        string meshPath,
+        string texturePath
+    )
     {
         _gd = gd;
         ResourceFactory factory = gd.ResourceFactory;
 
         Shader[] shaders = factory.CreateFromSpirv(
             new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
-            new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"));
+            new ShaderDescription(
+                ShaderStages.Fragment,
+                Encoding.ASCII.GetBytes(fragmentGlsl),
+                "main"
+            )
+        );
         _disposables.Add(shaders[0]);
         _disposables.Add(shaders[1]);
 
-        ResourceLayout rl = factory.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("WVP", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-            new ResourceLayoutElementDescription("Input", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-            new ResourceLayoutElementDescription("InputSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+        ResourceLayout rl = factory.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "WVP",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                ),
+                new ResourceLayoutElementDescription(
+                    "Input",
+                    ResourceKind.TextureReadOnly,
+                    ShaderStages.Fragment
+                ),
+                new ResourceLayoutElementDescription(
+                    "InputSampler",
+                    ResourceKind.Sampler,
+                    ShaderStages.Fragment
+                )
+            )
+        );
         _disposables.Add(rl);
 
         VertexLayoutDescription positionLayoutDesc = new(
             new VertexElementDescription[]
             {
-                new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
-            });
+                new VertexElementDescription(
+                    "Position",
+                    VertexElementSemantic.TextureCoordinate,
+                    VertexElementFormat.Float3
+                ),
+            }
+        );
 
         VertexLayoutDescription texCoordLayoutDesc = new(
             new VertexElementDescription[]
             {
-                new VertexElementDescription("UV", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-            });
+                new VertexElementDescription(
+                    "UV",
+                    VertexElementSemantic.TextureCoordinate,
+                    VertexElementFormat.Float2
+                ),
+            }
+        );
 
-        _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-            BlendStateDescription.SingleOverrideBlend,
-            DepthStencilStateDescription.DepthOnlyLessEqual,
-            RasterizerStateDescription.CullNone,
-            PrimitiveTopology.TriangleList,
-            new ShaderSetDescription([positionLayoutDesc, texCoordLayoutDesc], [shaders[0], shaders[1]]),
-            rl,
-            outputs));
+        _pipeline = factory.CreateGraphicsPipeline(
+            new GraphicsPipelineDescription(
+                BlendStateDescription.SingleOverrideBlend,
+                DepthStencilStateDescription.DepthOnlyLessEqual,
+                RasterizerStateDescription.CullNone,
+                PrimitiveTopology.TriangleList,
+                new ShaderSetDescription(
+                    [positionLayoutDesc, texCoordLayoutDesc],
+                    [shaders[0], shaders[1]]
+                ),
+                rl,
+                outputs
+            )
+        );
         _disposables.Add(_pipeline);
 
-        _wvpBuffer = factory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
+        _wvpBuffer = factory.CreateBuffer(
+            new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite)
+        );
         _disposables.Add(_wvpBuffer);
 
         _texture = new ImageSharpTexture(texturePath, true, true).CreateDeviceTexture(gd, factory);
@@ -70,7 +112,9 @@ internal class AssimpMesh : IDisposable
         _disposables.Add(_texture);
         _disposables.Add(_view);
 
-        _rs = factory.CreateResourceSet(new ResourceSetDescription(rl, _wvpBuffer, _view, gd.Aniso4xSampler));
+        _rs = factory.CreateResourceSet(
+            new ResourceSetDescription(rl, _wvpBuffer, _view, gd.Aniso4xSampler)
+        );
         _disposables.Add(_rs);
 
         AssimpContext ac = new();
@@ -80,17 +124,24 @@ internal class AssimpMesh : IDisposable
         {
             DeviceBuffer positions = CreateDeviceBuffer(mesh.Vertices, BufferUsage.VertexBuffer);
             DeviceBuffer texCoords = CreateDeviceBuffer(
-                mesh.TextureCoordinateChannels[0].Select(v3=>new Vector2(v3.X, v3.Y)).ToArray(),
-                BufferUsage.VertexBuffer);
-            DeviceBuffer indices = CreateDeviceBuffer(mesh.GetUnsignedIndices(), BufferUsage.IndexBuffer);
+                mesh.TextureCoordinateChannels[0].Select(v3 => new Vector2(v3.X, v3.Y)).ToArray(),
+                BufferUsage.VertexBuffer
+            );
+            DeviceBuffer indices = CreateDeviceBuffer(
+                mesh.GetUnsignedIndices(),
+                BufferUsage.IndexBuffer
+            );
 
             _meshPieces.Add(new MeshPiece(positions, texCoords, indices));
         }
     }
 
-    public DeviceBuffer CreateDeviceBuffer<T>(IList<T> list, BufferUsage usage) where T : unmanaged
+    public DeviceBuffer CreateDeviceBuffer<T>(IList<T> list, BufferUsage usage)
+        where T : unmanaged
     {
-        DeviceBuffer buffer = _gd.ResourceFactory.CreateBuffer(new BufferDescription((uint)(Unsafe.SizeOf<T>() * list.Count), usage));
+        DeviceBuffer buffer = _gd.ResourceFactory.CreateBuffer(
+            new BufferDescription((uint)(Unsafe.SizeOf<T>() * list.Count), usage)
+        );
         _disposables.Add(buffer);
         _gd.UpdateBuffer(buffer, 0, list.ToArray());
         return buffer;
@@ -157,7 +208,10 @@ void main()
 
     public void Dispose()
     {
-        foreach (IDisposable disposable in _disposables) { disposable.Dispose(); }
+        foreach (IDisposable disposable in _disposables)
+        {
+            disposable.Dispose();
+        }
         _disposables.Clear();
     }
 }

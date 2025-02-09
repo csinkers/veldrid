@@ -10,8 +10,12 @@ public static unsafe partial class Sdl2Native
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int SDL_GetWindowWMInfo_t(SDL_Window Sdl2Window, SDL_SysWMinfo* info);
 
-    static readonly SDL_GetWindowWMInfo_t s_getWindowWMInfo = LoadFunction<SDL_GetWindowWMInfo_t>("SDL_GetWindowWMInfo");
-    public static int SDL_GetWMWindowInfo(SDL_Window Sdl2Window, SDL_SysWMinfo* info) => s_getWindowWMInfo(Sdl2Window, info);
+    static readonly SDL_GetWindowWMInfo_t s_getWindowWMInfo = LoadFunction<SDL_GetWindowWMInfo_t>(
+        "SDL_GetWindowWMInfo"
+    );
+
+    public static int SDL_GetWMWindowInfo(SDL_Window Sdl2Window, SDL_SysWMinfo* info) =>
+        s_getWindowWMInfo(Sdl2Window, info);
 }
 
 public struct SDL_SysWMinfo
@@ -22,9 +26,7 @@ public struct SDL_SysWMinfo
 }
 
 [StructLayout(LayoutKind.Sequential, Size = 100)]
-public unsafe struct WindowInfo
-{
-}
+public unsafe struct WindowInfo { }
 
 public struct Win32WindowInfo
 {
@@ -83,5 +85,5 @@ public enum SysWMType
     Mir,
     WinRT,
     Android,
-    Vivante
+    Vivante,
 }

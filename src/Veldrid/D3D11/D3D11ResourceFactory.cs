@@ -1,5 +1,5 @@
-﻿using Vortice.Direct3D11;
-using System;
+﻿using System;
+using Vortice.Direct3D11;
 
 namespace Veldrid.D3D11;
 

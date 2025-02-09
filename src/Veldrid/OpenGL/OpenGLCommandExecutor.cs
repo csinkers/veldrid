@@ -1,13 +1,16 @@
 ﻿using System;
-using static Veldrid.OpenGLBinding.OpenGLNative;
-using static Veldrid.OpenGL.OpenGLUtil;
-using Veldrid.OpenGLBinding;
-using System.Runtime.CompilerServices;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using Veldrid.OpenGLBinding;
+using static Veldrid.OpenGL.OpenGLUtil;
+using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
-internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Action? setSwapchainFramebuffer)
+internal sealed unsafe class OpenGLCommandExecutor(
+    OpenGLGraphicsDevice gd,
+    Action? setSwapchainFramebuffer
+)
 {
     readonly GraphicsBackend _backend = gd.BackendType;
     readonly OpenGLTextureSamplerManager _textureSamplerManager = gd.TextureSamplerManager;
@@ -39,15 +42,15 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
     bool _vertexLayoutFlushed;
     bool _indexBufferBound;
 
-    public void Begin()
-    {
-    }
+    public void Begin() { }
 
     public void ClearColorTarget(uint index, RgbaFloat clearColor)
     {
         if (!_isSwapchainFB)
         {
-            DrawBuffersEnum bufs = (DrawBuffersEnum)((uint)DrawBuffersEnum.ColorAttachment0 + index);
+            DrawBuffersEnum bufs = (DrawBuffersEnum)(
+                (uint)DrawBuffersEnum.ColorAttachment0 + index
+            );
             glDrawBuffers(1, &bufs);
             CheckLastError();
         }
@@ -126,13 +129,25 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             }
             else
             {
-                glDrawArraysInstancedBaseInstance(_primitiveType, (int)vertexStart, vertexCount, instanceCount, instanceStart);
+                glDrawArraysInstancedBaseInstance(
+                    _primitiveType,
+                    (int)vertexStart,
+                    vertexCount,
+                    instanceCount,
+                    instanceStart
+                );
             }
         }
         CheckLastError();
     }
 
-    public void DrawIndexed(uint indexCount, uint instanceCount, uint indexStart, int vertexOffset, uint instanceStart)
+    public void DrawIndexed(
+        uint indexCount,
+        uint instanceCount,
+        uint indexStart,
+        int vertexOffset,
+        uint instanceStart
+    )
     {
         PreDrawCommand();
         PreDrawIndexedCommand();
@@ -148,7 +163,13 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             }
             else
             {
-                glDrawElementsBaseVertex(_primitiveType, indexCount, _drawElementsType, indices, vertexOffset);
+                glDrawElementsBaseVertex(
+                    _primitiveType,
+                    indexCount,
+                    _drawElementsType,
+                    indices,
+                    vertexOffset
+                );
             }
         }
         else
@@ -162,11 +183,18 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     indices,
                     instanceCount,
                     vertexOffset,
-                    instanceStart);
+                    instanceStart
+                );
             }
             else if (vertexOffset == 0)
             {
-                glDrawElementsInstanced(_primitiveType, indexCount, _drawElementsType, indices, instanceCount);
+                glDrawElementsInstanced(
+                    _primitiveType,
+                    indexCount,
+                    _drawElementsType,
+                    indices,
+                    instanceCount
+                );
             }
             else
             {
@@ -176,7 +204,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     _drawElementsType,
                     indices,
                     instanceCount,
-                    vertexOffset);
+                    vertexOffset
+                );
             }
         }
         CheckLastError();
@@ -208,7 +237,12 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
         }
     }
 
-    public void DrawIndexedIndirect(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    public void DrawIndexedIndirect(
+        DeviceBuffer indirectBuffer,
+        uint offset,
+        uint drawCount,
+        uint stride
+    )
     {
         PreDrawCommand();
         PreDrawIndexedCommand();
@@ -219,7 +253,13 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
 
         if (_extensions.MultiDrawIndirect)
         {
-            glMultiDrawElementsIndirect(_primitiveType, _drawElementsType, (IntPtr)offset, drawCount, stride);
+            glMultiDrawElementsIndirect(
+                _primitiveType,
+                _drawElementsType,
+                (IntPtr)offset,
+                drawCount,
+                stride
+            );
             CheckLastError();
         }
         else
@@ -278,8 +318,13 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             ? _graphicsPipeline!.ResourceLayouts.Length
             : _computePipeline!.ResourceLayouts.Length;
 
-        Span<BoundResourceSetInfo> sets = (graphics ? _graphicsResourceSets : _computeResourceSets).AsSpan(0, setCount);
-        Span<bool> newSets = (graphics ? _newGraphicsResourceSets : _newComputeResourceSets).AsSpan(0, setCount);
+        Span<BoundResourceSetInfo> sets = (
+            graphics ? _graphicsResourceSets : _computeResourceSets
+        ).AsSpan(0, setCount);
+        Span<bool> newSets = (graphics ? _newGraphicsResourceSets : _newComputeResourceSets).AsSpan(
+            0,
+            setCount
+        );
 
         for (int slot = 0; slot < setCount; slot++)
         {
@@ -317,7 +362,13 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                 }
                 else
                 {
-                    BindVertexAttribPointers(input.Elements, totalSlotsBound, buffers[i], offsets[i], strides[i]);
+                    BindVertexAttribPointers(
+                        input.Elements,
+                        totalSlotsBound,
+                        buffers[i],
+                        offsets[i],
+                        strides[i]
+                    );
                 }
                 newVertexBuffers[i] = false;
             }
@@ -327,7 +378,12 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
     }
 
     static void BindVertexAttribPointers(
-        VertexElementDescription[] elements, uint totalSlotsBound, uint vbBuffer, nuint vbOffset, uint stride)
+        VertexElementDescription[] elements,
+        uint totalSlotsBound,
+        uint vbBuffer,
+        nuint vbOffset,
+        uint stride
+    )
     {
         glBindBuffer(BufferTarget.ArrayBuffer, vbBuffer);
         CheckLastError();
@@ -343,19 +399,15 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             VertexAttribPointerType type = OpenGLFormats.VdToGLVertexAttribPointerType(
                 element.Format,
                 out bool normalized,
-                out bool isInteger);
+                out bool isInteger
+            );
 
             nuint actualOffset = element.Offset != 0 ? element.Offset : offset;
             actualOffset += vbOffset;
 
             if (isInteger && !normalized)
             {
-                glVertexAttribIPointer(
-                    actualSlot,
-                    elementCount,
-                    type,
-                    stride,
-                    (void*)actualOffset);
+                glVertexAttribIPointer(actualSlot, elementCount, type, stride, (void*)actualOffset);
             }
             else
             {
@@ -365,7 +417,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     type,
                     normalized,
                     stride,
-                    (void*)actualOffset);
+                    (void*)actualOffset
+                );
             }
             CheckLastError();
 
@@ -546,8 +599,14 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
 
         _graphicsPipeline!.EnsureResourcesCreated();
 
-        Util.EnsureArrayMinimumSize(ref _graphicsResourceSets, (uint)_graphicsPipeline.ResourceLayouts.Length);
-        Util.EnsureArrayMinimumSize(ref _newGraphicsResourceSets, (uint)_graphicsPipeline.ResourceLayouts.Length);
+        Util.EnsureArrayMinimumSize(
+            ref _graphicsResourceSets,
+            (uint)_graphicsPipeline.ResourceLayouts.Length
+        );
+        Util.EnsureArrayMinimumSize(
+            ref _newGraphicsResourceSets,
+            (uint)_graphicsPipeline.ResourceLayouts.Length
+        );
 
         // Force ResourceSets to be re-bound.
         for (int i = 0; i < _graphicsPipeline.ResourceLayouts.Length; i++)
@@ -559,7 +618,12 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
         // Blend State
 
         BlendStateDescription blendState = _graphicsPipeline.BlendState;
-        glBlendColor(blendState.BlendFactor.R, blendState.BlendFactor.G, blendState.BlendFactor.B, blendState.BlendFactor.A);
+        glBlendColor(
+            blendState.BlendFactor.R,
+            blendState.BlendFactor.G,
+            blendState.BlendFactor.B,
+            blendState.BlendFactor.A
+        );
         CheckLastError();
 
         if (blendState.AlphaToCoverageEnabled)
@@ -584,7 +648,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     (colorMask & ColorWriteMask.Red) == ColorWriteMask.Red,
                     (colorMask & ColorWriteMask.Green) == ColorWriteMask.Green,
                     (colorMask & ColorWriteMask.Blue) == ColorWriteMask.Blue,
-                    (colorMask & ColorWriteMask.Alpha) == ColorWriteMask.Alpha);
+                    (colorMask & ColorWriteMask.Alpha) == ColorWriteMask.Alpha
+                );
                 CheckLastError();
 
                 if (!attachment.BlendEnabled)
@@ -602,13 +667,15 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                         OpenGLFormats.VdToGLBlendFactorSrc(attachment.SourceColorFactor),
                         OpenGLFormats.VdToGLBlendFactorDest(attachment.DestinationColorFactor),
                         OpenGLFormats.VdToGLBlendFactorSrc(attachment.SourceAlphaFactor),
-                        OpenGLFormats.VdToGLBlendFactorDest(attachment.DestinationAlphaFactor));
+                        OpenGLFormats.VdToGLBlendFactorDest(attachment.DestinationAlphaFactor)
+                    );
                     CheckLastError();
 
                     glBlendEquationSeparatei(
                         i,
                         OpenGLFormats.VdToGLBlendEquationMode(attachment.ColorFunction),
-                        OpenGLFormats.VdToGLBlendEquationMode(attachment.AlphaFunction));
+                        OpenGLFormats.VdToGLBlendEquationMode(attachment.AlphaFunction)
+                    );
                     CheckLastError();
                 }
             }
@@ -622,7 +689,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                 (colorMask & ColorWriteMask.Red) == ColorWriteMask.Red,
                 (colorMask & ColorWriteMask.Green) == ColorWriteMask.Green,
                 (colorMask & ColorWriteMask.Blue) == ColorWriteMask.Blue,
-                (colorMask & ColorWriteMask.Alpha) == ColorWriteMask.Alpha);
+                (colorMask & ColorWriteMask.Alpha) == ColorWriteMask.Alpha
+            );
             CheckLastError();
 
             if (!attachment.BlendEnabled)
@@ -639,12 +707,14 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     OpenGLFormats.VdToGLBlendFactorSrc(attachment.SourceColorFactor),
                     OpenGLFormats.VdToGLBlendFactorDest(attachment.DestinationColorFactor),
                     OpenGLFormats.VdToGLBlendFactorSrc(attachment.SourceAlphaFactor),
-                    OpenGLFormats.VdToGLBlendFactorDest(attachment.DestinationAlphaFactor));
+                    OpenGLFormats.VdToGLBlendFactorDest(attachment.DestinationAlphaFactor)
+                );
                 CheckLastError();
 
                 glBlendEquationSeparate(
                     OpenGLFormats.VdToGLBlendEquationMode(attachment.ColorFunction),
-                    OpenGLFormats.VdToGLBlendEquationMode(attachment.AlphaFunction));
+                    OpenGLFormats.VdToGLBlendEquationMode(attachment.AlphaFunction)
+                );
                 CheckLastError();
             }
         }
@@ -678,28 +748,32 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                 CullFaceMode.Front,
                 OpenGLFormats.VdToGLStencilFunction(dss.StencilFront.Comparison),
                 (int)dss.StencilReference,
-                dss.StencilReadMask);
+                dss.StencilReadMask
+            );
             CheckLastError();
 
             glStencilOpSeparate(
                 CullFaceMode.Front,
                 OpenGLFormats.VdToGLStencilOp(dss.StencilFront.Fail),
                 OpenGLFormats.VdToGLStencilOp(dss.StencilFront.DepthFail),
-                OpenGLFormats.VdToGLStencilOp(dss.StencilFront.Pass));
+                OpenGLFormats.VdToGLStencilOp(dss.StencilFront.Pass)
+            );
             CheckLastError();
 
             glStencilFuncSeparate(
                 CullFaceMode.Back,
                 OpenGLFormats.VdToGLStencilFunction(dss.StencilBack.Comparison),
                 (int)dss.StencilReference,
-                dss.StencilReadMask);
+                dss.StencilReadMask
+            );
             CheckLastError();
 
             glStencilOpSeparate(
                 CullFaceMode.Back,
                 OpenGLFormats.VdToGLStencilOp(dss.StencilBack.Fail),
                 OpenGLFormats.VdToGLStencilOp(dss.StencilBack.DepthFail),
-                OpenGLFormats.VdToGLStencilOp(dss.StencilBack.Pass));
+                OpenGLFormats.VdToGLStencilOp(dss.StencilBack.Pass)
+            );
             CheckLastError();
 
             glStencilMask(dss.StencilWriteMask);
@@ -863,7 +937,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     0,
                     DebugSeverity.DebugSeverityNotification,
                     (uint)length,
-                    utf8Ptr);
+                    utf8Ptr
+                );
                 CheckLastError();
             }
             else if (ext_debugMarker)
@@ -887,8 +962,14 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
         }
 
         _computePipeline!.EnsureResourcesCreated();
-        Util.EnsureArrayMinimumSize(ref _computeResourceSets, (uint)_computePipeline.ResourceLayouts.Length);
-        Util.EnsureArrayMinimumSize(ref _newComputeResourceSets, (uint)_computePipeline.ResourceLayouts.Length);
+        Util.EnsureArrayMinimumSize(
+            ref _computeResourceSets,
+            (uint)_computePipeline.ResourceLayouts.Length
+        );
+        Util.EnsureArrayMinimumSize(
+            ref _newComputeResourceSets,
+            (uint)_computePipeline.ResourceLayouts.Length
+        );
 
         // Force ResourceSets to be re-bound.
         for (int i = 0; i < _computePipeline.ResourceLayouts.Length; i++)
@@ -933,9 +1014,12 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
         bool graphics,
         ref BoundResourceSetInfo brsi,
         ResourceLayoutElementDescription[] layoutElements,
-        bool isNew)
+        bool isNew
+    )
     {
-        OpenGLResourceSet glResourceSet = Util.AssertSubtype<ResourceSet, OpenGLResourceSet>(brsi.Set);
+        OpenGLResourceSet glResourceSet = Util.AssertSubtype<ResourceSet, OpenGLResourceSet>(
+            brsi.Set
+        );
         OpenGLPipeline pipeline = graphics ? _graphicsPipeline! : _computePipeline!;
         uint ubBaseIndex = GetUniformBaseIndex(slot, graphics);
         uint ssboBaseIndex = GetShaderStorageBaseIndex(slot, graphics);
@@ -965,18 +1049,31 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     }
 
                     DeviceBufferRange range = Util.GetBufferRange(resource, bufferOffset);
-                    OpenGLBuffer glUB = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(range.Buffer);
+                    OpenGLBuffer glUB = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(
+                        range.Buffer
+                    );
 
                     glUB.EnsureResourcesCreated();
-                    if (pipeline.GetUniformBindingForSlot(slot, element, out OpenGLUniformBinding uniformBindingInfo))
+                    if (
+                        pipeline.GetUniformBindingForSlot(
+                            slot,
+                            element,
+                            out OpenGLUniformBinding uniformBindingInfo
+                        )
+                    )
                     {
                         if (range.SizeInBytes < uniformBindingInfo.BlockSize)
                         {
                             string name = glResourceSet.Layout.Elements[element].Name;
                             throw new VeldridException(
-                                $"Not enough data in uniform buffer \"{name}\" (slot {slot}, element {element}). Shader expects at least {uniformBindingInfo.BlockSize} bytes, but buffer only contains {range.SizeInBytes} bytes");
+                                $"Not enough data in uniform buffer \"{name}\" (slot {slot}, element {element}). Shader expects at least {uniformBindingInfo.BlockSize} bytes, but buffer only contains {range.SizeInBytes} bytes"
+                            );
                         }
-                        glUniformBlockBinding(pipeline.Program, uniformBindingInfo.BlockLocation, ubBaseIndex + ubOffset);
+                        glUniformBlockBinding(
+                            pipeline.Program,
+                            uniformBindingInfo.BlockLocation,
+                            ubBaseIndex + ubOffset
+                        );
                         CheckLastError();
 
                         glBindBufferRange(
@@ -984,7 +1081,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                             ubBaseIndex + ubOffset,
                             glUB.Buffer,
                             (IntPtr)range.Offset,
-                            (UIntPtr)range.SizeInBytes);
+                            (UIntPtr)range.SizeInBytes
+                        );
                         CheckLastError();
 
                         ubOffset += 1;
@@ -1001,17 +1099,26 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     }
 
                     DeviceBufferRange range = Util.GetBufferRange(resource, bufferOffset);
-                    OpenGLBuffer glBuffer = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(range.Buffer);
+                    OpenGLBuffer glBuffer = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(
+                        range.Buffer
+                    );
 
                     glBuffer.EnsureResourcesCreated();
-                    if (pipeline.GetStorageBufferBindingForSlot(slot, element, out OpenGLShaderStorageBinding shaderStorageBinding))
+                    if (
+                        pipeline.GetStorageBufferBindingForSlot(
+                            slot,
+                            element,
+                            out OpenGLShaderStorageBinding shaderStorageBinding
+                        )
+                    )
                     {
                         if (_backend == GraphicsBackend.OpenGL)
                         {
                             glShaderStorageBlockBinding(
                                 pipeline.Program,
                                 shaderStorageBinding.StorageBlockBinding,
-                                ssboBaseIndex + ssboOffset);
+                                ssboBaseIndex + ssboOffset
+                            );
                             CheckLastError();
 
                             glBindBufferRange(
@@ -1019,7 +1126,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                                 ssboBaseIndex + ssboOffset,
                                 glBuffer.Buffer,
                                 (IntPtr)range.Offset,
-                                (UIntPtr)range.SizeInBytes);
+                                (UIntPtr)range.SizeInBytes
+                            );
                         }
                         else
                         {
@@ -1028,7 +1136,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                                 shaderStorageBinding.StorageBlockBinding,
                                 glBuffer.Buffer,
                                 (IntPtr)range.Offset,
-                                (UIntPtr)range.SizeInBytes);
+                                (UIntPtr)range.SizeInBytes
+                            );
                         }
                         CheckLastError();
                         ssboOffset += 1;
@@ -1038,29 +1147,64 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
 
                 case ResourceKind.TextureReadOnly:
                     TextureView texView = Util.GetTextureView(gd, resource);
-                    OpenGLTextureView glTexView = Util.AssertSubtype<TextureView, OpenGLTextureView>(texView);
+                    OpenGLTextureView glTexView = Util.AssertSubtype<
+                        TextureView,
+                        OpenGLTextureView
+                    >(texView);
                     glTexView.EnsureResourcesCreated();
-                    if (pipeline.GetTextureBindingInfo(slot, element, out OpenGLTextureBindingSlotInfo textureBindingInfo))
+                    if (
+                        pipeline.GetTextureBindingInfo(
+                            slot,
+                            element,
+                            out OpenGLTextureBindingSlotInfo textureBindingInfo
+                        )
+                    )
                     {
-                        _textureSamplerManager.SetTexture((uint)textureBindingInfo.RelativeIndex, glTexView);
-                        glUniform1i(textureBindingInfo.UniformLocation, textureBindingInfo.RelativeIndex);
+                        _textureSamplerManager.SetTexture(
+                            (uint)textureBindingInfo.RelativeIndex,
+                            glTexView
+                        );
+                        glUniform1i(
+                            textureBindingInfo.UniformLocation,
+                            textureBindingInfo.RelativeIndex
+                        );
                         CheckLastError();
                     }
                     break;
 
                 case ResourceKind.TextureReadWrite:
                     TextureView texViewRW = Util.GetTextureView(gd, resource);
-                    OpenGLTextureView glTexViewRW = Util.AssertSubtype<TextureView, OpenGLTextureView>(texViewRW);
+                    OpenGLTextureView glTexViewRW = Util.AssertSubtype<
+                        TextureView,
+                        OpenGLTextureView
+                    >(texViewRW);
                     glTexViewRW.EnsureResourcesCreated();
-                    if (pipeline.GetTextureBindingInfo(slot, element, out OpenGLTextureBindingSlotInfo imageBindingInfo))
+                    if (
+                        pipeline.GetTextureBindingInfo(
+                            slot,
+                            element,
+                            out OpenGLTextureBindingSlotInfo imageBindingInfo
+                        )
+                    )
                     {
-                        bool layered = (texViewRW.Target.Usage & TextureUsage.Cubemap) != 0 || texViewRW.ArrayLayers > 1;
+                        bool layered =
+                            (texViewRW.Target.Usage & TextureUsage.Cubemap) != 0
+                            || texViewRW.ArrayLayers > 1;
 
-                        if (layered && (texViewRW.BaseArrayLayer > 0
-                                        || (texViewRW.ArrayLayers > 1 && texViewRW.ArrayLayers < texViewRW.Target.ArrayLayers)))
+                        if (
+                            layered
+                            && (
+                                texViewRW.BaseArrayLayer > 0
+                                || (
+                                    texViewRW.ArrayLayers > 1
+                                    && texViewRW.ArrayLayers < texViewRW.Target.ArrayLayers
+                                )
+                            )
+                        )
                         {
                             throw new VeldridException(
-                                "Cannot bind texture with BaseArrayLayer > 0 and ArrayLayers > 1, or with an incomplete set of array layers (cubemaps have ArrayLayers == 6 implicitly).");
+                                "Cannot bind texture with BaseArrayLayer > 0 and ArrayLayers > 1, or with an incomplete set of array layers (cubemaps have ArrayLayers == 6 implicitly)."
+                            );
                         }
 
                         if (_backend == GraphicsBackend.OpenGL)
@@ -1072,10 +1216,14 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                                 layered,
                                 (int)texViewRW.BaseArrayLayer,
                                 TextureAccess.ReadWrite,
-                                glTexViewRW.GetReadWriteSizedInternalFormat());
+                                glTexViewRW.GetReadWriteSizedInternalFormat()
+                            );
                             CheckLastError();
 
-                            glUniform1i(imageBindingInfo.UniformLocation, imageBindingInfo.RelativeIndex);
+                            glUniform1i(
+                                imageBindingInfo.UniformLocation,
+                                imageBindingInfo.RelativeIndex
+                            );
                         }
                         else
                         {
@@ -1086,17 +1234,26 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                                 layered,
                                 (int)texViewRW.BaseArrayLayer,
                                 TextureAccess.ReadWrite,
-                                glTexViewRW.GetReadWriteSizedInternalFormat());
+                                glTexViewRW.GetReadWriteSizedInternalFormat()
+                            );
                         }
                         CheckLastError();
                     }
                     break;
 
                 case ResourceKind.Sampler:
-                    OpenGLSampler glSampler = Util.AssertSubtype<Sampler, OpenGLSampler>(resource.GetSampler());
+                    OpenGLSampler glSampler = Util.AssertSubtype<Sampler, OpenGLSampler>(
+                        resource.GetSampler()
+                    );
                     glSampler.EnsureResourcesCreated();
 
-                    if (pipeline.GetSamplerBindingInfo(slot, element, out OpenGLSamplerBindingSlotInfo samplerBindingInfo))
+                    if (
+                        pipeline.GetSamplerBindingInfo(
+                            slot,
+                            element,
+                            out OpenGLSamplerBindingSlotInfo samplerBindingInfo
+                        )
+                    )
                     {
                         foreach (int index in samplerBindingInfo.RelativeIndices)
                         {
@@ -1141,7 +1298,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             (int)destination.Width,
             (int)destination.Height,
             ClearBufferMask.ColorBufferBit,
-            BlitFramebufferFilter.Nearest);
+            BlitFramebufferFilter.Nearest
+        );
         CheckLastError();
     }
 
@@ -1173,23 +1331,14 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
     {
         if (_backend == GraphicsBackend.OpenGL)
         {
-            glScissorIndexed(
-                index,
-                (int)x,
-                (int)(_fb!.Height - (int)height - y),
-                width,
-                height);
+            glScissorIndexed(index, (int)x, (int)(_fb!.Height - (int)height - y), width, height);
             CheckLastError();
         }
         else
         {
             if (index == 0)
             {
-                glScissor(
-                    (int)x,
-                    (int)(_fb!.Height - (int)height - y),
-                    width,
-                    height);
+                glScissor((int)x, (int)(_fb!.Height - (int)height - y), width, height);
                 CheckLastError();
             }
         }
@@ -1236,7 +1385,12 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
         {
             if (index == 0)
             {
-                glViewport((int)viewport.X, (int)viewport.Y, (uint)viewport.Width, (uint)viewport.Height);
+                glViewport(
+                    (int)viewport.X,
+                    (int)viewport.Y,
+                    (uint)viewport.Width,
+                    (uint)viewport.Height
+                );
                 CheckLastError();
 
                 glDepthRangef(viewport.MinDepth, viewport.MaxDepth);
@@ -1245,7 +1399,12 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
         }
     }
 
-    public void UpdateBuffer(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr dataPtr, uint sizeInBytes)
+    public void UpdateBuffer(
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr dataPtr,
+        uint sizeInBytes
+    )
     {
         OpenGLBuffer glBuffer = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(buffer);
         glBuffer.EnsureResourcesCreated();
@@ -1258,7 +1417,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     glBuffer.Buffer,
                     (IntPtr)bufferOffsetInBytes,
                     sizeInBytes,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             else
             {
@@ -1270,7 +1430,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     bufferTarget,
                     (IntPtr)bufferOffsetInBytes,
                     (UIntPtr)sizeInBytes,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             CheckLastError();
         }
@@ -1286,7 +1447,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     tmpBuffer,
                     sizeInBytes,
                     dataPtr.ToPointer(),
-                    BufferUsageHint.StreamCopy);
+                    BufferUsageHint.StreamCopy
+                );
             }
             else
             {
@@ -1301,7 +1463,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     bufferTarget,
                     sizeInBytes,
                     dataPtr.ToPointer(),
-                    BufferUsageHint.StreamCopy);
+                    BufferUsageHint.StreamCopy
+                );
             }
             CheckLastError();
 
@@ -1322,7 +1485,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
         uint height,
         uint depth,
         uint mipLevel,
-        uint arrayLayer)
+        uint arrayLayer
+    )
     {
         if (width == 0 || height == 0 || depth == 0)
         {
@@ -1373,7 +1537,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     width,
                     glTex.GLInternalFormat,
                     rowPitch,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             else
             {
@@ -1384,7 +1549,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     width,
                     glTex.GLPixelFormat,
                     glTex.GLPixelType,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             CheckLastError();
         }
@@ -1401,7 +1567,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     1,
                     glTex.GLInternalFormat,
                     rowPitch,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             else
             {
@@ -1414,7 +1581,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     1,
                     glTex.GLPixelFormat,
                     glTex.GLPixelType,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             CheckLastError();
         }
@@ -1431,7 +1599,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     height,
                     glTex.GLInternalFormat,
                     depthPitch,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             else
             {
@@ -1444,7 +1613,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     height,
                     glTex.GLPixelFormat,
                     glTex.GLPixelType,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             CheckLastError();
         }
@@ -1463,7 +1633,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     1,
                     glTex.GLInternalFormat,
                     depthPitch,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             else
             {
@@ -1478,7 +1649,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     1,
                     glTex.GLPixelFormat,
                     glTex.GLPixelType,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             CheckLastError();
         }
@@ -1497,7 +1669,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     depth,
                     glTex.GLInternalFormat,
                     depthPitch * depth,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             else
             {
@@ -1512,7 +1685,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     depth,
                     glTex.GLPixelFormat,
                     glTex.GLPixelType,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             CheckLastError();
         }
@@ -1530,7 +1704,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     height,
                     glTex.GLInternalFormat,
                     depthPitch,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             else
             {
@@ -1543,7 +1718,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     height,
                     glTex.GLPixelFormat,
                     glTex.GLPixelType,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             CheckLastError();
         }
@@ -1562,7 +1738,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     1,
                     glTex.GLInternalFormat,
                     depthPitch,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             else
             {
@@ -1577,13 +1754,16 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     1,
                     glTex.GLPixelFormat,
                     glTex.GLPixelType,
-                    dataPtr.ToPointer());
+                    dataPtr.ToPointer()
+                );
             }
             CheckLastError();
         }
         else
         {
-            throw new VeldridException($"Invalid OpenGL TextureTarget encountered: {glTex.TextureTarget}.");
+            throw new VeldridException(
+                $"Invalid OpenGL TextureTarget encountered: {glTex.TextureTarget}."
+            );
         }
 
         if (unpackAlignment < 4)
@@ -1603,11 +1783,19 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             3 => TextureTarget.TextureCubeMapNegativeY,
             4 => TextureTarget.TextureCubeMapPositiveZ,
             5 => TextureTarget.TextureCubeMapNegativeZ,
-            _ => throw new VeldridException("Unexpected array layer in UpdateTexture called on a cubemap texture."),
+            _ => throw new VeldridException(
+                "Unexpected array layer in UpdateTexture called on a cubemap texture."
+            ),
         };
     }
 
-    public void CopyBuffer(DeviceBuffer source, uint sourceOffset, DeviceBuffer destination, uint destinationOffset, uint sizeInBytes)
+    public void CopyBuffer(
+        DeviceBuffer source,
+        uint sourceOffset,
+        DeviceBuffer destination,
+        uint destinationOffset,
+        uint sizeInBytes
+    )
     {
         OpenGLBuffer srcGLBuffer = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(source);
         OpenGLBuffer dstGLBuffer = Util.AssertSubtype<DeviceBuffer, OpenGLBuffer>(destination);
@@ -1615,10 +1803,22 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
         srcGLBuffer.EnsureResourcesCreated();
         dstGLBuffer.EnsureResourcesCreated();
 
-        CopyBufferCore(srcGLBuffer.Buffer, sourceOffset, dstGLBuffer.Buffer, destinationOffset, sizeInBytes);
+        CopyBufferCore(
+            srcGLBuffer.Buffer,
+            sourceOffset,
+            dstGLBuffer.Buffer,
+            destinationOffset,
+            sizeInBytes
+        );
     }
 
-    void CopyBufferCore(uint srcBuffer, uint sourceOffset, uint dstBuffer, uint destinationOffset, uint sizeInBytes)
+    void CopyBufferCore(
+        uint srcBuffer,
+        uint sourceOffset,
+        uint dstBuffer,
+        uint destinationOffset,
+        uint sizeInBytes
+    )
     {
         if (_extensions.ARB_DirectStateAccess)
         {
@@ -1627,7 +1827,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                 dstBuffer,
                 (IntPtr)sourceOffset,
                 (IntPtr)destinationOffset,
-                sizeInBytes);
+                sizeInBytes
+            );
         }
         else
         {
@@ -1642,22 +1843,30 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                 BufferTarget.CopyWriteBuffer,
                 (IntPtr)sourceOffset,
                 (IntPtr)destinationOffset,
-                (IntPtr)sizeInBytes);
+                (IntPtr)sizeInBytes
+            );
         }
         CheckLastError();
     }
 
     public void CopyTexture(
         Texture source,
-        uint srcX, uint srcY, uint srcZ,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
         uint srcMipLevel,
         uint srcBaseArrayLayer,
         Texture destination,
-        uint dstX, uint dstY, uint dstZ,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
         uint dstMipLevel,
         uint dstBaseArrayLayer,
-        uint width, uint height, uint depth,
-        uint layerCount)
+        uint width,
+        uint height,
+        uint depth,
+        uint layerCount
+    )
     {
         OpenGLTexture srcGLTexture = Util.AssertSubtype<Texture, OpenGLTexture>(source);
         OpenGLTexture dstGLTexture = Util.AssertSubtype<Texture, OpenGLTexture>(destination);
@@ -1678,9 +1887,22 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             height = Math.Min(height, mipHeight);
 
             glCopyImageSubData(
-                srcGLTexture.Texture, srcGLTexture.TextureTarget, (int)srcMipLevel, (int)srcX, (int)srcY, (int)srcZOrLayer,
-                dstGLTexture.Texture, dstGLTexture.TextureTarget, (int)dstMipLevel, (int)dstX, (int)dstY, (int)dstZOrLayer,
-                width, height, depthOrLayerCount);
+                srcGLTexture.Texture,
+                srcGLTexture.TextureTarget,
+                (int)srcMipLevel,
+                (int)srcX,
+                (int)srcY,
+                (int)srcZOrLayer,
+                dstGLTexture.Texture,
+                dstGLTexture.TextureTarget,
+                (int)dstMipLevel,
+                (int)dstX,
+                (int)dstY,
+                (int)dstZOrLayer,
+                width,
+                height,
+                depthOrLayerCount
+            );
             CheckLastError();
         }
         else
@@ -1690,24 +1912,50 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                 uint srcLayer = layer + srcBaseArrayLayer;
                 uint dstLayer = layer + dstBaseArrayLayer;
                 CopyRoundabout(
-                    srcGLTexture, dstGLTexture,
-                    srcX, srcY, srcZ, srcMipLevel, srcLayer,
-                    dstX, dstY, dstZ, dstMipLevel, dstLayer,
-                    width, height, depth);
+                    srcGLTexture,
+                    dstGLTexture,
+                    srcX,
+                    srcY,
+                    srcZ,
+                    srcMipLevel,
+                    srcLayer,
+                    dstX,
+                    dstY,
+                    dstZ,
+                    dstMipLevel,
+                    dstLayer,
+                    width,
+                    height,
+                    depth
+                );
             }
         }
     }
 
     void CopyRoundabout(
-        OpenGLTexture srcGLTexture, OpenGLTexture dstGLTexture,
-        uint srcX, uint srcY, uint srcZ, uint srcMipLevel, uint srcLayer,
-        uint dstX, uint dstY, uint dstZ, uint dstMipLevel, uint dstLayer,
-        uint width, uint height, uint depth)
+        OpenGLTexture srcGLTexture,
+        OpenGLTexture dstGLTexture,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
+        uint srcMipLevel,
+        uint srcLayer,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
+        uint dstMipLevel,
+        uint dstLayer,
+        uint width,
+        uint height,
+        uint depth
+    )
     {
         bool isCompressed = FormatHelpers.IsCompressedFormat(srcGLTexture.Format);
         if (srcGLTexture.Format != dstGLTexture.Format)
         {
-            throw new VeldridException("Copying to/from Textures with different formats is not supported.");
+            throw new VeldridException(
+                "Copying to/from Textures with different formats is not supported."
+            );
         }
 
         uint packAlignment = 4;
@@ -1723,7 +1971,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                 srcTarget,
                 (int)srcMipLevel,
                 GetTextureParameter.TextureCompressedImageSize,
-                &compressedSize);
+                &compressedSize
+            );
             CheckLastError();
             sizeInBytes = (uint)compressedSize;
         }
@@ -1751,7 +2000,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     srcGLTexture.Texture,
                     (int)srcMipLevel,
                     block.SizeInBytes,
-                    block.Data);
+                    block.Data
+                );
             }
             else
             {
@@ -1765,15 +2015,26 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             _textureSamplerManager.SetTextureTransient(dstTarget, dstGLTexture.Texture);
             CheckLastError();
 
-            Util.GetMipDimensions(srcGLTexture, srcMipLevel, out uint mipWidth, out uint mipHeight, out _);
+            Util.GetMipDimensions(
+                srcGLTexture,
+                srcMipLevel,
+                out uint mipWidth,
+                out uint mipHeight,
+                out _
+            );
             uint fullRowPitch = FormatHelpers.GetRowPitch(mipWidth, srcGLTexture.Format);
             uint fullDepthPitch = FormatHelpers.GetDepthPitch(
                 fullRowPitch,
                 mipHeight,
-                srcGLTexture.Format);
+                srcGLTexture.Format
+            );
 
             uint denseRowPitch = FormatHelpers.GetRowPitch(width, srcGLTexture.Format);
-            uint denseDepthPitch = FormatHelpers.GetDepthPitch(denseRowPitch, height, srcGLTexture.Format);
+            uint denseDepthPitch = FormatHelpers.GetDepthPitch(
+                denseRowPitch,
+                height,
+                srcGLTexture.Format
+            );
             uint numRows = FormatHelpers.GetNumRows(height, srcGLTexture.Format);
             uint trueCopySize = denseRowPitch * numRows;
             StagingBlock trueCopySrc = _stagingMemoryPool.GetStagingBlock(trueCopySize);
@@ -1782,21 +2043,35 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
 
             Util.CopyTextureRegion(
                 (byte*)block.Data + layerStartOffset,
-                srcX, srcY, srcZ,
-                fullRowPitch, fullDepthPitch,
+                srcX,
+                srcY,
+                srcZ,
+                fullRowPitch,
+                fullDepthPitch,
                 trueCopySrc.Data,
-                0, 0, 0,
+                0,
+                0,
+                0,
                 denseRowPitch,
                 denseDepthPitch,
-                width, height, depth,
-                srcGLTexture.Format);
+                width,
+                height,
+                depth,
+                srcGLTexture.Format
+            );
 
             UpdateTexture(
                 dstGLTexture,
                 (IntPtr)trueCopySrc.Data,
-                dstX, dstY, dstZ,
-                width, height, 1,
-                dstMipLevel, dstLayer);
+                dstX,
+                dstY,
+                dstZ,
+                width,
+                height,
+                1,
+                dstMipLevel,
+                dstLayer
+            );
 
             _stagingMemoryPool.Free(trueCopySrc);
         }
@@ -1805,9 +2080,19 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             if (_extensions.ARB_DirectStateAccess)
             {
                 glGetTextureSubImage(
-                    srcGLTexture.Texture, (int)srcMipLevel, (int)srcX, (int)srcY, (int)srcZ,
-                    width, height, depth,
-                    srcGLTexture.GLPixelFormat, srcGLTexture.GLPixelType, block.SizeInBytes, block.Data);
+                    srcGLTexture.Texture,
+                    (int)srcMipLevel,
+                    (int)srcX,
+                    (int)srcY,
+                    (int)srcZ,
+                    width,
+                    height,
+                    depth,
+                    srcGLTexture.GLPixelFormat,
+                    srcGLTexture.GLPixelType,
+                    block.SizeInBytes,
+                    block.Data
+                );
                 CheckLastError();
             }
             else
@@ -1822,15 +2107,19 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     glBindFramebuffer(FramebufferTarget.ReadFramebuffer, readFB);
                     CheckLastError();
 
-                    if (srcGLTexture.ArrayLayers > 1 || srcGLTexture.Type == TextureType.Texture3D
-                                                     || (srcGLTexture.Usage & TextureUsage.Cubemap) != 0)
+                    if (
+                        srcGLTexture.ArrayLayers > 1
+                        || srcGLTexture.Type == TextureType.Texture3D
+                        || (srcGLTexture.Usage & TextureUsage.Cubemap) != 0
+                    )
                     {
                         glFramebufferTextureLayer(
                             FramebufferTarget.ReadFramebuffer,
                             GLFramebufferAttachment.ColorAttachment0,
                             srcGLTexture.Texture,
                             (int)srcMipLevel,
-                            (int)curLayer);
+                            (int)curLayer
+                        );
                         CheckLastError();
                     }
                     else if (srcGLTexture.Type == TextureType.Texture1D)
@@ -1840,7 +2129,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                             GLFramebufferAttachment.ColorAttachment0,
                             TextureTarget.Texture1D,
                             srcGLTexture.Texture,
-                            (int)srcMipLevel);
+                            (int)srcMipLevel
+                        );
                         CheckLastError();
                     }
                     else
@@ -1850,16 +2140,20 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                             GLFramebufferAttachment.ColorAttachment0,
                             TextureTarget.Texture2D,
                             srcGLTexture.Texture,
-                            (int)srcMipLevel);
+                            (int)srcMipLevel
+                        );
                         CheckLastError();
                     }
 
                     glReadPixels(
-                        (int)srcX, (int)srcY,
-                        width, height,
+                        (int)srcX,
+                        (int)srcY,
+                        width,
+                        height,
                         srcGLTexture.GLPixelFormat,
                         srcGLTexture.GLPixelType,
-                        (byte*)block.Data + curOffset);
+                        (byte*)block.Data + curOffset
+                    );
                     CheckLastError();
                     glDeleteFramebuffers(1, &readFB);
                     CheckLastError();
@@ -1869,8 +2163,15 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
             UpdateTexture(
                 dstGLTexture,
                 (IntPtr)block.Data,
-                dstX, dstY, dstZ,
-                width, height, depth, dstMipLevel, dstLayer);
+                dstX,
+                dstY,
+                dstZ,
+                width,
+                height,
+                depth,
+                dstMipLevel,
+                dstLayer
+            );
         }
 
         if (packAlignment < 4)
@@ -1884,37 +2185,63 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
 
     static void CopyWithFBO(
         OpenGLTextureSamplerManager textureSamplerManager,
-        OpenGLTexture srcGLTexture, OpenGLTexture dstGLTexture,
-        uint srcX, uint srcY, uint srcZ, uint srcMipLevel, uint srcBaseArrayLayer,
-        uint dstX, uint dstY, uint dstZ, uint dstMipLevel, uint dstBaseArrayLayer,
-        uint width, uint height, uint depth, uint layerCount, uint layer)
+        OpenGLTexture srcGLTexture,
+        OpenGLTexture dstGLTexture,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
+        uint srcMipLevel,
+        uint srcBaseArrayLayer,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
+        uint dstMipLevel,
+        uint dstBaseArrayLayer,
+        uint width,
+        uint height,
+        uint depth,
+        uint layerCount,
+        uint layer
+    )
     {
         TextureTarget dstTarget = dstGLTexture.TextureTarget;
         if (dstTarget == TextureTarget.Texture2D)
         {
             glBindFramebuffer(
                 FramebufferTarget.ReadFramebuffer,
-                srcGLTexture.GetFramebuffer(srcMipLevel, srcBaseArrayLayer + layer));
+                srcGLTexture.GetFramebuffer(srcMipLevel, srcBaseArrayLayer + layer)
+            );
             CheckLastError();
 
-            textureSamplerManager.SetTextureTransient(TextureTarget.Texture2D, dstGLTexture.Texture);
+            textureSamplerManager.SetTextureTransient(
+                TextureTarget.Texture2D,
+                dstGLTexture.Texture
+            );
 
             glCopyTexSubImage2D(
                 TextureTarget.Texture2D,
                 (int)dstMipLevel,
-                (int)dstX, (int)dstY,
-                (int)srcX, (int)srcY,
-                width, height);
+                (int)dstX,
+                (int)dstY,
+                (int)srcX,
+                (int)srcY,
+                width,
+                height
+            );
             CheckLastError();
         }
         else if (dstTarget == TextureTarget.Texture2DArray)
         {
             glBindFramebuffer(
                 FramebufferTarget.ReadFramebuffer,
-                srcGLTexture.GetFramebuffer(srcMipLevel, srcBaseArrayLayer + layerCount));
+                srcGLTexture.GetFramebuffer(srcMipLevel, srcBaseArrayLayer + layerCount)
+            );
             CheckLastError();
 
-            textureSamplerManager.SetTextureTransient(TextureTarget.Texture2DArray, dstGLTexture.Texture);
+            textureSamplerManager.SetTextureTransient(
+                TextureTarget.Texture2DArray,
+                dstGLTexture.Texture
+            );
 
             glCopyTexSubImage3D(
                 TextureTarget.Texture2DArray,
@@ -1925,12 +2252,16 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                 (int)srcX,
                 (int)srcY,
                 width,
-                height);
+                height
+            );
             CheckLastError();
         }
         else if (dstTarget == TextureTarget.Texture3D)
         {
-            textureSamplerManager.SetTextureTransient(TextureTarget.Texture3D, dstGLTexture.Texture);
+            textureSamplerManager.SetTextureTransient(
+                TextureTarget.Texture3D,
+                dstGLTexture.Texture
+            );
 
             for (uint i = srcZ; i < srcZ + depth; i++)
             {
@@ -1943,7 +2274,8 @@ internal sealed unsafe class OpenGLCommandExecutor(OpenGLGraphicsDevice gd, Acti
                     (int)srcX,
                     (int)srcY,
                     width,
-                    height);
+                    height
+                );
                 CheckLastError();
             }
         }

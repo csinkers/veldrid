@@ -13,7 +13,13 @@ public readonly struct MTLFunctionConstantValues
 
     public unsafe void setConstantValuetypeatIndex(void* value, MTLDataType type, UIntPtr index)
     {
-        ObjectiveCRuntime.objc_msgSend(NativePtr, sel_setConstantValuetypeatIndex, value, (uint)type, index);
+        ObjectiveCRuntime.objc_msgSend(
+            NativePtr,
+            sel_setConstantValuetypeatIndex,
+            value,
+            (uint)type,
+            index
+        );
     }
 
     static readonly ObjCClass s_class = new("MTLFunctionConstantValues"u8);

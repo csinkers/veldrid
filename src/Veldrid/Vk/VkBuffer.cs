@@ -21,11 +21,14 @@ internal sealed unsafe class VkBuffer : DeviceBuffer, IResourceRefCountTarget
 
     public VkMemoryRequirements BufferMemoryRequirements => _bufferMemoryRequirements;
 
-    public VkBuffer(VkGraphicsDevice gd, in BufferDescription bd) : base(bd)
+    public VkBuffer(VkGraphicsDevice gd, in BufferDescription bd)
+        : base(bd)
     {
         _gd = gd;
 
-        VkBufferUsageFlags vkUsage = VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        VkBufferUsageFlags vkUsage =
+            VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_SRC_BIT
+            | VkBufferUsageFlags.VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         if ((bd.Usage & BufferUsage.VertexBuffer) == BufferUsage.VertexBuffer)
         {
             vkUsage |= VkBufferUsageFlags.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
@@ -38,8 +41,12 @@ internal sealed unsafe class VkBuffer : DeviceBuffer, IResourceRefCountTarget
         {
             vkUsage |= VkBufferUsageFlags.VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
         }
-        if ((bd.Usage & BufferUsage.StructuredBufferReadWrite) == BufferUsage.StructuredBufferReadWrite
-            || (bd.Usage & BufferUsage.StructuredBufferReadOnly) == BufferUsage.StructuredBufferReadOnly)
+        if (
+            (bd.Usage & BufferUsage.StructuredBufferReadWrite)
+                == BufferUsage.StructuredBufferReadWrite
+            || (bd.Usage & BufferUsage.StructuredBufferReadOnly)
+                == BufferUsage.StructuredBufferReadOnly
+        )
         {
             vkUsage |= VkBufferUsageFlags.VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
         }
@@ -52,7 +59,7 @@ internal sealed unsafe class VkBuffer : DeviceBuffer, IResourceRefCountTarget
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
             size = bd.SizeInBytes,
-            usage = vkUsage
+            usage = vkUsage,
         };
         VulkanBuffer deviceBuffer;
         VkResult result = vkCreateBuffer(gd.Device, &bufferCI, null, &deviceBuffer);
@@ -65,20 +72,22 @@ internal sealed unsafe class VkBuffer : DeviceBuffer, IResourceRefCountTarget
             VkBufferMemoryRequirementsInfo2 memReqInfo2 = new()
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2,
-                buffer = _deviceBuffer
+                buffer = _deviceBuffer,
             };
             VkMemoryDedicatedRequirements dedicatedReqs = new()
             {
-                sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS
+                sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS,
             };
             VkMemoryRequirements2 memReqs2 = new()
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2,
-                pNext = &dedicatedReqs
+                pNext = &dedicatedReqs,
             };
             _gd.GetBufferMemoryRequirements2(_gd.Device, &memReqInfo2, &memReqs2);
             _bufferMemoryRequirements = memReqs2.memoryRequirements;
-            prefersDedicatedAllocation = dedicatedReqs.prefersDedicatedAllocation | dedicatedReqs.requiresDedicatedAllocation;
+            prefersDedicatedAllocation =
+                dedicatedReqs.prefersDedicatedAllocation
+                | dedicatedReqs.requiresDedicatedAllocation;
         }
         else
         {
@@ -108,7 +117,8 @@ internal sealed unsafe class VkBuffer : DeviceBuffer, IResourceRefCountTarget
                 gd.PhysicalDeviceMemProperties,
                 _bufferMemoryRequirements.memoryTypeBits,
                 memoryPropertyFlags | VkMemoryPropertyFlags.VK_MEMORY_PROPERTY_HOST_CACHED_BIT,
-                out _);
+                out _
+            );
 
             if (hostCachedAvailable)
             {
@@ -125,7 +135,8 @@ internal sealed unsafe class VkBuffer : DeviceBuffer, IResourceRefCountTarget
             _bufferMemoryRequirements.alignment,
             prefersDedicatedAllocation,
             default,
-            _deviceBuffer);
+            _deviceBuffer
+        );
         _memory = memoryToken;
         result = vkBindBufferMemory(gd.Device, _deviceBuffer, _memory.DeviceMemory, _memory.Offset);
         CheckResult(result);

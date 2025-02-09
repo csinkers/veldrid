@@ -13,7 +13,11 @@ namespace Veldrid.Tests.Android.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool Set<T>(ref T destination, T value, [CallerMemberName] string? propertyName = null)
+        protected bool Set<T>(
+            ref T destination,
+            T value,
+            [CallerMemberName] string? propertyName = null
+        )
         {
             if (!EqualityComparer<T>.Default.Equals(destination, value))
             {

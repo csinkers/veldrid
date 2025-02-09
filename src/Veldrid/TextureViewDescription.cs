@@ -11,22 +11,27 @@ public struct TextureViewDescription : IEquatable<TextureViewDescription>
     /// The desired target <see cref="Texture"/>.
     /// </summary>
     public Texture Target;
+
     /// <summary>
     /// The base mip level visible in the view. Must be less than <see cref="Texture.MipLevels"/>.
     /// </summary>
     public uint BaseMipLevel;
+
     /// <summary>
     /// The number of mip levels visible in the view.
     /// </summary>
     public uint MipLevels;
+
     /// <summary>
     /// The base array layer visible in the view.
     /// </summary>
     public uint BaseArrayLayer;
+
     /// <summary>
     /// The number of array layers visible in the view.
     /// </summary>
     public uint ArrayLayers;
+
     /// <summary>
     /// An optional <see cref="PixelFormat"/> which specifies how the data within <see cref="Target"/> will be viewed.
     /// If this value is null, then the created TextureView will use the same <see cref="PixelFormat"/> as the target
@@ -79,7 +84,13 @@ public struct TextureViewDescription : IEquatable<TextureViewDescription>
     /// <param name="mipLevels">The number of mip levels visible in the view.</param>
     /// <param name="baseArrayLayer">The base array layer visible in the view.</param>
     /// <param name="arrayLayers">The number of array layers visible in the view.</param>
-    public TextureViewDescription(Texture target, uint baseMipLevel, uint mipLevels, uint baseArrayLayer, uint arrayLayers)
+    public TextureViewDescription(
+        Texture target,
+        uint baseMipLevel,
+        uint mipLevels,
+        uint baseArrayLayer,
+        uint arrayLayers
+    )
     {
         Target = target;
         BaseMipLevel = baseMipLevel;
@@ -102,7 +113,14 @@ public struct TextureViewDescription : IEquatable<TextureViewDescription>
     /// <param name="mipLevels">The number of mip levels visible in the view.</param>
     /// <param name="baseArrayLayer">The base array layer visible in the view.</param>
     /// <param name="arrayLayers">The number of array layers visible in the view.</param>
-    public TextureViewDescription(Texture target, PixelFormat format, uint baseMipLevel, uint mipLevels, uint baseArrayLayer, uint arrayLayers)
+    public TextureViewDescription(
+        Texture target,
+        PixelFormat format,
+        uint baseMipLevel,
+        uint mipLevels,
+        uint baseArrayLayer,
+        uint arrayLayers
+    )
     {
         Target = target;
         BaseMipLevel = baseMipLevel;
@@ -120,11 +138,11 @@ public struct TextureViewDescription : IEquatable<TextureViewDescription>
     public readonly bool Equals(TextureViewDescription other)
     {
         return Target.Equals(other.Target)
-               && BaseMipLevel.Equals(other.BaseMipLevel)
-               && MipLevels.Equals(other.MipLevels)
-               && BaseArrayLayer.Equals(other.BaseArrayLayer)
-               && ArrayLayers.Equals(other.ArrayLayers)
-               && Format == other.Format;
+            && BaseMipLevel.Equals(other.BaseMipLevel)
+            && MipLevels.Equals(other.MipLevels)
+            && BaseArrayLayer.Equals(other.BaseArrayLayer)
+            && ArrayLayers.Equals(other.ArrayLayers)
+            && Format == other.Format;
     }
 
     /// <summary>
@@ -139,6 +157,7 @@ public struct TextureViewDescription : IEquatable<TextureViewDescription>
             MipLevels.GetHashCode(),
             BaseArrayLayer.GetHashCode(),
             ArrayLayers.GetHashCode(),
-            Format.GetHashCode());
+            Format.GetHashCode()
+        );
     }
 }

@@ -15,7 +15,8 @@ internal sealed class MTLSampler : Sampler
             description.Filter,
             out MTLSamplerMinMagFilter min,
             out MTLSamplerMinMagFilter mag,
-            out MTLSamplerMipFilter mip);
+            out MTLSamplerMipFilter mip
+        );
 
         MTLSamplerDescriptor mtlDesc = MTLSamplerDescriptor.New();
         mtlDesc.sAddressMode = MTLFormats.VdToMTLAddressMode(description.AddressModeU);
@@ -30,7 +31,9 @@ internal sealed class MTLSampler : Sampler
         }
         if (description.ComparisonKind != null)
         {
-            mtlDesc.compareFunction = MTLFormats.VdToMTLCompareFunction(description.ComparisonKind.Value);
+            mtlDesc.compareFunction = MTLFormats.VdToMTLCompareFunction(
+                description.ComparisonKind.Value
+            );
         }
         mtlDesc.lodMinClamp = description.MinimumLod;
         mtlDesc.lodMaxClamp = description.MaximumLod;

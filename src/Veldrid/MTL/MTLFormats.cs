@@ -7,7 +7,11 @@ namespace Veldrid.MTL;
 
 internal static class MTLFormats
 {
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static MTLPixelFormat VdToMTLPixelFormat(PixelFormat format, TextureUsage usage)
     {
         bool depthFormat = FormatHelpers.IsDepthFormatPreferred(format, usage);
@@ -138,7 +142,9 @@ internal static class MTLFormats
             case PixelFormat.D16_UNorm:
                 return MTLPixelFormat.Depth16Unorm;
             case PixelFormat.D16_UNorm_S8_UInt:
-                throw new VeldridException($"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on Direct3D 11.");
+                throw new VeldridException(
+                    $"{nameof(PixelFormat.D16_UNorm_S8_UInt)} is not supported on Direct3D 11."
+                );
             case PixelFormat.D32_Float:
                 return MTLPixelFormat.Depth32Float;
             case PixelFormat.D24_UNorm_S8_UInt:
@@ -158,8 +164,16 @@ internal static class MTLFormats
         }
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
-    internal static bool IsFormatSupported(PixelFormat format, TextureUsage usage, MTLFeatureSupport metalFeatures)
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
+    internal static bool IsFormatSupported(
+        PixelFormat format,
+        TextureUsage usage,
+        MTLFeatureSupport metalFeatures
+    )
     {
         switch (format)
         {
@@ -178,21 +192,21 @@ internal static class MTLFormats
             case PixelFormat.BC7_UNorm:
             case PixelFormat.BC7_UNorm_SRgb:
                 return metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v1)
-                       || metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v2)
-                       || metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3);
+                    || metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v2)
+                    || metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3);
 
             case PixelFormat.ETC2_R8_G8_B8_UNorm:
             case PixelFormat.ETC2_R8_G8_B8_A1_UNorm:
             case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
                 return metalFeatures.IsSupported(MTLFeatureSet.iOS_GPUFamily1_v1)
-                       || metalFeatures.IsSupported(MTLFeatureSet.iOS_GPUFamily2_v1)
-                       || metalFeatures.IsSupported(MTLFeatureSet.iOS_GPUFamily3_v1)
-                       || metalFeatures.IsSupported(MTLFeatureSet.iOS_GPUFamily4_v1);
+                    || metalFeatures.IsSupported(MTLFeatureSet.iOS_GPUFamily2_v1)
+                    || metalFeatures.IsSupported(MTLFeatureSet.iOS_GPUFamily3_v1)
+                    || metalFeatures.IsSupported(MTLFeatureSet.iOS_GPUFamily4_v1);
 
             case PixelFormat.R16_UNorm:
                 return ((usage & TextureUsage.DepthStencil) == 0)
-                       || metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v2)
-                       || metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3);
+                    || metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v2)
+                    || metalFeatures.IsSupported(MTLFeatureSet.macOS_GPUFamily1_v3);
 
             default:
                 return true;
@@ -211,14 +225,17 @@ internal static class MTLFormats
 
     internal static MTLWinding VdVoMTLFrontFace(FrontFace frontFace)
     {
-        return frontFace == FrontFace.CounterClockwise ? MTLWinding.CounterClockwise : MTLWinding.Clockwise;
+        return frontFace == FrontFace.CounterClockwise
+            ? MTLWinding.CounterClockwise
+            : MTLWinding.Clockwise;
     }
 
     internal static void GetMinMagMipFilter(
         SamplerFilter filter,
         out MTLSamplerMinMagFilter min,
         out MTLSamplerMinMagFilter mag,
-        out MTLSamplerMipFilter mip)
+        out MTLSamplerMipFilter mip
+    )
     {
         switch (filter)
         {
@@ -279,7 +296,8 @@ internal static class MTLFormats
         TextureType type,
         uint arrayLayers,
         bool multiSampled,
-        bool cube)
+        bool cube
+    )
     {
         switch (type)
         {
@@ -354,7 +372,11 @@ internal static class MTLFormats
         return mask;
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static MTLDataType VdVoMTLShaderConstantType(ShaderConstantType type)
     {
         switch (type)
@@ -374,7 +396,8 @@ internal static class MTLFormats
             case ShaderConstantType.UInt64:
             case ShaderConstantType.Int64:
             case ShaderConstantType.Double:
-                static MTLDataType Throw() => throw new VeldridException($"Metal does not support 64-bit shader constants.");
+                static MTLDataType Throw() =>
+                    throw new VeldridException($"Metal does not support 64-bit shader constants.");
                 return Throw();
             default:
                 return Illegal.Value<ShaderConstantType, MTLDataType>();
@@ -456,8 +479,10 @@ internal static class MTLFormats
         {
             ret |= MTLTextureUsage.ShaderWrite;
         }
-        if ((usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil
-            || (usage & TextureUsage.RenderTarget) == TextureUsage.RenderTarget)
+        if (
+            (usage & TextureUsage.DepthStencil) == TextureUsage.DepthStencil
+            || (usage & TextureUsage.RenderTarget) == TextureUsage.RenderTarget
+        )
         {
             ret |= MTLTextureUsage.RenderTarget;
         }
@@ -525,7 +550,11 @@ internal static class MTLFormats
         };
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static uint GetMaxTexture1DWidth(MTLFeatureSet fs)
     {
         switch (fs)
@@ -557,7 +586,11 @@ internal static class MTLFormats
         }
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static uint GetMaxTexture2DDimensions(MTLFeatureSet fs)
     {
         switch (fs)
@@ -589,7 +622,11 @@ internal static class MTLFormats
         }
     }
 
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     internal static uint GetMaxTextureCubeDimensions(MTLFeatureSet fs)
     {
         switch (fs)

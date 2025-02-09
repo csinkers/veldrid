@@ -8,7 +8,8 @@ public readonly struct HmdPoseState(
     Vector3 leftEyePosition,
     Vector3 rightEyePosition,
     Quaternion leftEyeRotation,
-    Quaternion rightEyeRotation)
+    Quaternion rightEyeRotation
+)
 {
     public readonly Matrix4x4 LeftEyeProjection = leftEyeProjection;
     public readonly Matrix4x4 RightEyeProjection = rightEyeProjection;

@@ -14,7 +14,15 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     public void Map_Succeeds()
     {
         Texture texture = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 1, 1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.Staging));
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                1,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.Staging
+            )
+        );
 
         MappedResource map = GD.Map(texture, MapMode.ReadWrite, 0);
         GD.Unmap(texture, 0);
@@ -24,7 +32,15 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     public void Map_Succeeds_R32_G32_B32_A32_UInt()
     {
         Texture texture = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 1, 1, PixelFormat.R32_G32_B32_A32_UInt, TextureUsage.Staging));
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                1,
+                1,
+                PixelFormat.R32_G32_B32_A32_UInt,
+                TextureUsage.Staging
+            )
+        );
 
         MappedResource map = GD.Map(texture, MapMode.ReadWrite, 0);
         GD.Unmap(texture, 0);
@@ -36,7 +52,15 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     public unsafe void Update_ThenMapRead_Succeeds_R32Float(bool useArrayOverload)
     {
         Texture texture = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 1, 1, PixelFormat.R32_Float, TextureUsage.Staging));
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                1,
+                1,
+                PixelFormat.R32_Float,
+                TextureUsage.Staging
+            )
+        );
 
         float[] data = Enumerable.Range(0, 1024 * 1024).Select(i => (float)i).ToArray();
 
@@ -48,7 +72,19 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             }
             else
             {
-                GD.UpdateTexture(texture, (IntPtr)dataPtr, 1024 * 1024 * 4, 0, 0, 0, 1024, 1024, 1, 0, 0);
+                GD.UpdateTexture(
+                    texture,
+                    (IntPtr)dataPtr,
+                    1024 * 1024 * 4,
+                    0,
+                    0,
+                    0,
+                    1024,
+                    1024,
+                    1,
+                    0,
+                    0
+                );
             }
         }
 
@@ -71,7 +107,15 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     public unsafe void Update_ThenMapRead_SingleMip_Succeeds_R16UNorm(bool useArrayOverload)
     {
         Texture texture = RF.CreateTexture(
-            TextureDescription.Texture2D(1024, 1024, 3, 1, PixelFormat.R16_UNorm, TextureUsage.Staging));
+            TextureDescription.Texture2D(
+                1024,
+                1024,
+                3,
+                1,
+                PixelFormat.R16_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         ushort[] data = Enumerable.Range(0, 256 * 256).Select(i => (ushort)i).ToArray();
 
@@ -83,7 +127,19 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             }
             else
             {
-                GD.UpdateTexture(texture, (IntPtr)dataPtr, 256 * 256 * sizeof(ushort), 0, 0, 0, 256, 256, 1, 2, 0);
+                GD.UpdateTexture(
+                    texture,
+                    (IntPtr)dataPtr,
+                    256 * 256 * sizeof(ushort),
+                    0,
+                    0,
+                    0,
+                    256,
+                    256,
+                    1,
+                    2,
+                    0
+                );
             }
         }
 
@@ -105,7 +161,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     public unsafe void Update_ThenCopySingleMip_Succeeds_R16UNorm()
     {
         TextureDescription desc = TextureDescription.Texture2D(
-            1024, 1024, 3, 1, PixelFormat.R16_UNorm, TextureUsage.Staging);
+            1024,
+            1024,
+            3,
+            1,
+            PixelFormat.R16_UNorm,
+            TextureUsage.Staging
+        );
         Texture src = RF.CreateTexture(desc);
         Texture dst = RF.CreateTexture(desc);
 
@@ -113,7 +175,19 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
         fixed (ushort* dataPtr = data)
         {
-            GD.UpdateTexture(src, (IntPtr)dataPtr, 256 * 256 * sizeof(ushort), 0, 0, 0, 256, 256, 1, 2, 0);
+            GD.UpdateTexture(
+                src,
+                (IntPtr)dataPtr,
+                256 * 256 * sizeof(ushort),
+                0,
+                0,
+                0,
+                256,
+                256,
+                1,
+                2,
+                0
+            );
         }
 
         CommandList cl = RF.CreateCommandList();
@@ -137,7 +211,6 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         }
     }
 
-
     [Fact]
     public void CreateTextureViewFromTextureWithArrayLayers()
     {
@@ -146,7 +219,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint ArrayLayers = 6;
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, ArrayLayers, PixelFormat.R8_UNorm, TextureUsage.Storage | TextureUsage.Sampled);
+            TexSize,
+            TexSize,
+            MipLevels,
+            ArrayLayers,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Storage | TextureUsage.Sampled
+        );
         Texture tex = RF.CreateTexture(texDesc);
 
         for (uint mip = 0; mip < MipLevels; mip++)
@@ -154,7 +233,10 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             for (uint layer = 0; layer < ArrayLayers; layer++)
             {
                 uint mipSize = TexSize >> (int)mip;
-                byte[] data = Enumerable.Repeat((layer + 1) * 42, (int)(mipSize * mipSize)).Select(n => (byte)n).ToArray();
+                byte[] data = Enumerable
+                    .Repeat((layer + 1) * 42, (int)(mipSize * mipSize))
+                    .Select(n => (byte)n)
+                    .ToArray();
                 GD.UpdateTexture(tex, data, 0, 0, 0, mipSize, mipSize, 1, mip, layer);
             }
         }
@@ -170,7 +252,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint MipLevels = 3;
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 1, PixelFormat.R8_UNorm, TextureUsage.Cubemap);
+            TexSize,
+            TexSize,
+            MipLevels,
+            1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Cubemap
+        );
         Texture tex = RF.CreateTexture(texDesc);
 
         for (uint mip = 0; mip < MipLevels; mip++)
@@ -178,7 +266,10 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             for (uint face = 0; face < 6; face++)
             {
                 uint mipSize = TexSize >> (int)mip;
-                byte[] data = Enumerable.Repeat((face + 1) * 42, (int)(mipSize * mipSize)).Select(n => (byte)n).ToArray();
+                byte[] data = Enumerable
+                    .Repeat((face + 1) * 42, (int)(mipSize * mipSize))
+                    .Select(n => (byte)n)
+                    .ToArray();
                 GD.UpdateTexture(tex, data, 0, 0, 0, mipSize, mipSize, 1, mip, face);
             }
         }
@@ -214,7 +305,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint MipLevels = 3;
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 1, PixelFormat.R8_UNorm, TextureUsage.Cubemap | TextureUsage.Sampled);
+            TexSize,
+            TexSize,
+            MipLevels,
+            1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Cubemap | TextureUsage.Sampled
+        );
         Texture tex = RF.CreateTexture(texDesc);
 
         for (uint mip = 0; mip < MipLevels; mip++)
@@ -222,7 +319,10 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             for (uint face = 0; face < 6; face++)
             {
                 uint mipSize = TexSize >> (int)mip;
-                byte[] data = Enumerable.Repeat((face + 1) * 42, (int)(mipSize * mipSize)).Select(n => (byte)n).ToArray();
+                byte[] data = Enumerable
+                    .Repeat((face + 1) * 42, (int)(mipSize * mipSize))
+                    .Select(n => (byte)n)
+                    .ToArray();
                 GD.UpdateTexture(tex, data, 0, 0, 0, mipSize, mipSize, 1, mip, face);
             }
         }
@@ -238,15 +338,30 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint MipLevels = 1;
 
         TextureDescription srcDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 1, PixelFormat.R8_UNorm, TextureUsage.Cubemap);
+            TexSize,
+            TexSize,
+            MipLevels,
+            1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Cubemap
+        );
         TextureDescription dstDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 6, PixelFormat.R8_UNorm, TextureUsage.Staging);
+            TexSize,
+            TexSize,
+            MipLevels,
+            6,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Staging
+        );
         Texture src = RF.CreateTexture(srcDesc);
         Texture dst = RF.CreateTexture(dstDesc);
 
         for (uint face = 0; face < 6; face++)
         {
-            byte[] data = Enumerable.Repeat((face + 1) * 42, (int)(TexSize * TexSize)).Select(n => (byte)n).ToArray();
+            byte[] data = Enumerable
+                .Repeat((face + 1) * 42, (int)(TexSize * TexSize))
+                .Select(n => (byte)n)
+                .ToArray();
             GD.UpdateTexture(src, data, 0, 0, 0, TexSize, TexSize, 1, 0, face);
         }
 
@@ -286,15 +401,30 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint MipLevels = 1;
 
         TextureDescription srcDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 6, PixelFormat.R8_UNorm, TextureUsage.Staging);
+            TexSize,
+            TexSize,
+            MipLevels,
+            6,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Staging
+        );
         TextureDescription dstDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 1, PixelFormat.R8_UNorm, TextureUsage.Sampled | TextureUsage.Cubemap);
+            TexSize,
+            TexSize,
+            MipLevels,
+            1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Sampled | TextureUsage.Cubemap
+        );
         Texture src = RF.CreateTexture(srcDesc);
         Texture dst = RF.CreateTexture(dstDesc);
 
         for (uint face = 0; face < 6; face++)
         {
-            byte[] data = Enumerable.Repeat((face + 1) * 42, (int)(TexSize * TexSize)).Select(n => (byte)n).ToArray();
+            byte[] data = Enumerable
+                .Repeat((face + 1) * 42, (int)(TexSize * TexSize))
+                .Select(n => (byte)n)
+                .ToArray();
             GD.UpdateTexture(src, data, 0, 0, 0, TexSize, TexSize, 1, 0, face);
         }
 
@@ -338,9 +468,21 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint CopiedMip = 1;
 
         TextureDescription srcDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 1, PixelFormat.R8_UNorm, TextureUsage.Cubemap);
+            TexSize,
+            TexSize,
+            MipLevels,
+            1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Cubemap
+        );
         TextureDescription dstDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 6, PixelFormat.R8_UNorm, TextureUsage.Staging);
+            TexSize,
+            TexSize,
+            MipLevels,
+            6,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Staging
+        );
         Texture src = RF.CreateTexture(srcDesc);
         Texture dst = RF.CreateTexture(dstDesc);
 
@@ -349,7 +491,10 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             uint mipSize = (uint)(TexSize / (1 << (int)mip));
             for (uint face = 0; face < 6; face++)
             {
-                byte[] data = Enumerable.Repeat((mip + face + 1) * 42, (int)(mipSize * mipSize)).Select(n => (byte)n).ToArray();
+                byte[] data = Enumerable
+                    .Repeat((mip + face + 1) * 42, (int)(mipSize * mipSize))
+                    .Select(n => (byte)n)
+                    .ToArray();
                 GD.UpdateTexture(src, data, 0, 0, 0, mipSize, mipSize, 1, mip, face);
             }
         }
@@ -394,9 +539,21 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint MipLevels = 2;
 
         TextureDescription srcDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 1, PixelFormat.R8_UNorm, TextureUsage.Cubemap);
+            TexSize,
+            TexSize,
+            MipLevels,
+            1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Cubemap
+        );
         TextureDescription dstDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 6, PixelFormat.R8_UNorm, TextureUsage.Staging);
+            TexSize,
+            TexSize,
+            MipLevels,
+            6,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Staging
+        );
         Texture src = RF.CreateTexture(srcDesc);
         Texture dst = RF.CreateTexture(dstDesc);
 
@@ -405,7 +562,10 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             uint mipSize = (uint)(TexSize / (1 << (int)mip));
             for (uint face = 0; face < 6; face++)
             {
-                byte[] data = Enumerable.Repeat((face + 1) * 42, (int)(mipSize * mipSize)).Select(n => (byte)n).ToArray();
+                byte[] data = Enumerable
+                    .Repeat((face + 1) * 42, (int)(mipSize * mipSize))
+                    .Select(n => (byte)n)
+                    .ToArray();
                 GD.UpdateTexture(src, data, 0, 0, 0, mipSize, mipSize, 1, mip, face);
             }
         }
@@ -447,9 +607,21 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint CopiedArrayLayer = 3;
 
         TextureDescription srcDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 1, PixelFormat.R8_UNorm, TextureUsage.Cubemap);
+            TexSize,
+            TexSize,
+            MipLevels,
+            1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Cubemap
+        );
         TextureDescription dstDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, CopiedArrayLayer + 1, PixelFormat.R8_UNorm, TextureUsage.Staging);
+            TexSize,
+            TexSize,
+            MipLevels,
+            CopiedArrayLayer + 1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Staging
+        );
         Texture src = RF.CreateTexture(srcDesc);
         Texture dst = RF.CreateTexture(dstDesc);
 
@@ -458,7 +630,10 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             uint mipSize = (uint)(TexSize / (1 << (int)mip));
             for (uint face = 0; face < 6; face++)
             {
-                byte[] data = Enumerable.Repeat((face + 1) * 42, (int)(mipSize * mipSize)).Select(n => (byte)n).ToArray();
+                byte[] data = Enumerable
+                    .Repeat((face + 1) * 42, (int)(mipSize * mipSize))
+                    .Select(n => (byte)n)
+                    .ToArray();
                 GD.UpdateTexture(src, data, 0, 0, 0, mipSize, mipSize, 1, mip, face);
             }
         }
@@ -502,12 +677,21 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     public void CubeMap_GenerateMipmaps(uint TexSize, uint MipLevels)
     {
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, 1, PixelFormat.R8_UNorm, TextureUsage.Cubemap | TextureUsage.GenerateMipmaps);
+            TexSize,
+            TexSize,
+            MipLevels,
+            1,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Cubemap | TextureUsage.GenerateMipmaps
+        );
         Texture tex = RF.CreateTexture(texDesc);
 
         for (uint face = 0; face < 6; face++)
         {
-            byte[] data = Enumerable.Repeat((face + 1) * 42, (int)(TexSize * TexSize)).Select(n => (byte)n).ToArray();
+            byte[] data = Enumerable
+                .Repeat((face + 1) * 42, (int)(TexSize * TexSize))
+                .Select(n => (byte)n)
+                .ToArray();
             GD.UpdateTexture(tex, data, 0, 0, 0, TexSize, TexSize, 1, 0, face);
         }
 
@@ -572,12 +756,21 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint ArrayColorDelta = 255 / ArrayLayers;
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, 1, ArrayLayers, PixelFormat.R8_UNorm, TextureUsage.Staging);
+            TexSize,
+            TexSize,
+            1,
+            ArrayLayers,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Staging
+        );
         Texture tex = RF.CreateTexture(texDesc);
 
         for (uint layer = 0; layer < ArrayLayers; layer++)
         {
-            byte[] data = Enumerable.Repeat(layer * ArrayColorDelta, (int)(TexSize * TexSize)).Select(n => (byte)n).ToArray();
+            byte[] data = Enumerable
+                .Repeat(layer * ArrayColorDelta, (int)(TexSize * TexSize))
+                .Select(n => (byte)n)
+                .ToArray();
             GD.UpdateTexture(tex, data, 0, 0, 0, TexSize, TexSize, 1, 0, layer);
         }
 
@@ -603,12 +796,21 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint ArrayColorDelta = 255 / ArrayLayers;
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, 1, ArrayLayers, PixelFormat.R8_UNorm, TextureUsage.Staging);
+            TexSize,
+            TexSize,
+            1,
+            ArrayLayers,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Staging
+        );
         Texture tex = RF.CreateTexture(texDesc);
 
         for (uint layer = 0; layer < ArrayLayers; layer++)
         {
-            byte[] data = Enumerable.Repeat(layer * ArrayColorDelta, (int)(TexSize * TexSize)).Select(n => (byte)n).ToArray();
+            byte[] data = Enumerable
+                .Repeat(layer * ArrayColorDelta, (int)(TexSize * TexSize))
+                .Select(n => (byte)n)
+                .ToArray();
             GD.UpdateTexture(tex, data, 0, 0, 0, TexSize, TexSize, 1, 0, layer);
         }
 
@@ -635,7 +837,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         const uint ArrayColorDelta = 255 / ArrayLayers;
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize, MipLevels, ArrayLayers, PixelFormat.R8_UNorm, TextureUsage.Sampled);
+            TexSize,
+            TexSize,
+            MipLevels,
+            ArrayLayers,
+            PixelFormat.R8_UNorm,
+            TextureUsage.Sampled
+        );
         Texture tex = RF.CreateTexture(texDesc);
         texDesc.Usage = TextureUsage.Staging;
         Texture readback = RF.CreateTexture(texDesc);
@@ -645,7 +853,10 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             for (uint layer = 0; layer < ArrayLayers; layer++)
             {
                 uint mipSize = MipLevels >> (int)mip;
-                byte[] data = Enumerable.Repeat(layer * ArrayColorDelta, (int)(mipSize * mipSize)).Select(n => (byte)n).ToArray();
+                byte[] data = Enumerable
+                    .Repeat(layer * ArrayColorDelta, (int)(mipSize * mipSize))
+                    .Select(n => (byte)n)
+                    .ToArray();
                 GD.UpdateTexture(tex, data, 0, 0, 0, mipSize, mipSize, 1, mip, layer);
             }
         }
@@ -704,15 +915,24 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [InlineData(PixelFormat.BC7_UNorm, 16, 8, 4, 16, 16)]
     [InlineData(PixelFormat.BC7_UNorm_SRgb, 16, 0, 0, 16, 16)]
     [InlineData(PixelFormat.BC7_UNorm_SRgb, 16, 8, 4, 16, 16)]
-    public unsafe void Copy_Compressed_Texture(PixelFormat format, uint blockSizeInBytes, uint srcX, uint srcY, uint copyWidth, uint copyHeight)
+    public unsafe void Copy_Compressed_Texture(
+        PixelFormat format,
+        uint blockSizeInBytes,
+        uint srcX,
+        uint srcY,
+        uint copyWidth,
+        uint copyHeight
+    )
     {
         Skip.IfNot(GD.GetPixelFormatSupport(format, TextureType.Texture2D, TextureUsage.Staging));
         Skip.IfNot(GD.GetPixelFormatSupport(format, TextureType.Texture2D, TextureUsage.Sampled));
 
-        Texture copySrc = RF.CreateTexture(TextureDescription.Texture2D(
-            64, 64, 1, 1, format, TextureUsage.Staging));
-        Texture copyDst = RF.CreateTexture(TextureDescription.Texture2D(
-            copyWidth, copyHeight, 1, 1, format, TextureUsage.Staging));
+        Texture copySrc = RF.CreateTexture(
+            TextureDescription.Texture2D(64, 64, 1, 1, format, TextureUsage.Staging)
+        );
+        Texture copyDst = RF.CreateTexture(
+            TextureDescription.Texture2D(copyWidth, copyHeight, 1, 1, format, TextureUsage.Staging)
+        );
 
         const int numPixelsInBlockSide = 4;
         const int numPixelsInBlock = 16;
@@ -726,15 +946,41 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         }
         fixed (byte* dataPtr = data)
         {
-            GD.UpdateTexture(copySrc, (IntPtr)dataPtr, totalDataSize, srcX, srcY, 0, copyWidth, copyHeight, 1, 0, 0);
+            GD.UpdateTexture(
+                copySrc,
+                (IntPtr)dataPtr,
+                totalDataSize,
+                srcX,
+                srcY,
+                0,
+                copyWidth,
+                copyHeight,
+                1,
+                0,
+                0
+            );
         }
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
         cl.CopyTexture(
-            copySrc, srcX, srcY, 0, 0, 0,
-            copyDst, 0, 0, 0, 0, 0,
-            copyWidth, copyHeight, 1, 1);
+            copySrc,
+            srcX,
+            srcY,
+            0,
+            0,
+            0,
+            copyDst,
+            0,
+            0,
+            0,
+            0,
+            0,
+            copyWidth,
+            copyHeight,
+            1,
+            1
+        );
         cl.End();
         GD.SubmitCommands(cl);
         GD.WaitForIdle();
@@ -759,10 +1005,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.IfNot(GD.GetPixelFormatSupport(format, TextureType.Texture2D, TextureUsage.Sampled));
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            16, 16,
-            1, 4,
+            16,
+            16,
+            1,
+            4,
             format,
-            TextureUsage.Sampled);
+            TextureUsage.Sampled
+        );
 
         Texture copySrc = RF.CreateTexture(texDesc);
         texDesc.Usage = TextureUsage.Staging;
@@ -772,12 +1021,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         {
             int byteCount = 16 * 16;
             byte[] data = Enumerable.Range(0, byteCount).Select(i => (byte)(i + layer)).ToArray();
-            GD.UpdateTexture(
-                copySrc,
-                data,
-                0, 0, 0,
-                16, 16, 1,
-                0, layer);
+            GD.UpdateTexture(copySrc, data, 0, 0, 0, 16, 16, 1, 0, layer);
         }
 
         CommandList copyCL = RF.CreateCommandList();
@@ -786,12 +1030,46 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         {
             for (uint layer = 0; layer < copySrc.ArrayLayers; layer++)
             {
-                copyCL.CopyTexture(copySrc, 0, 0, 0, 0, layer, copyDst, 0, 0, 0, 0, layer, 16, 16, 1, 1);
+                copyCL.CopyTexture(
+                    copySrc,
+                    0,
+                    0,
+                    0,
+                    0,
+                    layer,
+                    copyDst,
+                    0,
+                    0,
+                    0,
+                    0,
+                    layer,
+                    16,
+                    16,
+                    1,
+                    1
+                );
             }
         }
         else
         {
-            copyCL.CopyTexture(copySrc, 0, 0, 0, 0, 0, copyDst, 0, 0, 0, 0, 0, 16, 16, 1, copySrc.ArrayLayers);
+            copyCL.CopyTexture(
+                copySrc,
+                0,
+                0,
+                0,
+                0,
+                0,
+                copyDst,
+                0,
+                0,
+                0,
+                0,
+                0,
+                16,
+                16,
+                1,
+                copySrc.ArrayLayers
+            );
         }
         copyCL.End();
         Fence fence = RF.CreateFence(false);
@@ -823,8 +1101,16 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public unsafe void Update_ThenMapRead_3D()
     {
-        Texture tex3D = RF.CreateTexture(TextureDescription.Texture3D(
-            10, 10, 10, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
+        Texture tex3D = RF.CreateTexture(
+            TextureDescription.Texture3D(
+                10,
+                10,
+                10,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         RgbaByte[] data = new RgbaByte[tex3D.Width * tex3D.Height * tex3D.Depth];
         for (int z = 0; z < tex3D.Depth; z++)
@@ -837,10 +1123,19 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
         fixed (RgbaByte* dataPtr = data)
         {
-            GD.UpdateTexture(tex3D, (IntPtr)dataPtr, (uint)(data.Length * Unsafe.SizeOf<RgbaByte>()),
-                0, 0, 0,
-                tex3D.Width, tex3D.Height, tex3D.Depth,
-                0, 0);
+            GD.UpdateTexture(
+                tex3D,
+                (IntPtr)dataPtr,
+                (uint)(data.Length * Unsafe.SizeOf<RgbaByte>()),
+                0,
+                0,
+                0,
+                tex3D.Width,
+                tex3D.Height,
+                tex3D.Depth,
+                0,
+                0
+            );
         }
 
         MappedResourceView<RgbaByte> view = GD.Map<RgbaByte>(tex3D, MapMode.Read, 0);
@@ -856,8 +1151,16 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public unsafe void MapWrite_ThenMapRead_3D()
     {
-        Texture tex3D = RF.CreateTexture(TextureDescription.Texture3D(
-            10, 10, 10, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
+        Texture tex3D = RF.CreateTexture(
+            TextureDescription.Texture3D(
+                10,
+                10,
+                10,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         MappedResourceView<RgbaByte> writeView = GD.Map<RgbaByte>(tex3D, MapMode.Write);
         for (int z = 0; z < tex3D.Depth; z++)
@@ -884,11 +1187,27 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.IfNot(GD.Features.Texture1D);
 
         Texture tex1D = RF.CreateTexture(
-            TextureDescription.Texture1D(100, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging));
-        ushort[] data = Enumerable.Range(0, (int)tex1D.Width).Select(i => (ushort)(i * 2)).ToArray();
+            TextureDescription.Texture1D(100, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging)
+        );
+        ushort[] data = Enumerable
+            .Range(0, (int)tex1D.Width)
+            .Select(i => (ushort)(i * 2))
+            .ToArray();
         fixed (ushort* dataPtr = &data[0])
         {
-            GD.UpdateTexture(tex1D, (IntPtr)dataPtr, (uint)(data.Length * sizeof(ushort)), 0, 0, 0, tex1D.Width, 1, 1, 0, 0);
+            GD.UpdateTexture(
+                tex1D,
+                (IntPtr)dataPtr,
+                (uint)(data.Length * sizeof(ushort)),
+                0,
+                0,
+                0,
+                tex1D.Width,
+                1,
+                1,
+                0,
+                0
+            );
         }
 
         MappedResourceView<ushort> view = GD.Map<ushort>(tex1D, MapMode.Read);
@@ -905,7 +1224,8 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.IfNot(GD.Features.Texture1D);
 
         Texture tex1D = RF.CreateTexture(
-            TextureDescription.Texture1D(100, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging));
+            TextureDescription.Texture1D(100, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging)
+        );
 
         MappedResourceView<ushort> writeView = GD.Map<ushort>(tex1D, MapMode.Write);
         for (int i = 0; i < tex1D.Width; i++)
@@ -928,9 +1248,11 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.IfNot(GD.Features.Texture1D);
 
         Texture tex1D = RF.CreateTexture(
-            TextureDescription.Texture1D(100, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging));
+            TextureDescription.Texture1D(100, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging)
+        );
         Texture tex2D = RF.CreateTexture(
-            TextureDescription.Texture2D(100, 10, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging));
+            TextureDescription.Texture2D(100, 10, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging)
+        );
 
         MappedResourceView<ushort> writeView = GD.Map<ushort>(tex1D, MapMode.Write);
         for (int i = 0; i < tex1D.Width; i++)
@@ -941,10 +1263,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
-        cl.CopyTexture(
-            tex1D, 0, 0, 0, 0, 0,
-            tex2D, 0, 5, 0, 0, 0,
-            tex1D.Width, 1, 1, 1);
+        cl.CopyTexture(tex1D, 0, 0, 0, 0, 0, tex2D, 0, 5, 0, 0, 0, tex1D.Width, 1, 1, 1);
         cl.End();
         GD.SubmitCommands(cl);
         cl.Dispose();
@@ -963,8 +1282,15 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     {
         Skip.IfNot(GD.Features.Texture1D);
 
-        Texture tex1D = RF.CreateTexture(TextureDescription.Texture1D(
-            100, 5, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
+        Texture tex1D = RF.CreateTexture(
+            TextureDescription.Texture1D(
+                100,
+                5,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         for (uint level = 0; level < tex1D.MipLevels; level++)
         {
@@ -993,9 +1319,11 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.IfNot(GD.Features.Texture1D);
 
         Texture tex1D = RF.CreateTexture(
-            TextureDescription.Texture1D(200, 2, 1, PixelFormat.R16_UNorm, TextureUsage.Staging));
+            TextureDescription.Texture1D(200, 2, 1, PixelFormat.R16_UNorm, TextureUsage.Staging)
+        );
         Texture tex2D = RF.CreateTexture(
-            TextureDescription.Texture2D(100, 10, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging));
+            TextureDescription.Texture2D(100, 10, 1, 1, PixelFormat.R16_UNorm, TextureUsage.Staging)
+        );
 
         MappedResourceView<ushort> writeView = GD.Map<ushort>(tex1D, MapMode.Write, 1);
         for (int i = 0; i < tex2D.Width; i++)
@@ -1006,10 +1334,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
-        cl.CopyTexture(
-            tex1D, 0, 0, 0, 1, 0,
-            tex2D, 0, 5, 0, 0, 0,
-            tex2D.Width, 1, 1, 1);
+        cl.CopyTexture(tex1D, 0, 0, 0, 1, 0, tex2D, 0, 5, 0, 0, 0, tex2D.Width, 1, 1, 1);
         cl.End();
         GD.SubmitCommands(cl);
         cl.Dispose();
@@ -1030,11 +1355,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [Theory]
     public void Copy_WithOffsets_2D(TextureUsage srcUsage, TextureUsage dstUsage)
     {
-        Texture src = RF.CreateTexture(TextureDescription.Texture2D(
-            100, 100, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, srcUsage));
+        Texture src = RF.CreateTexture(
+            TextureDescription.Texture2D(100, 100, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, srcUsage)
+        );
 
-        Texture dst = RF.CreateTexture(TextureDescription.Texture2D(
-            100, 100, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, dstUsage));
+        Texture dst = RF.CreateTexture(
+            TextureDescription.Texture2D(100, 100, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, dstUsage)
+        );
 
         RgbaByte[] srcData = new RgbaByte[src.Height * src.Width];
         for (int y = 0; y < src.Height; y++)
@@ -1047,12 +1374,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
-        cl.CopyTexture(
-            src,
-            50, 50, 0, 0, 0,
-            dst,
-            10, 10, 0, 0, 0,
-            50, 50, 1, 1);
+        cl.CopyTexture(src, 50, 50, 0, 0, 0, dst, 10, 10, 0, 0, 0, 50, 50, 1, 1);
         cl.End();
         GD.SubmitCommands(cl);
         GD.WaitForIdle();
@@ -1070,10 +1392,26 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Copy_ArrayToNonArray()
     {
-        Texture src = RF.CreateTexture(TextureDescription.Texture2D(
-            10, 10, 1, 10, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
-        Texture dst = RF.CreateTexture(TextureDescription.Texture2D(
-            10, 10, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
+        Texture src = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                10,
+                10,
+                1,
+                10,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
+        Texture dst = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                10,
+                10,
+                1,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         MappedResourceView<RgbaByte> writeView = GD.Map<RgbaByte>(src, MapMode.Write, 5);
         for (int y = 0; y < src.Height; y++)
@@ -1085,10 +1423,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
-        cl.CopyTexture(
-            src, 0, 0, 0, 0, 5,
-            dst, 0, 0, 0, 0, 0,
-            10, 10, 1, 1);
+        cl.CopyTexture(src, 0, 0, 0, 0, 5, dst, 0, 0, 0, 0, 0, 10, 10, 1, 1);
         cl.End();
         GD.SubmitCommands(cl);
         GD.WaitForIdle();
@@ -1105,8 +1440,16 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Map_ThenRead_MultipleArrayLayers()
     {
-        Texture src = RF.CreateTexture(TextureDescription.Texture2D(
-            10, 10, 1, 10, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
+        Texture src = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                10,
+                10,
+                1,
+                10,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         for (uint layer = 0; layer < src.ArrayLayers; layer++)
         {
@@ -1134,8 +1477,16 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public unsafe void Update_WithOffset_2D()
     {
-        Texture tex2D = RF.CreateTexture(TextureDescription.Texture2D(
-            100, 100, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
+        Texture tex2D = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                100,
+                100,
+                1,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         RgbaByte[] data = new RgbaByte[50 * 30];
         for (uint y = 0; y < 30; y++)
@@ -1147,10 +1498,18 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         fixed (RgbaByte* dataPtr = &data[0])
         {
             GD.UpdateTexture(
-                tex2D, (IntPtr)dataPtr, (uint)(data.Length * sizeof(RgbaByte)),
-                50, 70, 0,
-                50, 30, 1,
-                0, 0);
+                tex2D,
+                (IntPtr)dataPtr,
+                (uint)(data.Length * sizeof(RgbaByte)),
+                50,
+                70,
+                0,
+                50,
+                30,
+                1,
+                0,
+                0
+            );
         }
 
         MappedResourceView<RgbaByte> readView = GD.Map<RgbaByte>(tex2D, MapMode.Read);
@@ -1164,28 +1523,46 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [SkippableFact]
     public unsafe void Update_NonMultipleOfFourWithCompressedTexture_2D()
     {
-        Skip.IfNot(GD.GetPixelFormatSupport(PixelFormat.BC1_Rgb_UNorm, TextureType.Texture2D, TextureUsage.Staging));
-            
-        Texture tex2D = RF.CreateTexture(TextureDescription.Texture2D(
-            2, 2, 1, 1, PixelFormat.BC1_Rgb_UNorm, TextureUsage.Staging));
+        Skip.IfNot(
+            GD.GetPixelFormatSupport(
+                PixelFormat.BC1_Rgb_UNorm,
+                TextureType.Texture2D,
+                TextureUsage.Staging
+            )
+        );
+
+        Texture tex2D = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                2,
+                2,
+                1,
+                1,
+                PixelFormat.BC1_Rgb_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         byte[] data = new byte[16];
 
         fixed (byte* dataPtr = &data[0])
         {
-            GD.UpdateTexture(
-                tex2D, (IntPtr)dataPtr, (uint)data.Length,
-                0, 0, 0,
-                4, 4, 1,
-                0, 0);
+            GD.UpdateTexture(tex2D, (IntPtr)dataPtr, (uint)data.Length, 0, 0, 0, 4, 4, 1, 0, 0);
         }
     }
 
     [Fact]
     public unsafe void Map_NonZeroMip_3D()
     {
-        Texture tex3D = RF.CreateTexture(TextureDescription.Texture3D(
-            40, 40, 40, 3, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
+        Texture tex3D = RF.CreateTexture(
+            TextureDescription.Texture3D(
+                40,
+                40,
+                40,
+                3,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         MappedResourceView<RgbaByte> writeView = GD.Map<RgbaByte>(tex3D, MapMode.Write, 2);
         for (int z = 0; z < 10; z++)
@@ -1209,8 +1586,16 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public unsafe void Update_NonStaging_3D()
     {
-        Texture tex3D = RF.CreateTexture(TextureDescription.Texture3D(
-            16, 16, 16, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
+        Texture tex3D = RF.CreateTexture(
+            TextureDescription.Texture3D(
+                16,
+                16,
+                16,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Sampled
+            )
+        );
         RgbaByte[] data = new RgbaByte[16 * 16 * 16];
         for (int z = 0; z < 16; z++)
         for (int y = 0; y < 16; y++)
@@ -1222,14 +1607,31 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
         fixed (RgbaByte* dataPtr = data)
         {
-            GD.UpdateTexture(tex3D, (IntPtr)dataPtr, (uint)(data.Length * Unsafe.SizeOf<RgbaByte>()),
-                0, 0, 0,
-                tex3D.Width, tex3D.Height, tex3D.Depth,
-                0, 0);
+            GD.UpdateTexture(
+                tex3D,
+                (IntPtr)dataPtr,
+                (uint)(data.Length * Unsafe.SizeOf<RgbaByte>()),
+                0,
+                0,
+                0,
+                tex3D.Width,
+                tex3D.Height,
+                tex3D.Depth,
+                0,
+                0
+            );
         }
 
-        Texture staging = RF.CreateTexture(TextureDescription.Texture3D(
-            16, 16, 16, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Staging));
+        Texture staging = RF.CreateTexture(
+            TextureDescription.Texture3D(
+                16,
+                16,
+                16,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Staging
+            )
+        );
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -1252,25 +1654,45 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     public unsafe void Copy_NonSquareTexture()
     {
         Texture src = RF.CreateTexture(
-            TextureDescription.Texture2D(512, 128, 1, 1, PixelFormat.R8_UNorm, TextureUsage.Staging));
+            TextureDescription.Texture2D(512, 128, 1, 1, PixelFormat.R8_UNorm, TextureUsage.Staging)
+        );
         byte[] data = Enumerable.Repeat((byte)255, (int)(src.Width * src.Height)).ToArray();
         fixed (byte* dataPtr = data)
         {
-            GD.UpdateTexture(src, (IntPtr)dataPtr, (uint)data.Length,
-                0, 0, 0,
-                src.Width, src.Height, 1,
-                0, 0);
+            GD.UpdateTexture(
+                src,
+                (IntPtr)dataPtr,
+                (uint)data.Length,
+                0,
+                0,
+                0,
+                src.Width,
+                src.Height,
+                1,
+                0,
+                0
+            );
         }
 
         Texture dst = RF.CreateTexture(
-            TextureDescription.Texture2D(512, 128, 1, 1, PixelFormat.R8_UNorm, TextureUsage.Staging));
+            TextureDescription.Texture2D(512, 128, 1, 1, PixelFormat.R8_UNorm, TextureUsage.Staging)
+        );
         byte[] data2 = Enumerable.Repeat((byte)100, (int)(dst.Width * dst.Height)).ToArray();
         fixed (byte* dataPtr2 = data2)
         {
-            GD.UpdateTexture(dst, (IntPtr)dataPtr2, (uint)data2.Length,
-                0, 0, 0,
-                dst.Width, dst.Height, 1,
-                0, 0);
+            GD.UpdateTexture(
+                dst,
+                (IntPtr)dataPtr2,
+                (uint)data2.Length,
+                0,
+                0,
+                0,
+                dst.Width,
+                dst.Height,
+                1,
+                0,
+                0
+            );
         }
 
         CommandList cl = RF.CreateCommandList();
@@ -1293,22 +1715,52 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [SkippableTheory]
     [MemberData(nameof(FormatCoverageData))]
     public unsafe void FormatCoverage_CopyThenRead(
-        PixelFormat format, int rBits, int gBits, int bBits, int aBits,
+        PixelFormat format,
+        int rBits,
+        int gBits,
+        int bBits,
+        int aBits,
         TextureType srcType,
-        uint srcWidth, uint srcHeight, uint srcDepth, uint srcMipLevels, uint srcArrayLayers,
+        uint srcWidth,
+        uint srcHeight,
+        uint srcDepth,
+        uint srcMipLevels,
+        uint srcArrayLayers,
         TextureType dstType,
-        uint dstWidth, uint dstHeight, uint dstDepth, uint dstMipLevels, uint dstArrayLayers,
-        uint copyWidth, uint copyHeight, uint copyDepth,
-        uint srcX, uint srcY, uint srcZ,
-        uint srcMipLevel, uint srcArrayLayer,
-        uint dstX, uint dstY, uint dstZ,
-        uint dstMipLevel, uint dstArrayLayer)
+        uint dstWidth,
+        uint dstHeight,
+        uint dstDepth,
+        uint dstMipLevels,
+        uint dstArrayLayers,
+        uint copyWidth,
+        uint copyHeight,
+        uint copyDepth,
+        uint srcX,
+        uint srcY,
+        uint srcZ,
+        uint srcMipLevel,
+        uint srcArrayLayer,
+        uint dstX,
+        uint dstY,
+        uint dstZ,
+        uint dstMipLevel,
+        uint dstArrayLayer
+    )
     {
         Skip.IfNot(GD.GetPixelFormatSupport(format, srcType, TextureUsage.Staging));
 
-        Texture srcTex = RF.CreateTexture(new TextureDescription(
-            srcWidth, srcHeight, srcDepth, srcMipLevels, srcArrayLayers,
-            format, TextureUsage.Staging, srcType));
+        Texture srcTex = RF.CreateTexture(
+            new TextureDescription(
+                srcWidth,
+                srcHeight,
+                srcDepth,
+                srcMipLevels,
+                srcArrayLayers,
+                format,
+                TextureUsage.Staging,
+                srcType
+            )
+        );
 
         TextureDataReaderWriter tdrw = new(rBits, gBits, bBits, aBits);
         byte[] dataArray = tdrw.GetDataArray(srcWidth, srcHeight, srcDepth);
@@ -1330,21 +1782,54 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             }
 
             GD.UpdateTexture(
-                srcTex, (IntPtr)dataPtr, (uint)dataArray.Length,
-                0, 0, 0, srcWidth, srcHeight, srcDepth, 0, 0);
+                srcTex,
+                (IntPtr)dataPtr,
+                (uint)dataArray.Length,
+                0,
+                0,
+                0,
+                srcWidth,
+                srcHeight,
+                srcDepth,
+                0,
+                0
+            );
         }
 
-        Texture dstTex = RF.CreateTexture(new TextureDescription(
-            dstWidth, dstHeight, dstDepth, dstMipLevels, dstArrayLayers,
-            format, TextureUsage.Staging, dstType));
+        Texture dstTex = RF.CreateTexture(
+            new TextureDescription(
+                dstWidth,
+                dstHeight,
+                dstDepth,
+                dstMipLevels,
+                dstArrayLayers,
+                format,
+                TextureUsage.Staging,
+                dstType
+            )
+        );
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
 
         cl.CopyTexture(
-            srcTex, srcX, srcY, srcZ, srcMipLevel, srcArrayLayer,
-            dstTex, dstX, dstY, dstZ, dstMipLevel, dstArrayLayer,
-            copyWidth, copyHeight, copyDepth, 1);
+            srcTex,
+            srcX,
+            srcY,
+            srcZ,
+            srcMipLevel,
+            srcArrayLayer,
+            dstTex,
+            dstX,
+            dstY,
+            dstZ,
+            dstMipLevel,
+            dstArrayLayer,
+            copyWidth,
+            copyHeight,
+            copyDepth,
+            1
+        );
 
         cl.End();
         GD.SubmitCommands(cl);
@@ -1357,9 +1842,10 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             {
                 for (uint x = 0; x < copyWidth; x++)
                 {
-                    long offset = (z + dstZ) * map.DepthPitch
-                                  + (y + dstY) * map.RowPitch
-                                  + (x + dstX) * tdrw.PixelBytes;
+                    long offset =
+                        (z + dstZ) * map.DepthPitch
+                        + (y + dstY) * map.RowPitch
+                        + (x + dstX) * tdrw.PixelBytes;
                     WidePixel expected = tdrw.GetTestPixel(x, y, z);
                     WidePixel actual = tdrw.ReadPixel((byte*)map.Data + offset);
                     Assert.Equal(expected, actual);
@@ -1376,16 +1862,36 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         {
             yield return
             [
-                props.Format, props.RedBits, props.GreenBits, props.BlueBits, props.AlphaBits,
+                props.Format,
+                props.RedBits,
+                props.GreenBits,
+                props.BlueBits,
+                props.AlphaBits,
                 TextureType.Texture2D,
-                64, 64, 1, 1, 1,
+                64,
+                64,
+                1,
+                1,
+                1,
                 TextureType.Texture2D,
-                64, 64, 1, 1, 1,
-                64, 64, 1,
-                0, 0, 0,
-                0, 0,
-                0, 0, 0,
-                0, 0
+                64,
+                64,
+                1,
+                1,
+                1,
+                64,
+                64,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
             ];
         }
     }
@@ -1398,9 +1904,13 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     public unsafe void GenerateMipmaps(TextureUsage usage)
     {
         TextureDescription texDesc = TextureDescription.Texture2D(
-            1024, 1024, 11, 1,
+            1024,
+            1024,
+            11,
+            1,
             PixelFormat.R32_G32_B32_A32_Float,
-            usage);
+            usage
+        );
         Texture tex = RF.CreateTexture(texDesc);
 
         texDesc.Usage = TextureUsage.Staging;
@@ -1409,7 +1919,19 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         RgbaFloat[] pixelData = Enumerable.Repeat(RgbaFloat.Red, 1024 * 1024).ToArray();
         fixed (RgbaFloat* pixelDataPtr = pixelData)
         {
-            GD.UpdateTexture(tex, (IntPtr)pixelDataPtr, 1024 * 1024 * 16, 0, 0, 0, 1024, 1024, 1, 0, 0);
+            GD.UpdateTexture(
+                tex,
+                (IntPtr)pixelDataPtr,
+                1024 * 1024 * 16,
+                0,
+                0,
+                0,
+                1024,
+                1024,
+                1,
+                0,
+                0
+            );
         }
 
         CommandList cl = RF.CreateCommandList();
@@ -1422,7 +1944,11 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
 
         for (uint level = 1; level < 11; level++)
         {
-            MappedResourceView<RgbaFloat> readView = GD.Map<RgbaFloat>(readback, MapMode.Read, level);
+            MappedResourceView<RgbaFloat> readView = GD.Map<RgbaFloat>(
+                readback,
+                MapMode.Read,
+                level
+            );
             uint mipWidth = Math.Max(1, (uint)(tex.Width / Math.Pow(2, level)));
             uint mipHeight = Math.Max(1, (uint)(tex.Width / Math.Pow(2, level)));
             Assert.Equal(RgbaFloat.Red, readView[mipWidth - 1, mipHeight - 1]);
@@ -1433,18 +1959,31 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     [SkippableFact]
     public void CopyTexture_SmallCompressed()
     {
-        Skip.IfNot(GD.GetPixelFormatSupport(PixelFormat.BC3_UNorm, TextureType.Texture2D, TextureUsage.Staging));
-        Skip.IfNot(GD.GetPixelFormatSupport(PixelFormat.BC3_UNorm, TextureType.Texture2D, TextureUsage.Sampled));
+        Skip.IfNot(
+            GD.GetPixelFormatSupport(
+                PixelFormat.BC3_UNorm,
+                TextureType.Texture2D,
+                TextureUsage.Staging
+            )
+        );
+        Skip.IfNot(
+            GD.GetPixelFormatSupport(
+                PixelFormat.BC3_UNorm,
+                TextureType.Texture2D,
+                TextureUsage.Sampled
+            )
+        );
 
-        Texture src = RF.CreateTexture(TextureDescription.Texture2D(16, 16, 4, 1, PixelFormat.BC3_UNorm, TextureUsage.Staging));
-        Texture dst = RF.CreateTexture(TextureDescription.Texture2D(16, 16, 4, 1, PixelFormat.BC3_UNorm, TextureUsage.Sampled));
+        Texture src = RF.CreateTexture(
+            TextureDescription.Texture2D(16, 16, 4, 1, PixelFormat.BC3_UNorm, TextureUsage.Staging)
+        );
+        Texture dst = RF.CreateTexture(
+            TextureDescription.Texture2D(16, 16, 4, 1, PixelFormat.BC3_UNorm, TextureUsage.Sampled)
+        );
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
-        cl.CopyTexture(
-            src, 0, 0, 0, 3, 0,
-            dst, 0, 0, 0, 3, 0,
-            4, 4, 1, 1);
+        cl.CopyTexture(src, 0, 0, 0, 3, 0, dst, 0, 0, 0, 3, 0, 4, 4, 1, 1);
         cl.End();
         GD.SubmitCommands(cl);
         GD.WaitForIdle();
@@ -1469,7 +2008,9 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
     {
         Skip.IfNot(GD.GetPixelFormatSupport(format, TextureType.Texture2D, TextureUsage.Sampled));
 
-        Texture tex = RF.CreateTexture(TextureDescription.Texture2D(1, 1, 1, 1, format, TextureUsage.Sampled));
+        Texture tex = RF.CreateTexture(
+            TextureDescription.Texture2D(1, 1, 1, 1, format, TextureUsage.Sampled)
+        );
         Assert.Equal(1u, tex.Width);
         Assert.Equal(1u, tex.Height);
     }
@@ -1480,51 +2021,42 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
         new FormatProps(PixelFormat.R8_SNorm, 8, 0, 0, 0),
         new FormatProps(PixelFormat.R8_UInt, 8, 0, 0, 0),
         new FormatProps(PixelFormat.R8_SInt, 8, 0, 0, 0),
-
         new FormatProps(PixelFormat.R16_UNorm, 16, 0, 0, 0),
         new FormatProps(PixelFormat.R16_SNorm, 16, 0, 0, 0),
         new FormatProps(PixelFormat.R16_UInt, 16, 0, 0, 0),
         new FormatProps(PixelFormat.R16_SInt, 16, 0, 0, 0),
         new FormatProps(PixelFormat.R16_Float, 16, 0, 0, 0),
-
         new FormatProps(PixelFormat.R32_UInt, 32, 0, 0, 0),
         new FormatProps(PixelFormat.R32_SInt, 32, 0, 0, 0),
         new FormatProps(PixelFormat.R32_Float, 32, 0, 0, 0),
-
         new FormatProps(PixelFormat.R8_G8_UNorm, 8, 8, 0, 0),
         new FormatProps(PixelFormat.R8_G8_SNorm, 8, 8, 0, 0),
         new FormatProps(PixelFormat.R8_G8_UInt, 8, 8, 0, 0),
         new FormatProps(PixelFormat.R8_G8_SInt, 8, 8, 0, 0),
-
         new FormatProps(PixelFormat.R16_G16_UNorm, 16, 16, 0, 0),
         new FormatProps(PixelFormat.R16_G16_SNorm, 16, 16, 0, 0),
         new FormatProps(PixelFormat.R16_G16_UInt, 16, 16, 0, 0),
         new FormatProps(PixelFormat.R16_G16_SInt, 16, 16, 0, 0),
         new FormatProps(PixelFormat.R16_G16_Float, 16, 16, 0, 0),
-
         new FormatProps(PixelFormat.R32_G32_UInt, 32, 32, 0, 0),
         new FormatProps(PixelFormat.R32_G32_SInt, 32, 32, 0, 0),
         new FormatProps(PixelFormat.R32_G32_Float, 32, 32, 0, 0),
-
         new FormatProps(PixelFormat.B8_G8_R8_A8_UNorm, 8, 8, 8, 8),
         new FormatProps(PixelFormat.R8_G8_B8_A8_UNorm, 8, 8, 8, 8),
         new FormatProps(PixelFormat.R8_G8_B8_A8_SNorm, 8, 8, 8, 8),
         new FormatProps(PixelFormat.R8_G8_B8_A8_UInt, 8, 8, 8, 8),
         new FormatProps(PixelFormat.R8_G8_B8_A8_SInt, 8, 8, 8, 8),
-
         new FormatProps(PixelFormat.R16_G16_B16_A16_UNorm, 16, 16, 16, 16),
         new FormatProps(PixelFormat.R16_G16_B16_A16_SNorm, 16, 16, 16, 16),
         new FormatProps(PixelFormat.R16_G16_B16_A16_UInt, 16, 16, 16, 16),
         new FormatProps(PixelFormat.R16_G16_B16_A16_SInt, 16, 16, 16, 16),
         new FormatProps(PixelFormat.R16_G16_B16_A16_Float, 16, 16, 16, 16),
-
         new FormatProps(PixelFormat.R32_G32_B32_A32_UInt, 32, 32, 32, 32),
         new FormatProps(PixelFormat.R32_G32_B32_A32_SInt, 32, 32, 32, 32),
         new FormatProps(PixelFormat.R32_G32_B32_A32_Float, 32, 32, 32, 32),
-
         new FormatProps(PixelFormat.R10_G10_B10_A2_UInt, 10, 10, 10, 2),
         new FormatProps(PixelFormat.R10_G10_B10_A2_UNorm, 10, 10, 10, 2),
-        new FormatProps(PixelFormat.R11_G11_B10_Float, 11, 11, 10, 0)
+        new FormatProps(PixelFormat.R11_G11_B10_Float, 11, 11, 10, 0),
     ];
 
     struct FormatProps(PixelFormat format, int redBits, int blueBits, int greenBits, int alphaBits)
@@ -1546,8 +2078,8 @@ public class VulkanTextureTests : TextureTestBase<VulkanDeviceCreator> { }
 public class D3D11TextureTests : TextureTestBase<D3D11DeviceCreator> { }
 #endif
 #if TEST_METAL
-    [Trait("Backend", "Metal")]
-    public class MetalTextureTests : TextureTestBase<MetalDeviceCreator> { }
+[Trait("Backend", "Metal")]
+public class MetalTextureTests : TextureTestBase<MetalDeviceCreator> { }
 #endif
 #if TEST_OPENGL
 [Trait("Backend", "OpenGL")]

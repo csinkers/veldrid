@@ -1,6 +1,6 @@
-using static Veldrid.MetalBindings.ObjectiveCRuntime;
 using System;
 using System.Runtime.InteropServices;
+using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
@@ -28,8 +28,11 @@ public readonly struct MTLRenderPipelineDescriptor(IntPtr ptr)
         set => objc_msgSend(NativePtr, sel_setFragmentFunction, value.NativePtr);
     }
 
-    public MTLRenderPipelineColorAttachmentDescriptorArray colorAttachments
-        => objc_msgSend<MTLRenderPipelineColorAttachmentDescriptorArray>(NativePtr, sel_colorAttachments);
+    public MTLRenderPipelineColorAttachmentDescriptorArray colorAttachments =>
+        objc_msgSend<MTLRenderPipelineColorAttachmentDescriptorArray>(
+            NativePtr,
+            sel_colorAttachments
+        );
 
     public MTLPixelFormat depthAttachmentPixelFormat
     {
@@ -49,7 +52,8 @@ public readonly struct MTLRenderPipelineDescriptor(IntPtr ptr)
         set => objc_msgSend(NativePtr, sel_setSampleCount, value);
     }
 
-    public MTLVertexDescriptor vertexDescriptor => objc_msgSend<MTLVertexDescriptor>(NativePtr, sel_vertexDescriptor);
+    public MTLVertexDescriptor vertexDescriptor =>
+        objc_msgSend<MTLVertexDescriptor>(NativePtr, sel_vertexDescriptor);
 
     public Bool8 alphaToCoverageEnabled
     {
@@ -65,7 +69,8 @@ public readonly struct MTLRenderPipelineDescriptor(IntPtr ptr)
     static readonly Selector sel_depthAttachmentPixelFormat = "depthAttachmentPixelFormat"u8;
     static readonly Selector sel_setDepthAttachmentPixelFormat = "setDepthAttachmentPixelFormat:"u8;
     static readonly Selector sel_stencilAttachmentPixelFormat = "stencilAttachmentPixelFormat"u8;
-    static readonly Selector sel_setStencilAttachmentPixelFormat = "setStencilAttachmentPixelFormat:"u8;
+    static readonly Selector sel_setStencilAttachmentPixelFormat =
+        "setStencilAttachmentPixelFormat:"u8;
     static readonly Selector sel_sampleCount = "sampleCount"u8;
     static readonly Selector sel_setSampleCount = "setSampleCount:"u8;
     static readonly Selector sel_vertexDescriptor = "vertexDescriptor"u8;

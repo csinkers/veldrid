@@ -106,7 +106,11 @@ public static class FormatSizeHelpers
     /// </summary>
     /// <param name="format">A vertex element format.</param>
     /// <returns>The number of bytes required to store an element in the given format.</returns>
-    [SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+    [SuppressMessage(
+        "Style",
+        "IDE0066:Convert switch statement to expression",
+        Justification = "<Pending>"
+    )]
     public static uint GetSizeInBytes(VertexElementFormat format)
     {
         switch (format)

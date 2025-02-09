@@ -15,11 +15,12 @@ internal static class D3D11Util
         uint levelCount,
         uint baseArrayLayer,
         uint layerCount,
-        PixelFormat format)
+        PixelFormat format
+    )
     {
         ShaderResourceViewDescription srvDesc = new()
         {
-            Format = D3D11Formats.GetViewFormat(D3D11Formats.ToDxgiFormat(format, tex.Usage))
+            Format = D3D11Formats.GetViewFormat(D3D11Formats.ToDxgiFormat(format, tex.Usage)),
         };
 
         if ((tex.Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap)
@@ -32,7 +33,10 @@ internal static class D3D11Util
             }
             else
             {
-                srvDesc.ViewDimension = Vortice.Direct3D.ShaderResourceViewDimension.TextureCubeArray;
+                srvDesc.ViewDimension = Vortice
+                    .Direct3D
+                    .ShaderResourceViewDimension
+                    .TextureCubeArray;
                 srvDesc.TextureCubeArray.MostDetailedMip = (int)baseMipLevel;
                 srvDesc.TextureCubeArray.MipLevels = (int)levelCount;
                 srvDesc.TextureCubeArray.First2DArrayFace = (int)baseArrayLayer;
@@ -52,9 +56,15 @@ internal static class D3D11Util
                 else
                 {
                     if (tex.SampleCount == TextureSampleCount.Count1)
-                        srvDesc.ViewDimension = Vortice.Direct3D.ShaderResourceViewDimension.Texture2D;
+                        srvDesc.ViewDimension = Vortice
+                            .Direct3D
+                            .ShaderResourceViewDimension
+                            .Texture2D;
                     else
-                        srvDesc.ViewDimension = Vortice.Direct3D.ShaderResourceViewDimension.Texture2DMultisampled;
+                        srvDesc.ViewDimension = Vortice
+                            .Direct3D
+                            .ShaderResourceViewDimension
+                            .Texture2DMultisampled;
                     srvDesc.Texture2D.MostDetailedMip = (int)baseMipLevel;
                     srvDesc.Texture2D.MipLevels = (int)levelCount;
                 }
@@ -63,7 +73,10 @@ internal static class D3D11Util
             {
                 if (tex.Type == TextureType.Texture1D)
                 {
-                    srvDesc.ViewDimension = Vortice.Direct3D.ShaderResourceViewDimension.Texture1DArray;
+                    srvDesc.ViewDimension = Vortice
+                        .Direct3D
+                        .ShaderResourceViewDimension
+                        .Texture1DArray;
                     srvDesc.Texture1DArray.MostDetailedMip = (int)baseMipLevel;
                     srvDesc.Texture1DArray.MipLevels = (int)levelCount;
                     srvDesc.Texture1DArray.FirstArraySlice = (int)baseArrayLayer;
@@ -71,7 +84,10 @@ internal static class D3D11Util
                 }
                 else
                 {
-                    srvDesc.ViewDimension = Vortice.Direct3D.ShaderResourceViewDimension.Texture2DArray;
+                    srvDesc.ViewDimension = Vortice
+                        .Direct3D
+                        .ShaderResourceViewDimension
+                        .Texture2DArray;
                     srvDesc.Texture2DArray.MostDetailedMip = (int)baseMipLevel;
                     srvDesc.Texture2DArray.MipLevels = (int)levelCount;
                     srvDesc.Texture2DArray.FirstArraySlice = (int)baseArrayLayer;

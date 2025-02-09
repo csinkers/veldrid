@@ -91,7 +91,9 @@ internal sealed class MTLSwapchain : Swapchain
         }
         else
         {
-            throw new VeldridException($"A Metal Swapchain can only be created from an NSWindow, NSView, or UIView.");
+            throw new VeldridException(
+                $"A Metal Swapchain can only be created from an NSWindow, NSView, or UIView."
+            );
         }
 
         PixelFormat format = description.ColorSrgb
@@ -113,7 +115,8 @@ internal sealed class MTLSwapchain : Swapchain
             width,
             height,
             description.DepthFormat,
-            format);
+            format
+        );
     }
 
     public void GetNextDrawable()
@@ -155,9 +158,11 @@ internal sealed class MTLSwapchain : Swapchain
     {
         _syncToVerticalBlank = value;
 
-        if (_gd.MetalFeatures.MaxFeatureSet == MTLFeatureSet.macOS_GPUFamily1_v3
+        if (
+            _gd.MetalFeatures.MaxFeatureSet == MTLFeatureSet.macOS_GPUFamily1_v3
             || _gd.MetalFeatures.MaxFeatureSet == MTLFeatureSet.macOS_GPUFamily1_v4
-            || _gd.MetalFeatures.MaxFeatureSet == MTLFeatureSet.macOS_GPUFamily2_v1)
+            || _gd.MetalFeatures.MaxFeatureSet == MTLFeatureSet.macOS_GPUFamily2_v1
+        )
         {
             _metalLayer.displaySyncEnabled = value;
         }

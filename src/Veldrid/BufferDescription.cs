@@ -84,7 +84,12 @@ public struct BufferDescription : IEquatable<BufferDescription>
     /// <param name="rawBuffer">Indicates that this is a raw buffer. This should be combined with
     /// <see cref="BufferUsage.StructuredBufferReadWrite"/>. This affects how the buffer is bound in the D3D11 backend.
     /// </param>
-    public BufferDescription(uint sizeInBytes, BufferUsage usage, uint structureByteStride, bool rawBuffer)
+    public BufferDescription(
+        uint sizeInBytes,
+        BufferUsage usage,
+        uint structureByteStride,
+        bool rawBuffer
+    )
     {
         SizeInBytes = sizeInBytes;
         Usage = usage;
@@ -101,10 +106,10 @@ public struct BufferDescription : IEquatable<BufferDescription>
     public bool Equals(BufferDescription other)
     {
         return SizeInBytes.Equals(other.SizeInBytes)
-               && Usage == other.Usage
-               && StructureByteStride.Equals(other.StructureByteStride)
-               && RawBuffer.Equals(other.RawBuffer)
-               && InitialData == other.InitialData;
+            && Usage == other.Usage
+            && StructureByteStride.Equals(other.StructureByteStride)
+            && RawBuffer.Equals(other.RawBuffer)
+            && InitialData == other.InitialData;
     }
 
     /// <summary>
@@ -118,6 +123,7 @@ public struct BufferDescription : IEquatable<BufferDescription>
             (int)Usage,
             StructureByteStride.GetHashCode(),
             RawBuffer.GetHashCode(),
-            InitialData.GetHashCode());
+            InitialData.GetHashCode()
+        );
     }
 }

@@ -1,14 +1,14 @@
 ﻿#define GL_VALIDATE_SHADER_RESOURCE_NAMES
 #define GL_VALIDATE_VERTEX_INPUT_ELEMENTS
 
-using static Veldrid.OpenGLBinding.OpenGLNative;
-using static Veldrid.OpenGL.OpenGLUtil;
-using Veldrid.OpenGLBinding;
-using System.Text;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text;
+using Veldrid.OpenGLBinding;
+using static Veldrid.OpenGL.OpenGLUtil;
+using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -18,7 +18,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
     readonly OpenGLGraphicsDevice _gd;
 
 #if !VALIDATE_USAGE
-        public ResourceLayout[] ResourceLayouts { get; }
+    public ResourceLayout[] ResourceLayouts { get; }
 #endif
 
     // Graphics Pipeline
@@ -47,7 +47,9 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
     public uint Vao => _vao;
 
     public uint GetUniformBufferCount(uint setSlot) => _setInfos[setSlot].UniformBufferCount;
-    public uint GetShaderStorageBufferCount(uint setSlot) => _setInfos[setSlot].ShaderStorageBufferCount;
+
+    public uint GetShaderStorageBufferCount(uint setSlot) =>
+        _setInfos[setSlot].ShaderStorageBufferCount;
 
     public override string? Name { get; set; }
 
@@ -71,7 +73,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         }
 
 #if !VALIDATE_USAGE
-            ResourceLayouts = Util.ShallowClone(description.ResourceLayouts);
+        ResourceLayouts = Util.ShallowClone(description.ResourceLayouts);
 #endif
     }
 
@@ -85,7 +87,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         ComputeShader = description.ComputeShader;
         VertexStrides = [];
 #if !VALIDATE_USAGE
-            ResourceLayouts = Util.ShallowClone(description.ResourceLayouts);
+        ResourceLayouts = Util.ShallowClone(description.ResourceLayouts);
 #endif
     }
 
@@ -157,8 +159,11 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                     if (location == -1)
                     {
                         throw new VeldridException(
-                            "There was no attribute variable with the name " + layoutDesc.Elements[i].Name + ". " +
-                            "The compiler may have optimized out unused attribute variables.");
+                            "There was no attribute variable with the name "
+                                + layoutDesc.Elements[i].Name
+                                + ". "
+                                + "The compiler may have optimized out unused attribute variables."
+                        );
                     }
                     slot += 1;
                 }
@@ -210,17 +215,14 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                     VertexAttribPointerType type = OpenGLFormats.VdToGLVertexAttribPointerType(
                         element.Format,
                         out bool normalized,
-                        out bool isInteger);
+                        out bool isInteger
+                    );
 
                     uint actualOffset = element.Offset != 0 ? element.Offset : offset;
 
                     if (isInteger && !normalized)
                     {
-                        glVertexAttribIFormat(
-                            actualSlot,
-                            elementCount,
-                            type,
-                            actualOffset);
+                        glVertexAttribIFormat(actualSlot, elementCount, type, actualOffset);
                     }
                     else
                     {
@@ -229,7 +231,8 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                             elementCount,
                             type,
                             normalized,
-                            actualOffset);
+                            actualOffset
+                        );
                     }
                     CheckLastError();
 
@@ -296,7 +299,10 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         for (uint setSlot = 0; setSlot < resourceLayoutCount; setSlot++)
         {
             ResourceLayout setLayout = layouts[setSlot];
-            OpenGLResourceLayout glSetLayout = Util.AssertSubtype<ResourceLayout, OpenGLResourceLayout>(setLayout);
+            OpenGLResourceLayout glSetLayout = Util.AssertSubtype<
+                ResourceLayout,
+                OpenGLResourceLayout
+            >(setLayout);
             ResourceLayoutElementDescription[] resources = glSetLayout.Elements;
 
             Dictionary<uint, OpenGLUniformBinding> uniformBindings = new();
@@ -314,9 +320,18 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                     if (blockIndex != GL_INVALID_INDEX)
                     {
                         int blockSize;
-                        glGetActiveUniformBlockiv(_program, blockIndex, ActiveUniformBlockParameter.UniformBlockDataSize, &blockSize);
+                        glGetActiveUniformBlockiv(
+                            _program,
+                            blockIndex,
+                            ActiveUniformBlockParameter.UniformBlockDataSize,
+                            &blockSize
+                        );
                         CheckLastError();
-                        uniformBindings[i] = new OpenGLUniformBinding(_program, blockIndex, (uint)blockSize);
+                        uniformBindings[i] = new OpenGLUniformBinding(
+                            _program,
+                            blockIndex,
+                            (uint)blockSize
+                        );
                     }
                 }
                 else if (resource.Kind == ResourceKind.TextureReadOnly)
@@ -326,7 +341,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                     textureBindings[i] = new OpenGLTextureBindingSlotInfo()
                     {
                         RelativeIndex = relativeTextureIndex,
-                        UniformLocation = location
+                        UniformLocation = location,
                     };
                     samplerTrackedRelativeTextureIndices.Add(relativeTextureIndex);
                 }
@@ -337,17 +352,25 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                     textureBindings[i] = new OpenGLTextureBindingSlotInfo()
                     {
                         RelativeIndex = relativeImageIndex,
-                        UniformLocation = location
+                        UniformLocation = location,
                     };
                 }
-                else if (resource.Kind == ResourceKind.StructuredBufferReadOnly
-                         || resource.Kind == ResourceKind.StructuredBufferReadWrite)
+                else if (
+                    resource.Kind == ResourceKind.StructuredBufferReadOnly
+                    || resource.Kind == ResourceKind.StructuredBufferReadWrite
+                )
                 {
                     uint storageBlockBinding;
-                    if (_gd.Extensions.ARB_program_interface_query && _gd.BackendType == GraphicsBackend.OpenGL)
+                    if (
+                        _gd.Extensions.ARB_program_interface_query
+                        && _gd.BackendType == GraphicsBackend.OpenGL
+                    )
                     {
                         storageBlockBinding = GetProgramResourceIndex(
-                            resource.Name, ProgramInterface.ShaderStorageBlock, ref byteBuffer);
+                            resource.Name,
+                            ProgramInterface.ShaderStorageBlock,
+                            ref byteBuffer
+                        );
                     }
                     else
                     {
@@ -365,12 +388,17 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
                     samplerTrackedRelativeTextureIndices.Clear();
                     samplerBindings[i] = new OpenGLSamplerBindingSlotInfo()
                     {
-                        RelativeIndices = relativeIndices
+                        RelativeIndices = relativeIndices,
                     };
                 }
             }
 
-            _setInfos[setSlot] = new SetBindingsInfo(uniformBindings, textureBindings, samplerBindings, storageBufferBindings);
+            _setInfos[setSlot] = new SetBindingsInfo(
+                uniformBindings,
+                textureBindings,
+                samplerBindings,
+                storageBufferBindings
+            );
         }
     }
 
@@ -410,7 +438,11 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         return location;
     }
 
-    uint GetProgramResourceIndex(ReadOnlySpan<char> resourceName, ProgramInterface resourceType, ref Span<byte> byteBuffer)
+    uint GetProgramResourceIndex(
+        ReadOnlySpan<char> resourceName,
+        ProgramInterface resourceType,
+        ref Span<byte> byteBuffer
+    )
     {
         Util.GetNullTerminatedUtf8(resourceName, ref byteBuffer);
 
@@ -441,7 +473,13 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
             uint actualLength;
             fixed (byte* byteBufferPtr = byteBuffer)
             {
-                glGetActiveUniformBlockName(_program, uniformBufferIndex, (uint)byteBuffer.Length, &actualLength, byteBufferPtr);
+                glGetActiveUniformBlockName(
+                    _program,
+                    uniformBufferIndex,
+                    (uint)byteBuffer.Length,
+                    &actualLength,
+                    byteBufferPtr
+                );
             }
 
             if (glGetError() != 0)
@@ -455,8 +493,9 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         }
 
         throw new VeldridException(
-            $"Unable to bind uniform block buffer \"{uniformName}\" by name. " +
-            $"Valid names for this pipeline are: {string.Join(", ", names)}");
+            $"Unable to bind uniform block buffer \"{uniformName}\" by name. "
+                + $"Valid names for this pipeline are: {string.Join(", ", names)}"
+        );
     }
 
     [Conditional("GL_VALIDATE_SHADER_RESOURCE_NAMES")]
@@ -474,8 +513,15 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
             uint type;
             fixed (byte* byteBufferPtr = byteBuffer)
             {
-                glGetActiveUniform(_program, uniformIndex, (uint)byteBuffer.Length,
-                    &actualLength, &size, &type, byteBufferPtr);
+                glGetActiveUniform(
+                    _program,
+                    uniformIndex,
+                    (uint)byteBuffer.Length,
+                    &actualLength,
+                    &size,
+                    &type,
+                    byteBufferPtr
+                );
             }
 
             if (glGetError() != 0)
@@ -489,19 +535,34 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         }
 
         throw new VeldridException(
-            $"Unable to bind uniform \"{uniformName}\" by name. " +
-            $"Valid names for this pipeline are: {string.Join(", ", names)}");
+            $"Unable to bind uniform \"{uniformName}\" by name. "
+                + $"Valid names for this pipeline are: {string.Join(", ", names)}"
+        );
     }
 
     [Conditional("GL_VALIDATE_SHADER_RESOURCE_NAMES")]
-    void ReportInvalidResourceName(ReadOnlySpan<char> resourceName, ProgramInterface resourceType, ref Span<byte> byteBuffer)
+    void ReportInvalidResourceName(
+        ReadOnlySpan<char> resourceName,
+        ProgramInterface resourceType,
+        ref Span<byte> byteBuffer
+    )
     {
         VerifyLastError();
 
         int maxLength = 0;
         int resourceCount = 0;
-        glGetProgramInterfaceiv(_program, resourceType, ProgramInterfaceParameterName.MaxNameLength, &maxLength);
-        glGetProgramInterfaceiv(_program, resourceType, ProgramInterfaceParameterName.ActiveResources, &resourceCount);
+        glGetProgramInterfaceiv(
+            _program,
+            resourceType,
+            ProgramInterfaceParameterName.MaxNameLength,
+            &maxLength
+        );
+        glGetProgramInterfaceiv(
+            _program,
+            resourceType,
+            ProgramInterfaceParameterName.ActiveResources,
+            &resourceCount
+        );
 
         if (maxLength > byteBuffer.Length)
             byteBuffer = new byte[maxLength];
@@ -512,7 +573,14 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
             uint actualLength;
             fixed (byte* byteBufferPtr = byteBuffer)
             {
-                glGetProgramResourceName(_program, resourceType, resourceIndex, (uint)maxLength, &actualLength, byteBufferPtr);
+                glGetProgramResourceName(
+                    _program,
+                    resourceType,
+                    resourceIndex,
+                    (uint)maxLength,
+                    &actualLength,
+                    byteBufferPtr
+                );
             }
 
             if (glGetError() != 0)
@@ -525,8 +593,9 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
         }
 
         throw new VeldridException(
-            $"Unable to bind {resourceType} \"{resourceName}\" by name. " +
-            $"Valid names for this pipeline are: {string.Join(", ", names)}");
+            $"Unable to bind {resourceType} \"{resourceName}\" by name. "
+                + $"Valid names for this pipeline are: {string.Join(", ", names)}"
+        );
     }
 
     [SkipLocalsInit]
@@ -579,25 +648,41 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, OpenGLDeferredResource
 
     public bool GetUniformBindingForSlot(uint set, uint slot, out OpenGLUniformBinding binding)
     {
-        Debug.Assert(_setInfos != null, "EnsureResourcesCreated must be called before accessing resource set information.");
+        Debug.Assert(
+            _setInfos != null,
+            "EnsureResourcesCreated must be called before accessing resource set information."
+        );
         return _setInfos[set].GetUniformBindingForSlot(slot, out binding);
     }
 
     public bool GetTextureBindingInfo(uint set, uint slot, out OpenGLTextureBindingSlotInfo binding)
     {
-        Debug.Assert(_setInfos != null, "EnsureResourcesCreated must be called before accessing resource set information.");
+        Debug.Assert(
+            _setInfos != null,
+            "EnsureResourcesCreated must be called before accessing resource set information."
+        );
         return _setInfos[set].GetTextureBindingInfo(slot, out binding);
     }
 
     public bool GetSamplerBindingInfo(uint set, uint slot, out OpenGLSamplerBindingSlotInfo binding)
     {
-        Debug.Assert(_setInfos != null, "EnsureResourcesCreated must be called before accessing resource set information.");
+        Debug.Assert(
+            _setInfos != null,
+            "EnsureResourcesCreated must be called before accessing resource set information."
+        );
         return _setInfos[set].GetSamplerBindingInfo(slot, out binding);
     }
 
-    public bool GetStorageBufferBindingForSlot(uint set, uint slot, out OpenGLShaderStorageBinding binding)
+    public bool GetStorageBufferBindingForSlot(
+        uint set,
+        uint slot,
+        out OpenGLShaderStorageBinding binding
+    )
     {
-        Debug.Assert(_setInfos != null, "EnsureResourcesCreated must be called before accessing resource set information.");
+        Debug.Assert(
+            _setInfos != null,
+            "EnsureResourcesCreated must be called before accessing resource set information."
+        );
         return _setInfos[set].GetStorageBufferBindingForSlot(slot, out binding);
     }
 
@@ -630,7 +715,8 @@ internal readonly struct SetBindingsInfo(
     Dictionary<uint, OpenGLUniformBinding> uniformBindings,
     Dictionary<uint, OpenGLTextureBindingSlotInfo> textureBindings,
     Dictionary<uint, OpenGLSamplerBindingSlotInfo> samplerBindings,
-    Dictionary<uint, OpenGLShaderStorageBinding> storageBufferBindings)
+    Dictionary<uint, OpenGLShaderStorageBinding> storageBufferBindings
+)
 {
     public uint UniformBufferCount { get; } = (uint)uniformBindings.Count;
     public uint ShaderStorageBufferCount { get; } = (uint)storageBufferBindings.Count;

@@ -13,7 +13,8 @@ public unsafe delegate void OpenGLDebugMessageCallback(
     uint id,
     uint severity,
     uint length,
-    byte* message);
+    byte* message
+);
 
 /// <summary>
 /// Exposes OpenGL-specific functionality,
@@ -117,7 +118,8 @@ public class BackendInfoOpenGL
     /// </summary>
     public void SetTextureTarget(Texture texture, uint textureTarget)
     {
-        Util.AssertSubtype<Texture, OpenGLTexture>(texture).TextureTarget = (TextureTarget)textureTarget;
+        Util.AssertSubtype<Texture, OpenGLTexture>(texture).TextureTarget =
+            (TextureTarget)textureTarget;
     }
 
     internal unsafe bool InvokeDebugProc(
@@ -126,18 +128,13 @@ public class BackendInfoOpenGL
         uint id,
         DebugSeverity severity,
         uint length,
-        byte* message)
+        byte* message
+    )
     {
         OpenGLDebugMessageCallback? debugProc = DebugProc;
         if (debugProc != null)
         {
-            debugProc.Invoke(
-                (uint)source,
-                (uint)type,
-                id,
-                (uint)severity,
-                length,
-                message);
+            debugProc.Invoke((uint)source, (uint)type, id, (uint)severity, length, message);
             return true;
         }
         return false;

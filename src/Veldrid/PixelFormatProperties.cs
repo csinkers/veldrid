@@ -11,18 +11,22 @@ public struct PixelFormatProperties
     /// The maximum supported width.
     /// </summary>
     public readonly uint MaxWidth;
+
     /// <summary>
     /// The maximum supported height.
     /// </summary>
     public readonly uint MaxHeight;
+
     /// <summary>
     /// The maximum supported depth.
     /// </summary>
     public readonly uint MaxDepth;
+
     /// <summary>
     /// The maximum supported number of mipmap levels.
     /// </summary>
     public readonly uint MaxMipLevels;
+
     /// <summary>
     /// The maximum supported number of array layers.
     /// </summary>
@@ -47,7 +51,8 @@ public struct PixelFormatProperties
         uint maxDepth,
         uint maxMipLevels,
         uint maxArrayLayers,
-        uint sampleCounts)
+        uint sampleCounts
+    )
     {
         MaxWidth = maxWidth;
         MaxHeight = maxHeight;

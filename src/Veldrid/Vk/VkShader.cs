@@ -28,7 +28,7 @@ internal sealed unsafe class VkShader : Shader, IResourceRefCountTarget
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
                 codeSize = (UIntPtr)description.ShaderBytes.Length,
-                pCode = (uint*)codePtr
+                pCode = (uint*)codePtr,
             };
 
             VkShaderModule shaderModule;

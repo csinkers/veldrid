@@ -11,22 +11,27 @@ public struct Viewport : IEquatable<Viewport>
     /// The minimum X value.
     /// </summary>
     public float X;
+
     /// <summary>
     /// The minimum Y value.
     /// </summary>
     public float Y;
+
     /// <summary>
     /// The width.
     /// </summary>
     public float Width;
+
     /// <summary>
     /// The height.
     /// </summary>
     public float Height;
+
     /// <summary>
     /// The minimum depth.
     /// </summary>
     public float MinDepth;
+
     /// <summary>
     /// The maximum depth.
     /// </summary>
@@ -58,9 +63,12 @@ public struct Viewport : IEquatable<Viewport>
     /// <returns>True if all elements are equal; false otherswise.</returns>
     public bool Equals(Viewport other)
     {
-        return X.Equals(other.X) && Y.Equals(other.Y)
-                                 && Width.Equals(other.Width) && Height.Equals(other.Height)
-                                 && MinDepth.Equals(other.MinDepth) && MaxDepth.Equals(other.MaxDepth);
+        return X.Equals(other.X)
+            && Y.Equals(other.Y)
+            && Width.Equals(other.Width)
+            && Height.Equals(other.Height)
+            && MinDepth.Equals(other.MinDepth)
+            && MaxDepth.Equals(other.MaxDepth);
     }
 
     /// <summary>
@@ -75,6 +83,7 @@ public struct Viewport : IEquatable<Viewport>
             Width.GetHashCode(),
             Height.GetHashCode(),
             MinDepth.GetHashCode(),
-            MaxDepth.GetHashCode());
+            MaxDepth.GetHashCode()
+        );
     }
 }

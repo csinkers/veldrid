@@ -8,7 +8,16 @@ public abstract class PipelineTests<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void CreatePipelines_DifferentInstanceStepRate_Succeeds()
     {
-        Texture colorTex = RF.CreateTexture(TextureDescription.Texture2D(1, 1, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.RenderTarget));
+        Texture colorTex = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                1,
+                1,
+                1,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.RenderTarget
+            )
+        );
         Framebuffer framebuffer = RF.CreateFramebuffer(new FramebufferDescription(null, colorTex));
 
         ShaderSetDescription shaderSet = new(
@@ -16,14 +25,35 @@ public abstract class PipelineTests<T> : GraphicsDeviceTestBase<T>
                 new VertexLayoutDescription(
                     24,
                     0,
-                    new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                    new VertexElementDescription("Color_UInt", VertexElementSemantic.TextureCoordinate, VertexElementFormat.UInt4))
+                    new VertexElementDescription(
+                        "Position",
+                        VertexElementSemantic.TextureCoordinate,
+                        VertexElementFormat.Float2
+                    ),
+                    new VertexElementDescription(
+                        "Color_UInt",
+                        VertexElementSemantic.TextureCoordinate,
+                        VertexElementFormat.UInt4
+                    )
+                ),
             ],
-            TestShaders.LoadVertexFragment(RF, "UIntVertexAttribs"));
+            TestShaders.LoadVertexFragment(RF, "UIntVertexAttribs")
+        );
 
-        ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("InfoBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-            new ResourceLayoutElementDescription("Ortho", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
+        ResourceLayout layout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "InfoBuffer",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                ),
+                new ResourceLayoutElementDescription(
+                    "Ortho",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                )
+            )
+        );
 
         GraphicsPipelineDescription gpd = new(
             BlendStateDescription.SingleOverrideBlend,
@@ -32,7 +62,8 @@ public abstract class PipelineTests<T> : GraphicsDeviceTestBase<T>
             PrimitiveTopology.PointList,
             shaderSet,
             layout,
-            framebuffer.OutputDescription);
+            framebuffer.OutputDescription
+        );
 
         _ = RF.CreateGraphicsPipeline(gpd);
         _ = RF.CreateGraphicsPipeline(gpd);
@@ -62,6 +93,6 @@ public class VulkanPipelineTests : PipelineTests<VulkanDeviceCreator> { }
 public class D3D11PipelineTests : PipelineTests<D3D11DeviceCreator> { }
 #endif
 #if TEST_METAL
-    [Trait("Backend", "Metal")]
-    public class MetalPipelineTests : PipelineTests<MetalDeviceCreator> { }
+[Trait("Backend", "Metal")]
+public class MetalPipelineTests : PipelineTests<MetalDeviceCreator> { }
 #endif

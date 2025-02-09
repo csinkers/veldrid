@@ -18,7 +18,9 @@ internal struct FillValueStruct
     /// The value we fill the 3d texture with.
     /// </summary>
     public float FillValue;
-    public float pad1, pad2, pad3;
+    public float pad1,
+        pad2,
+        pad3;
 
     public FillValueStruct(float fillValue)
     {
@@ -34,7 +36,8 @@ public abstract class ComputeTests<T> : GraphicsDeviceTestBase<T>
     public void ComputeShader3dTexture()
     {
         // Just a dumb compute shader that fills a 3D texture with the same value from a uniform multiplied by the depth.
-        string shaderText = @"
+        string shaderText =
+            @"
 #version 450
 layout(set = 0, binding = 0, rgba32f) uniform image3D TextureToFill;
 layout(set = 0, binding = 1) uniform FillValueBuffer
@@ -57,37 +60,53 @@ void main()
         const float FillValue = 42.42f;
         const uint OutputTextureSize = 32;
 
-        using Shader computeShader = RF.CreateFromSpirv(new ShaderDescription(
-            ShaderStages.Compute,
-            Encoding.ASCII.GetBytes(shaderText),
-            "main"));
+        using Shader computeShader = RF.CreateFromSpirv(
+            new ShaderDescription(ShaderStages.Compute, Encoding.ASCII.GetBytes(shaderText), "main")
+        );
 
-        using ResourceLayout computeLayout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("TextureToFill", ResourceKind.TextureReadWrite, ShaderStages.Compute),
-            new ResourceLayoutElementDescription("FillValueBuffer", ResourceKind.UniformBuffer, ShaderStages.Compute)));
+        using ResourceLayout computeLayout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "TextureToFill",
+                    ResourceKind.TextureReadWrite,
+                    ShaderStages.Compute
+                ),
+                new ResourceLayoutElementDescription(
+                    "FillValueBuffer",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Compute
+                )
+            )
+        );
 
-        using Pipeline computePipeline = RF.CreateComputePipeline(new ComputePipelineDescription(
-            computeShader,
-            computeLayout,
-            16, 16, 1));
+        using Pipeline computePipeline = RF.CreateComputePipeline(
+            new ComputePipelineDescription(computeShader, computeLayout, 16, 16, 1)
+        );
 
-        using DeviceBuffer fillValueBuffer = RF.CreateBuffer(new BufferDescription((uint) Marshal.SizeOf<FillValueStruct>(), BufferUsage.UniformBuffer));
+        using DeviceBuffer fillValueBuffer = RF.CreateBuffer(
+            new BufferDescription(
+                (uint)Marshal.SizeOf<FillValueStruct>(),
+                BufferUsage.UniformBuffer
+            )
+        );
 
         // Create our output texture.
-        using Texture computeTargetTexture = RF.CreateTexture(TextureDescription.Texture3D(
-            OutputTextureSize,
-            OutputTextureSize,
-            OutputTextureSize,
-            1,
-            PixelFormat.R32_G32_B32_A32_Float,
-            TextureUsage.Sampled | TextureUsage.Storage));
+        using Texture computeTargetTexture = RF.CreateTexture(
+            TextureDescription.Texture3D(
+                OutputTextureSize,
+                OutputTextureSize,
+                OutputTextureSize,
+                1,
+                PixelFormat.R32_G32_B32_A32_Float,
+                TextureUsage.Sampled | TextureUsage.Storage
+            )
+        );
 
         using TextureView computeTargetTextureView = RF.CreateTextureView(computeTargetTexture);
 
-        using ResourceSet computeResourceSet = RF.CreateResourceSet(new ResourceSetDescription(
-            computeLayout,
-            computeTargetTextureView,
-            fillValueBuffer));
+        using ResourceSet computeResourceSet = RF.CreateResourceSet(
+            new ResourceSetDescription(computeLayout, computeTargetTextureView, fillValueBuffer)
+        );
 
         using CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -98,7 +117,11 @@ void main()
         cl.SetPipeline(computePipeline);
         cl.SetComputeResourceSet(0, computeResourceSet);
         const uint GroupDivisorXY = 16;
-        cl.Dispatch(OutputTextureSize / GroupDivisorXY, OutputTextureSize / GroupDivisorXY, OutputTextureSize);
+        cl.Dispatch(
+            OutputTextureSize / GroupDivisorXY,
+            OutputTextureSize / GroupDivisorXY,
+            OutputTextureSize
+        );
 
         cl.End();
         GD.SubmitCommands(cl);
@@ -108,40 +131,66 @@ void main()
         for (uint depth = 0; depth < computeTargetTexture.Depth; depth++)
         {
             RgbaFloat expectedFillValue = new(new Vector4(FillValue * (depth + 1)));
-            int notFilledCount = CountTexelsNotFilledAtDepth(GD, computeTargetTexture, expectedFillValue, depth);
+            int notFilledCount = CountTexelsNotFilledAtDepth(
+                GD,
+                computeTargetTexture,
+                expectedFillValue,
+                depth
+            );
 
             Assert.Equal(0, notFilledCount);
         }
     }
 
-
     /// <summary>
     /// Returns the number of texels in the texture that DO NOT match the fill value.
     /// </summary>
-    static int CountTexelsNotFilledAtDepth<TexelType>(GraphicsDevice device, Texture texture, TexelType fillValue, uint depth)
+    static int CountTexelsNotFilledAtDepth<TexelType>(
+        GraphicsDevice device,
+        Texture texture,
+        TexelType fillValue,
+        uint depth
+    )
         where TexelType : unmanaged
     {
         ResourceFactory factory = device.ResourceFactory;
 
         // We need to create a staging texture and copy into it.
-        TextureDescription description = new(texture.Width, texture.Height, depth: 1,
-            texture.MipLevels, texture.ArrayLayers,
-            texture.Format, TextureUsage.Staging,
-            texture.Type, texture.SampleCount);
+        TextureDescription description = new(
+            texture.Width,
+            texture.Height,
+            depth: 1,
+            texture.MipLevels,
+            texture.ArrayLayers,
+            texture.Format,
+            TextureUsage.Staging,
+            texture.Type,
+            texture.SampleCount
+        );
 
         using Texture staging = factory.CreateTexture(description);
 
         using CommandList cl = factory.CreateCommandList();
         cl.Begin();
 
-        cl.CopyTexture(texture,
-            srcX: 0, srcY: 0, srcZ: depth,
-            srcMipLevel: 0, srcBaseArrayLayer: 0,
+        cl.CopyTexture(
+            texture,
+            srcX: 0,
+            srcY: 0,
+            srcZ: depth,
+            srcMipLevel: 0,
+            srcBaseArrayLayer: 0,
             staging,
-            dstX: 0, dstY: 0, dstZ: 0,
-            dstMipLevel: 0, dstBaseArrayLayer: 0,
-            staging.Width, staging.Height,
-            depth: 1, layerCount: 1);
+            dstX: 0,
+            dstY: 0,
+            dstZ: 0,
+            dstMipLevel: 0,
+            dstBaseArrayLayer: 0,
+            staging.Width,
+            staging.Height,
+            depth: 1,
+            layerCount: 1
+        );
 
         cl.End();
         device.SubmitCommands(cl);
@@ -172,7 +221,6 @@ void main()
         }
     }
 
-
     [StructLayout(LayoutKind.Sequential)]
     public struct BasicComputeTestParams
     {
@@ -187,34 +235,75 @@ void main()
     {
         SkipIfNotComputeShader();
 
-        ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("Params", ResourceKind.UniformBuffer, ShaderStages.Compute),
-            new ResourceLayoutElementDescription("Source", ResourceKind.StructuredBufferReadWrite, ShaderStages.Compute),
-            new ResourceLayoutElementDescription("Destination", ResourceKind.StructuredBufferReadWrite, ShaderStages.Compute)));
+        ResourceLayout layout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "Params",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Compute
+                ),
+                new ResourceLayoutElementDescription(
+                    "Source",
+                    ResourceKind.StructuredBufferReadWrite,
+                    ShaderStages.Compute
+                ),
+                new ResourceLayoutElementDescription(
+                    "Destination",
+                    ResourceKind.StructuredBufferReadWrite,
+                    ShaderStages.Compute
+                )
+            )
+        );
 
         uint width = 1024;
         uint height = 1024;
-        DeviceBuffer paramsBuffer = RF.CreateBuffer(new BufferDescription((uint) Unsafe.SizeOf<BasicComputeTestParams>(), BufferUsage.UniformBuffer));
-        DeviceBuffer sourceBuffer = RF.CreateBuffer(new BufferDescription(width * height * sizeof(float), BufferUsage.StructuredBufferReadWrite));
-        DeviceBuffer destinationBuffer = RF.CreateBuffer(new BufferDescription(width * height * sizeof(float), BufferUsage.StructuredBufferReadWrite));
+        DeviceBuffer paramsBuffer = RF.CreateBuffer(
+            new BufferDescription(
+                (uint)Unsafe.SizeOf<BasicComputeTestParams>(),
+                BufferUsage.UniformBuffer
+            )
+        );
+        DeviceBuffer sourceBuffer = RF.CreateBuffer(
+            new BufferDescription(
+                width * height * sizeof(float),
+                BufferUsage.StructuredBufferReadWrite
+            )
+        );
+        DeviceBuffer destinationBuffer = RF.CreateBuffer(
+            new BufferDescription(
+                width * height * sizeof(float),
+                BufferUsage.StructuredBufferReadWrite
+            )
+        );
 
-        GD.UpdateBuffer(paramsBuffer, 0, new BasicComputeTestParams { Width = width, Height = height });
+        GD.UpdateBuffer(
+            paramsBuffer,
+            0,
+            new BasicComputeTestParams { Width = width, Height = height }
+        );
 
         float[] sourceData = new float[width * height];
         for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
         {
-            int index = y * (int) width + x;
+            int index = y * (int)width + x;
             sourceData[index] = index;
         }
         GD.UpdateBuffer(sourceBuffer, 0, sourceData);
 
-        ResourceSet rs = RF.CreateResourceSet(new ResourceSetDescription(layout, paramsBuffer, sourceBuffer, destinationBuffer));
+        ResourceSet rs = RF.CreateResourceSet(
+            new ResourceSetDescription(layout, paramsBuffer, sourceBuffer, destinationBuffer)
+        );
 
-        Pipeline pipeline = RF.CreateComputePipeline(new ComputePipelineDescription(
-            TestShaders.LoadCompute(RF, "BasicComputeTest"),
-            layout,
-            16, 16, 1));
+        Pipeline pipeline = RF.CreateComputePipeline(
+            new ComputePipelineDescription(
+                TestShaders.LoadCompute(RF, "BasicComputeTest"),
+                layout,
+                16,
+                16,
+                1
+            )
+        );
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -229,7 +318,10 @@ void main()
         DeviceBuffer destinationReadback = GetReadback(destinationBuffer);
 
         MappedResourceView<float> sourceReadView = GD.Map<float>(sourceReadback, MapMode.Read);
-        MappedResourceView<float> destinationReadView = GD.Map<float>(destinationReadback, MapMode.Read);
+        MappedResourceView<float> destinationReadView = GD.Map<float>(
+            destinationReadback,
+            MapMode.Read
+        );
 
         for (int y = 0; y < height; y++)
         {
@@ -245,7 +337,7 @@ void main()
         GD.Unmap(sourceReadback);
         GD.Unmap(destinationReadback);
     }
-        
+
     [StructLayout(LayoutKind.Sequential)]
     public struct ComputeTextureCopyParams
     {
@@ -254,24 +346,66 @@ void main()
         uint _padding1;
         uint _padding2;
     }
-        
+
     [SkippableFact]
     public void ComputeTextureCopy()
     {
         SkipIfNotComputeShader();
 
-        ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("Params", ResourceKind.UniformBuffer, ShaderStages.Compute),
-            new ResourceLayoutElementDescription("Src", ResourceKind.TextureReadWrite, ShaderStages.Compute),
-            new ResourceLayoutElementDescription("Dst", ResourceKind.TextureReadWrite, ShaderStages.Compute)));
+        ResourceLayout layout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "Params",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Compute
+                ),
+                new ResourceLayoutElementDescription(
+                    "Src",
+                    ResourceKind.TextureReadWrite,
+                    ShaderStages.Compute
+                ),
+                new ResourceLayoutElementDescription(
+                    "Dst",
+                    ResourceKind.TextureReadWrite,
+                    ShaderStages.Compute
+                )
+            )
+        );
 
         uint width = 1024;
         uint height = 1024;
-        DeviceBuffer paramsBuffer = RF.CreateBuffer(new BufferDescription((uint) Unsafe.SizeOf<ComputeTextureCopyParams>(), BufferUsage.UniformBuffer));
-        Texture srcTexture = RF.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.R32_Float, TextureUsage.Storage));
-        Texture dstTexture = RF.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.R32_Float, TextureUsage.Storage));
-            
-        GD.UpdateBuffer(paramsBuffer, 0, new BasicComputeTestParams { Width = width, Height = height });
+        DeviceBuffer paramsBuffer = RF.CreateBuffer(
+            new BufferDescription(
+                (uint)Unsafe.SizeOf<ComputeTextureCopyParams>(),
+                BufferUsage.UniformBuffer
+            )
+        );
+        Texture srcTexture = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                width,
+                height,
+                1,
+                1,
+                PixelFormat.R32_Float,
+                TextureUsage.Storage
+            )
+        );
+        Texture dstTexture = RF.CreateTexture(
+            TextureDescription.Texture2D(
+                width,
+                height,
+                1,
+                1,
+                PixelFormat.R32_Float,
+                TextureUsage.Storage
+            )
+        );
+
+        GD.UpdateBuffer(
+            paramsBuffer,
+            0,
+            new BasicComputeTestParams { Width = width, Height = height }
+        );
 
         float[] srcData = new float[width * height];
         for (int y = 0; y < height; y++)
@@ -284,12 +418,19 @@ void main()
         }
         GD.UpdateTexture(srcTexture, srcData, 0, 0, 0, width, height, 1, 0, 0);
 
-        ResourceSet rs = RF.CreateResourceSet(new ResourceSetDescription(layout, paramsBuffer, srcTexture, dstTexture));
+        ResourceSet rs = RF.CreateResourceSet(
+            new ResourceSetDescription(layout, paramsBuffer, srcTexture, dstTexture)
+        );
 
-        Pipeline pipeline = RF.CreateComputePipeline(new ComputePipelineDescription(
-            TestShaders.LoadCompute(RF, "ComputeTextureCopy"),
-            layout,
-            16, 16, 1));
+        Pipeline pipeline = RF.CreateComputePipeline(
+            new ComputePipelineDescription(
+                TestShaders.LoadCompute(RF, "ComputeTextureCopy"),
+                layout,
+                16,
+                16,
+                1
+            )
+        );
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -305,14 +446,14 @@ void main()
 
         MappedResourceView<float> srcReadView = GD.Map<float>(srcReadback, MapMode.Read);
         MappedResourceView<float> dstReadView = GD.Map<float>(dstReadback, MapMode.Read);
-            
+
         Assert.Equal(srcData, srcReadView.AsSpan());
         Assert.Equal(srcData, dstReadView.AsSpan());
 
         GD.Unmap(srcReadback);
         GD.Unmap(dstReadback);
     }
-        
+
     [SkippableFact]
     public void ComputeCubemapGeneration()
     {
@@ -323,11 +464,13 @@ void main()
         const uint MipLevels = 1;
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize,
+            TexSize,
+            TexSize,
             MipLevels,
             1,
             PixelFormat.R8_G8_B8_A8_UNorm,
-            TextureUsage.Sampled | TextureUsage.Storage | TextureUsage.Cubemap);
+            TextureUsage.Sampled | TextureUsage.Storage | TextureUsage.Cubemap
+        );
         Texture computeOutput = RF.CreateTexture(texDesc);
 
         Vector4[] faceColors =
@@ -337,17 +480,31 @@ void main()
             new Vector4(2 * 42),
             new Vector4(3 * 42),
             new Vector4(4 * 42),
-            new Vector4(5 * 42)
+            new Vector4(5 * 42),
         ];
 
-        ResourceLayout computeLayout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("ComputeOutput", ResourceKind.TextureReadWrite, ShaderStages.Compute)));
-        ResourceSet computeSet = RF.CreateResourceSet(new ResourceSetDescription(computeLayout, computeOutput));
+        ResourceLayout computeLayout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "ComputeOutput",
+                    ResourceKind.TextureReadWrite,
+                    ShaderStages.Compute
+                )
+            )
+        );
+        ResourceSet computeSet = RF.CreateResourceSet(
+            new ResourceSetDescription(computeLayout, computeOutput)
+        );
 
-        Pipeline computePipeline = RF.CreateComputePipeline(new ComputePipelineDescription(
-            TestShaders.LoadCompute(RF, "ComputeCubemapGenerator"),
-            computeLayout,
-            32, 32, 1));
+        Pipeline computePipeline = RF.CreateComputePipeline(
+            new ComputePipelineDescription(
+                TestShaders.LoadCompute(RF, "ComputeCubemapGenerator"),
+                computeLayout,
+                32,
+                32,
+                1
+            )
+        );
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -365,9 +522,18 @@ void main()
                 for (uint face = 0; face < 6; face++)
                 {
                     uint subresource = readback.CalculateSubresource(mip, face);
-                    int mipSize = (TexSize >> (int) mip);
-                    RgbaByte expectedColor = new((byte) faceColors[face].X, (byte) faceColors[face].Y, (byte) faceColors[face].Z, (byte) faceColors[face].Z);
-                    MappedResourceView<RgbaByte> readView = GD.Map<RgbaByte>(readback, MapMode.Read, subresource);
+                    int mipSize = (TexSize >> (int)mip);
+                    RgbaByte expectedColor = new(
+                        (byte)faceColors[face].X,
+                        (byte)faceColors[face].Y,
+                        (byte)faceColors[face].Z,
+                        (byte)faceColors[face].Z
+                    );
+                    MappedResourceView<RgbaByte> readView = GD.Map<RgbaByte>(
+                        readback,
+                        MapMode.Read,
+                        subresource
+                    );
                     for (int y = 0; y < mipSize; y++)
                     for (int x = 0; x < mipSize; x++)
                     {
@@ -391,14 +557,18 @@ void main()
         const uint BoundMipLevel = 2;
 
         TextureDescription texDesc = TextureDescription.Texture2D(
-            TexSize, TexSize,
+            TexSize,
+            TexSize,
             MipLevels,
             1,
             PixelFormat.R8_G8_B8_A8_UNorm,
-            TextureUsage.Sampled | TextureUsage.Storage | TextureUsage.Cubemap);
+            TextureUsage.Sampled | TextureUsage.Storage | TextureUsage.Cubemap
+        );
         Texture computeOutput = RF.CreateTexture(texDesc);
 
-        TextureView computeOutputMipLevel = RF.CreateTextureView(new TextureViewDescription(computeOutput, BoundMipLevel, 1, 0, 1));
+        TextureView computeOutputMipLevel = RF.CreateTextureView(
+            new TextureViewDescription(computeOutput, BoundMipLevel, 1, 0, 1)
+        );
 
         Vector4[] faceColors =
         [
@@ -407,17 +577,31 @@ void main()
             new Vector4(2 * 42),
             new Vector4(3 * 42),
             new Vector4(4 * 42),
-            new Vector4(5 * 42)
+            new Vector4(5 * 42),
         ];
 
-        ResourceLayout computeLayout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("ComputeOutput", ResourceKind.TextureReadWrite, ShaderStages.Compute)));
-        ResourceSet computeSet = RF.CreateResourceSet(new ResourceSetDescription(computeLayout, computeOutputMipLevel));
+        ResourceLayout computeLayout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "ComputeOutput",
+                    ResourceKind.TextureReadWrite,
+                    ShaderStages.Compute
+                )
+            )
+        );
+        ResourceSet computeSet = RF.CreateResourceSet(
+            new ResourceSetDescription(computeLayout, computeOutputMipLevel)
+        );
 
-        Pipeline computePipeline = RF.CreateComputePipeline(new ComputePipelineDescription(
-            TestShaders.LoadCompute(RF, "ComputeCubemapGenerator"),
-            computeLayout,
-            32, 32, 1));
+        Pipeline computePipeline = RF.CreateComputePipeline(
+            new ComputePipelineDescription(
+                TestShaders.LoadCompute(RF, "ComputeCubemapGenerator"),
+                computeLayout,
+                32,
+                32,
+                1
+            )
+        );
 
         using (Texture readback = GetReadback(computeOutput))
         {
@@ -426,9 +610,13 @@ void main()
                 for (uint face = 0; face < 6; face++)
                 {
                     uint subresource = readback.CalculateSubresource(mip, face);
-                    uint mipSize = (uint) (TexSize / (1 << (int) mip));
+                    uint mipSize = (uint)(TexSize / (1 << (int)mip));
                     RgbaByte expectedColor = RgbaByte.Clear;
-                    MappedResourceView<RgbaByte> readView = GD.Map<RgbaByte>(readback, MapMode.Read, subresource);
+                    MappedResourceView<RgbaByte> readView = GD.Map<RgbaByte>(
+                        readback,
+                        MapMode.Read,
+                        subresource
+                    );
                     for (int y = 0; y < mipSize; y++)
                     for (int x = 0; x < mipSize; x++)
                     {
@@ -443,7 +631,7 @@ void main()
         cl.Begin();
         cl.SetPipeline(computePipeline);
         cl.SetComputeResourceSet(0, computeSet);
-        cl.Dispatch((TexSize >> (int) BoundMipLevel) / 32, (TexSize >> (int) BoundMipLevel) / 32, 6);
+        cl.Dispatch((TexSize >> (int)BoundMipLevel) / 32, (TexSize >> (int)BoundMipLevel) / 32, 6);
         cl.End();
         GD.SubmitCommands(cl);
         GD.WaitForIdle();
@@ -455,9 +643,21 @@ void main()
                 for (uint face = 0; face < 6; face++)
                 {
                     uint subresource = readback.CalculateSubresource(mip, face);
-                    uint mipSize = (uint) (TexSize / (1 << (int) mip));
-                    RgbaByte expectedColor = mip == BoundMipLevel ? new RgbaByte((byte) faceColors[face].X, (byte) faceColors[face].Y, (byte) faceColors[face].Z, (byte) faceColors[face].Z) : RgbaByte.Clear;
-                    MappedResourceView<RgbaByte> readView = GD.Map<RgbaByte>(readback, MapMode.Read, subresource);
+                    uint mipSize = (uint)(TexSize / (1 << (int)mip));
+                    RgbaByte expectedColor =
+                        mip == BoundMipLevel
+                            ? new RgbaByte(
+                                (byte)faceColors[face].X,
+                                (byte)faceColors[face].Y,
+                                (byte)faceColors[face].Z,
+                                (byte)faceColors[face].Z
+                            )
+                            : RgbaByte.Clear;
+                    MappedResourceView<RgbaByte> readView = GD.Map<RgbaByte>(
+                        readback,
+                        MapMode.Read,
+                        subresource
+                    );
                     for (int y = 0; y < mipSize; y++)
                     for (int x = 0; x < mipSize; x++)
                     {
@@ -471,80 +671,136 @@ void main()
 
     [SkippableTheory]
     [MemberData(nameof(FillBuffer_WithOffsetsData))]
-    public void FillBuffer_WithOffsets(uint srcSetMultiple, uint srcBindingMultiple, uint dstSetMultiple, uint dstBindingMultiple, bool combinedLayout)
+    public void FillBuffer_WithOffsets(
+        uint srcSetMultiple,
+        uint srcBindingMultiple,
+        uint dstSetMultiple,
+        uint dstBindingMultiple,
+        bool combinedLayout
+    )
     {
         SkipIfNotComputeShader();
-        Skip.If(!GD.Features.BufferRangeBinding && (srcSetMultiple != 0 || srcBindingMultiple != 0 || dstSetMultiple != 0 || dstBindingMultiple != 0));
+        Skip.If(
+            !GD.Features.BufferRangeBinding
+                && (
+                    srcSetMultiple != 0
+                    || srcBindingMultiple != 0
+                    || dstSetMultiple != 0
+                    || dstBindingMultiple != 0
+                )
+        );
 
         Debug.Assert((GD.StructuredBufferMinOffsetAlignment % sizeof(uint)) == 0);
 
         uint valueCount = 512;
         uint dataSize = valueCount * sizeof(uint);
-        uint totalSrcAlignment = GD.StructuredBufferMinOffsetAlignment * (srcSetMultiple + srcBindingMultiple);
-        uint totalDstAlignment = GD.StructuredBufferMinOffsetAlignment * (dstSetMultiple + dstBindingMultiple);
+        uint totalSrcAlignment =
+            GD.StructuredBufferMinOffsetAlignment * (srcSetMultiple + srcBindingMultiple);
+        uint totalDstAlignment =
+            GD.StructuredBufferMinOffsetAlignment * (dstSetMultiple + dstBindingMultiple);
 
         DeviceBuffer copySrc = RF.CreateBuffer(
-            new BufferDescription(totalSrcAlignment + dataSize, BufferUsage.StructuredBufferReadOnly));
+            new BufferDescription(
+                totalSrcAlignment + dataSize,
+                BufferUsage.StructuredBufferReadOnly
+            )
+        );
         DeviceBuffer copyDst = RF.CreateBuffer(
-            new BufferDescription(totalDstAlignment + dataSize, BufferUsage.StructuredBufferReadWrite));
+            new BufferDescription(
+                totalDstAlignment + dataSize,
+                BufferUsage.StructuredBufferReadWrite
+            )
+        );
 
         ResourceLayout[] layouts;
         ResourceSet[] sets;
 
-        DeviceBufferRange srcRange = new(copySrc, srcSetMultiple * GD.StructuredBufferMinOffsetAlignment, dataSize);
-        DeviceBufferRange dstRange = new(copyDst, dstSetMultiple * GD.StructuredBufferMinOffsetAlignment, dataSize);
+        DeviceBufferRange srcRange = new(
+            copySrc,
+            srcSetMultiple * GD.StructuredBufferMinOffsetAlignment,
+            dataSize
+        );
+        DeviceBufferRange dstRange = new(
+            copyDst,
+            dstSetMultiple * GD.StructuredBufferMinOffsetAlignment,
+            dataSize
+        );
 
         if (combinedLayout)
         {
             layouts =
             [
-                RF.CreateResourceLayout(new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription(
-                        "CopySrc",
-                        ResourceKind.StructuredBufferReadOnly,
-                        ShaderStages.Compute,
-                        ResourceLayoutElementOptions.DynamicBinding),
-                    new ResourceLayoutElementDescription(
-                        "CopyDst",
-                        ResourceKind.StructuredBufferReadWrite,
-                        ShaderStages.Compute,
-                        ResourceLayoutElementOptions.DynamicBinding)))
+                RF.CreateResourceLayout(
+                    new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription(
+                            "CopySrc",
+                            ResourceKind.StructuredBufferReadOnly,
+                            ShaderStages.Compute,
+                            ResourceLayoutElementOptions.DynamicBinding
+                        ),
+                        new ResourceLayoutElementDescription(
+                            "CopyDst",
+                            ResourceKind.StructuredBufferReadWrite,
+                            ShaderStages.Compute,
+                            ResourceLayoutElementOptions.DynamicBinding
+                        )
+                    )
+                ),
             ];
             sets =
             [
-                RF.CreateResourceSet(new ResourceSetDescription(layouts[0], srcRange, dstRange))
+                RF.CreateResourceSet(new ResourceSetDescription(layouts[0], srcRange, dstRange)),
             ];
         }
         else
         {
             layouts =
             [
-                RF.CreateResourceLayout(new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription(
-                        "CopySrc",
-                        ResourceKind.StructuredBufferReadOnly,
-                        ShaderStages.Compute,
-                        ResourceLayoutElementOptions.DynamicBinding))),
-                RF.CreateResourceLayout(new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription(
-                        "CopyDst",
-                        ResourceKind.StructuredBufferReadWrite,
-                        ShaderStages.Compute,
-                        ResourceLayoutElementOptions.DynamicBinding)))
+                RF.CreateResourceLayout(
+                    new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription(
+                            "CopySrc",
+                            ResourceKind.StructuredBufferReadOnly,
+                            ShaderStages.Compute,
+                            ResourceLayoutElementOptions.DynamicBinding
+                        )
+                    )
+                ),
+                RF.CreateResourceLayout(
+                    new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription(
+                            "CopyDst",
+                            ResourceKind.StructuredBufferReadWrite,
+                            ShaderStages.Compute,
+                            ResourceLayoutElementOptions.DynamicBinding
+                        )
+                    )
+                ),
             ];
             sets =
             [
                 RF.CreateResourceSet(new ResourceSetDescription(layouts[0], srcRange)),
-                RF.CreateResourceSet(new ResourceSetDescription(layouts[1], dstRange))
+                RF.CreateResourceSet(new ResourceSetDescription(layouts[1], dstRange)),
             ];
         }
 
-        Pipeline pipeline = RF.CreateComputePipeline(new ComputePipelineDescription(
-            TestShaders.LoadCompute(RF, combinedLayout ? "FillBuffer" : "FillBuffer_SeparateLayout"),
-            layouts,
-            1, 1, 1));
+        Pipeline pipeline = RF.CreateComputePipeline(
+            new ComputePipelineDescription(
+                TestShaders.LoadCompute(
+                    RF,
+                    combinedLayout ? "FillBuffer" : "FillBuffer_SeparateLayout"
+                ),
+                layouts,
+                1,
+                1,
+                1
+            )
+        );
 
-        uint[] srcData = Enumerable.Range(0, (int) copySrc.SizeInBytes / sizeof(uint)).Select(i => (uint) i).ToArray();
+        uint[] srcData = Enumerable
+            .Range(0, (int)copySrc.SizeInBytes / sizeof(uint))
+            .Select(i => (uint)i)
+            .ToArray();
         GD.UpdateBuffer(copySrc, 0, srcData);
 
         CommandList cl = RF.CreateCommandList();
@@ -555,7 +811,7 @@ void main()
             uint[] offsets =
             [
                 srcBindingMultiple * GD.StructuredBufferMinOffsetAlignment,
-                dstBindingMultiple * GD.StructuredBufferMinOffsetAlignment
+                dstBindingMultiple * GD.StructuredBufferMinOffsetAlignment,
             ];
             cl.SetComputeResourceSet(0, sets[0], offsets);
         }
@@ -578,7 +834,7 @@ void main()
         for (uint i = 0; i < valueCount; i++)
         {
             uint srcIndex = totalSrcAlignment / sizeof(uint) + i;
-            uint expected = srcData[(int) srcIndex];
+            uint expected = srcData[(int)srcIndex];
 
             uint dstIndex = totalDstAlignment / sizeof(uint) + i;
             uint actual = readView[dstIndex];
@@ -598,7 +854,11 @@ void main()
         {
             yield return
             [
-                srcSetMultiple, srcBindingMultiple, dstSetMultiple, dstBindingMultiple, combinedLayout
+                srcSetMultiple,
+                srcBindingMultiple,
+                dstSetMultiple,
+                dstBindingMultiple,
+                combinedLayout,
             ];
         }
     }
@@ -610,18 +870,35 @@ void main()
     public unsafe void FillIndirectBuffer(BufferUsage dstUsage)
     {
         SkipIfNotComputeShader();
-            
-        ResourceLayout layout = RF.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("Params", ResourceKind.StructuredBufferReadOnly, ShaderStages.Compute),
-            new ResourceLayoutElementDescription("Destination", ResourceKind.StructuredBufferReadWrite, ShaderStages.Compute)));
 
-        DeviceBuffer paramsBuffer = RF.CreateBuffer(new BufferDescription(
-            (uint) sizeof(IndirectDrawIndexedArguments),
-            BufferUsage.StructuredBufferReadOnly));
+        ResourceLayout layout = RF.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "Params",
+                    ResourceKind.StructuredBufferReadOnly,
+                    ShaderStages.Compute
+                ),
+                new ResourceLayoutElementDescription(
+                    "Destination",
+                    ResourceKind.StructuredBufferReadWrite,
+                    ShaderStages.Compute
+                )
+            )
+        );
 
-        DeviceBuffer dstBuffer = RF.CreateBuffer(new BufferDescription(
-            (uint) sizeof(IndirectDrawIndexedArguments),
-            dstUsage | BufferUsage.StructuredBufferReadWrite));
+        DeviceBuffer paramsBuffer = RF.CreateBuffer(
+            new BufferDescription(
+                (uint)sizeof(IndirectDrawIndexedArguments),
+                BufferUsage.StructuredBufferReadOnly
+            )
+        );
+
+        DeviceBuffer dstBuffer = RF.CreateBuffer(
+            new BufferDescription(
+                (uint)sizeof(IndirectDrawIndexedArguments),
+                dstUsage | BufferUsage.StructuredBufferReadWrite
+            )
+        );
 
         IndirectDrawIndexedArguments paramsValue = new()
         {
@@ -633,12 +910,19 @@ void main()
         };
         GD.UpdateBuffer(paramsBuffer, 0, paramsValue);
 
-        ResourceSet rs = RF.CreateResourceSet(new ResourceSetDescription(layout, paramsBuffer, dstBuffer));
+        ResourceSet rs = RF.CreateResourceSet(
+            new ResourceSetDescription(layout, paramsBuffer, dstBuffer)
+        );
 
-        Pipeline pipeline = RF.CreateComputePipeline(new ComputePipelineDescription(
-            TestShaders.LoadCompute(RF, "FillIndirectBufferComputeTest"),
-            layout,
-            1, 1, 1));
+        Pipeline pipeline = RF.CreateComputePipeline(
+            new ComputePipelineDescription(
+                TestShaders.LoadCompute(RF, "FillIndirectBufferComputeTest"),
+                layout,
+                1,
+                1,
+                1
+            )
+        );
 
         CommandList cl = RF.CreateCommandList();
         cl.Begin();
@@ -680,6 +964,6 @@ public class VulkanComputeTests : ComputeTests<VulkanDeviceCreator> { }
 public class D3D11ComputeTests : ComputeTests<D3D11DeviceCreator> { }
 #endif
 #if TEST_METAL
-    [Trait("Backend", "Metal")]
-    public class MetalComputeTests : RenderTests<MetalDeviceCreator> { }
+[Trait("Backend", "Metal")]
+public class MetalComputeTests : RenderTests<MetalDeviceCreator> { }
 #endif

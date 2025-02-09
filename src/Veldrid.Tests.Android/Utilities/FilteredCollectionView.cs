@@ -7,7 +7,11 @@ using System.ComponentModel;
 
 namespace Veldrid.Tests.Android.Utilities
 {
-    class FilteredCollectionView<T, TFilterArg> : IList<T>, IList, INotifyCollectionChanged, IDisposable
+    class FilteredCollectionView<T, TFilterArg>
+        : IList<T>,
+            IList,
+            INotifyCollectionChanged,
+            IDisposable
     {
         readonly ObservableCollection<T> dataSource;
         readonly Func<T, TFilterArg, bool> filter;
@@ -15,9 +19,15 @@ namespace Veldrid.Tests.Android.Utilities
 
         TFilterArg filterArgument;
 
-        public FilteredCollectionView(ObservableCollection<T> dataSource, Func<T, TFilterArg, bool> filter, TFilterArg filterArgument, IComparer<T> sort)
+        public FilteredCollectionView(
+            ObservableCollection<T> dataSource,
+            Func<T, TFilterArg, bool> filter,
+            TFilterArg filterArgument,
+            IComparer<T> sort
+        )
         {
-            if (sort == null) throw new ArgumentNullException(nameof(sort));
+            if (sort == null)
+                throw new ArgumentNullException(nameof(sort));
 
             this.dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
             this.filter = filter ?? throw new ArgumentNullException(nameof(filter));
@@ -233,13 +243,25 @@ namespace Veldrid.Tests.Android.Utilities
                 if (index < 0)
                 {
                     filteredList.Insert(~index, item);
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, ~index));
+                    OnCollectionChanged(
+                        new NotifyCollectionChangedEventArgs(
+                            NotifyCollectionChangedAction.Add,
+                            item,
+                            ~index
+                        )
+                    );
                 }
             }
             else if (index >= 0)
             {
                 filteredList.RemoveAt(index);
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index));
+                OnCollectionChanged(
+                    new NotifyCollectionChangedEventArgs(
+                        NotifyCollectionChangedAction.Remove,
+                        item,
+                        index
+                    )
+                );
             }
 
             OnItemChanged(item, e);
@@ -253,7 +275,13 @@ namespace Veldrid.Tests.Android.Utilities
                 if (index < 0)
                 {
                     filteredList.Insert(~index, item);
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, ~index));
+                    OnCollectionChanged(
+                        new NotifyCollectionChangedEventArgs(
+                            NotifyCollectionChangedAction.Add,
+                            item,
+                            ~index
+                        )
+                    );
                 }
             }
 
@@ -274,7 +302,13 @@ namespace Veldrid.Tests.Android.Utilities
             if (index >= 0)
             {
                 filteredList.RemoveAt(index);
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index));
+                OnCollectionChanged(
+                    new NotifyCollectionChangedEventArgs(
+                        NotifyCollectionChangedAction.Remove,
+                        item,
+                        index
+                    )
+                );
             }
         }
 
@@ -290,7 +324,9 @@ namespace Veldrid.Tests.Android.Utilities
                 }
             }
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            OnCollectionChanged(
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
+            );
         }
     }
 }

@@ -20,7 +20,10 @@ public readonly struct BindableResource : IEquatable<BindableResource>
 
     BindableResource(BindableResourceKind kind, object? resource)
     {
-        Debug.Assert(kind != BindableResourceKind.Null || resource == null, "Non-null resource for Null kind.");
+        Debug.Assert(
+            kind != BindableResourceKind.Null || resource == null,
+            "Non-null resource for Null kind."
+        );
 
         Kind = resource != null ? kind : BindableResourceKind.Null;
         Resource = resource;
@@ -46,7 +49,8 @@ public readonly struct BindableResource : IEquatable<BindableResource>
 
     public DeviceBuffer GetDeviceBuffer() => As<DeviceBuffer>(BindableResourceKind.DeviceBuffer);
 
-    public DeviceBufferRange GetDeviceBufferRange() => Unbox<DeviceBufferRange>(BindableResourceKind.DeviceBufferRange);
+    public DeviceBufferRange GetDeviceBufferRange() =>
+        Unbox<DeviceBufferRange>(BindableResourceKind.DeviceBufferRange);
 
     public Sampler GetSampler() => As<Sampler>(BindableResourceKind.Sampler);
 
@@ -105,6 +109,8 @@ public readonly struct BindableResource : IEquatable<BindableResource>
 
     static void ThrowMismatch(BindableResourceKind expected, BindableResourceKind actual)
     {
-        throw new VeldridException($"Resource type mismatch. Expected {expected} but got {actual}.");
+        throw new VeldridException(
+            $"Resource type mismatch. Expected {expected} but got {actual}."
+        );
     }
 }

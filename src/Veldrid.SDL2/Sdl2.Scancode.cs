@@ -1,5 +1,4 @@
-﻿
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace Veldrid.Sdl2;
 
@@ -112,7 +111,7 @@ public enum SDL_Scancode
     /// layout on ANSI keyboards.
     /// </summary>
     SDL_SCANCODE_GRAVE = 53,
- 
+
     SDL_SCANCODE_COMMA = 54,
     SDL_SCANCODE_PERIOD = 55,
     SDL_SCANCODE_SLASH = 56,
@@ -189,7 +188,7 @@ public enum SDL_Scancode
     /// <summary>
     /// windows contextual menu, compose
     /// </summary>
-    SDL_SCANCODE_APPLICATION = 101, 
+    SDL_SCANCODE_APPLICATION = 101,
 
     /// <summary>
     /// The USB document says this is a status flag,
@@ -230,8 +229,8 @@ public enum SDL_Scancode
     SDL_SCANCODE_MUTE = 127,
     SDL_SCANCODE_VOLUMEUP = 128,
     SDL_SCANCODE_VOLUMEDOWN = 129,
-    SDL_SCANCODE_LOCKINGCAPSLOCK = 130,  
-    SDL_SCANCODE_LOCKINGNUMLOCK = 131,   
+    SDL_SCANCODE_LOCKINGCAPSLOCK = 130,
+    SDL_SCANCODE_LOCKINGNUMLOCK = 131,
     SDL_SCANCODE_LOCKINGSCROLLLOCK = 132,
     SDL_SCANCODE_KP_COMMA = 133,
     SDL_SCANCODE_KP_EQUALSAS400 = 134,
@@ -256,7 +255,7 @@ public enum SDL_Scancode
     SDL_SCANCODE_INTERNATIONAL9 = 143,
 
     /// <summary>
-    /// Hangul/English toggle 
+    /// Hangul/English toggle
     /// </summary>
     SDL_SCANCODE_LANG1 = 144,
 
@@ -278,7 +277,7 @@ public enum SDL_Scancode
     /// <summary>
     /// Zenkaku/Hankaku
     /// </summary>
-    SDL_SCANCODE_LANG5 = 148, 
+    SDL_SCANCODE_LANG5 = 148,
 
     /// <summary>
     /// reserved
@@ -394,14 +393,14 @@ public enum SDL_Scancode
     /// I'm not sure if this is really not covered by any of the above,
     /// but since there's a special KMOD_MODE for it I'm adding it here
     /// </summary>
-    SDL_SCANCODE_MODE = 257,    
+    SDL_SCANCODE_MODE = 257,
 
     // Usage page 0x07
 
 
     // Usage page 0x0C
     // These values are mapped from usage page 0x0C (USB consumer page).
-       
+
     SDL_SCANCODE_AUDIONEXT = 258,
     SDL_SCANCODE_AUDIOPREV = 259,
     SDL_SCANCODE_AUDIOSTOP = 260,
@@ -425,7 +424,7 @@ public enum SDL_Scancode
 
     // Walther keys
     // These are values that Christian Walther added (for mac keyboard?).
-        
+
     SDL_SCANCODE_BRIGHTNESSDOWN = 275,
     SDL_SCANCODE_BRIGHTNESSUP = 276,
 
@@ -451,5 +450,5 @@ public enum SDL_Scancode
     /// <summary>
     /// not a key, just marks the number of scancodes for array bounds
     /// </summary>
-    SDL_NUM_SCANCODES = 512
+    SDL_NUM_SCANCODES = 512,
 }

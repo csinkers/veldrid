@@ -20,7 +20,11 @@ internal sealed unsafe class VkSampler : Sampler, IResourceRefCountTarget
     {
         _gd = gd;
         VkFormats.GetFilterParams(
-            description.Filter, out VkFilter minFilter, out VkFilter magFilter, out VkSamplerMipmapMode mipmapMode);
+            description.Filter,
+            out VkFilter minFilter,
+            out VkFilter magFilter,
+            out VkSamplerMipmapMode mipmapMode
+        );
 
         VkSamplerCreateInfo samplerCI = new()
         {
@@ -32,15 +36,16 @@ internal sealed unsafe class VkSampler : Sampler, IResourceRefCountTarget
             magFilter = magFilter,
             mipmapMode = mipmapMode,
             compareEnable = (VkBool32)(description.ComparisonKind != null),
-            compareOp = description.ComparisonKind != null
-                ? VkFormats.VdToVkCompareOp(description.ComparisonKind.Value)
-                : VkCompareOp.VK_COMPARE_OP_NEVER,
+            compareOp =
+                description.ComparisonKind != null
+                    ? VkFormats.VdToVkCompareOp(description.ComparisonKind.Value)
+                    : VkCompareOp.VK_COMPARE_OP_NEVER,
             anisotropyEnable = (VkBool32)(description.Filter == SamplerFilter.Anisotropic),
             maxAnisotropy = description.MaximumAnisotropy,
             minLod = description.MinimumLod,
             maxLod = description.MaximumLod,
             mipLodBias = description.LodBias,
-            borderColor = VkFormats.VdToVkSamplerBorderColor(description.BorderColor)
+            borderColor = VkFormats.VdToVkSamplerBorderColor(description.BorderColor),
         };
 
         VulkanSampler sampler;

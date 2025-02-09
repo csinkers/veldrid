@@ -11,18 +11,22 @@ public struct RasterizerStateDescription : IEquatable<RasterizerStateDescription
     /// Controls which face will be culled.
     /// </summary>
     public FaceCullMode CullMode;
+
     /// <summary>
     /// Controls how the rasterizer fills polygons.
     /// </summary>
     public PolygonFillMode FillMode;
+
     /// <summary>
     /// Controls the winding order used to determine the front face of primitives.
     /// </summary>
     public FrontFace FrontFace;
+
     /// <summary>
     /// Controls whether depth clipping is enabled.
     /// </summary>
     public bool DepthClipEnabled;
+
     /// <summary>
     /// Controls whether the scissor test is enabled.
     /// </summary>
@@ -41,7 +45,8 @@ public struct RasterizerStateDescription : IEquatable<RasterizerStateDescription
         PolygonFillMode fillMode,
         FrontFace frontFace,
         bool depthClipEnabled,
-        bool scissorTestEnabled)
+        bool scissorTestEnabled
+    )
     {
         CullMode = cullMode;
         FillMode = fillMode;
@@ -96,10 +101,10 @@ public struct RasterizerStateDescription : IEquatable<RasterizerStateDescription
     public bool Equals(RasterizerStateDescription other)
     {
         return CullMode == other.CullMode
-               && FillMode == other.FillMode
-               && FrontFace == other.FrontFace
-               && DepthClipEnabled.Equals(other.DepthClipEnabled)
-               && ScissorTestEnabled.Equals(other.ScissorTestEnabled);
+            && FillMode == other.FillMode
+            && FrontFace == other.FrontFace
+            && DepthClipEnabled.Equals(other.DepthClipEnabled)
+            && ScissorTestEnabled.Equals(other.ScissorTestEnabled);
     }
 
     /// <summary>
@@ -113,6 +118,7 @@ public struct RasterizerStateDescription : IEquatable<RasterizerStateDescription
             (int)FillMode,
             (int)FrontFace,
             DepthClipEnabled.GetHashCode(),
-            ScissorTestEnabled.GetHashCode());
+            ScissorTestEnabled.GetHashCode()
+        );
     }
 }

@@ -31,7 +31,10 @@ namespace Veldrid.Tests.Android.Sinks
             _mutex = new AsyncLock();
         }
 
-        public async ValueTask RecordResultAsync(TestResultViewModel result, CancellationToken cancellationToken)
+        public async ValueTask RecordResultAsync(
+            TestResultViewModel result,
+            CancellationToken cancellationToken
+        )
         {
             using (await _mutex.LockAsync())
             {
@@ -67,7 +70,10 @@ namespace Veldrid.Tests.Android.Sinks
                 string stacktrace = result.ErrorStackTrace;
                 if (!string.IsNullOrEmpty(result.ErrorStackTrace))
                 {
-                    string[] lines = stacktrace.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] lines = stacktrace.Split(
+                        new[] { '\r', '\n' },
+                        StringSplitOptions.RemoveEmptyEntries
+                    );
                     foreach (string line in lines)
                     {
                         builder.AppendLine($"\t\t{line}");
@@ -84,7 +90,9 @@ namespace Veldrid.Tests.Android.Sinks
             {
                 int total = _passed + _failed; // ignored are *not* run
                 StringBuilder builder = new();
-                builder.AppendLine($"Tests run: {total} Passed: {_passed} Failed: {_failed} Skipped: {_skipped}");
+                builder.AppendLine(
+                    $"Tests run: {total} Passed: {_passed} Failed: {_failed} Skipped: {_skipped}"
+                );
 
                 await WriteAsync(builder, CancellationToken.None);
 
@@ -93,14 +101,18 @@ namespace Veldrid.Tests.Android.Sinks
             }
         }
 
-        public async Task<bool> OpenChannelAsync(CancellationToken cancellationToken, string? message = null)
+        public async Task<bool> OpenChannelAsync(
+            CancellationToken cancellationToken,
+            string? message = null
+        )
         {
             using (await _mutex.LockAsync())
             {
                 DateTime now = DateTime.Now;
 
                 System.Diagnostics.Debug.WriteLine(
-                    $"[{now}] Sending '{message}' results to {_endPoint}:{_port}");
+                    $"[{now}] Sending '{message}' results to {_endPoint}:{_port}"
+                );
 
                 try
                 {
@@ -111,8 +123,8 @@ namespace Veldrid.Tests.Android.Sinks
                 catch (SocketException)
                 {
                     string msg =
-                        $"Cannot connect to {_endPoint}:{_port}. " +
-                        $"Start network service or disable network logger option";
+                        $"Cannot connect to {_endPoint}:{_port}. "
+                        + $"Start network service or disable network logger option";
                     Toast.MakeText(Application.Context, msg, ToastLength.Long)?.Show();
                     return false;
                 }
@@ -120,13 +132,19 @@ namespace Veldrid.Tests.Android.Sinks
                 StringBuilder builder = new();
 
                 builder.AppendLine($"[Runner executing:\t{message}]");
-                builder.AppendLine($"[M4A Version:\t{"???"}]");  // FIXME
+                builder.AppendLine($"[M4A Version:\t{"???"}]"); // FIXME
                 builder.AppendLine($"[Board:\t\t{Build.Board}]");
                 builder.AppendLine($"[Bootloader:\t{Build.Bootloader}]");
                 builder.AppendLine($"[Brand:\t\t{Build.Brand}]");
-                builder.AppendLine($"[SupportedAbis:\t{string.Join(", ", Build.SupportedAbis ?? Array.Empty<string>())}]");
-                builder.AppendLine($"[Supported32BitAbis:\t{string.Join(", ", Build.Supported32BitAbis ?? Array.Empty<string>())}]");
-                builder.AppendLine($"[Supported64BitAbis:\t{string.Join(", ", Build.Supported64BitAbis ?? Array.Empty<string>())}]");
+                builder.AppendLine(
+                    $"[SupportedAbis:\t{string.Join(", ", Build.SupportedAbis ?? Array.Empty<string>())}]"
+                );
+                builder.AppendLine(
+                    $"[Supported32BitAbis:\t{string.Join(", ", Build.Supported32BitAbis ?? Array.Empty<string>())}]"
+                );
+                builder.AppendLine(
+                    $"[Supported64BitAbis:\t{string.Join(", ", Build.Supported64BitAbis ?? Array.Empty<string>())}]"
+                );
                 builder.AppendLine($"[Device:\t{Build.Device}]");
                 builder.AppendLine($"[Display:\t{Build.Display}]");
                 builder.AppendLine($"[Fingerprint:\t{Build.Fingerprint}]");
@@ -166,7 +184,10 @@ namespace Veldrid.Tests.Android.Sinks
             }
         }
 
-        private async ValueTask WriteAsync(StringBuilder builder, CancellationToken cancellationToken)
+        private async ValueTask WriteAsync(
+            StringBuilder builder,
+            CancellationToken cancellationToken
+        )
         {
             if (_writer == null)
             {

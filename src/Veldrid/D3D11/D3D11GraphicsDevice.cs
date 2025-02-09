@@ -39,10 +39,12 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
 
     public int DeviceId => _deviceId;
 
-    public D3D11GraphicsDevice(GraphicsDeviceOptions options, D3D11DeviceOptions d3D11DeviceOptions, SwapchainDescription? swapchainDesc)
-        : this(MergeOptions(d3D11DeviceOptions, options), swapchainDesc)
-    {
-    }
+    public D3D11GraphicsDevice(
+        GraphicsDeviceOptions options,
+        D3D11DeviceOptions d3D11DeviceOptions,
+        SwapchainDescription? swapchainDesc
+    )
+        : this(MergeOptions(d3D11DeviceOptions, options), swapchainDesc) { }
 
     public D3D11GraphicsDevice(D3D11DeviceOptions options, SwapchainDescription? swapchainDesc)
     {
@@ -65,29 +67,41 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             flags &= ~DeviceCreationFlags.Debug;
         }
 
-        static void CreateDevice(DeviceCreationFlags flags, IntPtr adapterPtr, out ID3D11Device? device)
+        static void CreateDevice(
+            DeviceCreationFlags flags,
+            IntPtr adapterPtr,
+            out ID3D11Device? device
+        )
         {
             try
             {
-                VorticeD3D11.D3D11CreateDevice(adapterPtr,
-                    Vortice.Direct3D.DriverType.Hardware,
-                    flags,
-                    [
-                        Vortice.Direct3D.FeatureLevel.Level_11_1,
-                        Vortice.Direct3D.FeatureLevel.Level_11_0
-                    ],
-                    out device).CheckError();
+                VorticeD3D11
+                    .D3D11CreateDevice(
+                        adapterPtr,
+                        Vortice.Direct3D.DriverType.Hardware,
+                        flags,
+                        [
+                            Vortice.Direct3D.FeatureLevel.Level_11_1,
+                            Vortice.Direct3D.FeatureLevel.Level_11_0,
+                        ],
+                        out device
+                    )
+                    .CheckError();
             }
             catch
             {
-                VorticeD3D11.D3D11CreateDevice(adapterPtr,
-                    Vortice.Direct3D.DriverType.Hardware,
-                    flags,
-                    null!,
-                    out device).CheckError();
+                VorticeD3D11
+                    .D3D11CreateDevice(
+                        adapterPtr,
+                        Vortice.Direct3D.DriverType.Hardware,
+                        flags,
+                        null!,
+                        out device
+                    )
+                    .CheckError();
             }
         }
-            
+
         ID3D11Device? device;
         try
         {
@@ -170,9 +184,13 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             independentBlend: true,
             structuredBuffer: true,
             subsetTextureView: true,
-            commandListDebugMarkers: _device.FeatureLevel >= Vortice.Direct3D.FeatureLevel.Level_11_1,
+            commandListDebugMarkers: _device.FeatureLevel
+                >= Vortice.Direct3D.FeatureLevel.Level_11_1,
             bufferRangeBinding: _device.FeatureLevel >= Vortice.Direct3D.FeatureLevel.Level_11_1,
-            shaderFloat64: _device.CheckFeatureSupport<FeatureDataDoubles>(Vortice.Direct3D11.Feature.Doubles).DoublePrecisionFloatShaderOps);
+            shaderFloat64: _device
+                .CheckFeatureSupport<FeatureDataDoubles>(Vortice.Direct3D11.Feature.Doubles)
+                .DoublePrecisionFloatShaderOps
+        );
 
         ResourceFactory = new D3D11ResourceFactory(this);
         _d3d11Info = new BackendInfoD3D11(this);
@@ -180,7 +198,10 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         PostDeviceCreated();
     }
 
-    static D3D11DeviceOptions MergeOptions(D3D11DeviceOptions d3D11DeviceOptions, GraphicsDeviceOptions options)
+    static D3D11DeviceOptions MergeOptions(
+        D3D11DeviceOptions d3D11DeviceOptions,
+        GraphicsDeviceOptions options
+    )
     {
         if (options.Debug)
         {
@@ -220,7 +241,10 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
 
     public override TextureSampleCount GetSampleCountLimit(PixelFormat format, bool depthFormat)
     {
-        Format dxgiFormat = D3D11Formats.ToDxgiFormat(format, depthFormat ? TextureUsage.DepthStencil : default);
+        Format dxgiFormat = D3D11Formats.ToDxgiFormat(
+            format,
+            depthFormat ? TextureUsage.DepthStencil : default
+        );
 
         if (CheckFormatMultisample(dxgiFormat, 64))
         {
@@ -258,7 +282,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         PixelFormat format,
         TextureType type,
         TextureUsage usage,
-        out PixelFormatProperties properties)
+        out PixelFormatProperties properties
+    )
     {
         if (D3D11Formats.IsUnsupportedFormat(format))
         {
@@ -269,11 +294,14 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         Format dxgiFormat = D3D11Formats.ToDxgiFormat(format, usage);
         FormatSupport fs = _device.CheckFormatSupport(dxgiFormat);
 
-        if ((usage & TextureUsage.RenderTarget) != 0 && (fs & FormatSupport.RenderTarget) == 0
+        if (
+            (usage & TextureUsage.RenderTarget) != 0 && (fs & FormatSupport.RenderTarget) == 0
             || (usage & TextureUsage.DepthStencil) != 0 && (fs & FormatSupport.DepthStencil) == 0
             || (usage & TextureUsage.Sampled) != 0 && (fs & FormatSupport.ShaderSample) == 0
             || (usage & TextureUsage.Cubemap) != 0 && (fs & FormatSupport.TextureCube) == 0
-            || (usage & TextureUsage.Storage) != 0 && (fs & FormatSupport.TypedUnorderedAccessView) == 0)
+            || (usage & TextureUsage.Storage) != 0
+                && (fs & FormatSupport.TypedUnorderedAccessView) == 0
+        )
         {
             properties = default;
             return false;
@@ -284,17 +312,29 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
 
         uint sampleCounts = 0;
         if (CheckFormatMultisample(dxgiFormat, 1))
-        { sampleCounts |= (1 << 0); }
+        {
+            sampleCounts |= (1 << 0);
+        }
         if (CheckFormatMultisample(dxgiFormat, 2))
-        { sampleCounts |= (1 << 1); }
+        {
+            sampleCounts |= (1 << 1);
+        }
         if (CheckFormatMultisample(dxgiFormat, 4))
-        { sampleCounts |= (1 << 2); }
+        {
+            sampleCounts |= (1 << 2);
+        }
         if (CheckFormatMultisample(dxgiFormat, 8))
-        { sampleCounts |= (1 << 3); }
+        {
+            sampleCounts |= (1 << 3);
+        }
         if (CheckFormatMultisample(dxgiFormat, 16))
-        { sampleCounts |= (1 << 4); }
+        {
+            sampleCounts |= (1 << 4);
+        }
         if (CheckFormatMultisample(dxgiFormat, 32))
-        { sampleCounts |= (1 << 5); }
+        {
+            sampleCounts |= (1 << 5);
+        }
 
         properties = new PixelFormatProperties(
             MaxTextureDimension,
@@ -302,7 +342,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             type != TextureType.Texture3D ? 1 : MaxVolumeExtent,
             uint.MaxValue,
             type == TextureType.Texture3D ? 1 : MaxVolumeExtent,
-            sampleCounts);
+            sampleCounts
+        );
         return true;
     }
 
@@ -311,7 +352,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         uint offsetInBytes,
         uint sizeInBytes,
         MapMode mode,
-        uint subresource)
+        uint subresource
+    )
     {
         MappedResourceCacheKey key = new(resource, subresource);
         lock (_mappedResourceLock)
@@ -331,11 +373,20 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                     MappedSubresource msr = _immediateContext.Map(
                         buffer.Buffer,
                         0,
-                        D3D11Formats.VdToD3D11MapMode((buffer.Usage & BufferUsage.DynamicReadWrite) != 0, mode),
-                        Vortice.Direct3D11.MapFlags.None);
+                        D3D11Formats.VdToD3D11MapMode(
+                            (buffer.Usage & BufferUsage.DynamicReadWrite) != 0,
+                            mode
+                        ),
+                        Vortice.Direct3D11.MapFlags.None
+                    );
 
                     mappedResource = new MappedResource(
-                        resource, mode, msr.DataPointer + (nint)offsetInBytes, offsetInBytes, sizeInBytes);
+                        resource,
+                        mode,
+                        msr.DataPointer + (nint)offsetInBytes,
+                        offsetInBytes,
+                        sizeInBytes
+                    );
                 }
             }
             else
@@ -343,7 +394,12 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                 D3D11Texture texture = Util.AssertSubtype<MappableResource, D3D11Texture>(resource);
                 lock (_immediateContextLock)
                 {
-                    Util.GetMipLevelAndArrayLayer(texture, subresource, out uint mipLevel, out uint arrayLayer);
+                    Util.GetMipLevelAndArrayLayer(
+                        texture,
+                        subresource,
+                        out uint mipLevel,
+                        out uint arrayLayer
+                    );
                     _immediateContext.Map(
                         texture.DeviceTexture,
                         (int)mipLevel,
@@ -351,7 +407,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                         D3D11Formats.VdToD3D11MapMode(false, mode),
                         Vortice.Direct3D11.MapFlags.None,
                         out int mipSize,
-                        out MappedSubresource msr);
+                        out MappedSubresource msr
+                    );
 
                     mappedResource = new MappedResource(
                         resource,
@@ -361,7 +418,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                         sizeInBytes,
                         subresource,
                         (uint)msr.RowPitch,
-                        (uint)msr.DepthPitch);
+                        (uint)msr.DepthPitch
+                    );
                 }
             }
 
@@ -389,14 +447,21 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                 }
                 else
                 {
-                    D3D11Texture texture = Util.AssertSubtype<MappableResource, D3D11Texture>(resource);
+                    D3D11Texture texture = Util.AssertSubtype<MappableResource, D3D11Texture>(
+                        resource
+                    );
                     _immediateContext.Unmap(texture.DeviceTexture, (int)subresource);
                 }
             }
         }
     }
 
-    private protected unsafe override void UpdateBufferCore(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
+    private protected override unsafe void UpdateBufferCore(
+        DeviceBuffer buffer,
+        uint bufferOffsetInBytes,
+        IntPtr source,
+        uint sizeInBytes
+    )
     {
         D3D11Buffer d3dBuffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(buffer);
 
@@ -407,16 +472,22 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         bool isFullBuffer = bufferOffsetInBytes == 0 && sizeInBytes == buffer.SizeInBytes;
 
         bool useUpdateSubresource =
-            (!isDynamic && !isStaging) &&
-            (!isUniformBuffer || isFullBuffer);
+            (!isDynamic && !isStaging) && (!isUniformBuffer || isFullBuffer);
 
         bool useMap =
-            ((usage & BufferUsage.DynamicWrite) != 0 && isFullBuffer) ||
-            (usage & BufferUsage.StagingWrite) != 0;
+            ((usage & BufferUsage.DynamicWrite) != 0 && isFullBuffer)
+            || (usage & BufferUsage.StagingWrite) != 0;
 
         if (useUpdateSubresource)
         {
-            Box? subregion = new Box((int)bufferOffsetInBytes, 0, 0, (int)(sizeInBytes + bufferOffsetInBytes), 1, 1);
+            Box? subregion = new Box(
+                (int)bufferOffsetInBytes,
+                0,
+                0,
+                (int)(sizeInBytes + bufferOffsetInBytes),
+                1,
+                1
+            );
 
             if (isUniformBuffer)
             {
@@ -442,9 +513,15 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             lock (_immediateContextLock)
             {
                 _immediateContext.CopySubresourceRegion(
-                    d3dBuffer.Buffer, 0, (int)bufferOffsetInBytes, 0, 0,
-                    staging.Buffer, 0,
-                    sourceRegion);
+                    d3dBuffer.Buffer,
+                    0,
+                    (int)bufferOffsetInBytes,
+                    0,
+                    0,
+                    staging.Buffer,
+                    0,
+                    sourceRegion
+                );
             }
 
             lock (_stagingResourcesLock)
@@ -469,12 +546,13 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         }
 
         DeviceBuffer staging = ResourceFactory.CreateBuffer(
-            new BufferDescription(sizeInBytes, BufferUsage.StagingWrite));
+            new BufferDescription(sizeInBytes, BufferUsage.StagingWrite)
+        );
 
         return Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(staging);
     }
 
-    private protected unsafe override void UpdateTextureCore(
+    private protected override unsafe void UpdateTextureCore(
         Texture texture,
         IntPtr source,
         uint sizeInBytes,
@@ -485,27 +563,43 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         uint height,
         uint depth,
         uint mipLevel,
-        uint arrayLayer)
+        uint arrayLayer
+    )
     {
         D3D11Texture d3dTex = Util.AssertSubtype<Texture, D3D11Texture>(texture);
         bool useMap = (texture.Usage & TextureUsage.Staging) == TextureUsage.Staging;
         if (useMap)
         {
             uint subresource = texture.CalculateSubresource(mipLevel, arrayLayer);
-            MappedResource map = MapCore(texture, 0, texture.GetSizeInBytes(subresource), MapMode.Write, subresource);
+            MappedResource map = MapCore(
+                texture,
+                0,
+                texture.GetSizeInBytes(subresource),
+                MapMode.Write,
+                subresource
+            );
 
             uint denseRowSize = FormatHelpers.GetRowPitch(width, texture.Format);
             uint denseSliceSize = FormatHelpers.GetDepthPitch(denseRowSize, height, texture.Format);
 
             Util.CopyTextureRegion(
                 source.ToPointer(),
-                0, 0, 0,
-                denseRowSize, denseSliceSize,
+                0,
+                0,
+                0,
+                denseRowSize,
+                denseSliceSize,
                 map.Data.ToPointer(),
-                x, y, z,
-                map.RowPitch, map.DepthPitch,
-                width, height, depth,
-                texture.Format);
+                x,
+                y,
+                z,
+                map.RowPitch,
+                map.DepthPitch,
+                width,
+                height,
+                depth,
+                texture.Format
+            );
 
             UnmapCore(texture, subresource);
         }
@@ -518,7 +612,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                 top: (int)y,
                 front: (int)z,
                 bottom: (int)(y + height),
-                back: (int)(z + depth));
+                back: (int)(z + depth)
+            );
 
             uint srcRowPitch = FormatHelpers.GetRowPitch(width, texture.Format);
             uint srcDepthPitch = FormatHelpers.GetDepthPitch(srcRowPitch, height, texture.Format);
@@ -530,7 +625,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                     resourceRegion,
                     source,
                     (int)srcRowPitch,
-                    (int)srcDepthPitch);
+                    (int)srcDepthPitch
+                );
             }
         }
     }
@@ -631,7 +727,11 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                 ID3D11Debug? deviceDebug = _device.QueryInterfaceOrNull<ID3D11Debug>();
                 if (deviceDebug != null)
                 {
-                    deviceDebug.ReportLiveDeviceObjects(ReportLiveDeviceObjectFlags.Summary | ReportLiveDeviceObjectFlags.Detail | ReportLiveDeviceObjectFlags.IgnoreInternal);
+                    deviceDebug.ReportLiveDeviceObjects(
+                        ReportLiveDeviceObjectFlags.Summary
+                            | ReportLiveDeviceObjectFlags.Detail
+                            | ReportLiveDeviceObjectFlags.IgnoreInternal
+                    );
                     deviceDebug.Dispose();
                 }
             }
@@ -639,9 +739,15 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             _dxgiAdapter.Dispose();
 
             // Report live objects using DXGI if available (DXGIGetDebugInterface1 will fail on pre Windows 8 OS).
-            if (VorticeDXGI.DXGIGetDebugInterface1(out IDXGIDebug1? dxgiDebug).Success && dxgiDebug != null)
+            if (
+                VorticeDXGI.DXGIGetDebugInterface1(out IDXGIDebug1? dxgiDebug).Success
+                && dxgiDebug != null
+            )
             {
-                dxgiDebug.ReportLiveObjects(VorticeDXGI.DebugAll, ReportLiveObjectFlags.Summary | ReportLiveObjectFlags.IgnoreInternal);
+                dxgiDebug.ReportLiveObjects(
+                    VorticeDXGI.DebugAll,
+                    ReportLiveObjectFlags.Summary | ReportLiveObjectFlags.IgnoreInternal
+                );
                 dxgiDebug.Dispose();
             }
         }
@@ -652,9 +758,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         }
     }
 
-    private protected override void WaitForIdleCore()
-    {
-    }
+    private protected override void WaitForIdleCore() { }
 
     public override bool GetD3D11Info(out BackendInfoD3D11 info)
     {

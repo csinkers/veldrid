@@ -38,13 +38,12 @@ public abstract class Framebuffer : DeviceResource, IDisposable
     /// </summary>
     public uint Height { get; protected set; }
 
-    internal Framebuffer()
-    {
-    }
+    internal Framebuffer() { }
 
     internal Framebuffer(
         FramebufferAttachmentDescription? depthTargetDesc,
-        ReadOnlySpan<FramebufferAttachmentDescription> colorTargetDescs)
+        ReadOnlySpan<FramebufferAttachmentDescription> colorTargetDescs
+    )
     {
         if (depthTargetDesc != null)
         {
@@ -52,7 +51,8 @@ public abstract class Framebuffer : DeviceResource, IDisposable
             _depthTarget = new FramebufferAttachment(
                 depthAttachment.Target,
                 depthAttachment.ArrayLayer,
-                depthAttachment.MipLevel);
+                depthAttachment.MipLevel
+            );
         }
 
         FramebufferAttachment[] colorTargets = new FramebufferAttachment[colorTargetDescs.Length];
@@ -61,7 +61,8 @@ public abstract class Framebuffer : DeviceResource, IDisposable
             colorTargets[i] = new FramebufferAttachment(
                 colorTargetDescs[i].Target,
                 colorTargetDescs[i].ArrayLayer,
-                colorTargetDescs[i].MipLevel);
+                colorTargetDescs[i].MipLevel
+            );
         }
 
         Texture dimTex;

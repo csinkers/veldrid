@@ -19,7 +19,8 @@ internal ref struct ReadOnlySpanSplitter<T>
     public ReadOnlySpanSplitter(
         ReadOnlySpan<T> value,
         ReadOnlySpan<T> separator,
-        StringSplitOptions splitOptions)
+        StringSplitOptions splitOptions
+    )
     {
         if ((splitOptions & StringSplitOptions.TrimEntries) != 0)
         {
@@ -89,13 +90,15 @@ internal ref struct ReadOnlySpanSplitter<T>
 
         ReadOnlySpan<char> charSpan = MemoryMarshal.CreateReadOnlySpan(
             ref Unsafe.As<T, char>(ref MemoryMarshal.GetReference(span)),
-            span.Length);
+            span.Length
+        );
 
         charSpan = charSpan.Trim();
 
         ReadOnlySpan<T> tSpan = MemoryMarshal.CreateReadOnlySpan(
             ref Unsafe.As<char, T>(ref MemoryMarshal.GetReference(charSpan)),
-            charSpan.Length);
+            charSpan.Length
+        );
 
         return tSpan;
     }

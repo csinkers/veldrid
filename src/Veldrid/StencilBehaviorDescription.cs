@@ -11,14 +11,17 @@ public struct StencilBehaviorDescription : IEquatable<StencilBehaviorDescription
     /// The operation performed on samples that fail the stencil test.
     /// </summary>
     public StencilOperation Fail;
+
     /// <summary>
     /// The operation performed on samples that pass the stencil test.
     /// </summary>
     public StencilOperation Pass;
+
     /// <summary>
     /// The operation performed on samples that pass the stencil test but fail the depth test.
     /// </summary>
     public StencilOperation DepthFail;
+
     /// <summary>
     /// The comparison operator used in the stencil test.
     /// </summary>
@@ -35,7 +38,8 @@ public struct StencilBehaviorDescription : IEquatable<StencilBehaviorDescription
         StencilOperation fail,
         StencilOperation pass,
         StencilOperation depthFail,
-        ComparisonKind comparison)
+        ComparisonKind comparison
+    )
     {
         Fail = fail;
         Pass = pass;
@@ -50,7 +54,10 @@ public struct StencilBehaviorDescription : IEquatable<StencilBehaviorDescription
     /// <returns>True if all elements are equal; false otherswise.</returns>
     public bool Equals(StencilBehaviorDescription other)
     {
-        return Fail == other.Fail && Pass == other.Pass && DepthFail == other.DepthFail && Comparison == other.Comparison;
+        return Fail == other.Fail
+            && Pass == other.Pass
+            && DepthFail == other.DepthFail
+            && Comparison == other.Comparison;
     }
 
     /// <summary>

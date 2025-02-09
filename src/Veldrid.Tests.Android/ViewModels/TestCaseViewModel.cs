@@ -22,7 +22,12 @@ namespace Veldrid.Tests.Android.ViewModels
         private ITestCase testCase;
         private TestResultViewModel testResult;
 
-        internal TestCaseViewModel(Assembly assembly, ITestCase testCase, Navigator navigator, DeviceRunner runner)
+        internal TestCaseViewModel(
+            Assembly assembly,
+            ITestCase testCase,
+            Navigator navigator,
+            DeviceRunner runner
+        )
         {
             _navigator = navigator;
             _runner = runner;
@@ -93,7 +98,6 @@ namespace Veldrid.Tests.Android.ViewModels
             get { return testResult; }
             private set { Set(ref testResult, value); }
         }
-
 
         internal void UpdateTestState(TestResultViewModel message)
         {

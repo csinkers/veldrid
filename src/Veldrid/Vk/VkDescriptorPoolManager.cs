@@ -17,7 +17,10 @@ internal sealed class VkDescriptorPoolManager
         _pools.Add(CreateNewPool());
     }
 
-    public unsafe DescriptorAllocationToken Allocate(DescriptorResourceCounts counts, VkDescriptorSetLayout setLayout)
+    public unsafe DescriptorAllocationToken Allocate(
+        DescriptorResourceCounts counts,
+        VkDescriptorSetLayout setLayout
+    )
     {
         lock (_lock)
         {
@@ -27,7 +30,7 @@ internal sealed class VkDescriptorPoolManager
                 sType = VkStructureType.VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
                 descriptorSetCount = 1,
                 pSetLayouts = &setLayout,
-                descriptorPool = pool
+                descriptorPool = pool,
             };
 
             VkDescriptorSet set;
@@ -96,7 +99,7 @@ internal sealed class VkDescriptorPoolManager
             flags = VkDescriptorPoolCreateFlags.VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
             maxSets = totalSets,
             pPoolSizes = sizes,
-            poolSizeCount = poolSizeCount
+            poolSizeCount = poolSizeCount,
         };
 
         VkDescriptorPool descriptorPool;
@@ -130,14 +133,16 @@ internal sealed class VkDescriptorPoolManager
 
         internal bool Allocate(DescriptorResourceCounts counts)
         {
-            if (RemainingSets > 0
+            if (
+                RemainingSets > 0
                 && UniformBufferCount >= counts.UniformBufferCount
                 && UniformBufferDynamicCount >= counts.UniformBufferDynamicCount
                 && SampledImageCount >= counts.SampledImageCount
                 && SamplerCount >= counts.SamplerCount
                 && StorageBufferCount >= counts.StorageBufferCount
                 && StorageBufferDynamicCount >= counts.StorageBufferDynamicCount
-                && StorageImageCount >= counts.StorageImageCount)
+                && StorageImageCount >= counts.StorageImageCount
+            )
             {
                 RemainingSets -= 1;
                 UniformBufferCount -= counts.UniformBufferCount;
@@ -155,7 +160,11 @@ internal sealed class VkDescriptorPoolManager
             }
         }
 
-        internal unsafe void Free(VkDevice device, DescriptorAllocationToken token, DescriptorResourceCounts counts)
+        internal unsafe void Free(
+            VkDevice device,
+            DescriptorAllocationToken token,
+            DescriptorResourceCounts counts
+        )
         {
             VkDescriptorSet set = token.Set;
             vkFreeDescriptorSets(device, Pool, 1, &set);

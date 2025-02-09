@@ -136,8 +136,11 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
 
         for (int chainLength = 2; chainLength <= 10; chainLength += 4)
         {
-            DeviceBuffer[] dsts = Enumerable.Range(0, chainLength)
-                .Select(i => RF.CreateBuffer(new BufferDescription(1024, BufferUsage.UniformBuffer)))
+            DeviceBuffer[] dsts = Enumerable
+                .Range(0, chainLength)
+                .Select(i =>
+                    RF.CreateBuffer(new BufferDescription(1024, BufferUsage.UniformBuffer))
+                )
                 .ToArray();
 
             CommandList copyCL = RF.CreateCommandList();
@@ -167,7 +170,9 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.If(GD.BackendType == GraphicsBackend.Vulkan); // TODO
         Skip.If(GD.BackendType == GraphicsBackend.Metal); // TODO
 
-        DeviceBuffer buffer = RF.CreateBuffer(new BufferDescription(1024, BufferUsage.StagingReadWrite));
+        DeviceBuffer buffer = RF.CreateBuffer(
+            new BufferDescription(1024, BufferUsage.StagingReadWrite)
+        );
         MappedResourceView<int> view = GD.Map<int>(buffer, MapMode.ReadWrite);
         int[] data = Enumerable.Range(0, 256).Select(i => 2 * i).ToArray();
         Assert.Throws<VeldridMappedResourceException>(() => GD.UpdateBuffer(buffer, 0, data));
@@ -179,7 +184,9 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.If(GD.BackendType == GraphicsBackend.Vulkan); // TODO
         Skip.If(GD.BackendType == GraphicsBackend.Metal); // TODO
 
-        DeviceBuffer buffer = RF.CreateBuffer(new BufferDescription(1024, BufferUsage.StagingReadWrite));
+        DeviceBuffer buffer = RF.CreateBuffer(
+            new BufferDescription(1024, BufferUsage.StagingReadWrite)
+        );
         MappedResource map = GD.Map(buffer, MapMode.ReadWrite);
         Assert.Throws<VeldridMappedResourceException>(() => GD.Map(buffer, MapMode.ReadWrite));
         GD.Unmap(buffer);
@@ -195,17 +202,17 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     [Fact]
     public void Map_DifferentMode_ReadFromWriteFails()
     {
-        DeviceBuffer buffer = RF.CreateBuffer(new BufferDescription(1024, BufferUsage.StagingWrite));
+        DeviceBuffer buffer = RF.CreateBuffer(
+            new BufferDescription(1024, BufferUsage.StagingWrite)
+        );
         Assert.Throws<VeldridException>(() => GD.Map(buffer, MapMode.Read));
     }
 
     [Fact]
     public unsafe void UnusualSize()
     {
-        DeviceBuffer src = RF.CreateBuffer(
-            new BufferDescription(208, BufferUsage.UniformBuffer));
-        DeviceBuffer dst = RF.CreateBuffer(
-            new BufferDescription(208, BufferUsage.StagingRead));
+        DeviceBuffer src = RF.CreateBuffer(new BufferDescription(208, BufferUsage.UniformBuffer));
+        DeviceBuffer dst = RF.CreateBuffer(new BufferDescription(208, BufferUsage.StagingRead));
 
         byte[] data = Enumerable.Range(0, 208).Select(i => (byte)(i * 150)).ToArray();
         GD.UpdateBuffer(src, 0, data);
@@ -227,7 +234,8 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     public void Update_Dynamic_NonZeroOffset()
     {
         DeviceBuffer dynamic = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.DynamicWrite | BufferUsage.UniformBuffer));
+            new BufferDescription(1024, BufferUsage.DynamicWrite | BufferUsage.UniformBuffer)
+        );
 
         byte[] initialData = Enumerable.Range(0, 1024).Select(i => (byte)i).ToArray();
         GD.UpdateBuffer(dynamic, 0, initialData);
@@ -240,8 +248,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         GD.SubmitCommands(cl);
         GD.WaitForIdle();
 
-        DeviceBuffer dst = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.StagingRead));
+        DeviceBuffer dst = RF.CreateBuffer(new BufferDescription(1024, BufferUsage.StagingRead));
 
         cl.Begin();
         cl.CopyBuffer(dynamic, 0, dst, 0, dynamic.SizeInBytes);
@@ -265,7 +272,8 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     public void Dynamic_MapRead_Fails()
     {
         DeviceBuffer dynamic = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.DynamicRead | BufferUsage.UniformBuffer));
+            new BufferDescription(1024, BufferUsage.DynamicRead | BufferUsage.UniformBuffer)
+        );
         Assert.Throws<VeldridException>(() => GD.Map(dynamic, MapMode.ReadWrite));
     }
 
@@ -273,7 +281,8 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     public void CommandList_Update_Staging()
     {
         DeviceBuffer staging = RF.CreateBuffer(
-            new BufferDescription(1024, BufferUsage.StagingRead));
+            new BufferDescription(1024, BufferUsage.StagingRead)
+        );
         byte[] data = Enumerable.Range(0, 1024).Select(i => (byte)i).ToArray();
 
         CommandList cl = RF.CreateCommandList();
@@ -291,30 +300,20 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     }
 
     [Theory]
-    [InlineData(
-        60, BufferUsage.VertexBuffer, 1,
-        70, BufferUsage.VertexBuffer, 13,
-        11)]
-    [InlineData(
-        60, BufferUsage.StagingWrite, 1,
-        70, BufferUsage.VertexBuffer, 13,
-        11)]
-    [InlineData(
-        60, BufferUsage.VertexBuffer, 1,
-        70, BufferUsage.StagingWrite, 13,
-        11)]
-    [InlineData(
-        60, BufferUsage.StagingWrite, 1,
-        70, BufferUsage.StagingWrite, 13,
-        11)]
-    [InlineData(
-        5, BufferUsage.VertexBuffer, 3,
-        10, BufferUsage.VertexBuffer, 7,
-        2)]
+    [InlineData(60, BufferUsage.VertexBuffer, 1, 70, BufferUsage.VertexBuffer, 13, 11)]
+    [InlineData(60, BufferUsage.StagingWrite, 1, 70, BufferUsage.VertexBuffer, 13, 11)]
+    [InlineData(60, BufferUsage.VertexBuffer, 1, 70, BufferUsage.StagingWrite, 13, 11)]
+    [InlineData(60, BufferUsage.StagingWrite, 1, 70, BufferUsage.StagingWrite, 13, 11)]
+    [InlineData(5, BufferUsage.VertexBuffer, 3, 10, BufferUsage.VertexBuffer, 7, 2)]
     public void Copy_UnalignedRegion(
-        uint srcBufferSize, BufferUsage srcUsage, uint srcCopyOffset,
-        uint dstBufferSize, BufferUsage dstUsage, uint dstCopyOffset,
-        uint copySize)
+        uint srcBufferSize,
+        BufferUsage srcUsage,
+        uint srcCopyOffset,
+        uint dstBufferSize,
+        BufferUsage dstUsage,
+        uint dstCopyOffset,
+        uint copySize
+    )
     {
         DeviceBuffer src = CreateBuffer(srcBufferSize, srcUsage);
         DeviceBuffer dst = CreateBuffer(dstBufferSize, dstUsage);
@@ -345,7 +344,12 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
     [Theory]
     [InlineData(BufferUsage.VertexBuffer, 13, 5, 1)]
     [InlineData(BufferUsage.StagingWrite, 13, 5, 1)]
-    public void CommandList_UpdateNonStaging_Unaligned(BufferUsage usage, uint bufferSize, uint dataSize, uint offset)
+    public void CommandList_UpdateNonStaging_Unaligned(
+        BufferUsage usage,
+        uint bufferSize,
+        uint dataSize,
+        uint offset
+    )
     {
         DeviceBuffer buffer = CreateBuffer(bufferSize, usage);
         byte[] data = Enumerable.Range(0, (int)dataSize).Select(i => (byte)i).ToArray();
@@ -432,7 +436,10 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.If((usage & BufferUsage.StructuredBufferReadWrite) != 0);
 
         BufferDescription description = new(64, usage);
-        if ((usage & BufferUsage.StructuredBufferReadOnly) != 0 || (usage & BufferUsage.StructuredBufferReadWrite) != 0)
+        if (
+            (usage & BufferUsage.StructuredBufferReadOnly) != 0
+            || (usage & BufferUsage.StructuredBufferReadWrite) != 0
+        )
         {
             description.StructureByteStride = 16;
         }
@@ -557,6 +564,6 @@ public class VulkanBufferTests : BufferTestBase<VulkanDeviceCreator> { }
 public class D3D11BufferTests : BufferTestBase<D3D11DeviceCreator> { }
 #endif
 #if TEST_METAL
-    [Trait("Backend", "Metal")]
-    public class MetalBufferTests : BufferTestBase<MetalDeviceCreator> { }
+[Trait("Backend", "Metal")]
+public class MetalBufferTests : BufferTestBase<MetalDeviceCreator> { }
 #endif

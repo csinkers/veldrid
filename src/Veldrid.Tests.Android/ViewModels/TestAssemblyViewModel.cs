@@ -46,7 +46,8 @@ namespace Veldrid.Tests.Android.ViewModels
                 allTests,
                 IsTestFilterMatch,
                 (SearchQuery, ResultFilter),
-                new TestComparer());
+                new TestComparer()
+            );
 
             filteredTests.ItemChanged += (sender, args) => UpdateCaption();
             filteredTests.CollectionChanged += (sender, args) => UpdateCaption();
@@ -135,15 +136,20 @@ namespace Veldrid.Tests.Android.ViewModels
 
             Task.Delay(500, token)
                 .ContinueWith(
-                    x => { filteredTests.FilterArgument = (SearchQuery, ResultFilter); },
+                    x =>
+                    {
+                        filteredTests.FilterArgument = (SearchQuery, ResultFilter);
+                    },
                     token,
                     TaskContinuationOptions.None,
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                    TaskScheduler.FromCurrentSynchronizationContext()
+                );
         }
 
         static bool IsTestFilterMatch(TestCaseViewModel test, (string?, TestState) query)
         {
-            if (test == null) throw new ArgumentNullException(nameof(test));
+            if (test == null)
+                throw new ArgumentNullException(nameof(test));
             TestState? requiredTestState = query.Item2 switch
             {
                 TestState.All => null,
@@ -159,7 +165,8 @@ namespace Veldrid.Tests.Android.ViewModels
             }
 
             string? pattern = query.Item1;
-            return string.IsNullOrWhiteSpace(pattern) || test.DisplayName.Contains(pattern.Trim(), StringComparison.OrdinalIgnoreCase);
+            return string.IsNullOrWhiteSpace(pattern)
+                || test.DisplayName.Contains(pattern.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
         async void RunAllTests()
@@ -188,11 +195,26 @@ namespace Veldrid.Tests.Android.ViewModels
             }
         }
 
-
-        public int NotRun { get => _notRun; set => Set(ref _notRun, value); }
-        public int Passed { get => _passed; set => Set(ref _passed, value); }
-        public int Failed { get => _failed; set => Set(ref _failed, value); }
-        public int Skipped { get => _skipped; set => Set(ref _skipped, value); }
+        public int NotRun
+        {
+            get => _notRun;
+            set => Set(ref _notRun, value);
+        }
+        public int Passed
+        {
+            get => _passed;
+            set => Set(ref _passed, value);
+        }
+        public int Failed
+        {
+            get => _failed;
+            set => Set(ref _failed, value);
+        }
+        public int Skipped
+        {
+            get => _skipped;
+            set => Set(ref _skipped, value);
+        }
 
         void UpdateCaption()
         {
@@ -205,8 +227,13 @@ namespace Veldrid.Tests.Android.ViewModels
             }
             else
             {
-                IEnumerable<IGrouping<TestState, TestCaseViewModel>> outcomes = allTests.GroupBy(r => r.Result);
-                Dictionary<TestState, int> results = outcomes.ToDictionary(k => k.Key, v => v.Count());
+                IEnumerable<IGrouping<TestState, TestCaseViewModel>> outcomes = allTests.GroupBy(
+                    r => r.Result
+                );
+                Dictionary<TestState, int> results = outcomes.ToDictionary(
+                    k => k.Key,
+                    v => v.Count()
+                );
 
                 results.TryGetValue(TestState.Passed, out int positive);
                 results.TryGetValue(TestState.Failed, out int failure);
@@ -256,9 +283,7 @@ namespace Veldrid.Tests.Android.ViewModels
                             RunStatus = RunStatus.NotRun;
                             Result = TestState.NotRun;
                         }
-
                     }
-
                 }
                 else if (Result == TestState.NotRun)
                 {
@@ -272,7 +297,11 @@ namespace Veldrid.Tests.Android.ViewModels
         {
             public int Compare(TestCaseViewModel? x, TestCaseViewModel? y)
             {
-                int compare = string.Compare(x.DisplayName, y.DisplayName, StringComparison.OrdinalIgnoreCase);
+                int compare = string.Compare(
+                    x.DisplayName,
+                    y.DisplayName,
+                    StringComparison.OrdinalIgnoreCase
+                );
                 return compare;
             }
         }

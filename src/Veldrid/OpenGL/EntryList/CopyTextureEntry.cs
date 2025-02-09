@@ -16,7 +16,8 @@ internal struct CopyTextureEntry(
     uint width,
     uint height,
     uint depth,
-    uint layerCount)
+    uint layerCount
+)
 {
     public readonly Tracked<Texture> Source = source;
     public readonly uint SrcX = srcX;

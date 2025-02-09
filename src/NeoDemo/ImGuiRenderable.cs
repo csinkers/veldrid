@@ -15,11 +15,21 @@ public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
     {
         if (_imguiRenderer == null)
         {
-            _imguiRenderer = new ImGuiRenderer(gd, sc.MainSceneFramebuffer.OutputDescription, width, height, ColorSpaceHandling.Linear);
+            _imguiRenderer = new ImGuiRenderer(
+                gd,
+                sc.MainSceneFramebuffer.OutputDescription,
+                width,
+                height,
+                ColorSpaceHandling.Linear
+            );
         }
         else
         {
-            _imguiRenderer.CreateDeviceResources(gd, sc.MainSceneFramebuffer.OutputDescription, ColorSpaceHandling.Linear);
+            _imguiRenderer.CreateDeviceResources(
+                gd,
+                sc.MainSceneFramebuffer.OutputDescription,
+                ColorSpaceHandling.Linear
+            );
         }
     }
 
@@ -33,15 +43,22 @@ public class ImGuiRenderable(int width, int height) : Renderable, IUpdateable
         return new RenderOrderKey(ulong.MaxValue);
     }
 
-    public override void Render(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass)
+    public override void Render(
+        GraphicsDevice gd,
+        CommandList cl,
+        SceneContext sc,
+        RenderPasses renderPass
+    )
     {
         Debug.Assert(renderPass == RenderPasses.Overlay);
         _imguiRenderer.Render(gd, cl);
     }
 
-    public override void UpdatePerFrameResources(GraphicsDevice gd, CommandList cl, SceneContext sc)
-    {
-    }
+    public override void UpdatePerFrameResources(
+        GraphicsDevice gd,
+        CommandList cl,
+        SceneContext sc
+    ) { }
 
     public override RenderPasses RenderPasses => RenderPasses.Overlay;
 

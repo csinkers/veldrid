@@ -39,7 +39,9 @@ internal sealed class MTLPipeline : Pipeline
         NonVertexBufferCount = 0;
         for (int i = 0; i < ResourceLayouts.Length; i++)
         {
-            ResourceLayouts[i] = Util.AssertSubtype<ResourceLayout, MTLResourceLayout>(description.ResourceLayouts[i]);
+            ResourceLayouts[i] = Util.AssertSubtype<ResourceLayout, MTLResourceLayout>(
+                description.ResourceLayouts[i]
+            );
             NonVertexBufferCount += ResourceLayouts[i].BufferCount;
         }
         ResourceBindingModel = description.ResourceBindingModel ?? gd.ResourceBindingModel;
@@ -58,12 +60,20 @@ internal sealed class MTLPipeline : Pipeline
             if (mtlShader.HasFunctionConstants)
             {
                 // Need to create specialized MTLFunction.
-                MTLFunctionConstantValues constantValues = CreateConstantValues(description.ShaderSet.Specializations);
-                specializedFunction = mtlShader.Library.newFunctionWithNameConstantValues(mtlShader.EntryPoint, constantValues);
+                MTLFunctionConstantValues constantValues = CreateConstantValues(
+                    description.ShaderSet.Specializations
+                );
+                specializedFunction = mtlShader.Library.newFunctionWithNameConstantValues(
+                    mtlShader.EntryPoint,
+                    constantValues
+                );
                 AddSpecializedFunction(specializedFunction);
                 ObjectiveCRuntime.release(constantValues.NativePtr);
 
-                Debug.Assert(specializedFunction.NativePtr != IntPtr.Zero, "Failed to create specialized MTLFunction");
+                Debug.Assert(
+                    specializedFunction.NativePtr != IntPtr.Zero,
+                    "Failed to create specialized MTLFunction"
+                );
             }
             else
             {
@@ -86,13 +96,15 @@ internal sealed class MTLPipeline : Pipeline
 
         for (uint i = 0; i < vdVertexLayouts.Length; i++)
         {
-            uint layoutIndex = ResourceBindingModel == ResourceBindingModel.Improved
-                ? NonVertexBufferCount + i
-                : i;
+            uint layoutIndex =
+                ResourceBindingModel == ResourceBindingModel.Improved
+                    ? NonVertexBufferCount + i
+                    : i;
             MTLVertexBufferLayoutDescriptor mtlLayout = vertexDescriptor.layouts[layoutIndex];
             mtlLayout.stride = (UIntPtr)vdVertexLayouts[i].Stride;
             uint stepRate = vdVertexLayouts[i].InstanceStepRate;
-            mtlLayout.stepFunction = stepRate == 0 ? MTLVertexStepFunction.PerVertex : MTLVertexStepFunction.PerInstance;
+            mtlLayout.stepFunction =
+                stepRate == 0 ? MTLVertexStepFunction.PerVertex : MTLVertexStepFunction.PerInstance;
             mtlLayout.stepRate = (UIntPtr)Math.Max(1, stepRate);
         }
 
@@ -105,11 +117,14 @@ internal sealed class MTLPipeline : Pipeline
             {
                 VertexElementDescription elementDesc = vdDesc.Elements[j];
                 MTLVertexAttributeDescriptor mtlAttribute = vertexDescriptor.attributes[element];
-                mtlAttribute.bufferIndex = (UIntPtr)(ResourceBindingModel == ResourceBindingModel.Improved
-                    ? NonVertexBufferCount + i
-                    : i);
+                mtlAttribute.bufferIndex = (UIntPtr)(
+                    ResourceBindingModel == ResourceBindingModel.Improved
+                        ? NonVertexBufferCount + i
+                        : i
+                );
                 mtlAttribute.format = MTLFormats.VdToMTLVertexFormat(elementDesc.Format);
-                mtlAttribute.offset = elementDesc.Offset != 0 ? (UIntPtr)elementDesc.Offset : (UIntPtr)offset;
+                mtlAttribute.offset =
+                    elementDesc.Offset != 0 ? (UIntPtr)elementDesc.Offset : (UIntPtr)offset;
                 offset += FormatSizeHelpers.GetSizeInBytes(elementDesc.Format);
                 element += 1;
             }
@@ -130,7 +145,10 @@ internal sealed class MTLPipeline : Pipeline
         if (outputs.DepthAttachment != null)
         {
             PixelFormat depthFormat = outputs.DepthAttachment.Value.Format;
-            MTLPixelFormat mtlDepthFormat = MTLFormats.VdToMTLPixelFormat(depthFormat, TextureUsage.DepthStencil);
+            MTLPixelFormat mtlDepthFormat = MTLFormats.VdToMTLPixelFormat(
+                depthFormat,
+                TextureUsage.DepthStencil
+            );
             mtlDesc.depthAttachmentPixelFormat = mtlDepthFormat;
             if (FormatHelpers.IsStencilFormat(depthFormat))
             {
@@ -143,17 +161,36 @@ internal sealed class MTLPipeline : Pipeline
         for (int i = 0; i < outputColorAttachments.Length; i++)
         {
             BlendAttachmentDescription attachmentBlendDesc = blendStateDesc.AttachmentStates[i];
-            MTLRenderPipelineColorAttachmentDescriptor colorDesc = mtlDesc.colorAttachments[(uint)i];
-            colorDesc.pixelFormat = MTLFormats.VdToMTLPixelFormat(outputColorAttachments[i].Format, default);
+            MTLRenderPipelineColorAttachmentDescriptor colorDesc = mtlDesc.colorAttachments[
+                (uint)i
+            ];
+            colorDesc.pixelFormat = MTLFormats.VdToMTLPixelFormat(
+                outputColorAttachments[i].Format,
+                default
+            );
             colorDesc.blendingEnabled = attachmentBlendDesc.BlendEnabled;
-            colorDesc.writeMask = MTLFormats.VdToMTLColorWriteMask(attachmentBlendDesc.ColorWriteMask.GetOrDefault());
-            colorDesc.alphaBlendOperation = MTLFormats.VdToMTLBlendOp(attachmentBlendDesc.AlphaFunction);
-            colorDesc.sourceAlphaBlendFactor = MTLFormats.VdToMTLBlendFactor(attachmentBlendDesc.SourceAlphaFactor);
-            colorDesc.destinationAlphaBlendFactor = MTLFormats.VdToMTLBlendFactor(attachmentBlendDesc.DestinationAlphaFactor);
+            colorDesc.writeMask = MTLFormats.VdToMTLColorWriteMask(
+                attachmentBlendDesc.ColorWriteMask.GetOrDefault()
+            );
+            colorDesc.alphaBlendOperation = MTLFormats.VdToMTLBlendOp(
+                attachmentBlendDesc.AlphaFunction
+            );
+            colorDesc.sourceAlphaBlendFactor = MTLFormats.VdToMTLBlendFactor(
+                attachmentBlendDesc.SourceAlphaFactor
+            );
+            colorDesc.destinationAlphaBlendFactor = MTLFormats.VdToMTLBlendFactor(
+                attachmentBlendDesc.DestinationAlphaFactor
+            );
 
-            colorDesc.rgbBlendOperation = MTLFormats.VdToMTLBlendOp(attachmentBlendDesc.ColorFunction);
-            colorDesc.sourceRGBBlendFactor = MTLFormats.VdToMTLBlendFactor(attachmentBlendDesc.SourceColorFactor);
-            colorDesc.destinationRGBBlendFactor = MTLFormats.VdToMTLBlendFactor(attachmentBlendDesc.DestinationColorFactor);
+            colorDesc.rgbBlendOperation = MTLFormats.VdToMTLBlendOp(
+                attachmentBlendDesc.ColorFunction
+            );
+            colorDesc.sourceRGBBlendFactor = MTLFormats.VdToMTLBlendFactor(
+                attachmentBlendDesc.SourceColorFactor
+            );
+            colorDesc.destinationRGBBlendFactor = MTLFormats.VdToMTLBlendFactor(
+                attachmentBlendDesc.DestinationColorFactor
+            );
         }
 
         mtlDesc.alphaToCoverageEnabled = blendStateDesc.AlphaToCoverageEnabled;
@@ -163,10 +200,11 @@ internal sealed class MTLPipeline : Pipeline
 
         if (outputs.DepthAttachment != null)
         {
-            MTLDepthStencilDescriptor depthDescriptor = MTLUtil.AllocInit<MTLDepthStencilDescriptor>(
-                "MTLDepthStencilDescriptor"u8);
+            MTLDepthStencilDescriptor depthDescriptor =
+                MTLUtil.AllocInit<MTLDepthStencilDescriptor>("MTLDepthStencilDescriptor"u8);
             depthDescriptor.depthCompareFunction = MTLFormats.VdToMTLCompareFunction(
-                description.DepthStencilState.DepthComparison);
+                description.DepthStencilState.DepthComparison
+            );
             depthDescriptor.depthWriteEnabled = description.DepthStencilState.DepthWriteEnabled;
 
             bool stencilEnabled = description.DepthStencilState.StencilTestEnabled;
@@ -175,23 +213,47 @@ internal sealed class MTLPipeline : Pipeline
                 StencilReference = description.DepthStencilState.StencilReference;
 
                 StencilBehaviorDescription vdFrontDesc = description.DepthStencilState.StencilFront;
-                MTLStencilDescriptor front = MTLUtil.AllocInit<MTLStencilDescriptor>("MTLStencilDescriptor"u8);
-                front.readMask = stencilEnabled ? description.DepthStencilState.StencilReadMask : 0u;
-                front.writeMask = stencilEnabled ? description.DepthStencilState.StencilWriteMask : 0u;
-                front.depthFailureOperation = MTLFormats.VdToMTLStencilOperation(vdFrontDesc.DepthFail);
-                front.stencilFailureOperation = MTLFormats.VdToMTLStencilOperation(vdFrontDesc.Fail);
-                front.depthStencilPassOperation = MTLFormats.VdToMTLStencilOperation(vdFrontDesc.Pass);
-                front.stencilCompareFunction = MTLFormats.VdToMTLCompareFunction(vdFrontDesc.Comparison);
+                MTLStencilDescriptor front = MTLUtil.AllocInit<MTLStencilDescriptor>(
+                    "MTLStencilDescriptor"u8
+                );
+                front.readMask = stencilEnabled
+                    ? description.DepthStencilState.StencilReadMask
+                    : 0u;
+                front.writeMask = stencilEnabled
+                    ? description.DepthStencilState.StencilWriteMask
+                    : 0u;
+                front.depthFailureOperation = MTLFormats.VdToMTLStencilOperation(
+                    vdFrontDesc.DepthFail
+                );
+                front.stencilFailureOperation = MTLFormats.VdToMTLStencilOperation(
+                    vdFrontDesc.Fail
+                );
+                front.depthStencilPassOperation = MTLFormats.VdToMTLStencilOperation(
+                    vdFrontDesc.Pass
+                );
+                front.stencilCompareFunction = MTLFormats.VdToMTLCompareFunction(
+                    vdFrontDesc.Comparison
+                );
                 depthDescriptor.frontFaceStencil = front;
 
                 StencilBehaviorDescription vdBackDesc = description.DepthStencilState.StencilBack;
-                MTLStencilDescriptor back = MTLUtil.AllocInit<MTLStencilDescriptor>("MTLStencilDescriptor"u8);
+                MTLStencilDescriptor back = MTLUtil.AllocInit<MTLStencilDescriptor>(
+                    "MTLStencilDescriptor"u8
+                );
                 back.readMask = stencilEnabled ? description.DepthStencilState.StencilReadMask : 0u;
-                back.writeMask = stencilEnabled ? description.DepthStencilState.StencilWriteMask : 0u;
-                back.depthFailureOperation = MTLFormats.VdToMTLStencilOperation(vdBackDesc.DepthFail);
+                back.writeMask = stencilEnabled
+                    ? description.DepthStencilState.StencilWriteMask
+                    : 0u;
+                back.depthFailureOperation = MTLFormats.VdToMTLStencilOperation(
+                    vdBackDesc.DepthFail
+                );
                 back.stencilFailureOperation = MTLFormats.VdToMTLStencilOperation(vdBackDesc.Fail);
-                back.depthStencilPassOperation = MTLFormats.VdToMTLStencilOperation(vdBackDesc.Pass);
-                back.stencilCompareFunction = MTLFormats.VdToMTLCompareFunction(vdBackDesc.Comparison);
+                back.depthStencilPassOperation = MTLFormats.VdToMTLStencilOperation(
+                    vdBackDesc.Pass
+                );
+                back.stencilCompareFunction = MTLFormats.VdToMTLCompareFunction(
+                    vdBackDesc.Comparison
+                );
                 depthDescriptor.backFaceStencil = back;
 
                 ObjectiveCRuntime.release(front.NativePtr);
@@ -202,7 +264,9 @@ internal sealed class MTLPipeline : Pipeline
             ObjectiveCRuntime.release(depthDescriptor.NativePtr);
         }
 
-        DepthClipMode = description.DepthStencilState.DepthTestEnabled ? MTLDepthClipMode.Clip : MTLDepthClipMode.Clamp;
+        DepthClipMode = description.DepthStencilState.DepthTestEnabled
+            ? MTLDepthClipMode.Clip
+            : MTLDepthClipMode.Clamp;
     }
 
     public MTLPipeline(in ComputePipelineDescription description, MTLGraphicsDevice gd)
@@ -212,27 +276,39 @@ internal sealed class MTLPipeline : Pipeline
         ResourceLayouts = new MTLResourceLayout[description.ResourceLayouts.Length];
         for (int i = 0; i < ResourceLayouts.Length; i++)
         {
-            ResourceLayouts[i] = Util.AssertSubtype<ResourceLayout, MTLResourceLayout>(description.ResourceLayouts[i]);
+            ResourceLayouts[i] = Util.AssertSubtype<ResourceLayout, MTLResourceLayout>(
+                description.ResourceLayouts[i]
+            );
         }
 
         ThreadsPerThreadgroup = new MTLSize(
             description.ThreadGroupSizeX,
             description.ThreadGroupSizeY,
-            description.ThreadGroupSizeZ);
+            description.ThreadGroupSizeZ
+        );
 
         MTLComputePipelineDescriptor mtlDesc = MTLUtil.AllocInit<MTLComputePipelineDescriptor>(
-            "MTLComputePipelineDescriptor"u8);
+            "MTLComputePipelineDescriptor"u8
+        );
         MTLShader mtlShader = Util.AssertSubtype<Shader, MTLShader>(description.ComputeShader);
         MTLFunction specializedFunction;
         if (mtlShader.HasFunctionConstants)
         {
             // Need to create specialized MTLFunction.
-            MTLFunctionConstantValues constantValues = CreateConstantValues(description.Specializations);
-            specializedFunction = mtlShader.Library.newFunctionWithNameConstantValues(mtlShader.EntryPoint, constantValues);
+            MTLFunctionConstantValues constantValues = CreateConstantValues(
+                description.Specializations
+            );
+            specializedFunction = mtlShader.Library.newFunctionWithNameConstantValues(
+                mtlShader.EntryPoint,
+                constantValues
+            );
             AddSpecializedFunction(specializedFunction);
             ObjectiveCRuntime.release(constantValues.NativePtr);
 
-            Debug.Assert(specializedFunction.NativePtr != IntPtr.Zero, "Failed to create specialized MTLFunction");
+            Debug.Assert(
+                specializedFunction.NativePtr != IntPtr.Zero,
+                "Failed to create specialized MTLFunction"
+            );
         }
         else
         {
@@ -247,8 +323,10 @@ internal sealed class MTLPipeline : Pipeline
             foreach (ResourceLayoutElementDescription rle in layout.Description.Elements)
             {
                 ResourceKind kind = rle.Kind;
-                if (kind == ResourceKind.UniformBuffer
-                    || kind == ResourceKind.StructuredBufferReadOnly)
+                if (
+                    kind == ResourceKind.UniformBuffer
+                    || kind == ResourceKind.StructuredBufferReadOnly
+                )
                 {
                     MTLPipelineBufferDescriptor bufferDesc = buffers[bufferIndex];
                     bufferDesc.mutability = MTLMutability.Immutable;
@@ -268,7 +346,9 @@ internal sealed class MTLPipeline : Pipeline
         ObjectiveCRuntime.release(mtlDesc.NativePtr);
     }
 
-    static unsafe MTLFunctionConstantValues CreateConstantValues(SpecializationConstant[]? specializations)
+    static unsafe MTLFunctionConstantValues CreateConstantValues(
+        SpecializationConstant[]? specializations
+    )
     {
         MTLFunctionConstantValues ret = MTLFunctionConstantValues.New();
         if (specializations != null)

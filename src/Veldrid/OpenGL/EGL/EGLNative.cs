@@ -30,26 +30,48 @@ internal static unsafe class EGLNative
 
     [DllImport(LibName)]
     public static extern EGLError eglGetError();
+
     [DllImport(LibName)]
     public static extern IntPtr eglGetCurrentContext();
+
     [DllImport(LibName)]
     public static extern int eglDestroyContext(IntPtr display, IntPtr context);
+
     [DllImport(LibName)]
     public static extern int eglDestroySurface(IntPtr display, IntPtr surface);
+
     [DllImport(LibName)]
     public static extern int eglTerminate(IntPtr display);
+
     [DllImport(LibName)]
-    public static extern int eglMakeCurrent(IntPtr display, IntPtr draw, IntPtr read, IntPtr context);
+    public static extern int eglMakeCurrent(
+        IntPtr display,
+        IntPtr draw,
+        IntPtr read,
+        IntPtr context
+    );
+
     [DllImport(LibName)]
-    public static extern int eglChooseConfig(IntPtr display, int* attrib_list, IntPtr* configs, int config_size, int* num_config);
+    public static extern int eglChooseConfig(
+        IntPtr display,
+        int* attrib_list,
+        IntPtr* configs,
+        int config_size,
+        int* num_config
+    );
+
     [DllImport(LibName)]
     public static extern IntPtr eglGetProcAddress(string name);
+
     [DllImport(LibName)]
     public static extern IntPtr eglGetCurrentDisplay();
+
     [DllImport(LibName)]
     public static extern IntPtr eglGetDisplay(int native_display);
+
     [DllImport(LibName)]
     public static extern IntPtr eglGetCurrentSurface(int readdraw);
+
     [DllImport(LibName)]
     public static extern int eglInitialize(IntPtr display, int* major, int* minor);
 
@@ -58,32 +80,45 @@ internal static unsafe class EGLNative
         IntPtr display,
         IntPtr config,
         IntPtr native_window,
-        int* attrib_list);
+        int* attrib_list
+    );
 
     [DllImport(LibName)]
     public static extern IntPtr eglCreatePbufferSurface(
         IntPtr display,
         IntPtr config,
-        int* attrib_list);
+        int* attrib_list
+    );
 
     [DllImport(LibName)]
-    public static extern IntPtr eglCreateContext(IntPtr display,
+    public static extern IntPtr eglCreateContext(
+        IntPtr display,
         IntPtr config,
         IntPtr share_context,
-        int* attrib_list);
+        int* attrib_list
+    );
+
     [DllImport(LibName)]
     public static extern int eglSwapBuffers(IntPtr display, IntPtr surface);
+
     [DllImport(LibName)]
     public static extern int eglSwapInterval(IntPtr display, int value);
+
     [DllImport(LibName)]
-    public static extern int eglGetConfigAttrib(IntPtr display, IntPtr config, int attribute, int* value);
+    public static extern int eglGetConfigAttrib(
+        IntPtr display,
+        IntPtr config,
+        int attribute,
+        int* value
+    );
 
     [DllImport(LibName)]
     public static extern int eglQuerySurface(
         IntPtr display,
         IntPtr surface,
         int attribute,
-        int* value);
+        int* value
+    );
 }
 
 internal enum EGLError

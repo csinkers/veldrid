@@ -5,7 +5,8 @@ internal struct CopyBufferEntry(
     uint sourceOffset,
     Tracked<DeviceBuffer> destination,
     uint destinationOffset,
-    uint sizeInBytes)
+    uint sizeInBytes
+)
 {
     public readonly Tracked<DeviceBuffer> Source = source;
     public readonly uint SourceOffset = sourceOffset;

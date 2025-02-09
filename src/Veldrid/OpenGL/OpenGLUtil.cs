@@ -29,7 +29,11 @@ internal static class OpenGLUtil
         throw new VeldridException("glGetError: " + (ErrorCode)error);
     }
 
-    internal static unsafe void SetObjectLabel(ObjectLabelIdentifier identifier, uint target, ReadOnlySpan<char> name)
+    internal static unsafe void SetObjectLabel(
+        ObjectLabelIdentifier identifier,
+        uint target,
+        ReadOnlySpan<char> name
+    )
     {
         if (!HasGlObjectLabel)
         {
@@ -51,7 +55,7 @@ internal static class OpenGLUtil
             MaxLabelLength = maxLabelLength;
         }
         maxLabelLength = MaxLabelLength.GetValueOrDefault();
-            
+
         int byteCount = Util.UTF8.GetByteCount(name);
         if (byteCount >= maxLabelLength)
         {

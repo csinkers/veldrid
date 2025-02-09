@@ -17,17 +17,25 @@ public abstract class VRContext : IDisposable
 
     public abstract HmdPoseState WaitForPoses();
     public abstract void SubmitFrame();
-    public abstract void RenderMirrorTexture(CommandList cl, Framebuffer fb, MirrorTextureEyeSource source);
+    public abstract void RenderMirrorTexture(
+        CommandList cl,
+        Framebuffer fb,
+        MirrorTextureEyeSource source
+    );
 
     public abstract (string[] instance, string[] device) GetRequiredVulkanExtensions();
 
     public abstract void Dispose();
 
     public static VRContext CreateOculus() => CreateOculus(default);
+
     public static VRContext CreateOculus(VRContextOptions options) => new OculusContext(options);
+
     public static bool IsOculusSupported() => OculusContext.IsSupported();
 
     public static VRContext CreateOpenVR() => CreateOpenVR(default);
+
     public static VRContext CreateOpenVR(VRContextOptions options) => new OpenVRContext(options);
+
     public static bool IsOpenVRSupported() => OpenVRContext.IsSupported();
 }

@@ -5,13 +5,17 @@ namespace Veldrid.OpenGL;
 internal sealed class OpenGLSwapchain(
     OpenGLGraphicsDevice gd,
     OpenGLSwapchainFramebuffer framebuffer,
-    Action<uint, uint>? resizeAction)
-    : Swapchain
+    Action<uint, uint>? resizeAction
+) : Swapchain
 {
     bool _disposed;
 
     public override Framebuffer Framebuffer => framebuffer;
-    public override bool SyncToVerticalBlank { get => gd.SyncToVerticalBlank; set => gd.SyncToVerticalBlank = value; }
+    public override bool SyncToVerticalBlank
+    {
+        get => gd.SyncToVerticalBlank;
+        set => gd.SyncToVerticalBlank = value;
+    }
     public override string? Name { get; set; } = "OpenGL Context Swapchain";
     public override bool IsDisposed => _disposed;
 

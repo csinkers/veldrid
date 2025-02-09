@@ -36,7 +36,8 @@ namespace Veldrid.Tests.Android
 
         protected void AddTestAssembly(Assembly assembly)
         {
-            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+            if (assembly == null)
+                throw new ArgumentNullException(nameof(assembly));
 
             if (!Initialized)
             {

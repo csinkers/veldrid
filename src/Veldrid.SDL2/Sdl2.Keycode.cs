@@ -1,5 +1,4 @@
-﻿
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace Veldrid.Sdl2;
 
@@ -256,5 +255,5 @@ public enum SDL_Keycode
     SDLK_KBDILLUMUP = SDL_Scancode.SDL_SCANCODE_KBDILLUMUP | (1 << 30),
 
     SDLK_EJECT = SDL_Scancode.SDL_SCANCODE_EJECT | (1 << 30),
-    SDLK_SLEEP = SDL_Scancode.SDL_SCANCODE_SLEEP | (1 << 30)
+    SDLK_SLEEP = SDL_Scancode.SDL_SCANCODE_SLEEP | (1 << 30),
 }

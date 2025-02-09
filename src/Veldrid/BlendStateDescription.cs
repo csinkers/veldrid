@@ -29,7 +29,10 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
     /// </summary>
     /// <param name="blendFactor">The constant blend color.</param>
     /// <param name="attachmentStates">The blend attachment states.</param>
-    public BlendStateDescription(RgbaFloat blendFactor, params BlendAttachmentDescription[] attachmentStates)
+    public BlendStateDescription(
+        RgbaFloat blendFactor,
+        params BlendAttachmentDescription[] attachmentStates
+    )
     {
         BlendFactor = blendFactor;
         AttachmentStates = attachmentStates;
@@ -46,7 +49,8 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
     public BlendStateDescription(
         RgbaFloat blendFactor,
         bool alphaToCoverageEnabled,
-        params BlendAttachmentDescription[] attachmentStates)
+        params BlendAttachmentDescription[] attachmentStates
+    )
     {
         BlendFactor = blendFactor;
         AttachmentStates = attachmentStates;
@@ -58,7 +62,7 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
     /// </summary>
     public static readonly BlendStateDescription SingleOverrideBlend = new()
     {
-        AttachmentStates = [BlendAttachmentDescription.OverrideBlend]
+        AttachmentStates = [BlendAttachmentDescription.OverrideBlend],
     };
 
     /// <summary>
@@ -66,7 +70,7 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
     /// </summary>
     public static readonly BlendStateDescription SingleAlphaBlend = new()
     {
-        AttachmentStates = [BlendAttachmentDescription.AlphaBlend]
+        AttachmentStates = [BlendAttachmentDescription.AlphaBlend],
     };
 
     /// <summary>
@@ -74,7 +78,7 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
     /// </summary>
     public static readonly BlendStateDescription SingleAdditiveBlend = new()
     {
-        AttachmentStates = [BlendAttachmentDescription.AdditiveBlend]
+        AttachmentStates = [BlendAttachmentDescription.AdditiveBlend],
     };
 
     /// <summary>
@@ -82,16 +86,13 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
     /// </summary>
     public static readonly BlendStateDescription SingleDisabled = new()
     {
-        AttachmentStates = [BlendAttachmentDescription.Disabled]
+        AttachmentStates = [BlendAttachmentDescription.Disabled],
     };
 
     /// <summary>
     /// Describes an empty blend state in which no color targets are used.
     /// </summary>
-    public static readonly BlendStateDescription Empty = new()
-    {
-        AttachmentStates = []
-    };
+    public static readonly BlendStateDescription Empty = new() { AttachmentStates = [] };
 
     /// <summary>
     /// Element-wise equality.
@@ -101,8 +102,8 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
     public bool Equals(BlendStateDescription other)
     {
         return BlendFactor.Equals(other.BlendFactor)
-               && AlphaToCoverageEnabled.Equals(other.AlphaToCoverageEnabled)
-               && Util.ArrayEqualsEquatable(AttachmentStates, other.AttachmentStates);
+            && AlphaToCoverageEnabled.Equals(other.AlphaToCoverageEnabled)
+            && Util.ArrayEqualsEquatable(AttachmentStates, other.AttachmentStates);
     }
 
     /// <summary>
@@ -114,7 +115,8 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
         return HashHelper.Combine(
             BlendFactor.GetHashCode(),
             AlphaToCoverageEnabled.GetHashCode(),
-            HashHelper.Array(AttachmentStates));
+            HashHelper.Array(AttachmentStates)
+        );
     }
 
     internal BlendStateDescription ShallowClone()

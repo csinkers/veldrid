@@ -41,7 +41,7 @@ public readonly struct MTLRenderPassColorAttachmentDescriptor(IntPtr ptr)
             }
             else
             {
-                return MTLClearColor_objc_msgSend(NativePtr,sel_clearColor);
+                return MTLClearColor_objc_msgSend(NativePtr, sel_clearColor);
             }
         }
         set => objc_msgSend(NativePtr, sel_setClearColor, value);

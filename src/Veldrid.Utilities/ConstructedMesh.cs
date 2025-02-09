@@ -15,7 +15,8 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
     /// <summary>
     /// The vertices of the mesh.
     /// </summary>
-    public VertexPositionNormalTexture[] Vertices { get; } = vertices ?? throw new ArgumentNullException(nameof(vertices));
+    public VertexPositionNormalTexture[] Vertices { get; } =
+        vertices ?? throw new ArgumentNullException(nameof(vertices));
 
     /// <summary>
     /// The name of the <see cref="MaterialDefinition"/> associated with this mesh.
@@ -34,7 +35,11 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
     public DeviceBuffer CreateVertexBuffer(ResourceFactory factory, CommandList cl)
     {
         DeviceBuffer vb = factory.CreateBuffer(
-            new BufferDescription((uint)Vertices.Length * (uint)Unsafe.SizeOf<VertexPositionNormalTexture>(), BufferUsage.VertexBuffer));
+            new BufferDescription(
+                (uint)Vertices.Length * (uint)Unsafe.SizeOf<VertexPositionNormalTexture>(),
+                BufferUsage.VertexBuffer
+            )
+        );
         cl.UpdateBuffer(vb, 0, Vertices);
         return vb;
     }
@@ -54,7 +59,8 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
     {
         return BoundingSphere.CreateFromPoints(
             MemoryMarshal.AsBytes(Vertices.AsSpan()),
-            Unsafe.SizeOf<VertexPositionNormalTexture>());
+            Unsafe.SizeOf<VertexPositionNormalTexture>()
+        );
     }
 
     /// <summary>
@@ -68,7 +74,8 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
             Unsafe.SizeOf<VertexPositionNormalTexture>(),
             Quaternion.Identity,
             Vector3.Zero,
-            Vector3.One);
+            Vector3.One
+        );
     }
 
     /// <summary>
@@ -80,7 +87,7 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
     /// May make <paramref name="distance"/> incorrect.
     /// </param>
     /// <param name="distance">
-    /// If the ray cast is successful, contains the distance 
+    /// If the ray cast is successful, contains the distance
     /// from the <see cref="Ray"/> origin that the hit occurred.
     /// May be incorrect if <paramref name="any"/> is true.
     /// </param>

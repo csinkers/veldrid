@@ -1,4 +1,3 @@
-
 namespace Veldrid.MetalBindings;
 
 // TODO: Technically this should be "pointer-sized",

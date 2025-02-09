@@ -2,7 +2,12 @@
 
 namespace Veldrid.Tests.Utilities;
 
-internal unsafe class TextureDataReaderWriter(int redBits, int greenBits, int blueBits, int alphaBits)
+internal unsafe class TextureDataReaderWriter(
+    int redBits,
+    int greenBits,
+    int blueBits,
+    int alphaBits
+)
 {
     public int RedBits { get; } = redBits;
     public int GreenBits { get; } = greenBits;
@@ -103,8 +108,7 @@ internal unsafe class TextureDataReaderWriter(int redBits, int greenBits, int bl
     }
 }
 
-internal struct WidePixel(ulong? r, ulong? g, ulong? b, ulong? a)
-    : IEquatable<WidePixel>
+internal struct WidePixel(ulong? r, ulong? g, ulong? b, ulong? a) : IEquatable<WidePixel>
 {
     public readonly ulong? R = r;
     public readonly ulong? G = g;
@@ -113,10 +117,14 @@ internal struct WidePixel(ulong? r, ulong? g, ulong? b, ulong? a)
 
     public bool Equals(WidePixel other)
     {
-        return R.HasValue == other.R.HasValue && R.GetValueOrDefault().Equals(other.R.GetValueOrDefault())
-                                              && G.HasValue == other.G.HasValue && G.GetValueOrDefault().Equals(other.G.GetValueOrDefault())
-                                              && B.HasValue == other.B.HasValue && B.GetValueOrDefault().Equals(other.B.GetValueOrDefault())
-                                              && A.HasValue == other.A.HasValue && A.GetValueOrDefault().Equals(other.A.GetValueOrDefault());
+        return R.HasValue == other.R.HasValue
+            && R.GetValueOrDefault().Equals(other.R.GetValueOrDefault())
+            && G.HasValue == other.G.HasValue
+            && G.GetValueOrDefault().Equals(other.G.GetValueOrDefault())
+            && B.HasValue == other.B.HasValue
+            && B.GetValueOrDefault().Equals(other.B.GetValueOrDefault())
+            && A.HasValue == other.A.HasValue
+            && A.GetValueOrDefault().Equals(other.A.GetValueOrDefault());
     }
 
     public override string ToString()

@@ -24,20 +24,16 @@ internal sealed class MTLBuffer : DeviceBuffer
 
     public MetalBindings.MTLBuffer DeviceBuffer { get; private set; }
 
-    public unsafe MTLBuffer(in BufferDescription bd, MTLGraphicsDevice gd) : base(bd)
+    public unsafe MTLBuffer(in BufferDescription bd, MTLGraphicsDevice gd)
+        : base(bd)
     {
         if (bd.InitialData == IntPtr.Zero)
         {
-            DeviceBuffer = gd.Device.newBufferWithLengthOptions(
-                SizeInBytes,
-                0);
+            DeviceBuffer = gd.Device.newBufferWithLengthOptions(SizeInBytes, 0);
         }
         else
         {
-            DeviceBuffer = gd.Device.newBuffer(
-                (void*)bd.InitialData,
-                SizeInBytes,
-                0);
+            DeviceBuffer = gd.Device.newBuffer((void*)bd.InitialData, SizeInBytes, 0);
         }
     }
 

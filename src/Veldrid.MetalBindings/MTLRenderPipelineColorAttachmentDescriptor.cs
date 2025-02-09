@@ -72,7 +72,8 @@ public readonly struct MTLRenderPipelineColorAttachmentDescriptor(IntPtr ptr)
     static readonly Selector sel_rgbBlendOperation = "rgbBlendOperation"u8;
     static readonly Selector sel_setRGBBlendOperation = "setRgbBlendOperation:"u8;
     static readonly Selector sel_destinationAlphaBlendFactor = "destinationAlphaBlendFactor"u8;
-    static readonly Selector sel_setDestinationAlphaBlendFactor = "setDestinationAlphaBlendFactor:"u8;
+    static readonly Selector sel_setDestinationAlphaBlendFactor =
+        "setDestinationAlphaBlendFactor:"u8;
     static readonly Selector sel_destinationRGBBlendFactor = "destinationRGBBlendFactor"u8;
     static readonly Selector sel_setDestinationRGBBlendFactor = "setDestinationRGBBlendFactor:"u8;
     static readonly Selector sel_sourceAlphaBlendFactor = "sourceAlphaBlendFactor"u8;

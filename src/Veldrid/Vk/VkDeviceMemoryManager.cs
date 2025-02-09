@@ -18,8 +18,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
     VkDevice device,
     VkPhysicalDevice physicalDevice,
     ulong bufferImageGranularity,
-    ulong chunkGranularity)
-    : IDisposable
+    ulong chunkGranularity
+) : IDisposable
 {
     readonly VkPhysicalDevice _physicalDevice = physicalDevice;
     readonly object _allocatorMutex = new();
@@ -32,7 +32,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
         VkMemoryPropertyFlags flags,
         bool persistentMapped,
         ulong size,
-        ulong alignment)
+        ulong alignment
+    )
     {
         return Allocate(
             memProperties,
@@ -43,7 +44,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
             alignment,
             false,
             VkImage.NULL,
-            VulkanBuffer.NULL);
+            VulkanBuffer.NULL
+        );
     }
 
     public VkMemoryBlock Allocate(
@@ -55,7 +57,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
         ulong alignment,
         bool dedicated,
         VkImage dedicatedImage,
-        VulkanBuffer dedicatedBuffer)
+        VulkanBuffer dedicatedBuffer
+    )
     {
         if (!TryFindMemoryType(memProperties, memoryTypeBits, flags, out uint memoryTypeIndex))
         {
@@ -74,7 +77,9 @@ internal sealed unsafe class VkDeviceMemoryManager(
             if (dedicatedImage == VkImage.NULL && dedicatedBuffer == VulkanBuffer.NULL)
             {
                 // Round up to the nearest multiple of bufferImageGranularity.
-                dedicatedSize = ((alignedSize + bufferImageGranularity - 1) / bufferImageGranularity) * bufferImageGranularity;
+                dedicatedSize =
+                    ((alignedSize + bufferImageGranularity - 1) / bufferImageGranularity)
+                    * bufferImageGranularity;
             }
             else
             {
@@ -86,7 +91,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
                 allocationSize = dedicatedSize,
-                memoryTypeIndex = memoryTypeIndex
+                memoryTypeIndex = memoryTypeIndex,
             };
 
             VkMemoryDedicatedAllocateInfo dedicatedAI;
@@ -96,7 +101,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
                 {
                     sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
                     buffer = dedicatedBuffer,
-                    image = dedicatedImage
+                    image = dedicatedImage,
                 };
                 allocateInfo.pNext = &dedicatedAI;
             }
@@ -123,7 +128,11 @@ internal sealed unsafe class VkDeviceMemoryManager(
         else
         {
             ChunkAllocatorSet allocator = GetAllocator(memoryTypeIndex, persistentMapped);
-            bool result = allocator.Allocate((uint)alignedSize, (uint)alignment, out VkMemoryBlock ret);
+            bool result = allocator.Allocate(
+                (uint)alignedSize,
+                (uint)alignment,
+                out VkMemoryBlock ret
+            );
             if (!result)
             {
                 throw new VeldridException("Unable to allocate sufficient Vulkan memory.");
@@ -266,7 +275,7 @@ internal sealed unsafe class VkDeviceMemoryManager(
             {
                 sType = VkStructureType.VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
                 allocationSize = _totalMemorySize,
-                memoryTypeIndex = _memoryTypeIndex
+                memoryTypeIndex = _memoryTypeIndex,
             };
             VkDeviceMemory memory;
             VkResult result = vkAllocateMemory(_device, &memoryAI, null, &memory);
@@ -287,7 +296,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
                 _totalMemorySize,
                 _memoryTypeIndex,
                 _mappedPtr,
-                false);
+                false
+            );
             _freeBlocks.Add(initialBlock);
         }
 
@@ -340,7 +350,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
                         offset,
                         _memoryTypeIndex,
                         block.BaseMappedPointer,
-                        false);
+                        false
+                    );
                     _freeBlocks.Insert(selectedIndex, splitBlock);
                     selectedIndex++;
 
@@ -356,7 +367,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
                         block.Size - size,
                         _memoryTypeIndex,
                         block.BaseMappedPointer,
-                        false);
+                        false
+                    );
 
                     _freeBlocks[selectedIndex] = splitBlock;
                     block.Size = size;
@@ -409,21 +421,25 @@ internal sealed unsafe class VkDeviceMemoryManager(
             Span<VkMemoryBlock> freeBlocks = CollectionsMarshal.AsSpan(_freeBlocks);
 
             // The free block list should always be sorted by offset.
-            // List mutations done by this algorithm must preserve order. 
+            // List mutations done by this algorithm must preserve order.
 
             int precedingBlock = FindPrecedingBlockIndex(freeBlocks, block.Offset);
             if (precedingBlock != -1)
             {
-                if ((uint)precedingBlock < (uint)freeBlocks.Length &&
-                    block.End == freeBlocks[precedingBlock].Offset)
+                if (
+                    (uint)precedingBlock < (uint)freeBlocks.Length
+                    && block.End == freeBlocks[precedingBlock].Offset
+                )
                 {
                     // Free block ends at the beginning of found block; merge with found block.
                     freeBlocks[precedingBlock].Size += block.Size;
                     freeBlocks[precedingBlock].Offset = block.Offset;
 
                     int prevBlock = precedingBlock - 1;
-                    if ((uint)prevBlock < (uint)freeBlocks.Length &&
-                        freeBlocks[prevBlock].End == freeBlocks[precedingBlock].Offset)
+                    if (
+                        (uint)prevBlock < (uint)freeBlocks.Length
+                        && freeBlocks[prevBlock].End == freeBlocks[precedingBlock].Offset
+                    )
                     {
                         // Merged block begins at the end of the previous block; extend the previous block.
                         freeBlocks[prevBlock].Size += freeBlocks[precedingBlock].Size;
@@ -433,8 +449,10 @@ internal sealed unsafe class VkDeviceMemoryManager(
                 else
                 {
                     int prevBlock = precedingBlock - 1;
-                    if ((uint)prevBlock < (uint)freeBlocks.Length &&
-                        freeBlocks[prevBlock].End == block.Offset)
+                    if (
+                        (uint)prevBlock < (uint)freeBlocks.Length
+                        && freeBlocks[prevBlock].End == block.Offset
+                    )
                     {
                         // Free block begins at the end of found block; extend the previous block.
                         freeBlocks[prevBlock].Size += block.Size;
@@ -449,8 +467,10 @@ internal sealed unsafe class VkDeviceMemoryManager(
             else
             {
                 int lastIndex = freeBlocks.Length - 1;
-                if ((uint)lastIndex < (uint)freeBlocks.Length &&
-                    freeBlocks[lastIndex].End == block.Offset)
+                if (
+                    (uint)lastIndex < (uint)freeBlocks.Length
+                    && freeBlocks[lastIndex].End == block.Offset
+                )
                 {
                     // Free block begins at the end of last block; extend the last block.
                     freeBlocks[lastIndex].Size += block.Size;
@@ -467,7 +487,6 @@ internal sealed unsafe class VkDeviceMemoryManager(
 #endif
         }
 
-
 #if ALLOC_TRACK
         bool MergeContiguousBlocks()
         {
@@ -478,8 +497,11 @@ internal sealed unsafe class VkDeviceMemoryManager(
             for (int i = 0; i < freeBlocks.Count - 1; i++)
             {
                 uint blockStart = freeBlocks[i].Offset;
-                while (i + contiguousLength < freeBlocks.Count
-                       && freeBlocks[i + contiguousLength - 1].End == freeBlocks[i + contiguousLength].Offset)
+                while (
+                    i + contiguousLength < freeBlocks.Count
+                    && freeBlocks[i + contiguousLength - 1].End
+                        == freeBlocks[i + contiguousLength].Offset
+                )
                 {
                     contiguousLength += 1;
                 }
@@ -495,7 +517,8 @@ internal sealed unsafe class VkDeviceMemoryManager(
                         blockEnd - blockStart,
                         _memoryTypeIndex,
                         _mappedPtr,
-                        false);
+                        false
+                    );
                     freeBlocks.Insert(i, mergedBlock);
                     hasMerged = true;
                     contiguousLength = 0;
@@ -515,33 +538,49 @@ internal sealed unsafe class VkDeviceMemoryManager(
             {
                 uint leftOffset = _allocatedBlocks.Keys[index - 1];
                 ulong leftSize = _allocatedBlocks.Values[index - 1];
-                TrackAssert(!BlocksOverlap(offset, size, leftOffset, leftSize), "Allocated segments have overlapped.");
+                TrackAssert(
+                    !BlocksOverlap(offset, size, leftOffset, leftSize),
+                    "Allocated segments have overlapped."
+                );
             }
 
             if (index < _allocatedBlocks.Count - 1)
             {
                 uint rightOffset = _allocatedBlocks.Keys[index + 1];
                 ulong rightSize = _allocatedBlocks.Values[index + 1];
-                TrackAssert(!BlocksOverlap(offset, size, rightOffset, rightSize), "Allocated segments have overlapped.");
+                TrackAssert(
+                    !BlocksOverlap(offset, size, rightOffset, rightSize),
+                    "Allocated segments have overlapped."
+                );
             }
         }
 
-        static bool BlocksOverlap(uint firstOffset, ulong firstSize, uint secondOffset, ulong secondSize)
+        static bool BlocksOverlap(
+            uint firstOffset,
+            ulong firstSize,
+            uint secondOffset,
+            ulong secondSize
+        )
         {
             ulong firstStart = firstOffset;
             ulong firstEnd = firstOffset + firstSize;
             ulong secondStart = secondOffset;
             ulong secondEnd = secondOffset + secondSize;
 
-            return (firstStart <= secondStart && firstEnd > secondStart
-                    || firstStart >= secondStart && firstEnd <= secondEnd
-                    || firstStart < secondEnd && firstEnd >= secondEnd
-                    || firstStart <= secondStart && firstEnd >= secondEnd);
+            return (
+                firstStart <= secondStart && firstEnd > secondStart
+                || firstStart >= secondStart && firstEnd <= secondEnd
+                || firstStart < secondEnd && firstEnd >= secondEnd
+                || firstStart <= secondStart && firstEnd >= secondEnd
+            );
         }
 
         void RemoveAllocatedBlock(uint offset)
         {
-            TrackAssert(_allocatedBlocks.Remove(offset), "Unable to remove a supposedly allocated block.");
+            TrackAssert(
+                _allocatedBlocks.Remove(offset),
+                "Unable to remove a supposedly allocated block."
+            );
         }
 
         static void TrackAssert(bool condition, string message)
@@ -569,9 +608,10 @@ internal sealed unsafe class VkDeviceMemoryManager(
 
         bool IsFirstFullFreeBlock()
         {
-            ref VkMemoryBlock freeBlock = ref MemoryMarshal.GetReference(CollectionsMarshal.AsSpan(_freeBlocks));
-            return freeBlock.Offset == 0
-                   && freeBlock.Size == _totalMemorySize;
+            ref VkMemoryBlock freeBlock = ref MemoryMarshal.GetReference(
+                CollectionsMarshal.AsSpan(_freeBlocks)
+            );
+            return freeBlock.Offset == 0 && freeBlock.Size == _totalMemorySize;
         }
 
         public void Dispose()
@@ -619,7 +659,8 @@ internal unsafe struct VkMemoryBlock : IEquatable<VkMemoryBlock>
         ulong size,
         uint memoryTypeIndex,
         void* mappedPtr,
-        bool dedicatedAllocation)
+        bool dedicatedAllocation
+    )
     {
         DeviceMemory = memory;
         Offset = offset;
@@ -634,8 +675,8 @@ internal unsafe struct VkMemoryBlock : IEquatable<VkMemoryBlock>
     public readonly bool Equals(VkMemoryBlock other)
     {
         return DeviceMemory.Equals(other.DeviceMemory)
-               && Offset.Equals(other.Offset)
-               && Size.Equals(other.Size);
+            && Offset.Equals(other.Offset)
+            && Size.Equals(other.Size);
     }
 
     string GetDebuggerDisplay()

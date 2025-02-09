@@ -9,14 +9,17 @@ public struct IndirectDrawArguments
     /// The number of vertices to draw.
     /// </summary>
     public uint VertexCount;
+
     /// <summary>
     /// The number of instances to draw.
     /// </summary>
     public uint InstanceCount;
+
     /// <summary>
     /// The first vertex to draw. Subsequent vertices are incremented by 1.
     /// </summary>
     public uint FirstVertex;
+
     /// <summary>
     /// The first instance to draw. Subsequent instances are incrmented by 1.
     /// </summary>

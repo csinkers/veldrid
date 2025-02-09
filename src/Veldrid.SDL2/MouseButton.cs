@@ -63,5 +63,5 @@ public enum MouseButton
     /// <summary>
     /// The ninth extra mouse button.
     /// </summary>
-    Button9 = 1 << 11
+    Button9 = 1 << 11,
 }

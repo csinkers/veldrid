@@ -54,7 +54,8 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
         ResourceLayout[] resourceLayouts,
         uint threadGroupSizeX,
         uint threadGroupSizeY,
-        uint threadGroupSizeZ)
+        uint threadGroupSizeZ
+    )
     {
         ComputeShader = computeShader;
         ResourceLayouts = resourceLayouts;
@@ -78,7 +79,8 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
         ResourceLayout resourceLayout,
         uint threadGroupSizeX,
         uint threadGroupSizeY,
-        uint threadGroupSizeZ)
+        uint threadGroupSizeZ
+    )
     {
         ComputeShader = shaderStage;
         ResourceLayouts = [resourceLayout];
@@ -106,7 +108,8 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
         uint threadGroupSizeX,
         uint threadGroupSizeY,
         uint threadGroupSizeZ,
-        SpecializationConstant[] specializations)
+        SpecializationConstant[] specializations
+    )
     {
         ComputeShader = shaderStage;
         ResourceLayouts = [resourceLayout];
@@ -124,10 +127,10 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
     public bool Equals(ComputePipelineDescription other)
     {
         return ComputeShader.Equals(other.ComputeShader)
-               && Util.ArrayEquals(ResourceLayouts, other.ResourceLayouts)
-               && ThreadGroupSizeX.Equals(other.ThreadGroupSizeX)
-               && ThreadGroupSizeY.Equals(other.ThreadGroupSizeY)
-               && ThreadGroupSizeZ.Equals(other.ThreadGroupSizeZ);
+            && Util.ArrayEquals(ResourceLayouts, other.ResourceLayouts)
+            && ThreadGroupSizeX.Equals(other.ThreadGroupSizeX)
+            && ThreadGroupSizeY.Equals(other.ThreadGroupSizeY)
+            && ThreadGroupSizeZ.Equals(other.ThreadGroupSizeZ);
     }
 
     /// <summary>
@@ -141,6 +144,7 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
             HashHelper.Array(ResourceLayouts),
             ThreadGroupSizeX.GetHashCode(),
             ThreadGroupSizeY.GetHashCode(),
-            ThreadGroupSizeZ.GetHashCode());
+            ThreadGroupSizeZ.GetHashCode()
+        );
     }
 }

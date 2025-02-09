@@ -10,18 +10,19 @@ public readonly struct MTLBuffer(IntPtr ptr)
 
     public bool IsNull => NativePtr == IntPtr.Zero;
 
-    public unsafe void* contents() => ObjectiveCRuntime.IntPtr_objc_msgSend(NativePtr, sel_contents).ToPointer();
+    public unsafe void* contents() =>
+        ObjectiveCRuntime.IntPtr_objc_msgSend(NativePtr, sel_contents).ToPointer();
 
     public UIntPtr length => ObjectiveCRuntime.UIntPtr_objc_msgSend(NativePtr, sel_length);
 
-    public void didModifyRange(NSRange range)
-        => ObjectiveCRuntime.objc_msgSend(NativePtr, sel_didModifyRange, range);
+    public void didModifyRange(NSRange range) =>
+        ObjectiveCRuntime.objc_msgSend(NativePtr, sel_didModifyRange, range);
 
-    public void addDebugMarker(NSString marker, NSRange range)
-        => ObjectiveCRuntime.objc_msgSend(NativePtr, sel_addDebugMarker, marker.NativePtr, range);
+    public void addDebugMarker(NSString marker, NSRange range) =>
+        ObjectiveCRuntime.objc_msgSend(NativePtr, sel_addDebugMarker, marker.NativePtr, range);
 
-    public void removeAllDebugMarkers()
-        => ObjectiveCRuntime.objc_msgSend(NativePtr, sel_removeAllDebugMarkers);
+    public void removeAllDebugMarkers() =>
+        ObjectiveCRuntime.objc_msgSend(NativePtr, sel_removeAllDebugMarkers);
 
     static readonly Selector sel_contents = "contents"u8;
     static readonly Selector sel_length = "length"u8;

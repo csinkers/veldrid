@@ -25,9 +25,25 @@ public class ShadowmapDrawer : Renderable
     SizeInfo? _si;
     Matrix4x4? _ortho;
 
-    public Vector2 Position { get => _position; set { _position = value; UpdateSizeInfoBuffer(); } }
+    public Vector2 Position
+    {
+        get => _position;
+        set
+        {
+            _position = value;
+            UpdateSizeInfoBuffer();
+        }
+    }
 
-    public Vector2 Size { get => _size; set { _size = value; UpdateSizeInfoBuffer(); } }
+    public Vector2 Size
+    {
+        get => _size;
+        set
+        {
+            _size = value;
+            UpdateSizeInfoBuffer();
+        }
+    }
 
     void UpdateSizeInfoBuffer()
     {
@@ -43,60 +59,118 @@ public class ShadowmapDrawer : Renderable
 
     public void OnWindowResized()
     {
-        _ortho = Matrix4x4.CreateOrthographicOffCenter(0, _windowGetter().Width, _windowGetter().Height, 0, -1, 1);
+        _ortho = Matrix4x4.CreateOrthographicOffCenter(
+            0,
+            _windowGetter().Width,
+            _windowGetter().Height,
+            0,
+            -1,
+            1
+        );
     }
 
     public override void CreateDeviceObjects(GraphicsDevice gd, CommandList cl, SceneContext sc)
     {
         ResourceFactory factory = gd.ResourceFactory;
-        _vb = factory.CreateBuffer(new BufferDescription(s_quadVerts.SizeInBytes(), BufferUsage.VertexBuffer));
+        _vb = factory.CreateBuffer(
+            new BufferDescription(s_quadVerts.SizeInBytes(), BufferUsage.VertexBuffer)
+        );
         cl.UpdateBuffer(_vb, 0, s_quadVerts);
-        _ib = factory.CreateBuffer(new BufferDescription(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer));
+        _ib = factory.CreateBuffer(
+            new BufferDescription(s_quadIndices.SizeInBytes(), BufferUsage.IndexBuffer)
+        );
         cl.UpdateBuffer(_ib, 0, s_quadIndices);
 
         VertexLayoutDescription[] vertexLayouts =
         [
             new VertexLayoutDescription(
-                new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                new VertexElementDescription("TexCoord", VertexElementSemantic.TextureCoordinate,  VertexElementFormat.Float2))
+                new VertexElementDescription(
+                    "Position",
+                    VertexElementSemantic.TextureCoordinate,
+                    VertexElementFormat.Float2
+                ),
+                new VertexElementDescription(
+                    "TexCoord",
+                    VertexElementSemantic.TextureCoordinate,
+                    VertexElementFormat.Float2
+                )
+            ),
         ];
 
-        (Shader vs, Shader fs) = StaticResourceCache.GetShaders(gd, gd.ResourceFactory, "ShadowmapPreviewShader");
+        (Shader vs, Shader fs) = StaticResourceCache.GetShaders(
+            gd,
+            gd.ResourceFactory,
+            "ShadowmapPreviewShader"
+        );
 
-        ResourceLayout layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
-            new ResourceLayoutElementDescription("Projection", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-            new ResourceLayoutElementDescription("SizePos", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-            new ResourceLayoutElementDescription("Tex", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-            new ResourceLayoutElementDescription("TexSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+        ResourceLayout layout = factory.CreateResourceLayout(
+            new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription(
+                    "Projection",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                ),
+                new ResourceLayoutElementDescription(
+                    "SizePos",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex
+                ),
+                new ResourceLayoutElementDescription(
+                    "Tex",
+                    ResourceKind.TextureReadOnly,
+                    ShaderStages.Fragment
+                ),
+                new ResourceLayoutElementDescription(
+                    "TexSampler",
+                    ResourceKind.Sampler,
+                    ShaderStages.Fragment
+                )
+            )
+        );
 
         GraphicsPipelineDescription pd = new(
             BlendStateDescription.SingleOverrideBlend,
             new DepthStencilStateDescription(false, true, ComparisonKind.Always),
             RasterizerStateDescription.Default,
             PrimitiveTopology.TriangleList,
-            new ShaderSetDescription(
-                vertexLayouts,
-                [vs, fs],
-                ShaderHelper.GetSpecializations(gd)),
+            new ShaderSetDescription(vertexLayouts, [vs, fs], ShaderHelper.GetSpecializations(gd)),
             [layout],
-            sc.MainSceneFramebuffer.OutputDescription);
+            sc.MainSceneFramebuffer.OutputDescription
+        );
 
         _pipeline = factory.CreateGraphicsPipeline(pd);
 
-        _sizeInfoBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<SizeInfo>(), BufferUsage.UniformBuffer));
+        _sizeInfoBuffer = factory.CreateBuffer(
+            new BufferDescription((uint)Unsafe.SizeOf<SizeInfo>(), BufferUsage.UniformBuffer)
+        );
         UpdateSizeInfoBuffer();
-        _orthographicBuffer = factory.CreateBuffer(new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffer));
+        _orthographicBuffer = factory.CreateBuffer(
+            new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffer)
+        );
 
-        _resourceSet = factory.CreateResourceSet(new ResourceSetDescription(
-            layout,
-            _orthographicBuffer,
-            _sizeInfoBuffer,
-            _bindingGetter(),
-            gd.PointSampler));
+        _resourceSet = factory.CreateResourceSet(
+            new ResourceSetDescription(
+                layout,
+                _orthographicBuffer,
+                _sizeInfoBuffer,
+                _bindingGetter(),
+                gd.PointSampler
+            )
+        );
 
         OnWindowResized();
 
-        _disposeCollector.Add(_vb, _ib, layout, vs, fs, _pipeline, _sizeInfoBuffer, _orthographicBuffer, _resourceSet);
+        _disposeCollector.Add(
+            _vb,
+            _ib,
+            layout,
+            vs,
+            fs,
+            _pipeline,
+            _sizeInfoBuffer,
+            _orthographicBuffer,
+            _resourceSet
+        );
     }
 
     public override void DestroyDeviceObjects()
@@ -126,7 +200,12 @@ public class ShadowmapDrawer : Renderable
         }
     }
 
-    public override void Render(GraphicsDevice gd, CommandList cl, SceneContext sc, RenderPasses renderPass)
+    public override void Render(
+        GraphicsDevice gd,
+        CommandList cl,
+        SceneContext sc,
+        RenderPasses renderPass
+    )
     {
         cl.SetVertexBuffer(0, _vb);
         cl.SetIndexBuffer(_ib, IndexFormat.UInt16);
@@ -135,13 +214,7 @@ public class ShadowmapDrawer : Renderable
         cl.DrawIndexed((uint)s_quadIndices.Length, 1, 0, 0, 0);
     }
 
-    static float[] s_quadVerts =
-    [
-        0, 0, 0, 0,
-        1, 0, 1, 0,
-        1, 1, 1, 1,
-        0, 1, 0, 1
-    ];
+    static float[] s_quadVerts = [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1];
 
     static ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
 

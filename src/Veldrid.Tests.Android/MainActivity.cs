@@ -9,7 +9,8 @@ namespace Veldrid.Tests.Android
         Theme = "@android:style/Theme.DeviceDefault.NoActionBar",
         Label = "@string/app_name",
         MainLauncher = true,
-        ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize)]
+        ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize
+    )]
     public class MainActivity : RunnerActivity
     {
         public static MainActivity Current;

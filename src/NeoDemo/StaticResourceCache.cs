@@ -17,10 +17,22 @@ internal static class StaticResourceCache
     static Texture _pinkTex;
 
     public static readonly ResourceLayoutDescription ProjViewLayoutDescription = new(
-        new ResourceLayoutElementDescription("Projection", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-        new ResourceLayoutElementDescription("View", ResourceKind.UniformBuffer, ShaderStages.Vertex));
+        new ResourceLayoutElementDescription(
+            "Projection",
+            ResourceKind.UniformBuffer,
+            ShaderStages.Vertex
+        ),
+        new ResourceLayoutElementDescription(
+            "View",
+            ResourceKind.UniformBuffer,
+            ShaderStages.Vertex
+        )
+    );
 
-    public static Pipeline GetPipeline(ResourceFactory factory, ref GraphicsPipelineDescription desc)
+    public static Pipeline GetPipeline(
+        ResourceFactory factory,
+        ref GraphicsPipelineDescription desc
+    )
     {
         if (!s_pipelines.TryGetValue(desc, out Pipeline p))
         {
@@ -31,7 +43,10 @@ internal static class StaticResourceCache
         return p;
     }
 
-    public static ResourceLayout GetResourceLayout(ResourceFactory factory, ResourceLayoutDescription desc)
+    public static ResourceLayout GetResourceLayout(
+        ResourceFactory factory,
+        ResourceLayoutDescription desc
+    )
     {
         if (!s_layouts.TryGetValue(desc, out ResourceLayout p))
         {
@@ -45,7 +60,8 @@ internal static class StaticResourceCache
     public static (Shader vs, Shader fs) GetShaders(
         GraphicsDevice gd,
         ResourceFactory factory,
-        string name)
+        string name
+    )
     {
         SpecializationConstant[] constants = ShaderHelper.GetSpecializations(gd);
         ShaderSetCacheKey cacheKey = new(name, constants);
@@ -101,7 +117,11 @@ internal static class StaticResourceCache
         s_resourceSets.Clear();
     }
 
-    internal static Texture GetTexture2D(GraphicsDevice gd, ResourceFactory factory, ImageSharpTexture textureData)
+    internal static Texture GetTexture2D(
+        GraphicsDevice gd,
+        ResourceFactory factory,
+        ImageSharpTexture textureData
+    )
     {
         if (!s_textures.TryGetValue(textureData, out Texture tex))
         {
@@ -128,14 +148,26 @@ internal static class StaticResourceCache
         if (_pinkTex == null)
         {
             RgbaByte pink = RgbaByte.Pink;
-            _pinkTex = factory.CreateTexture(TextureDescription.Texture2D(1, 1, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
+            _pinkTex = factory.CreateTexture(
+                TextureDescription.Texture2D(
+                    1,
+                    1,
+                    1,
+                    1,
+                    PixelFormat.R8_G8_B8_A8_UNorm,
+                    TextureUsage.Sampled
+                )
+            );
             gd.UpdateTexture(_pinkTex, (IntPtr)(&pink), 4, 0, 0, 0, 1, 1, 1, 0, 0);
         }
 
         return _pinkTex;
     }
 
-    internal static ResourceSet GetResourceSet(ResourceFactory factory, ResourceSetDescription description)
+    internal static ResourceSet GetResourceSet(
+        ResourceFactory factory,
+        ResourceSetDescription description
+    )
     {
         if (!s_resourceSets.TryGetValue(description, out ResourceSet ret))
         {

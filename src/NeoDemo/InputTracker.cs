@@ -17,8 +17,7 @@ public static class InputTracker
     public static Vector2 MouseDelta;
     public static InputSnapshot FrameSnapshot { get; private set; }
 
-    public static
-        Key(Key key)
+    public static Key(Key key)
     {
         return _currentlyPressedKeys.Contains(key);
     }

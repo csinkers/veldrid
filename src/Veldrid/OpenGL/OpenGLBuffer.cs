@@ -1,8 +1,8 @@
 ﻿using System;
-using static Veldrid.OpenGLBinding.OpenGLNative;
-using static Veldrid.OpenGL.OpenGLUtil;
-using Veldrid.OpenGLBinding;
 using System.Diagnostics;
+using Veldrid.OpenGLBinding;
+using static Veldrid.OpenGL.OpenGLUtil;
+using static Veldrid.OpenGLBinding.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -15,7 +15,15 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, OpenGLDeferredResource
     string? _name;
     bool _nameChanged;
 
-    public override string? Name { get => _name; set { _name = value; _nameChanged = true; } }
+    public override string? Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            _nameChanged = true;
+        }
+    }
 
     public uint Buffer => _buffer;
 
@@ -24,7 +32,8 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, OpenGLDeferredResource
 
     public override bool IsDisposed => _disposeRequested;
 
-    public OpenGLBuffer(OpenGLGraphicsDevice gd, in BufferDescription desc) : base(desc)
+    public OpenGLBuffer(OpenGLGraphicsDevice gd, in BufferDescription desc)
+        : base(desc)
     {
         _gd = gd;
 
@@ -61,16 +70,14 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, OpenGLDeferredResource
     {
         BufferStorageMask storageMask = 0;
 
-        if ((usage & BufferUsage.StagingRead) != 0 ||
-            (usage & BufferUsage.DynamicRead) != 0)
+        if ((usage & BufferUsage.StagingRead) != 0 || (usage & BufferUsage.DynamicRead) != 0)
         {
             storageMask |= BufferStorageMask.MapRead;
             storageMask |= BufferStorageMask.ClientStorage;
             storageMask |= BufferStorageMask.DynamicStorage;
         }
 
-        if ((usage & BufferUsage.StagingWrite) != 0 ||
-            (usage & BufferUsage.DynamicWrite) != 0)
+        if ((usage & BufferUsage.StagingWrite) != 0 || (usage & BufferUsage.DynamicWrite) != 0)
         {
             storageMask |= BufferStorageMask.MapWrite;
             storageMask |= BufferStorageMask.ClientStorage;
@@ -119,21 +126,13 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, OpenGLDeferredResource
 
             if (mask != 0 && _gd.Extensions.ARB_buffer_storage)
             {
-                glNamedBufferStorage(
-                    _buffer,
-                    SizeInBytes,
-                    (void*)initialData,
-                    mask);
+                glNamedBufferStorage(_buffer, SizeInBytes, (void*)initialData, mask);
                 CanBufferSubData = (mask & BufferStorageMask.DynamicStorage) != 0;
             }
             else
             {
                 BufferUsageHint hint = GetUsageHint(Usage);
-                glNamedBufferData(
-                    _buffer,
-                    SizeInBytes,
-                    (void*)initialData,
-                    hint);
+                glNamedBufferData(_buffer, SizeInBytes, (void*)initialData, hint);
                 CanBufferSubData = true;
             }
             CheckLastError();
@@ -154,17 +153,14 @@ internal sealed unsafe class OpenGLBuffer : DeviceBuffer, OpenGLDeferredResource
                     BufferTarget.CopyWriteBuffer,
                     SizeInBytes,
                     (void*)initialData,
-                    mask);
+                    mask
+                );
                 CanBufferSubData = (mask & BufferStorageMask.DynamicStorage) != 0;
             }
             else
             {
                 BufferUsageHint hint = GetUsageHint(Usage);
-                glBufferData(
-                    BufferTarget.CopyWriteBuffer,
-                    SizeInBytes,
-                    (void*)initialData,
-                    hint);
+                glBufferData(BufferTarget.CopyWriteBuffer, SizeInBytes, (void*)initialData, hint);
                 CanBufferSubData = true;
             }
             CheckLastError();

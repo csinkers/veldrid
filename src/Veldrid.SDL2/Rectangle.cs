@@ -3,17 +3,15 @@ using System.Numerics;
 
 namespace Veldrid;
 
-public struct Rectangle(int x, int y, int width, int height)
-    : IEquatable<Rectangle>
+public struct Rectangle(int x, int y, int width, int height) : IEquatable<Rectangle>
 {
     public int X = x;
     public int Y = y;
     public int Width = width;
     public int Height = height;
 
-    public Rectangle(Point topLeft, Point size) : this(topLeft.X, topLeft.Y, size.X, size.Y)
-    {
-    }
+    public Rectangle(Point topLeft, Point size)
+        : this(topLeft.X, topLeft.Y, size.X, size.Y) { }
 
     public readonly int Left => X;
     public readonly int Right => X + Width;
@@ -27,21 +25,22 @@ public struct Rectangle(int x, int y, int width, int height)
 
     public readonly bool Contains(int x, int y)
     {
-        return (X <= x && (X + Width) > x)
-               && (Y <= y && (Y + Height) > y);
+        return (X <= x && (X + Width) > x) && (Y <= y && (Y + Height) > y);
     }
 
     public readonly bool Equals(Rectangle other)
     {
         return X.Equals(other.X)
-               && Y.Equals(other.Y)
-               && Width.Equals(other.Width)
-               && Height.Equals(other.Height);
+            && Y.Equals(other.Y)
+            && Width.Equals(other.Width)
+            && Height.Equals(other.Height);
     }
 
-    public readonly override bool Equals(object? obj) => obj is Rectangle r && Equals(r);
-    public readonly override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
+    public override readonly bool Equals(object? obj) => obj is Rectangle r && Equals(r);
+
+    public override readonly int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
 
     public static bool operator ==(Rectangle left, Rectangle right) => left.Equals(right);
+
     public static bool operator !=(Rectangle left, Rectangle right) => !left.Equals(right);
 }

@@ -505,7 +505,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         if (!result)
         {
             throw new VeldridException(
-                $"Failed to associate OpenGLES Renderbuffer with CAEAGLLayer."
+                "Failed to associate OpenGLES Renderbuffer with CAEAGLLayer."
             );
         }
 
@@ -568,7 +568,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         if (status != FramebufferErrorCode.FramebufferComplete)
         {
             throw new VeldridException(
-                $"The OpenGLES main Swapchain Framebuffer was incomplete after initialization."
+                "The OpenGLES main Swapchain Framebuffer was incomplete after initialization."
             );
         }
 
@@ -579,7 +579,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         {
             if (!EAGLContext.setCurrentContext(ctx))
             {
-                throw new VeldridException($"Unable to set the thread's current GL context.");
+                throw new VeldridException("Unable to set the thread's current GL context.");
             }
         }
 
@@ -595,7 +595,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             CheckLastError();
             if (!presentResult)
             {
-                throw new VeldridException($"Failed to present the EAGL RenderBuffer.");
+                throw new VeldridException("Failed to present the EAGL RenderBuffer.");
             }
         }
 
@@ -624,7 +624,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
                     if (!rbStorageResult)
                     {
                         throw new VeldridException(
-                            $"Failed to associate OpenGLES Renderbuffer with CAEAGLLayer."
+                            "Failed to associate OpenGLES Renderbuffer with CAEAGLLayer."
                         );
                     }
 
@@ -834,7 +834,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
                 debug = false;
                 goto TryCreateContext;
             }
-            throw new VeldridException($"Failed to create an EGLContext: " + eglGetError());
+            throw new VeldridException("Failed to create an EGLContext: " + eglGetError());
         }
 
         void makeCurrent(IntPtr ctx)

@@ -92,7 +92,7 @@ internal sealed class MTLSwapchain : Swapchain
         else
         {
             throw new VeldridException(
-                $"A Metal Swapchain can only be created from an NSWindow, NSView, or UIView."
+                "A Metal Swapchain can only be created from an NSWindow, NSView, or UIView."
             );
         }
 

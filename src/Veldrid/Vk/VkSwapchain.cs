@@ -85,7 +85,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         if (!GetPresentQueueIndex(out _presentQueueIndex))
         {
             throw new VeldridException(
-                $"The system does not support presenting the given Vulkan surface."
+                "The system does not support presenting the given Vulkan surface."
             );
         }
         VkQueue presentQueue;
@@ -184,7 +184,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         );
         if (result == VkResult.VK_ERROR_SURFACE_LOST_KHR)
         {
-            throw new VeldridException($"The Swapchain's underlying surface has been lost.");
+            throw new VeldridException("The Swapchain's underlying surface has been lost.");
         }
 
         if (
@@ -249,7 +249,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
                 if (_colorSrgb && surfaceFormat.format != VK_FORMAT_R8G8B8A8_SRGB)
                 {
                     throw new VeldridException(
-                        $"Unable to create an sRGB Swapchain for this surface."
+                        "Unable to create an sRGB Swapchain for this surface."
                     );
                 }
 

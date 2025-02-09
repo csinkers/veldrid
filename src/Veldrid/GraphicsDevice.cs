@@ -805,7 +805,7 @@ public abstract class GraphicsDevice : IDisposable
                 if (width != mipWidth && height != mipHeight)
                 {
                     throw new VeldridException(
-                        $"Updates to block-compressed textures must use a region that is block-size aligned and sized."
+                        "Updates to block-compressed textures must use a region that is block-size aligned and sized."
                     );
                 }
             }
@@ -841,7 +841,7 @@ public abstract class GraphicsDevice : IDisposable
             || z + depth > texture.Depth
         )
         {
-            throw new VeldridException($"The given region does not fit into the Texture.");
+            throw new VeldridException("The given region does not fit into the Texture.");
         }
 
         if (mipLevel >= texture.MipLevels)

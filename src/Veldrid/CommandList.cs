@@ -479,7 +479,7 @@ public abstract class CommandList : DeviceResource, IDisposable
             static void Throw()
             {
                 throw new VeldridException(
-                    $"Cannot use ClearColorTarget. There is no Framebuffer bound."
+                    "Cannot use ClearColorTarget. There is no Framebuffer bound."
                 );
             }
             Throw();
@@ -527,7 +527,7 @@ public abstract class CommandList : DeviceResource, IDisposable
             static void Throw()
             {
                 throw new VeldridException(
-                    $"Cannot use ClearDepthStencil. There is no Framebuffer bound."
+                    "Cannot use ClearDepthStencil. There is no Framebuffer bound."
                 );
             }
             Throw();
@@ -822,7 +822,7 @@ public abstract class CommandList : DeviceResource, IDisposable
         {
             static void Throw()
             {
-                throw new VeldridException($"Indirect drawing is not supported by this device.");
+                throw new VeldridException("Indirect drawing is not supported by this device.");
             }
             Throw();
         }
@@ -1398,7 +1398,7 @@ public abstract class CommandList : DeviceResource, IDisposable
         {
             static void Throw()
             {
-                throw new VeldridException($"The given copy region is empty.");
+                throw new VeldridException("The given copy region is empty.");
             }
             Throw();
         }
@@ -1431,7 +1431,7 @@ public abstract class CommandList : DeviceResource, IDisposable
             static void Throw()
             {
                 throw new VeldridException(
-                    $"The given copy region is not valid for the source Texture."
+                    "The given copy region is not valid for the source Texture."
                 );
             }
             Throw();
@@ -1456,7 +1456,7 @@ public abstract class CommandList : DeviceResource, IDisposable
             static void Throw()
             {
                 throw new VeldridException(
-                    $"The given copy region is not valid for the destination Texture."
+                    "The given copy region is not valid for the destination Texture."
                 );
             }
             Throw();
@@ -1482,7 +1482,7 @@ public abstract class CommandList : DeviceResource, IDisposable
             static void Throw()
             {
                 throw new VeldridException(
-                    $"An invalid mip range was given for the source Texture."
+                    "An invalid mip range was given for the source Texture."
                 );
             }
             Throw();
@@ -1508,7 +1508,7 @@ public abstract class CommandList : DeviceResource, IDisposable
             static void Throw()
             {
                 throw new VeldridException(
-                    $"An invalid mip range was given for the destination Texture."
+                    "An invalid mip range was given for the destination Texture."
                 );
             }
             Throw();

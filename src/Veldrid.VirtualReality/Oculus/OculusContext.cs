@@ -91,7 +91,7 @@ internal unsafe class OculusContext : VRContext
         result = ovr_Create(&session, &luid);
         if (result != ovrResult.Success)
         {
-            throw new VeldridException($"Failed to create an Oculus session.");
+            throw new VeldridException("Failed to create an Oculus session.");
         }
 
         _session = session;
@@ -114,14 +114,14 @@ internal unsafe class OculusContext : VRContext
             );
             if (result != ovrResult.Success)
             {
-                throw new VeldridException($"Failed to get Vulkan physical device.");
+                throw new VeldridException("Failed to get Vulkan physical device.");
             }
 
             result = ovr_SetSynchonizationQueueVk(_session, vkInfo.GraphicsQueue);
             if (result != ovrResult.Success)
             {
                 throw new VeldridException(
-                    $"Failed to set the Oculus session's Vulkan synchronization queue."
+                    "Failed to set the Oculus session's Vulkan synchronization queue."
                 );
             }
         }

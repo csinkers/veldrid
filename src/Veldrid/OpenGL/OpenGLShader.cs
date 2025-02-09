@@ -50,7 +50,7 @@ internal sealed unsafe class OpenGLShader : Shader, OpenGLDeferredResource
             else
             {
                 throw new VeldridException(
-                    $"Compute shaders require OpenGL 4.3 or ARB_compute_shader."
+                    "Compute shaders require OpenGL 4.3 or ARB_compute_shader."
                 );
             }
         }

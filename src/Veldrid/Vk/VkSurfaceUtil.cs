@@ -149,7 +149,7 @@ internal static unsafe class VkSurfaceUtil
 
             default:
                 throw new VeldridException(
-                    $"The provided SwapchainSource cannot be used to create a Vulkan surface."
+                    "The provided SwapchainSource cannot be used to create a Vulkan surface."
                 );
         }
     }

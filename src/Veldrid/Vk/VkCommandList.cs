@@ -94,7 +94,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
         _pool = pool;
 
         _cb = GetNextCommandBuffer();
-        _stagingBufferName = $"Staging Buffer (CommandList)";
+        _stagingBufferName = "Staging Buffer (CommandList)";
         RefCount = new(this);
     }
 

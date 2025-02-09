@@ -64,7 +64,7 @@ public abstract class ResourceFactory
                     if (!attachmentState.Equals(description.BlendState.AttachmentStates[i]))
                     {
                         throw new VeldridException(
-                            $"If GraphcsDeviceFeatures.IndependentBlend is false, then all members of BlendState.AttachmentStates must be equal."
+                            "If GraphcsDeviceFeatures.IndependentBlend is false, then all members of BlendState.AttachmentStates must be equal."
                         );
                     }
                 }
@@ -79,7 +79,7 @@ public abstract class ResourceFactory
                 if (hasExplicitLayout && elementDesc.Offset == 0)
                 {
                     throw new VeldridException(
-                        $"If any vertex element has an explicit offset, then all elements must have an explicit offset."
+                        "If any vertex element has an explicit offset, then all elements must have an explicit offset."
                     );
                 }
 
@@ -156,7 +156,7 @@ public abstract class ResourceFactory
         }
         if (description.Type == TextureType.Texture1D && !Features.Texture1D)
         {
-            throw new VeldridException($"1D Textures are not supported by this device.");
+            throw new VeldridException("1D Textures are not supported by this device.");
         }
         if (
             (description.Usage & TextureUsage.Staging) != 0
@@ -330,7 +330,7 @@ public abstract class ResourceFactory
         }
         if ((usage & BufferUsage.UniformBuffer) != 0 && (description.SizeInBytes % 16) != 0)
         {
-            throw new VeldridException($"Uniform buffer size must be a multiple of 16 bytes.");
+            throw new VeldridException("Uniform buffer size must be a multiple of 16 bytes.");
         }
     }
 

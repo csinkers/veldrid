@@ -396,7 +396,7 @@ internal static class MTLFormats
             case ShaderConstantType.Int64:
             case ShaderConstantType.Double:
                 static MTLDataType Throw() =>
-                    throw new VeldridException($"Metal does not support 64-bit shader constants.");
+                    throw new VeldridException("Metal does not support 64-bit shader constants.");
                 return Throw();
             default:
                 return Illegal.Value<ShaderConstantType, MTLDataType>();

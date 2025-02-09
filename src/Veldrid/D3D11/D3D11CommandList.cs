@@ -1361,7 +1361,7 @@ internal sealed class D3D11CommandList : CommandList
         void* pAdjustedSrcData = data.ToPointer();
         if (needWorkaround)
         {
-            Debug.Assert(region.Top == 0 && region.Front == 0);
+            Debug.Assert(region is { Top: 0, Front: 0 });
             pAdjustedSrcData = (byte*)data - region.Left;
         }
 

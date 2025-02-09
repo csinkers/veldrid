@@ -536,22 +536,22 @@ public class ImGuiRenderer : IDisposable
             return startKey2 + changeFromStart1;
         }
 
-        if (key >= Key.F1 && key <= Key.F12)
+        if (key is >= Key.F1 and <= Key.F12)
         {
             result = keyToImGuiKeyShortcut(key, Key.F1, ImGuiKey.F1);
             return true;
         }
-        else if (key >= Key.Keypad0 && key <= Key.Keypad9)
+        else if (key is >= Key.Keypad0 and <= Key.Keypad9)
         {
             result = keyToImGuiKeyShortcut(key, Key.Keypad0, ImGuiKey.Keypad0);
             return true;
         }
-        else if (key >= Key.A && key <= Key.Z)
+        else if (key is >= Key.A and <= Key.Z)
         {
             result = keyToImGuiKeyShortcut(key, Key.A, ImGuiKey.A);
             return true;
         }
-        else if (key >= Key.Num0 && key <= Key.Num9)
+        else if (key is >= Key.Num0 and <= Key.Num9)
         {
             result = keyToImGuiKeyShortcut(key, Key.Num0, ImGuiKey._0);
             return true;

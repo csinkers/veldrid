@@ -188,10 +188,8 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         }
 
         if (
-            surfaceCapabilities.minImageExtent.width == 0
-            && surfaceCapabilities.minImageExtent.height == 0
-            && surfaceCapabilities.maxImageExtent.width == 0
-            && surfaceCapabilities.maxImageExtent.height == 0
+            surfaceCapabilities.minImageExtent is { width: 0, height: 0 }
+            && surfaceCapabilities.maxImageExtent is { width: 0, height: 0 }
         )
         {
             return false;
@@ -226,7 +224,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         VkFormat desiredFormat = _colorSrgb ? VK_FORMAT_B8G8R8A8_SRGB : VK_FORMAT_B8G8R8A8_UNORM;
 
         VkSurfaceFormatKHR surfaceFormat = new();
-        if (formats.Length == 1 && formats[0].format == VK_FORMAT_UNDEFINED)
+        if (formats is [{ format: VK_FORMAT_UNDEFINED } _])
         {
             surfaceFormat.format = desiredFormat;
             surfaceFormat.colorSpace = VkColorSpaceKHR.VK_COLORSPACE_SRGB_NONLINEAR_KHR;

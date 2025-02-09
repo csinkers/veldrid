@@ -299,7 +299,7 @@ public abstract class ResourceFactory
                 throw new VeldridException("GraphicsDevice does not support structured buffers.");
             }
 
-            if (!description.RawBuffer && description.StructureByteStride == 0)
+            if (description is { RawBuffer: false, StructureByteStride: 0 })
             {
                 throw new VeldridException(
                     "Structured Buffer objects must have a non-zero StructureByteStride."

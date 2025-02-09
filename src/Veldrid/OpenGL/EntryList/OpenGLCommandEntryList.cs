@@ -770,7 +770,7 @@ internal sealed unsafe class OpenGLCommandEntryList : IDisposable
 /// A handle for an object stored in some List.
 /// </summary>
 /// <typeparam name="T">The type of object to track.</typeparam>
-internal struct Tracked<T>
+internal readonly struct Tracked<T>
     where T : class
 {
     readonly int _index;

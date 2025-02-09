@@ -405,7 +405,7 @@ public abstract class RenderTests<T> : GraphicsDeviceTestBase<T>
 
     static ushort UShortNorm(float normalizedValue)
     {
-        Debug.Assert(normalizedValue >= 0 && normalizedValue <= 1);
+        Debug.Assert(normalizedValue is >= 0 and <= 1);
         return (ushort)(normalizedValue * ushort.MaxValue);
     }
 

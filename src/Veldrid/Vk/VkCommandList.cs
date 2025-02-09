@@ -294,7 +294,7 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
             };
 
             VkExtent2D renderableExtent = _currentFramebuffer.RenderableExtent;
-            if (renderableExtent.width > 0 && renderableExtent.height > 0)
+            if (renderableExtent is { width: > 0, height: > 0 })
             {
                 VkClearRect clearRect = new()
                 {

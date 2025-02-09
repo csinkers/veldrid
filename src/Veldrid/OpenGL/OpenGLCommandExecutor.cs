@@ -59,7 +59,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
         glClearColor(color.R, color.G, color.B, color.A);
         CheckLastError();
 
-        if (_graphicsPipeline != null && _graphicsPipeline.RasterizerState.ScissorTestEnabled)
+        if (_graphicsPipeline is { RasterizerState.ScissorTestEnabled: true })
         {
             glDisable(EnableCap.ScissorTest);
             CheckLastError();
@@ -68,7 +68,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
         glClear(ClearBufferMask.ColorBufferBit);
         CheckLastError();
 
-        if (_graphicsPipeline != null && _graphicsPipeline.RasterizerState.ScissorTestEnabled)
+        if (_graphicsPipeline is { RasterizerState.ScissorTestEnabled: true })
         {
             glEnable(EnableCap.ScissorTest);
         }
@@ -97,7 +97,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
         glClearStencil(stencil);
         CheckLastError();
 
-        if (_graphicsPipeline != null && _graphicsPipeline.RasterizerState.ScissorTestEnabled)
+        if (_graphicsPipeline is { RasterizerState.ScissorTestEnabled: true })
         {
             glDisable(EnableCap.ScissorTest);
             CheckLastError();
@@ -107,7 +107,7 @@ internal sealed unsafe class OpenGLCommandExecutor(
         glClear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         CheckLastError();
 
-        if (_graphicsPipeline != null && _graphicsPipeline.RasterizerState.ScissorTestEnabled)
+        if (_graphicsPipeline is { RasterizerState.ScissorTestEnabled: true })
         {
             glEnable(EnableCap.ScissorTest);
         }

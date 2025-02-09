@@ -84,7 +84,7 @@ public struct Ray(Vector3 origin, Vector3 direction)
         //if determinant is near zero, ray lies in plane of triangle or ray is parallel to plane of triangle
         det = Vector3.Dot(e1, P);
         //NOT CULLIN
-        if (det > -EPSILON && det < EPSILON)
+        if (det is > -EPSILON and < EPSILON)
         {
             distance = 0f;
             return false;

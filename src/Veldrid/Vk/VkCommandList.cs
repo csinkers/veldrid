@@ -7,11 +7,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.Vulkan;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 using VkImageLayout = TerraFX.Interop.Vulkan.VkImageLayout;
 using VulkanBuffer = TerraFX.Interop.Vulkan.VkBuffer;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarget
 {
@@ -69,7 +69,6 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
 
     public VkCommandList(VkGraphicsDevice gd, in CommandListDescription description)
         : base(
-            description,
             gd.Features,
             gd.UniformBufferMinOffsetAlignment,
             gd.StructuredBufferMinOffsetAlignment
@@ -166,15 +165,12 @@ internal sealed unsafe class VkCommandList : CommandList, IResourceRefCountTarge
                 {
                     _availableCommandBuffers.Push(completedCB);
                     _submittedCommandBuffers.RemoveAt(i);
-                    i -= 1;
                     break;
                 }
             }
 
             if (!_submittedStagingInfos.Remove(completedCB, out StagingResourceInfo info))
-            {
                 ThrowUnreachableStateException();
-            }
 
             RefCount.Decrement();
             return info;

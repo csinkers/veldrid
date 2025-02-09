@@ -107,7 +107,7 @@ public readonly struct MappedResource
 /// mapped resource.
 /// </summary>
 /// <typeparam name="T">The blittable value type which mapped data is viewed as.</typeparam>
-public unsafe readonly struct MappedResourceView<T>
+public readonly unsafe struct MappedResourceView<T>
     where T : unmanaged
 {
     /// <summary>

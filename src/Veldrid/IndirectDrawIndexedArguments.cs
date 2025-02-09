@@ -1,10 +1,12 @@
-﻿namespace Veldrid;
+﻿using System;
+
+namespace Veldrid;
 
 /// <summary>
 /// A structure describing the format expected by indirect, indexed draw commands contained in an indirect
 /// <see cref="DeviceBuffer"/>.
 /// </summary>
-public struct IndirectDrawIndexedArguments
+public struct IndirectDrawIndexedArguments : IEquatable<IndirectDrawIndexedArguments>
 {
     /// <summary>
     /// The number of indices to use in the indexed draw.
@@ -30,4 +32,17 @@ public struct IndirectDrawIndexedArguments
     /// The first instance to draw. Subsequent instances (if InstanceCount > 1) are incremented by 1.
     /// </summary>
     public uint FirstInstance;
+
+    public bool Equals(IndirectDrawIndexedArguments other) =>
+        IndexCount == other.IndexCount
+        && InstanceCount == other.InstanceCount
+        && FirstIndex == other.FirstIndex
+        && VertexOffset == other.VertexOffset
+        && FirstInstance == other.FirstInstance;
+
+    public override bool Equals(object? obj) =>
+        obj is IndirectDrawIndexedArguments other && Equals(other);
+
+    public override int GetHashCode() =>
+        HashCode.Combine(IndexCount, InstanceCount, FirstIndex, VertexOffset, FirstInstance);
 }

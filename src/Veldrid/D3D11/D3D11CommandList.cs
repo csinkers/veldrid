@@ -44,14 +44,14 @@ internal sealed class D3D11CommandList : CommandList
     ID3D11DomainShader? _domainShader;
     ID3D11PixelShader? _pixelShader;
 
-    new D3D11Pipeline? _graphicsPipeline;
+    D3D11Pipeline? _graphicsPipeline;
 
     BoundResourceSetInfo[] _graphicsResourceSets = new BoundResourceSetInfo[1];
 
     // Resource sets are invalidated when a new resource set is bound with an incompatible SRV or UAV.
     bool[] _invalidatedGraphicsResourceSets = new bool[1];
 
-    new D3D11Pipeline? _computePipeline;
+    D3D11Pipeline? _computePipeline;
 
     BoundResourceSetInfo[] _computeResourceSets = new BoundResourceSetInfo[1];
 
@@ -96,10 +96,8 @@ internal sealed class D3D11CommandList : CommandList
     uint _viewportCount;
     readonly List<D3D11Swapchain> _referencedSwapchains = [];
 
-    public D3D11CommandList(D3D11GraphicsDevice gd, in CommandListDescription description)
-        : base(
-            description,
-            gd.Features,
+    public D3D11CommandList(D3D11GraphicsDevice gd)
+        : base(gd.Features,
             gd.UniformBufferMinOffsetAlignment,
             gd.StructuredBufferMinOffsetAlignment
         )
@@ -115,7 +113,7 @@ internal sealed class D3D11CommandList : CommandList
     internal ID3D11DeviceContext DeviceContext => _context;
 
     D3D11Framebuffer D3D11Framebuffer =>
-        Util.AssertSubtype<Framebuffer, D3D11Framebuffer>(_framebuffer!);
+        Util.AssertSubtype<Framebuffer, D3D11Framebuffer>(Framebuffer!);
 
     public override bool IsDisposed => _disposed;
 
@@ -141,7 +139,7 @@ internal sealed class D3D11CommandList : CommandList
         _vertexStrides = null;
         Util.ClearArray(_vertexOffsets);
 
-        _framebuffer = null;
+        Framebuffer = null;
 
         Util.ClearArray(_viewports);
         Util.ClearArray(_scissors);
@@ -1090,7 +1088,7 @@ internal sealed class D3D11CommandList : CommandList
 
         int baseSlot = 0;
         if (!compute)
-            baseSlot = _framebuffer!.ColorTargets.Length;
+            baseSlot = Framebuffer!.ColorTargets.Length;
 
         int actualSlot = baseSlot + slot;
 

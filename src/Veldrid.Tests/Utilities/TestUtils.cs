@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Text;
-using Veldrid.Sdl2;
+using Veldrid.SDL2;
 using Veldrid.StartupUtilities;
 using Veldrid.Utilities;
 using Xunit;
 
-namespace Veldrid.Tests;
+namespace Veldrid.Tests.Utilities;
 
 public static class TestUtils
 {

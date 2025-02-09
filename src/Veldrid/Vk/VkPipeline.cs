@@ -2,10 +2,10 @@
 using System.Runtime.CompilerServices;
 using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.Vulkan;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 using VulkanPipeline = TerraFX.Interop.Vulkan.VkPipeline;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
 {
@@ -431,8 +431,9 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
 
         ResourceSetCount = (uint)description.ResourceLayouts.Length;
         DynamicOffsetsCount = 0;
-        foreach (VkResourceLayout layout in description.ResourceLayouts)
+        foreach (ResourceLayout resourceLayout in description.ResourceLayouts)
         {
+            VkResourceLayout layout = (VkResourceLayout)resourceLayout;
             DynamicOffsetsCount += layout.DynamicBufferCount;
         }
         VertexLayoutCount = (uint)inputDescriptions.Length;
@@ -536,8 +537,9 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
         ResourceSetCount = (uint)description.ResourceLayouts.Length;
         DynamicOffsetsCount = 0;
 
-        foreach (VkResourceLayout layout in description.ResourceLayouts)
+        foreach (ResourceLayout resourceLayout in description.ResourceLayouts)
         {
+            VkResourceLayout layout = (VkResourceLayout)resourceLayout;
             DynamicOffsetsCount += layout.DynamicBufferCount;
         }
     }

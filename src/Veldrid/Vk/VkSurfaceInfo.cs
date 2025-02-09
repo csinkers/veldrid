@@ -1,7 +1,7 @@
 ﻿using System;
 using TerraFX.Interop.Vulkan;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 /// <summary>
 /// An object which can be used to create a <see cref="VkSurfaceKHR"/>.

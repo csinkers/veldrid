@@ -175,17 +175,17 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
         return Min == other.Min && Max == other.Max;
     }
 
-    public override readonly string ToString()
+    public readonly override string ToString()
     {
         return string.Format("Min:{0}, Max:{1}", Min, Max);
     }
 
-    public override readonly bool Equals(object? obj)
+    public readonly override bool Equals(object? obj)
     {
         return obj is BoundingBox box && Equals(box);
     }
 
-    public override readonly int GetHashCode()
+    public readonly override int GetHashCode()
     {
         int h1 = Min.GetHashCode();
         int h2 = Max.GetHashCode();

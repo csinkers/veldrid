@@ -1,7 +1,7 @@
 ﻿using System;
-using Veldrid.OpenGLBinding;
+using Veldrid.OpenGLBindings;
 using static Veldrid.OpenGL.OpenGLUtil;
-using static Veldrid.OpenGLBinding.OpenGLNative;
+using static Veldrid.OpenGLBindings.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -106,8 +106,6 @@ internal sealed unsafe class OpenGLFramebuffer(
             CheckLastError();
         }
 
-        uint depthTextureID = 0;
-        TextureTarget depthTarget = TextureTarget.Texture2D;
         if (DepthTarget != null)
         {
             FramebufferAttachment depthTargetValue = DepthTarget.GetValueOrDefault();
@@ -116,9 +114,8 @@ internal sealed unsafe class OpenGLFramebuffer(
                 depthTargetValue.Target
             );
             glDepthTex.EnsureResourcesCreated();
-            depthTarget = glDepthTex.TextureTarget;
-
-            depthTextureID = glDepthTex.Texture;
+            TextureTarget depthTarget = glDepthTex.TextureTarget;
+            uint depthTextureID = glDepthTex.Texture;
 
             gd.TextureSamplerManager.SetTextureTransient(depthTarget, glDepthTex.Texture);
 

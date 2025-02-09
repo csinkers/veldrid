@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Veldrid.OpenGLBinding;
+namespace Veldrid.OpenGLBindings;
 
 public readonly struct GLsync(IntPtr handle)
 {

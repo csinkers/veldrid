@@ -3,18 +3,18 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLComputePipelineDescriptor
+public readonly struct MTLComputePipelineDescriptor(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLFunction computeFunction
     {
-        get => objc_msgSend<MTLFunction>(NativePtr, sel_computeFunction);
+        get => new(IntPtr_objc_msgSend(NativePtr, sel_computeFunction));
         set => objc_msgSend(NativePtr, sel_setComputeFunction, value.NativePtr);
     }
 
     public MTLPipelineBufferDescriptorArray buffers =>
-        objc_msgSend<MTLPipelineBufferDescriptorArray>(NativePtr, sel_buffers);
+        new(IntPtr_objc_msgSend(NativePtr, sel_buffers));
 
     static readonly Selector sel_computeFunction = "computeFunction"u8;
     static readonly Selector sel_setComputeFunction = "setComputeFunction:"u8;

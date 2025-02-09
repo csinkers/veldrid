@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}} ({{{nameof(_target)},nq}})")]
 internal sealed class ResourceRefCount(IResourceRefCountTarget target)

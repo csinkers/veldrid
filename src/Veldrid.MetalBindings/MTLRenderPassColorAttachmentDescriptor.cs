@@ -9,7 +9,7 @@ public readonly struct MTLRenderPassColorAttachmentDescriptor(IntPtr ptr)
 
     public MTLTexture texture
     {
-        get => objc_msgSend<MTLTexture>(NativePtr, Selectors.texture);
+        get => new(IntPtr_objc_msgSend(NativePtr, Selectors.texture));
         set => objc_msgSend(NativePtr, Selectors.setTexture, value.NativePtr);
     }
 
@@ -27,7 +27,7 @@ public readonly struct MTLRenderPassColorAttachmentDescriptor(IntPtr ptr)
 
     public MTLTexture resolveTexture
     {
-        get => objc_msgSend<MTLTexture>(NativePtr, Selectors.resolveTexture);
+        get => new(IntPtr_objc_msgSend(NativePtr, Selectors.resolveTexture));
         set => objc_msgSend(NativePtr, Selectors.setResolveTexture, value.NativePtr);
     }
 

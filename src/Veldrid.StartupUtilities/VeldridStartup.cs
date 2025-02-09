@@ -3,8 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Veldrid.Sdl2;
-using Veldrid.Vulkan;
+using Veldrid.SDL2;
 
 namespace Veldrid.StartupUtilities;
 
@@ -266,6 +265,7 @@ public static class VeldridStartup
         return gd;
     }
 
+    /*
     static unsafe VkSurfaceSource GetSurfaceSource(SDL_SysWMinfo sysWmInfo)
     {
         switch (sysWmInfo.subsystem)
@@ -288,6 +288,7 @@ public static class VeldridStartup
                 );
         }
     }
+    */
 #endif
 
 #if !EXCLUDE_OPENGL_BACKEND
@@ -320,17 +321,17 @@ public static class VeldridStartup
         }
 
         int actualDepthSize;
-        int result = Sdl2Native.SDL_GL_GetAttribute(SDL_GLAttribute.DepthSize, &actualDepthSize);
-        int actualStencilSize;
-        result = Sdl2Native.SDL_GL_GetAttribute(SDL_GLAttribute.StencilSize, &actualStencilSize);
+        _ = Sdl2Native.SDL_GL_GetAttribute(SDL_GLAttribute.DepthSize, &actualDepthSize);
 
-        result = Sdl2Native.SDL_GL_SetSwapInterval(options.SyncToVerticalBlank ? 1 : 0);
+        int actualStencilSize;
+        _ = Sdl2Native.SDL_GL_GetAttribute(SDL_GLAttribute.StencilSize, &actualStencilSize);
+        _ = Sdl2Native.SDL_GL_SetSwapInterval(options.SyncToVerticalBlank ? 1 : 0);
 
         OpenGL.OpenGLPlatformInfo platformInfo = new(
             contextHandle,
             Sdl2Native.SDL_GL_GetProcAddress,
             context => Sdl2Native.SDL_GL_MakeCurrent(sdlHandle, context),
-            () => Sdl2Native.SDL_GL_GetCurrentContext(),
+            Sdl2Native.SDL_GL_GetCurrentContext,
             () => Sdl2Native.SDL_GL_MakeCurrent(new(IntPtr.Zero), IntPtr.Zero),
             Sdl2Native.SDL_GL_DeleteContext,
             () => Sdl2Native.SDL_GL_SwapWindow(sdlHandle),

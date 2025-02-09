@@ -19,17 +19,15 @@ public struct VulkanDeviceOptions
     /// </summary>
     public readonly string[] DeviceExtensions;
 
+    public VulkanDeviceOptions()
+    {
+        InstanceExtensions = [];
+        DeviceExtensions = [];
+    }
+
     /// <summary>
-    /// Constructs a new <see cref="VulkanDeviceOptions"/>.
+    /// A structure describing Vulkan-specific device creation options.
     /// </summary>
-    /// <param name="instanceExtensions">
-    /// An array of required Vulkan instance extensions. Entries in this array will be
-    /// enabled in the <see cref="GraphicsDevice"/>'s created <see cref="VkInstance"/>.
-    /// </param>
-    /// <param name="deviceExtensions">
-    /// An array of required Vulkan device extensions. Entries in this array will be enabled
-    /// in the <see cref="GraphicsDevice"/>'s created <see cref="VkDevice"/>.
-    /// </param>
     public VulkanDeviceOptions(string[] instanceExtensions, string[] deviceExtensions)
     {
         InstanceExtensions = instanceExtensions;

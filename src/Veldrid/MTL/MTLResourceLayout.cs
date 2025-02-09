@@ -17,7 +17,7 @@ internal sealed class MTLResourceLayout : ResourceLayout
     public ResourceLayoutDescription Description { get; }
 #endif
 
-    public MTLResourceLayout(in ResourceLayoutDescription description, MTLGraphicsDevice gd)
+    public MTLResourceLayout(in ResourceLayoutDescription description)
         : base(description)
     {
 #if !VALIDATE_USAGE

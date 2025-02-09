@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
-using Veldrid.Vulkan;
+using Veldrid.Vk;
 
 namespace Veldrid;
 

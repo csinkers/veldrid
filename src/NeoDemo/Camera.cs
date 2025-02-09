@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ImGuiNET;
-using Veldrid.Sdl2;
+using Veldrid.SDL2;
 
 namespace Veldrid.NeoDemo;
 

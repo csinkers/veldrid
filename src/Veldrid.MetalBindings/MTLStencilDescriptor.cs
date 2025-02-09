@@ -3,9 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLStencilDescriptor
+public readonly struct MTLStencilDescriptor(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLStencilOperation stencilFailureOperation
     {

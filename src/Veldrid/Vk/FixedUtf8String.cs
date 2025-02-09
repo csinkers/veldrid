@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class FixedUtf8String : IDisposable
 {
@@ -39,23 +39,23 @@ internal sealed unsafe class FixedUtf8String : IDisposable
 
     public static implicit operator string(FixedUtf8String utf8String) => utf8String.ToString();
 
-    void Dispose(bool disposing)
+    void Dispose(bool _)
     {
-        if (_handle != IntPtr.Zero)
-        {
-            Marshal.FreeHGlobal(_handle);
-            _handle = IntPtr.Zero;
-        }
+        if (_handle == IntPtr.Zero)
+            return;
+
+        Marshal.FreeHGlobal(_handle);
+        _handle = IntPtr.Zero;
     }
 
     public void Dispose()
     {
-        Dispose(disposing: true);
+        Dispose(true);
         GC.SuppressFinalize(this);
     }
 
     ~FixedUtf8String()
     {
-        Dispose(disposing: false);
+        Dispose(false);
     }
 }

@@ -3,9 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public struct MTLPipelineBufferDescriptorArray
+public struct MTLPipelineBufferDescriptorArray(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLPipelineBufferDescriptor this[uint index]
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using TerraFX.Interop.Vulkan;
 using Veldrid.Android;
 using Veldrid.MetalBindings;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal static unsafe class VkSurfaceUtil
 {

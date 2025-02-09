@@ -6,10 +6,10 @@ using static TerraFX.Interop.Vulkan.VkAttachmentLoadOp;
 using static TerraFX.Interop.Vulkan.VkAttachmentStoreOp;
 using static TerraFX.Interop.Vulkan.VkImageLayout;
 using static TerraFX.Interop.Vulkan.Vulkan;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 using VulkanFramebuffer = TerraFX.Interop.Vulkan.VkFramebuffer;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkFramebuffer : VkFramebufferBase
 {

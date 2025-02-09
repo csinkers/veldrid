@@ -2,15 +2,14 @@
 using System.Diagnostics;
 using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.Vulkan;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
 {
     readonly VkGraphicsDevice _gd;
     readonly VkSwapchain _swapchain;
-    readonly VkSurfaceKHR _surface;
     readonly PixelFormat? _depthFormat;
     uint _currentImageIndex;
 
@@ -39,16 +38,13 @@ internal sealed unsafe class VkSwapchainFramebuffer : VkFramebufferBase
     public VkSwapchainFramebuffer(
         VkGraphicsDevice gd,
         VkSwapchain swapchain,
-        VkSurfaceKHR surface,
         in SwapchainDescription description
     )
-        : base()
     {
         swapchain.RefCount.Increment();
 
         _gd = gd;
         _swapchain = swapchain;
-        _surface = surface;
         _depthFormat = description.DepthFormat;
 
         AttachmentCount = _depthFormat.HasValue ? 2u : 1u; // 1 Color + 1 Depth

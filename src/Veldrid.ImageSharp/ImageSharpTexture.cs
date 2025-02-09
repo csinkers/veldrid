@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -36,7 +35,7 @@ public class ImageSharpTexture
     public uint MipLevels => (uint)Images.Length;
 
     public ImageSharpTexture(string path)
-        : this(Image.Load<Rgba32>(path), true) { }
+        : this(Image.Load<Rgba32>(path)) { }
 
     public ImageSharpTexture(string path, bool mipmap)
         : this(Image.Load<Rgba32>(path), mipmap) { }
@@ -45,7 +44,7 @@ public class ImageSharpTexture
         : this(Image.Load<Rgba32>(path), mipmap, srgb) { }
 
     public ImageSharpTexture(Stream stream)
-        : this(Image.Load<Rgba32>(stream), true) { }
+        : this(Image.Load<Rgba32>(stream)) { }
 
     public ImageSharpTexture(Stream stream, bool mipmap)
         : this(Image.Load<Rgba32>(stream), mipmap) { }
@@ -74,6 +73,7 @@ public class ImageSharpTexture
         return CreateTextureViaUpdate(gd, factory);
     }
 
+    /*
     unsafe Texture CreateTextureViaStaging(GraphicsDevice gd, ResourceFactory factory)
     {
         Texture staging = factory.CreateTexture(
@@ -144,6 +144,7 @@ public class ImageSharpTexture
 
         return ret;
     }
+    */
 
     unsafe Texture CreateTextureViaUpdate(GraphicsDevice gd, ResourceFactory factory)
     {
@@ -176,32 +177,31 @@ public class ImageSharpTexture
             }
             else
             {
-                image.ProcessPixelRows(
-                    (pixels) =>
+                int level2 = level;
+                image.ProcessPixelRows(pixels2 =>
+                {
+                    for (int y = 0; y < pixels2.Height; y++)
                     {
-                        for (int y = 0; y < pixels.Height; y++)
-                        {
-                            Span<Rgba32> span = pixels.GetRowSpan(y);
+                        Span<Rgba32> span = pixels2.GetRowSpan(y);
 
-                            fixed (void* pixelPtr = span)
-                            {
-                                gd.UpdateTexture(
-                                    tex,
-                                    (IntPtr)pixelPtr,
-                                    (uint)(sizeof(Rgba32) * image.Width),
-                                    0,
-                                    (uint)y,
-                                    0,
-                                    (uint)pixels.Width,
-                                    height: 1,
-                                    depth: 1,
-                                    (uint)level,
-                                    0
-                                );
-                            }
+                        fixed (void* pixelPtr = span)
+                        {
+                            gd.UpdateTexture(
+                                tex,
+                                (IntPtr)pixelPtr,
+                                (uint)(sizeof(Rgba32) * image.Width),
+                                0,
+                                (uint)y,
+                                0,
+                                (uint)pixels2.Width,
+                                height: 1,
+                                depth: 1,
+                                (uint)level2,
+                                0
+                            );
                         }
                     }
-                );
+                });
             }
         }
 

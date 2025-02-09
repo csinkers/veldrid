@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Veldrid.Tests.Utilities;
 using Xunit;
 
 namespace Veldrid.Tests;
@@ -138,7 +139,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         {
             DeviceBuffer[] dsts = Enumerable
                 .Range(0, chainLength)
-                .Select(i => RF.CreateBuffer(new(1024, BufferUsage.UniformBuffer)))
+                .Select(_ => RF.CreateBuffer(new(1024, BufferUsage.UniformBuffer)))
                 .ToArray();
 
             CommandList copyCL = RF.CreateCommandList();
@@ -169,7 +170,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.If(GD.BackendType == GraphicsBackend.Metal); // TODO
 
         DeviceBuffer buffer = RF.CreateBuffer(new(1024, BufferUsage.StagingReadWrite));
-        MappedResourceView<int> view = GD.Map<int>(buffer, MapMode.ReadWrite);
+        _ = GD.Map<int>(buffer, MapMode.ReadWrite);
         int[] data = Enumerable.Range(0, 256).Select(i => 2 * i).ToArray();
         Assert.Throws<VeldridMappedResourceException>(() => GD.UpdateBuffer(buffer, 0, data));
     }
@@ -181,7 +182,7 @@ public abstract class BufferTestBase<T> : GraphicsDeviceTestBase<T>
         Skip.If(GD.BackendType == GraphicsBackend.Metal); // TODO
 
         DeviceBuffer buffer = RF.CreateBuffer(new(1024, BufferUsage.StagingReadWrite));
-        MappedResource map = GD.Map(buffer, MapMode.ReadWrite);
+        _ = GD.Map(buffer, MapMode.ReadWrite);
         Assert.Throws<VeldridMappedResourceException>(() => GD.Map(buffer, MapMode.ReadWrite));
         GD.Unmap(buffer);
     }

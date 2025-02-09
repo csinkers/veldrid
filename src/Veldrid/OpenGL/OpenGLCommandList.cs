@@ -5,21 +5,17 @@ using Veldrid.OpenGL.EntryList;
 
 namespace Veldrid.OpenGL;
 
-internal sealed class OpenGLCommandList(
-    OpenGLGraphicsDevice gd,
-    in CommandListDescription description
-)
+internal sealed class OpenGLCommandList(OpenGLGraphicsDevice gd)
     : CommandList(
-        description,
         gd.Features,
         gd.UniformBufferMinOffsetAlignment,
         gd.StructuredBufferMinOffsetAlignment
     )
 {
-    OpenGLCommandEntryList _currentCommands = null!;
+    OpenGLCommandEntryList? _currentCommands;
     bool _disposed;
 
-    internal OpenGLCommandEntryList CurrentCommands => _currentCommands;
+    internal OpenGLCommandEntryList CurrentCommands => _currentCommands!;
     internal OpenGLGraphicsDevice Device => gd;
 
     readonly object _lock = new();
@@ -41,26 +37,17 @@ internal sealed class OpenGLCommandList(
     OpenGLCommandEntryList GetFreeCommandList()
     {
         lock (_lock)
-        {
-            if (_availableLists.TryPop(out OpenGLCommandEntryList? ret))
-            {
-                return ret;
-            }
-            else
-            {
-                return new(this);
-            }
-        }
+            return _availableLists.TryPop(out OpenGLCommandEntryList? ret) ? ret : new(this);
     }
 
     private protected override void ClearColorTargetCore(uint index, RgbaFloat clearColor)
     {
-        _currentCommands.ClearColorTarget(index, clearColor);
+        _currentCommands?.ClearColorTarget(index, clearColor);
     }
 
     private protected override void ClearDepthStencilCore(float depth, byte stencil)
     {
-        _currentCommands.ClearDepthTarget(depth, stencil);
+        _currentCommands?.ClearDepthTarget(depth, stencil);
     }
 
     private protected override void DrawCore(
@@ -70,7 +57,7 @@ internal sealed class OpenGLCommandList(
         uint instanceStart
     )
     {
-        _currentCommands.Draw(vertexCount, instanceCount, vertexStart, instanceStart);
+        _currentCommands?.Draw(vertexCount, instanceCount, vertexStart, instanceStart);
     }
 
     private protected override void DrawIndexedCore(
@@ -81,7 +68,7 @@ internal sealed class OpenGLCommandList(
         uint instanceStart
     )
     {
-        _currentCommands.DrawIndexed(
+        _currentCommands?.DrawIndexed(
             indexCount,
             instanceCount,
             indexStart,
@@ -97,7 +84,7 @@ internal sealed class OpenGLCommandList(
         uint stride
     )
     {
-        _currentCommands.DrawIndirect(indirectBuffer, offset, drawCount, stride);
+        _currentCommands?.DrawIndirect(indirectBuffer, offset, drawCount, stride);
     }
 
     protected override void DrawIndexedIndirectCore(
@@ -107,32 +94,32 @@ internal sealed class OpenGLCommandList(
         uint stride
     )
     {
-        _currentCommands.DrawIndexedIndirect(indirectBuffer, offset, drawCount, stride);
+        _currentCommands?.DrawIndexedIndirect(indirectBuffer, offset, drawCount, stride);
     }
 
     public override void Dispatch(uint groupCountX, uint groupCountY, uint groupCountZ)
     {
-        _currentCommands.Dispatch(groupCountX, groupCountY, groupCountZ);
+        _currentCommands?.Dispatch(groupCountX, groupCountY, groupCountZ);
     }
 
     private protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
     {
-        _currentCommands.DispatchIndirect(indirectBuffer, offset);
+        _currentCommands?.DispatchIndirect(indirectBuffer, offset);
     }
 
     protected override void ResolveTextureCore(Texture source, Texture destination)
     {
-        _currentCommands.ResolveTexture(source, destination);
+        _currentCommands?.ResolveTexture(source, destination);
     }
 
     public override void End()
     {
-        _currentCommands.End();
+        _currentCommands?.End();
     }
 
     protected override void SetFramebufferCore(Framebuffer fb)
     {
-        _currentCommands.SetFramebuffer(fb);
+        _currentCommands?.SetFramebuffer(fb);
     }
 
     private protected override void SetIndexBufferCore(
@@ -145,12 +132,12 @@ internal sealed class OpenGLCommandList(
         {
             gd.ThrowIfMapped(buffer, 0);
         }
-        _currentCommands.SetIndexBuffer(buffer, format, offset);
+        _currentCommands?.SetIndexBuffer(buffer, format, offset);
     }
 
     private protected override void SetPipelineCore(Pipeline pipeline)
     {
-        _currentCommands.SetPipeline(pipeline);
+        _currentCommands?.SetPipeline(pipeline);
     }
 
     private protected override void SetGraphicsResourceSetCore(
@@ -159,7 +146,7 @@ internal sealed class OpenGLCommandList(
         ReadOnlySpan<uint> dynamicOffsets
     )
     {
-        _currentCommands.SetGraphicsResourceSet(slot, rs, dynamicOffsets);
+        _currentCommands?.SetGraphicsResourceSet(slot, rs, dynamicOffsets);
     }
 
     protected override void SetComputeResourceSetCore(
@@ -168,12 +155,12 @@ internal sealed class OpenGLCommandList(
         ReadOnlySpan<uint> dynamicOffsets
     )
     {
-        _currentCommands.SetComputeResourceSet(slot, rs, dynamicOffsets);
+        _currentCommands?.SetComputeResourceSet(slot, rs, dynamicOffsets);
     }
 
     public override void SetScissorRect(uint index, uint x, uint y, uint width, uint height)
     {
-        _currentCommands.SetScissorRect(index, x, y, width, height);
+        _currentCommands?.SetScissorRect(index, x, y, width, height);
     }
 
     private protected override void SetVertexBufferCore(
@@ -186,17 +173,17 @@ internal sealed class OpenGLCommandList(
         {
             gd.ThrowIfMapped(buffer, 0);
         }
-        _currentCommands.SetVertexBuffer(index, buffer, offset);
+        _currentCommands?.SetVertexBuffer(index, buffer, offset);
     }
 
     public override void SetViewport(uint index, in Viewport viewport)
     {
-        _currentCommands.SetViewport(index, viewport);
+        _currentCommands?.SetViewport(index, viewport);
     }
 
     internal void Reset()
     {
-        _currentCommands.Reset();
+        _currentCommands?.Reset();
     }
 
     private protected override void UpdateBufferCore(
@@ -206,7 +193,7 @@ internal sealed class OpenGLCommandList(
         uint sizeInBytes
     )
     {
-        _currentCommands.UpdateBuffer(buffer, bufferOffsetInBytes, source, sizeInBytes);
+        _currentCommands?.UpdateBuffer(buffer, bufferOffsetInBytes, source, sizeInBytes);
     }
 
     private protected override void CopyBufferCore(
@@ -215,7 +202,7 @@ internal sealed class OpenGLCommandList(
         ReadOnlySpan<BufferCopyCommand> commands
     )
     {
-        _currentCommands.CopyBuffer(source, destination, commands);
+        _currentCommands?.CopyBuffer(source, destination, commands);
     }
 
     private protected override void CopyTextureCore(
@@ -237,7 +224,7 @@ internal sealed class OpenGLCommandList(
         uint layerCount
     )
     {
-        _currentCommands.CopyTexture(
+        _currentCommands?.CopyTexture(
             source,
             srcX,
             srcY,
@@ -259,7 +246,7 @@ internal sealed class OpenGLCommandList(
 
     private protected override void GenerateMipmapsCore(Texture texture)
     {
-        _currentCommands.GenerateMipmaps(texture);
+        _currentCommands?.GenerateMipmaps(texture);
     }
 
     public void OnSubmitted(OpenGLCommandEntryList entryList)
@@ -290,17 +277,17 @@ internal sealed class OpenGLCommandList(
 
     private protected override void PushDebugGroupCore(ReadOnlySpan<char> name)
     {
-        _currentCommands.PushDebugGroup(name.ToString());
+        _currentCommands?.PushDebugGroup(name.ToString());
     }
 
     private protected override void PopDebugGroupCore()
     {
-        _currentCommands.PopDebugGroup();
+        _currentCommands?.PopDebugGroup();
     }
 
     private protected override void InsertDebugMarkerCore(ReadOnlySpan<char> name)
     {
-        _currentCommands.InsertDebugMarker(name.ToString());
+        _currentCommands?.InsertDebugMarker(name.ToString());
     }
 
     public override void Dispose()

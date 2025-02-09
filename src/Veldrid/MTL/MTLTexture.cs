@@ -62,7 +62,7 @@ internal sealed class MTLTexture : Texture
         }
         else
         {
-            uint blockSize = FormatHelpers.IsCompressedFormat(Format) ? 4u : 1u;
+            // uint blockSize = FormatHelpers.IsCompressedFormat(Format) ? 4u : 1u;
             uint totalStorageSize = 0;
             for (uint level = 0; level < MipLevels; level++)
             {
@@ -73,8 +73,10 @@ internal sealed class MTLTexture : Texture
                     out uint levelHeight,
                     out uint levelDepth
                 );
-                uint storageWidth = Math.Max(levelWidth, blockSize);
-                uint storageHeight = Math.Max(levelHeight, blockSize);
+
+                // uint storageWidth = Math.Max(levelWidth, blockSize);
+                // uint storageHeight = Math.Max(levelHeight, blockSize);
+
                 totalStorageSize +=
                     levelDepth
                     * FormatHelpers.GetDepthPitch(

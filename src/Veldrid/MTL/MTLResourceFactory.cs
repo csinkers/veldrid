@@ -6,7 +6,7 @@ internal sealed class MTLResourceFactory(MTLGraphicsDevice gd) : ResourceFactory
 
     public override CommandList CreateCommandList(in CommandListDescription description)
     {
-        return new MTLCommandList(description, gd);
+        return new MTLCommandList(gd);
     }
 
     public override Pipeline CreateComputePipeline(in ComputePipelineDescription description)
@@ -16,7 +16,7 @@ internal sealed class MTLResourceFactory(MTLGraphicsDevice gd) : ResourceFactory
 
     public override Framebuffer CreateFramebuffer(in FramebufferDescription description)
     {
-        return new MTLFramebuffer(gd, description);
+        return new MTLFramebuffer(description);
     }
 
     public override Pipeline CreateGraphicsPipeline(in GraphicsPipelineDescription description)
@@ -27,13 +27,13 @@ internal sealed class MTLResourceFactory(MTLGraphicsDevice gd) : ResourceFactory
 
     public override ResourceLayout CreateResourceLayout(in ResourceLayoutDescription description)
     {
-        return new MTLResourceLayout(description, gd);
+        return new MTLResourceLayout(description);
     }
 
     public override ResourceSet CreateResourceSet(in ResourceSetDescription description)
     {
         ValidationHelpers.ValidateResourceSet(gd, description);
-        return new MTLResourceSet(description, gd);
+        return new MTLResourceSet(description);
     }
 
     public override Sampler CreateSampler(in SamplerDescription description)
@@ -68,7 +68,7 @@ internal sealed class MTLResourceFactory(MTLGraphicsDevice gd) : ResourceFactory
     public override TextureView CreateTextureView(in TextureViewDescription description)
     {
         ValidateTextureView(description);
-        return new MTLTextureView(description, gd);
+        return new MTLTextureView(description);
     }
 
     public override Fence CreateFence(bool signaled)

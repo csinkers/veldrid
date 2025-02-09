@@ -348,13 +348,6 @@ public static unsafe class ObjectiveCRuntime
     [DllImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
     public static extern UIntPtr UIntPtr_objc_msgSend(IntPtr receiver, Selector selector);
 
-    public static T objc_msgSend<T>(IntPtr receiver, Selector selector)
-        where T : unmanaged
-    {
-        IntPtr value = IntPtr_objc_msgSend(receiver, selector);
-        return Unsafe.BitCast<IntPtr, T>(value);
-    }
-
     public static T objc_msgSend<T>(IntPtr receiver, Selector selector, IntPtr a)
         where T : unmanaged
     {
@@ -364,7 +357,7 @@ public static unsafe class ObjectiveCRuntime
 
     public static string string_objc_msgSend(IntPtr receiver, Selector selector)
     {
-        return objc_msgSend<NSString>(receiver, selector).GetValue();
+        return new NSString(IntPtr_objc_msgSend(receiver, selector)).GetValue();
     }
 
     [DllImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
@@ -413,7 +406,7 @@ public static unsafe class ObjectiveCRuntime
     public static extern CGRect CGRect_objc_msgSend(IntPtr receiver, Selector selector);
 
     // TODO: This should check the current processor type, struct size, etc.
-    // At the moment there is no need because all existing occurences of
+    // At the moment there is no need because all existing occurrences of
     // this can safely use the non-stret versions everywhere.
     public static bool UseStret<T>() => false;
 

@@ -18,17 +18,11 @@ public struct CommandListDescription : IEquatable<CommandListDescription>
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
     /// <returns>True if all elements are equal; false otherwise.</returns>
-    public readonly bool Equals(CommandListDescription other)
-    {
-        return Transient == other.Transient;
-    }
+    public readonly bool Equals(CommandListDescription other) => Transient == other.Transient;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-    public override readonly int GetHashCode()
-    {
-        return HashCode.Combine(Transient);
-    }
+    public readonly override int GetHashCode() => HashCode.Combine(Transient);
 }

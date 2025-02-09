@@ -9,19 +9,17 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.Vulkan;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 using VulkanBuffer = TerraFX.Interop.Vulkan.VkBuffer;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkDeviceMemoryManager(
     VkDevice device,
-    VkPhysicalDevice physicalDevice,
     ulong bufferImageGranularity,
     ulong chunkGranularity
 ) : IDisposable
 {
-    readonly VkPhysicalDevice _physicalDevice = physicalDevice;
     readonly object _allocatorMutex = new();
     readonly Dictionary<uint, ChunkAllocatorSet> _allocatorsByMemoryTypeUnmapped = new();
     readonly Dictionary<uint, ChunkAllocatorSet> _allocatorsByMemoryType = new();
@@ -253,7 +251,6 @@ internal sealed unsafe class VkDeviceMemoryManager(
 
         readonly VkDevice _device;
         readonly uint _memoryTypeIndex;
-        readonly bool _persistentMapped;
         readonly List<VkMemoryBlock> _freeBlocks = [];
         readonly void* _mappedPtr;
         readonly ulong _totalMemorySize;
@@ -268,7 +265,6 @@ internal sealed unsafe class VkDeviceMemoryManager(
         {
             _device = device;
             _memoryTypeIndex = memoryTypeIndex;
-            _persistentMapped = persistentMapped;
             _totalMemorySize = persistentMapped ? PersistentMappedChunkSize : UnmappedChunkSize;
 
             VkMemoryAllocateInfo memoryAI = new()

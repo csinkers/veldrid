@@ -3,15 +3,15 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLVertexDescriptor
+public readonly struct MTLVertexDescriptor(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLVertexBufferLayoutDescriptorArray layouts =>
-        objc_msgSend<MTLVertexBufferLayoutDescriptorArray>(NativePtr, sel_layouts);
+        new(IntPtr_objc_msgSend(NativePtr, sel_layouts));
 
     public MTLVertexAttributeDescriptorArray attributes =>
-        objc_msgSend<MTLVertexAttributeDescriptorArray>(NativePtr, sel_attributes);
+        new(IntPtr_objc_msgSend(NativePtr, sel_attributes));
 
     static readonly Selector sel_layouts = "layouts"u8;
     static readonly Selector sel_attributes = "attributes"u8;

@@ -9,7 +9,7 @@ internal sealed class OpenGLResourceFactory(OpenGLGraphicsDevice gd) : ResourceF
     public override GraphicsBackend BackendType => gd.BackendType;
 
     public override CommandList CreateCommandList(in CommandListDescription description) =>
-        new OpenGLCommandList(gd, description);
+        new OpenGLCommandList(gd);
 
     public override Framebuffer CreateFramebuffer(in FramebufferDescription description) =>
         new OpenGLFramebuffer(gd, description);

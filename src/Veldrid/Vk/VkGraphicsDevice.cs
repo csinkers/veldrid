@@ -7,10 +7,10 @@ using System.Runtime.InteropServices;
 using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.VkStructureType;
 using static TerraFX.Interop.Vulkan.Vulkan;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 using VulkanFence = TerraFX.Interop.Vulkan.VkFence;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
 {
@@ -51,7 +51,8 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
 
     // Staging Resources
     const uint MinStagingBufferSize = 64;
-    const uint MaxStagingBufferSize = 512;
+
+    // const uint MaxStagingBufferSize = 512;
 
     readonly List<VkTexture> _availableStagingTextures = [];
     readonly List<VkBuffer> _availableStagingBuffers = [];
@@ -67,7 +68,16 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
     public VkPhysicalDevice PhysicalDevice => _physicalDevice;
     public VkPhysicalDeviceMemoryProperties PhysicalDeviceMemProperties =>
         _physicalDeviceMemProperties;
-    public VkQueue GraphicsQueue => _graphicsQueue;
+
+    public IntPtr GraphicsQueue
+    {
+        get
+        {
+            lock (_graphicsQueueLock)
+                return (IntPtr)_graphicsQueue.Value;
+        }
+    }
+
     public uint GraphicsQueueIndex => _graphicsQueueIndex;
     public uint PresentQueueIndex => _presentQueueIndex;
     public bool DebugMarkerEnabled => _debugMarkerEnabled;
@@ -117,7 +127,6 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
 
         _memoryManager = new(
             _device,
-            _physicalDevice,
             _physicalDeviceProperties.limits.bufferImageGranularity,
             1024
         );
@@ -484,9 +493,6 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
                     name
                 );
                 break;
-
-            default:
-                break;
         }
     }
 
@@ -574,7 +580,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
             instanceExtensions.Add(CommonStrings.VK_KHR_get_physical_device_properties2);
         }
 
-        string[] requestedInstanceExtensions = options.InstanceExtensions ?? [];
+        string[] requestedInstanceExtensions = options.InstanceExtensions;
         List<FixedUtf8String> tempStrings = [];
         try
         {
@@ -867,7 +873,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         uint queueCreateInfosCount = (uint)familyIndices.Count;
 
         int i = 0;
-        foreach (uint index in familyIndices)
+        foreach (uint _ in familyIndices)
         {
             float priority = 1f;
             VkDeviceQueueCreateInfo queueCreateInfo = new()
@@ -877,6 +883,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
                 queueCount = 1,
                 pQueuePriorities = &priority,
             };
+
             queueCreateInfos[i] = queueCreateInfo;
             i += 1;
         }
@@ -885,7 +892,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
 
         VkExtensionProperties[] props = GetDeviceExtensionProperties();
 
-        HashSet<string> requiredDeviceExtensions = new(options.DeviceExtensions ?? []);
+        HashSet<string> requiredDeviceExtensions = new(options.DeviceExtensions);
 
         bool hasMemReqs2 = false;
         bool hasDedicatedAllocation = false;
@@ -958,6 +965,7 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         }
 
         StackList<IntPtr> layerNames = new();
+
         if (_standardValidationSupported)
         {
             layerNames.Add(CommonStrings.StandardValidationLayerName);
@@ -1013,14 +1021,17 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
         if (hasDedicatedAllocation && hasMemReqs2)
         {
             _getBufferMemoryRequirements2 =
-                GetDeviceProcAddr<vkGetBufferMemoryRequirements2_t>(
+                GetDeviceProcAddrOrDefault<vkGetBufferMemoryRequirements2_t>(
                     "vkGetBufferMemoryRequirements2"
                 )
                 ?? GetDeviceProcAddr<vkGetBufferMemoryRequirements2_t>(
                     "vkGetBufferMemoryRequirements2KHR"
                 );
+
             _getImageMemoryRequirements2 =
-                GetDeviceProcAddr<vkGetImageMemoryRequirements2_t>("vkGetImageMemoryRequirements2")
+                GetDeviceProcAddrOrDefault<vkGetImageMemoryRequirements2_t>(
+                    "vkGetImageMemoryRequirements2"
+                )
                 ?? GetDeviceProcAddr<vkGetImageMemoryRequirements2_t>(
                     "vkGetImageMemoryRequirements2KHR"
                 );
@@ -1084,11 +1095,15 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
     T GetDeviceProcAddr<T>(string name)
     {
         IntPtr funcPtr = GetDeviceProcAddr(name);
-        if (funcPtr != IntPtr.Zero)
-        {
-            return Marshal.GetDelegateForFunctionPointer<T>(funcPtr);
-        }
-        throw new EntryPointNotFoundException(name);
+        return funcPtr != IntPtr.Zero
+            ? Marshal.GetDelegateForFunctionPointer<T>(funcPtr)
+            : throw new EntryPointNotFoundException(name);
+    }
+
+    T? GetDeviceProcAddrOrDefault<T>(string name)
+    {
+        IntPtr funcPtr = GetDeviceProcAddr(name);
+        return funcPtr != IntPtr.Zero ? Marshal.GetDelegateForFunctionPointer<T>(funcPtr) : default;
     }
 
     void GetQueueFamilyIndices(VkSurfaceKHR surface)
@@ -1251,11 +1266,13 @@ internal sealed unsafe class VkGraphicsDevice : GraphicsDevice
     {
         base.Dispose(disposing);
 
-        Debug.Assert(_submittedFences.Count == 0);
+#if DEBUG
+        lock (_submittedFencesLock)
+            Debug.Assert(_submittedFences.Count == 0);
+#endif
+
         foreach (VulkanFence fence in _availableSubmissionFences)
-        {
             vkDestroyFence(_device, fence, null);
-        }
 
         MainSwapchain?.Dispose();
 

@@ -1,8 +1,6 @@
-﻿using Veldrid.Sdl2;
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-
-namespace Veldrid;
+namespace Veldrid.SDL2;
 
 /// <summary>
 /// Represents virtual key codes.

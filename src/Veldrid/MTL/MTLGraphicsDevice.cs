@@ -24,16 +24,14 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
     MTLCommandBuffer _latestSubmittedCB;
 
     readonly object _resetEventsLock = new();
-    readonly List<ManualResetEvent[]> _resetEvents = [];
+    readonly List<WaitHandle[]> _resetEvents = [];
 
     const string UnalignedBufferCopyPipelineMacOSName = "MTL_UnalignedBufferCopy_macOS";
     const string UnalignedBufferCopyPipelineiOSName = "MTL_UnalignedBufferCopy_iOS";
     readonly object _unalignedBufferCopyPipelineLock = new();
     readonly IntPtr _libSystem;
-    readonly IntPtr _concreteGlobalBlock;
     MTLShader? _unalignedBufferCopyShader;
     MTLComputePipelineState _unalignedBufferCopyPipeline;
-    readonly delegate* unmanaged[Cdecl]<IntPtr, MTLCommandBuffer, void> _completionHandler;
     readonly IntPtr _completionBlockDescriptor;
     readonly IntPtr _completionBlockLiteral;
 
@@ -87,8 +85,9 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         ResourceBindingModel = options.ResourceBindingModel;
 
         _libSystem = NativeLibrary.Load("libSystem.dylib");
-        _concreteGlobalBlock = NativeLibrary.GetExport(_libSystem, "_NSConcreteGlobalBlock");
-        _completionHandler = &OnCommandBufferCompleted_Static;
+        IntPtr concreteGlobalBlock = NativeLibrary.GetExport(_libSystem, "_NSConcreteGlobalBlock");
+        delegate* unmanaged[Cdecl]<IntPtr, MTLCommandBuffer, void> completionHandler =
+            &OnCommandBufferCompleted_Static;
         _completionBlockDescriptor = Marshal.AllocHGlobal(Unsafe.SizeOf<BlockDescriptor>());
         BlockDescriptor* descriptorPtr = (BlockDescriptor*)_completionBlockDescriptor;
         descriptorPtr->reserved = 0;
@@ -96,9 +95,9 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
 
         _completionBlockLiteral = Marshal.AllocHGlobal(Unsafe.SizeOf<BlockLiteral>());
         BlockLiteral* blockPtr = (BlockLiteral*)_completionBlockLiteral;
-        blockPtr->isa = _concreteGlobalBlock;
+        blockPtr->isa = concreteGlobalBlock;
         blockPtr->flags = 1 << 28 | 1 << 29;
-        blockPtr->invoke = (nint)_completionHandler;
+        blockPtr->invoke = (nint)completionHandler;
         blockPtr->descriptor = descriptorPtr;
 
         lock (s_aotRegisteredBlocks)
@@ -132,7 +131,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         PostDeviceCreated();
     }
 
-    void OnCommandBufferCompleted(IntPtr block, MTLCommandBuffer cb)
+    void OnCommandBufferCompleted(MTLCommandBuffer cb)
     {
         lock (_submittedCommandsLock)
         {
@@ -157,7 +156,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         {
             if (s_aotRegisteredBlocks.TryGetValue(block, out MTLGraphicsDevice? gd))
             {
-                gd.OnCommandBufferCompleted(block, cb);
+                gd.OnCommandBufferCompleted(cb);
             }
         }
     }
@@ -370,7 +369,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
 
     private protected override void WaitForIdleCore()
     {
-        MTLCommandBuffer lastCB = default;
+        MTLCommandBuffer lastCB;
         lock (_submittedCommandsLock)
         {
             lastCB = _latestSubmittedCB;
@@ -484,7 +483,7 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
             msTimeout = (int)Math.Min(nanosecondTimeout / 1_000_000, int.MaxValue);
         }
 
-        ManualResetEvent[] events = GetResetEventArray(fences.Length);
+        WaitHandle[] events = GetResetEventArray(fences.Length);
         for (int i = 0; i < fences.Length; i++)
         {
             events[i] = Util.AssertSubtype<Fence, MTLFence>(fences[i]).ResetEvent;
@@ -505,13 +504,13 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
         return result;
     }
 
-    ManualResetEvent[] GetResetEventArray(int length)
+    WaitHandle[] GetResetEventArray(int length)
     {
         lock (_resetEventsLock)
         {
             for (int i = _resetEvents.Count - 1; i > 0; i--)
             {
-                ManualResetEvent[] array = _resetEvents[i];
+                WaitHandle[] array = _resetEvents[i];
                 if (array.Length == length)
                 {
                     _resetEvents.RemoveAt(i);
@@ -520,11 +519,10 @@ internal sealed unsafe class MTLGraphicsDevice : GraphicsDevice
             }
         }
 
-        ManualResetEvent[] newArray = new ManualResetEvent[length];
-        return newArray;
+        return new WaitHandle[length];
     }
 
-    void ReturnResetEventArray(ManualResetEvent[] array)
+    void ReturnResetEventArray(WaitHandle[] array)
     {
         lock (_resetEventsLock)
         {

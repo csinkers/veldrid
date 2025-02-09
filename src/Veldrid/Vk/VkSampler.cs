@@ -2,7 +2,7 @@
 using static TerraFX.Interop.Vulkan.Vulkan;
 using VulkanSampler = TerraFX.Interop.Vulkan.VkSampler;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkSampler : Sampler, IResourceRefCountTarget
 {

@@ -5,9 +5,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct MTLCommandBuffer
+public readonly struct MTLCommandBuffer(IntPtr nativePtr) : IEquatable<MTLCommandBuffer>
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLRenderCommandEncoder renderCommandEncoderWithDescriptor(MTLRenderPassDescriptor desc)
     {
@@ -22,10 +22,10 @@ public readonly struct MTLCommandBuffer
     public void commit() => objc_msgSend(NativePtr, sel_commit);
 
     public MTLBlitCommandEncoder blitCommandEncoder() =>
-        objc_msgSend<MTLBlitCommandEncoder>(NativePtr, sel_blitCommandEncoder);
+        new(IntPtr_objc_msgSend(NativePtr, sel_blitCommandEncoder));
 
     public MTLComputeCommandEncoder computeCommandEncoder() =>
-        objc_msgSend<MTLComputeCommandEncoder>(NativePtr, sel_computeCommandEncoder);
+        new(IntPtr_objc_msgSend(NativePtr, sel_computeCommandEncoder));
 
     public void waitUntilCompleted() => objc_msgSend(NativePtr, sel_waitUntilCompleted);
 
@@ -48,4 +48,10 @@ public readonly struct MTLCommandBuffer
     static readonly Selector sel_waitUntilCompleted = "waitUntilCompleted"u8;
     static readonly Selector sel_addCompletedHandler = "addCompletedHandler:"u8;
     static readonly Selector sel_status = "status"u8;
+
+    public bool Equals(MTLCommandBuffer other) => NativePtr == other.NativePtr;
+
+    public override bool Equals(object? obj) => obj is MTLCommandBuffer other && Equals(other);
+
+    public override int GetHashCode() => NativePtr.GetHashCode();
 }

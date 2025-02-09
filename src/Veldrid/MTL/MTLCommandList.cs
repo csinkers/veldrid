@@ -4,12 +4,8 @@ using Veldrid.MetalBindings;
 
 namespace Veldrid.MTL;
 
-internal sealed unsafe class MTLCommandList(
-    in CommandListDescription description,
-    MTLGraphicsDevice gd
-)
+internal sealed unsafe class MTLCommandList(MTLGraphicsDevice gd)
     : CommandList(
-        description,
         gd.Features,
         gd.UniformBufferMinOffsetAlignment,
         gd.StructuredBufferMinOffsetAlignment
@@ -27,9 +23,9 @@ internal sealed unsafe class MTLCommandList(
     MTLBuffer? _indexBuffer;
     uint _ibOffset;
     MTLIndexType _indexType;
-    new MTLPipeline? _graphicsPipeline;
+    MTLPipeline? _graphicsPipeline;
     bool _graphicsPipelineChanged;
-    new MTLPipeline? _computePipeline;
+    MTLPipeline? _computePipeline;
     bool _computePipelineChanged;
     MTLViewport[] _viewports = [];
     bool _viewportsChanged;
@@ -196,7 +192,7 @@ internal sealed unsafe class MTLCommandList(
             _rce.setTriangleFillMode(_graphicsPipeline.FillMode);
             RgbaFloat blendColor = _graphicsPipeline.BlendColor;
             _rce.setBlendColor(blendColor.R, blendColor.G, blendColor.B, blendColor.A);
-            if (_framebuffer!.DepthTarget != null)
+            if (Framebuffer!.DepthTarget != null)
             {
                 _rce.setDepthStencilState(_graphicsPipeline.DepthStencilState);
                 _rce.setDepthClipMode(_graphicsPipeline.DepthClipMode);

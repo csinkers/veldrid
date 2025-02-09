@@ -25,7 +25,7 @@ public readonly struct CAMetalLayer(IntPtr ptr)
 
     public MTLDevice device
     {
-        get => objc_msgSend<MTLDevice>(NativePtr, sel_device);
+        get => new(IntPtr_objc_msgSend(NativePtr, sel_device));
         set => objc_msgSend(NativePtr, sel_setDevice, value);
     }
 
@@ -59,8 +59,7 @@ public readonly struct CAMetalLayer(IntPtr ptr)
         set => objc_msgSend(NativePtr, "setOpaque:"u8, value);
     }
 
-    public CAMetalDrawable nextDrawable() =>
-        objc_msgSend<CAMetalDrawable>(NativePtr, sel_nextDrawable);
+    public CAMetalDrawable nextDrawable() => new(IntPtr_objc_msgSend(NativePtr, sel_nextDrawable));
 
     public Bool8 displaySyncEnabled
     {

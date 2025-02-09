@@ -280,13 +280,13 @@ public class ObjFile(
                 && TexCoordIndex == other.TexCoordIndex;
         }
 
-        public override readonly bool Equals(object? obj)
+        public readonly override bool Equals(object? obj)
         {
             return obj is FaceVertex value && Equals(value);
         }
 
 #pragma warning disable IDE0070 // Use 'System.HashCode'
-        public override readonly int GetHashCode()
+        public readonly override int GetHashCode()
 #pragma warning restore IDE0070 // Use 'System.HashCode'
         {
             unchecked
@@ -299,7 +299,7 @@ public class ObjFile(
             }
         }
 
-        public override readonly string ToString()
+        public readonly override string ToString()
         {
             return string.Format(
                 "Pos:{0}, Normal:{1}, TexCoord:{2}",

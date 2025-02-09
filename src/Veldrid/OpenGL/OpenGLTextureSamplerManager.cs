@@ -1,7 +1,7 @@
 ﻿using System;
-using Veldrid.OpenGLBinding;
+using Veldrid.OpenGLBindings;
 using static Veldrid.OpenGL.OpenGLUtil;
-using static Veldrid.OpenGLBinding.OpenGLNative;
+using static Veldrid.OpenGLBindings.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -11,7 +11,6 @@ namespace Veldrid.OpenGL;
 internal sealed unsafe class OpenGLTextureSamplerManager
 {
     readonly bool _dsaAvailable;
-    readonly int _maxTextureUnits;
     readonly uint _lastTextureUnit;
     readonly OpenGLTextureView?[] _textureUnitTextures;
     readonly BoundSamplerStateInfo[] _textureUnitSamplers;
@@ -23,11 +22,12 @@ internal sealed unsafe class OpenGLTextureSamplerManager
         int maxTextureUnits;
         glGetIntegerv(GetPName.MaxCombinedTextureImageUnits, &maxTextureUnits);
         CheckLastError();
-        _maxTextureUnits = Math.Max(maxTextureUnits, 8); // OpenGL spec indicates that implementations must support at least 8.
-        _textureUnitTextures = new OpenGLTextureView[_maxTextureUnits];
-        _textureUnitSamplers = new BoundSamplerStateInfo[_maxTextureUnits];
 
-        _lastTextureUnit = (uint)(_maxTextureUnits - 1);
+        int maxTextureUnits1 = Math.Max(maxTextureUnits, 8); // OpenGL spec indicates that implementations must support at least 8.
+        _textureUnitTextures = new OpenGLTextureView[maxTextureUnits1];
+        _textureUnitSamplers = new BoundSamplerStateInfo[maxTextureUnits1];
+
+        _lastTextureUnit = (uint)(maxTextureUnits1 - 1);
     }
 
     public void SetTexture(uint textureUnit, OpenGLTextureView textureView)
@@ -105,17 +105,20 @@ internal sealed unsafe class OpenGLTextureSamplerManager
             return;
         }
 
-        OpenGLSampler sampler = _textureUnitSamplers[textureUnit].Sampler;
-        uint samplerID = mipmapped ? sampler.MipmapSampler : sampler.NoMipmapSampler;
-        glBindSampler(textureUnit, samplerID);
-        CheckLastError();
+        OpenGLSampler? sampler = _textureUnitSamplers[textureUnit].Sampler;
+        if (sampler != null)
+        {
+            uint samplerID = mipmapped ? sampler.MipmapSampler : sampler.NoMipmapSampler;
+            glBindSampler(textureUnit, samplerID);
+            CheckLastError();
+        }
 
         _textureUnitSamplers[textureUnit].Mipmapped = mipmapped;
     }
 
-    struct BoundSamplerStateInfo(OpenGLSampler sampler, bool mipmapped)
+    struct BoundSamplerStateInfo(OpenGLSampler? sampler, bool mipmapped)
     {
-        public readonly OpenGLSampler Sampler = sampler;
+        public readonly OpenGLSampler? Sampler = sampler;
         public bool Mipmapped = mipmapped;
     }
 }

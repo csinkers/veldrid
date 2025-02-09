@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Veldrid.Sdl2;
-using static Veldrid.Sdl2.Sdl2Native;
+using Veldrid.SDL2;
+using static Veldrid.SDL2.Sdl2Native;
 
 namespace Veldrid.NeoDemo;
 

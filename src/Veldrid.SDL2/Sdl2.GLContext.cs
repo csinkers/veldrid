@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace Veldrid.Sdl2;
+namespace Veldrid.SDL2;
 
 public static unsafe partial class Sdl2Native
 {
@@ -124,6 +124,7 @@ public enum SDL_GLAttribute
     ContextReleaseBehavior,
 }
 
+[Flags]
 public enum SDL_GLContextFlag
 {
     Debug = 0x0001,
@@ -132,6 +133,7 @@ public enum SDL_GLContextFlag
     ResetIsolatio = 0x0008,
 }
 
+[Flags]
 public enum SDL_GLProfile
 {
     Core = 0x0001,

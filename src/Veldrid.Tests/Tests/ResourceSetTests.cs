@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Veldrid.Tests.Utilities;
+using Xunit;
 
 namespace Veldrid.Tests;
 
@@ -22,7 +23,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
 
         Assert.Throws<VeldridException>(() =>
         {
-            ResourceSet set = RF.CreateResourceSet(new(layout, ub));
+            _ = RF.CreateResourceSet(new(layout, ub));
         });
     }
 
@@ -53,7 +54,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
 
         Assert.Throws<VeldridException>(() =>
         {
-            ResourceSet set = RF.CreateResourceSet(new(layout, tv));
+            _ = RF.CreateResourceSet(new(layout, tv));
         });
     }
 
@@ -74,7 +75,7 @@ public abstract class ResourceSetTests<T> : GraphicsDeviceTestBase<T>
 
         Assert.Throws<VeldridException>(() =>
         {
-            ResourceSet set = RF.CreateResourceSet(new(layout, readOnlyBuffer));
+            _ = RF.CreateResourceSet(new(layout, readOnlyBuffer));
         });
     }
 

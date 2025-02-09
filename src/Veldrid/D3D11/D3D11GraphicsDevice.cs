@@ -630,7 +630,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                 ? -1
                 : (int)Math.Min(nanosecondTimeout / 1_000_000, int.MaxValue);
 
-        ManualResetEvent[] events = GetResetEventArray(fences.Length);
+        WaitHandle[] events = GetResetEventArray(fences.Length);
         for (int i = 0; i < fences.Length; i++)
             events[i] = Util.AssertSubtype<Fence, D3D11Fence>(fences[i]).ResetEvent;
 
@@ -650,15 +650,15 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
     }
 
     readonly object _resetEventsLock = new();
-    readonly List<ManualResetEvent[]> _resetEvents = [];
+    readonly List<WaitHandle[]> _resetEvents = [];
 
-    ManualResetEvent[] GetResetEventArray(int length)
+    WaitHandle[] GetResetEventArray(int length)
     {
         lock (_resetEventsLock)
         {
             for (int i = _resetEvents.Count - 1; i > 0; i--)
             {
-                ManualResetEvent[] array = _resetEvents[i];
+                WaitHandle[] array = _resetEvents[i];
                 if (array.Length == length)
                 {
                     _resetEvents.RemoveAt(i);
@@ -667,11 +667,10 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             }
         }
 
-        ManualResetEvent[] newArray = new ManualResetEvent[length];
-        return newArray;
+        return new WaitHandle[length];
     }
 
-    void ReturnResetEventArray(ManualResetEvent[] array)
+    void ReturnResetEventArray(WaitHandle[] array)
     {
         lock (_resetEventsLock)
         {

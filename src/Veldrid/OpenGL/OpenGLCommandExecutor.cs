@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Veldrid.OpenGLBinding;
+using Veldrid.OpenGLBindings;
 using static Veldrid.OpenGL.OpenGLUtil;
-using static Veldrid.OpenGLBinding.OpenGLNative;
+using static Veldrid.OpenGLBindings.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -2181,103 +2181,5 @@ internal sealed unsafe class OpenGLCommandExecutor(
         }
 
         _stagingMemoryPool.Free(block);
-    }
-
-    static void CopyWithFBO(
-        OpenGLTextureSamplerManager textureSamplerManager,
-        OpenGLTexture srcGLTexture,
-        OpenGLTexture dstGLTexture,
-        uint srcX,
-        uint srcY,
-        uint srcZ,
-        uint srcMipLevel,
-        uint srcBaseArrayLayer,
-        uint dstX,
-        uint dstY,
-        uint dstZ,
-        uint dstMipLevel,
-        uint dstBaseArrayLayer,
-        uint width,
-        uint height,
-        uint depth,
-        uint layerCount,
-        uint layer
-    )
-    {
-        TextureTarget dstTarget = dstGLTexture.TextureTarget;
-        if (dstTarget == TextureTarget.Texture2D)
-        {
-            glBindFramebuffer(
-                FramebufferTarget.ReadFramebuffer,
-                srcGLTexture.GetFramebuffer(srcMipLevel, srcBaseArrayLayer + layer)
-            );
-            CheckLastError();
-
-            textureSamplerManager.SetTextureTransient(
-                TextureTarget.Texture2D,
-                dstGLTexture.Texture
-            );
-
-            glCopyTexSubImage2D(
-                TextureTarget.Texture2D,
-                (int)dstMipLevel,
-                (int)dstX,
-                (int)dstY,
-                (int)srcX,
-                (int)srcY,
-                width,
-                height
-            );
-            CheckLastError();
-        }
-        else if (dstTarget == TextureTarget.Texture2DArray)
-        {
-            glBindFramebuffer(
-                FramebufferTarget.ReadFramebuffer,
-                srcGLTexture.GetFramebuffer(srcMipLevel, srcBaseArrayLayer + layerCount)
-            );
-            CheckLastError();
-
-            textureSamplerManager.SetTextureTransient(
-                TextureTarget.Texture2DArray,
-                dstGLTexture.Texture
-            );
-
-            glCopyTexSubImage3D(
-                TextureTarget.Texture2DArray,
-                (int)dstMipLevel,
-                (int)dstX,
-                (int)dstY,
-                (int)(dstBaseArrayLayer + layer),
-                (int)srcX,
-                (int)srcY,
-                width,
-                height
-            );
-            CheckLastError();
-        }
-        else if (dstTarget == TextureTarget.Texture3D)
-        {
-            textureSamplerManager.SetTextureTransient(
-                TextureTarget.Texture3D,
-                dstGLTexture.Texture
-            );
-
-            for (uint i = srcZ; i < srcZ + depth; i++)
-            {
-                glCopyTexSubImage3D(
-                    TextureTarget.Texture3D,
-                    (int)dstMipLevel,
-                    (int)dstX,
-                    (int)dstY,
-                    (int)dstZ,
-                    (int)srcX,
-                    (int)srcY,
-                    width,
-                    height
-                );
-                CheckLastError();
-            }
-        }
     }
 }

@@ -2,7 +2,7 @@
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace Veldrid.Sdl2;
+namespace Veldrid.SDL2;
 
 /// <summary>
 /// Enumeration of valid key mods (possibly OR'd together).

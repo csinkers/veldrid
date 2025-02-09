@@ -35,7 +35,11 @@ internal sealed unsafe class StagingMemoryPool : IDisposable
         return block;
     }
 
-    public StagingBlock RetrieveById(uint id) => _storage[(int)id];
+    public StagingBlock RetrieveById(uint id)
+    {
+        lock (_lock)
+            return _storage[(int)id];
+    }
 
     void Rent(uint size, out StagingBlock block)
     {

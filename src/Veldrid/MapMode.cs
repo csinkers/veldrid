@@ -1,9 +1,12 @@
-﻿namespace Veldrid;
+﻿using System;
+
+namespace Veldrid;
 
 /// <summary>
 /// Identifies how a <see cref="MappableResource"/> will be mapped into CPU address space.
 /// </summary>
 /// <seealso cref="GraphicsDevice.Map(MappableResource, MapMode)"/>
+[Flags]
 public enum MapMode : byte
 {
     /// <summary>

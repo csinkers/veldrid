@@ -1,7 +1,7 @@
 ﻿using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.VkFormat;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal static partial class VkFormats
 {

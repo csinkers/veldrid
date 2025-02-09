@@ -7,5 +7,5 @@ public readonly struct NSWindow(IntPtr ptr)
 {
     public readonly IntPtr NativePtr = ptr;
 
-    public NSView contentView => objc_msgSend<NSView>(NativePtr, "contentView"u8);
+    public NSView contentView => new(IntPtr_objc_msgSend(NativePtr, "contentView"u8));
 }

@@ -7,7 +7,7 @@ using System.Numerics;
 using ImGuiNET;
 using Veldrid.ImageSharp;
 using Veldrid.NeoDemo.Objects;
-using Veldrid.Sdl2;
+using Veldrid.SDL2;
 using Veldrid.StartupUtilities;
 using Veldrid.Utilities;
 
@@ -294,7 +294,7 @@ public class NeoDemo
             previousFrameTicks = currentFrameTicks;
 
             Sdl2Events.ProcessEvents();
-            InputSnapshot snapshot = _window.PumpEvents();
+            IInputSnapshot snapshot = _window.PumpEvents();
             InputTracker.UpdateFrameInput(snapshot, _window);
             Update((float)deltaSeconds);
             if (!_window.Exists)

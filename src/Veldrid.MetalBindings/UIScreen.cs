@@ -10,5 +10,5 @@ public readonly struct UIScreen(IntPtr ptr)
     public CGFloat nativeScale => CGFloat_objc_msgSend(NativePtr, "nativeScale"u8);
 
     public static UIScreen mainScreen =>
-        objc_msgSend<UIScreen>(new ObjCClass("UIScreen"u8), "mainScreen"u8);
+        new(IntPtr_objc_msgSend(new ObjCClass("UIScreen"u8), "mainScreen"u8));
 }

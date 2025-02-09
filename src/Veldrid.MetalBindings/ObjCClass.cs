@@ -43,14 +43,14 @@ public unsafe struct ObjCClass
 
     public string Name => MTLUtil.GetUtf8String(ObjectiveCRuntime.class_getName(this));
 
-    public T Alloc<T>()
+    public readonly T Alloc<T>()
         where T : unmanaged
     {
         IntPtr value = ObjectiveCRuntime.IntPtr_objc_msgSend(NativePtr, Selectors.alloc);
         return Unsafe.BitCast<IntPtr, T>(value);
     }
 
-    public T AllocInit<T>()
+    public readonly T AllocInit<T>()
         where T : unmanaged
     {
         IntPtr value = ObjectiveCRuntime.IntPtr_objc_msgSend(NativePtr, Selectors.alloc);

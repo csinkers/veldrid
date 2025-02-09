@@ -30,8 +30,7 @@ internal sealed class D3D11Buffer : DeviceBuffer
 
         Vortice.Direct3D11.BufferDescription bd = new(
             (int)desc.SizeInBytes,
-            D3D11Formats.VdToD3D11BindFlags(desc.Usage),
-            ResourceUsage.Default
+            D3D11Formats.VdToD3D11BindFlags(desc.Usage)
         );
 
         if (

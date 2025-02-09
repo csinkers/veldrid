@@ -3,11 +3,11 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLSamplerDescriptor
+public readonly struct MTLSamplerDescriptor(IntPtr nativePtr)
 {
     static readonly ObjCClass s_class = new("MTLSamplerDescriptor"u8);
 
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public static MTLSamplerDescriptor New() => s_class.AllocInit<MTLSamplerDescriptor>();
 

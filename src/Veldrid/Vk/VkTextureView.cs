@@ -1,7 +1,7 @@
 ﻿using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.Vulkan;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkTextureView : TextureView, IResourceRefCountTarget
 {

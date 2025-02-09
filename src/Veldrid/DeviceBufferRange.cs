@@ -51,7 +51,7 @@ public struct DeviceBufferRange : IEquatable<DeviceBufferRange>
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-    public override readonly int GetHashCode()
+    public readonly override int GetHashCode()
     {
         int bufferHash = Buffer?.GetHashCode() ?? 0;
         return HashHelper.Combine(bufferHash, Offset.GetHashCode(), SizeInBytes.GetHashCode());

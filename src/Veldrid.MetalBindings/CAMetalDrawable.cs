@@ -5,9 +5,10 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public struct CAMetalDrawable
+public struct CAMetalDrawable(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
+
     public bool IsNull => NativePtr == IntPtr.Zero;
-    public MTLTexture texture => objc_msgSend<MTLTexture>(NativePtr, Selectors.texture);
+    public MTLTexture texture => new(IntPtr_objc_msgSend(NativePtr, Selectors.texture));
 }

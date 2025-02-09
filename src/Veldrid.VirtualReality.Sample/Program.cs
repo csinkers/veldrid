@@ -6,7 +6,7 @@ using ImGuiNET;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid.NeoDemo;
-using Veldrid.Sdl2;
+using Veldrid.SDL2;
 using Veldrid.StartupUtilities;
 
 namespace Veldrid.VirtualReality.Sample;
@@ -129,7 +129,7 @@ internal static class Program
             double deltaSeconds = newFrameTime - lastFrameTime;
             lastFrameTime = newFrameTime;
 
-            InputSnapshot snapshot = window.PumpEvents();
+            IInputSnapshot snapshot = window.PumpEvents();
             if (!window.Exists)
             {
                 break;

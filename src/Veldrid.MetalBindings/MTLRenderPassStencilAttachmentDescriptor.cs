@@ -3,13 +3,13 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLRenderPassStencilAttachmentDescriptor
+public readonly struct MTLRenderPassStencilAttachmentDescriptor(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLTexture texture
     {
-        get => objc_msgSend<MTLTexture>(NativePtr, Selectors.texture);
+        get => new(IntPtr_objc_msgSend(NativePtr, Selectors.texture));
         set => objc_msgSend(NativePtr, Selectors.setTexture, value.NativePtr);
     }
 

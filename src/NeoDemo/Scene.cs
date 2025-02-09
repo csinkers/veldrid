@@ -6,7 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Veldrid.NeoDemo.Objects;
-using Veldrid.Sdl2;
+using Veldrid.SDL2;
 using Veldrid.Utilities;
 
 namespace Veldrid.NeoDemo;

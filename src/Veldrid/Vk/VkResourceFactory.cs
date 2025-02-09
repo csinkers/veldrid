@@ -1,6 +1,4 @@
-﻿using TerraFX.Interop.Vulkan;
-
-namespace Veldrid.Vulkan;
+﻿namespace Veldrid.Vk;
 
 internal sealed class VkResourceFactory(VkGraphicsDevice vkGraphicsDevice)
     : ResourceFactory(vkGraphicsDevice.Features)

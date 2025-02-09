@@ -6,11 +6,11 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 namespace Veldrid.OpenGL.EAGL;
 
 [StructLayout(LayoutKind.Sequential)]
-internal readonly struct EAGLContext
+internal readonly struct EAGLContext(IntPtr nativePtr)
 {
     static ObjCClass s_class = new("EAGLContext"u8);
 
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public Bool8 renderBufferStorage(UIntPtr target, IntPtr drawable) =>
         bool8_objc_msgSend(NativePtr, sel_renderBufferStorage, target, drawable);
@@ -29,7 +29,7 @@ internal readonly struct EAGLContext
         bool8_objc_msgSend(s_class, sel_setCurrentContext, context);
 
     public static EAGLContext currentContext =>
-        objc_msgSend<EAGLContext>(s_class, sel_currentContext);
+        new(IntPtr_objc_msgSend(s_class, sel_currentContext));
 
     public void Release() => release(NativePtr);
 

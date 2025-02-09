@@ -1,8 +1,7 @@
 ﻿using System;
 using Veldrid.SPIRV;
-using Veldrid.Tests.Utilities;
 
-namespace Veldrid.Tests;
+namespace Veldrid.Tests.Utilities;
 
 internal static class TestShaders
 {
@@ -24,7 +23,7 @@ internal static class TestShaders
         return factory.CreateFromSpirv(
             GetShaderDescription(ShaderStages.Vertex, setName),
             GetShaderDescription(ShaderStages.Fragment, setName),
-            new(false, false, new SpecializationConstant[] { new(100, false) })
+            new(false, false, [new(100, false)])
         );
     }
 
@@ -32,7 +31,7 @@ internal static class TestShaders
     {
         return factory.CreateFromSpirv(
             GetShaderDescription(ShaderStages.Compute, setName),
-            new CrossCompileOptions(false, false, new SpecializationConstant[] { new(100, false) })
+            new CrossCompileOptions(false, false, [new(100, false)])
         );
     }
 }

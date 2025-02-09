@@ -13,7 +13,7 @@ internal sealed class MTLTextureView : TextureView
 
     public override bool IsDisposed => _disposed;
 
-    public MTLTextureView(in TextureViewDescription description, MTLGraphicsDevice gd)
+    public MTLTextureView(in TextureViewDescription description)
         : base(description)
     {
         MTLTexture targetMTLTexture = Util.AssertSubtype<Texture, MTLTexture>(description.Target);

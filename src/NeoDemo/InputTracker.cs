@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Veldrid.Sdl2;
+using Veldrid.SDL2;
 
 namespace Veldrid.NeoDemo;
 
@@ -15,7 +15,7 @@ public static class InputTracker
 
     public static Vector2 MousePosition;
     public static Vector2 MouseDelta;
-    public static InputSnapshot? FrameSnapshot { get; private set; }
+    public static IInputSnapshot? FrameSnapshot { get; private set; }
 
     public static bool GetKey(Key key) => _currentlyPressedKeys.Contains(key);
 
@@ -27,7 +27,7 @@ public static class InputTracker
     public static bool GetMouseButtonDown(MouseButton button) =>
         _newMouseButtonsThisFrame.Contains(button);
 
-    public static void UpdateFrameInput(InputSnapshot snapshot, Sdl2Window window)
+    public static void UpdateFrameInput(IInputSnapshot snapshot, Sdl2Window window)
     {
         FrameSnapshot = snapshot;
         _newKeysThisFrame.Clear();

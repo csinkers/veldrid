@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Veldrid.Sdl2;
+namespace Veldrid.SDL2;
 
 public readonly struct MouseWheelEvent(uint timestamp, uint windowId, Vector2 wheelDelta)
 {

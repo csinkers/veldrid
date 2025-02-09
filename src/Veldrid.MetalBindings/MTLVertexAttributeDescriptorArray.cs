@@ -3,9 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public struct MTLVertexAttributeDescriptorArray
+public struct MTLVertexAttributeDescriptorArray(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLVertexAttributeDescriptor this[uint index]
     {

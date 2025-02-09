@@ -14,7 +14,7 @@ namespace Veldrid;
 /// NOTE: The use of <see cref="CommandList"/> is not thread-safe. Access to the <see cref="CommandList"/> must be
 /// externally synchronized.
 /// There are some limitations dictating proper usage and ordering of graphics commands. For example, a
-/// <see cref="Framebuffer"/>, <see cref="Pipeline"/>, vertex buffer, and index buffer must all be
+/// <see cref="Veldrid.Framebuffer"/>, <see cref="Pipeline"/>, vertex buffer, and index buffer must all be
 /// bound before a call to <see cref="DrawIndexed(uint, uint, uint, int, uint)"/> will succeed.
 /// These limitations are described in each function, where applicable.
 /// <see cref="CommandList"/> instances cannot be executed multiple times per-recording. When executed by a
@@ -27,9 +27,9 @@ public abstract class CommandList : DeviceResource, IDisposable
     readonly uint _uniformBufferAlignment;
     readonly uint _structuredBufferAlignment;
 
-    private protected Framebuffer? _framebuffer;
-    private protected Pipeline? _graphicsPipeline;
-    private protected Pipeline? _computePipeline;
+    private protected Framebuffer? Framebuffer;
+    Pipeline? _graphicsPipeline;
+    Pipeline? _computePipeline;
     StringBuilder? _debugStringBuilder;
 
 #if VALIDATE_USAGE
@@ -38,7 +38,6 @@ public abstract class CommandList : DeviceResource, IDisposable
 #endif
 
     internal CommandList(
-        in CommandListDescription description,
         GraphicsDeviceFeatures features,
         uint uniformAlignment,
         uint structuredAlignment
@@ -49,14 +48,11 @@ public abstract class CommandList : DeviceResource, IDisposable
         _structuredBufferAlignment = structuredAlignment;
     }
 
-    internal StringBuilder GetDebugStringBuilder()
-    {
-        return (_debugStringBuilder ??= new()).Clear();
-    }
+    StringBuilder GetDebugStringBuilder() => (_debugStringBuilder ??= new()).Clear();
 
     internal void ClearCachedState()
     {
-        _framebuffer = null;
+        Framebuffer = null;
         _graphicsPipeline = null;
         _computePipeline = null;
 #if VALIDATE_USAGE
@@ -81,7 +77,7 @@ public abstract class CommandList : DeviceResource, IDisposable
 
     /// <summary>
     /// Sets the active <see cref="Pipeline"/> used for rendering.
-    /// When drawing, the active <see cref="Pipeline"/> must be compatible with the bound <see cref="Framebuffer"/>,
+    /// When drawing, the active <see cref="Pipeline"/> must be compatible with the bound <see cref="Veldrid.Framebuffer"/>,
     /// <see cref="ResourceSet"/>, and <see cref="DeviceBuffer"/> objects.
     /// When a new Pipeline is set, the previously-bound ResourceSets on this CommandList become invalidated and must be
     /// re-bound.
@@ -90,13 +86,9 @@ public abstract class CommandList : DeviceResource, IDisposable
     public void SetPipeline(Pipeline pipeline)
     {
         if (pipeline.IsComputePipeline)
-        {
             _computePipeline = pipeline;
-        }
         else
-        {
             _graphicsPipeline = pipeline;
-        }
 
         SetPipelineCore(pipeline);
     }
@@ -151,10 +143,8 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// </summary>
     /// <param name="buffer">The new <see cref="DeviceBuffer"/>.</param>
     /// <param name="format">The format of data in the <see cref="DeviceBuffer"/>.</param>
-    public void SetIndexBuffer(DeviceBuffer buffer, IndexFormat format)
-    {
+    public void SetIndexBuffer(DeviceBuffer buffer, IndexFormat format) =>
         SetIndexBuffer(buffer, format, 0);
-    }
 
     /// <summary>
     /// Sets the active <see cref="DeviceBuffer"/>.
@@ -193,10 +183,8 @@ public abstract class CommandList : DeviceResource, IDisposable
     /// </summary>
     /// <param name="slot">The resource slot.</param>
     /// <param name="rs">The new <see cref="ResourceSet"/>.</param>
-    public void SetGraphicsResourceSet(uint slot, ResourceSet rs)
-    {
+    public void SetGraphicsResourceSet(uint slot, ResourceSet rs) =>
         SetGraphicsResourceSet(slot, rs, ReadOnlySpan<uint>.Empty);
-    }
 
     /// <summary>
     /// Sets the active <see cref="ResourceSet"/> for the given index. This ResourceSet is only active for the graphics
@@ -386,45 +374,45 @@ public abstract class CommandList : DeviceResource, IDisposable
     );
 
     /// <summary>
-    /// Sets the active <see cref="Framebuffer"/> which will be rendered to.
-    /// When drawing, the active <see cref="Framebuffer"/> must be compatible with the active <see cref="Pipeline"/>.
+    /// Sets the active <see cref="Veldrid.Framebuffer"/> which will be rendered to.
+    /// When drawing, the active <see cref="Veldrid.Framebuffer"/> must be compatible with the active <see cref="Pipeline"/>.
     /// A compatible <see cref="Pipeline"/> has the same number of output attachments with matching formats.
     /// </summary>
-    /// <param name="fb">The new <see cref="Framebuffer"/>.</param>
+    /// <param name="fb">The new <see cref="Veldrid.Framebuffer"/>.</param>
     public void SetFramebuffer(Framebuffer fb)
     {
-        if (_framebuffer == fb)
+        if (Framebuffer == fb)
             return;
 
-        _framebuffer = fb;
+        Framebuffer = fb;
         SetFramebufferCore(fb);
         SetFullViewports();
         SetFullScissorRects();
     }
 
     /// <summary>
-    /// Performs API-specific handling of the <see cref="Framebuffer"/> resource.
+    /// Performs API-specific handling of the <see cref="Veldrid.Framebuffer"/> resource.
     /// </summary>
     /// <param name="fb"></param>
     protected abstract void SetFramebufferCore(Framebuffer fb);
 
     /// <summary>
-    /// Clears the color target at the given index of the active <see cref="Framebuffer"/>.
-    /// The index given must be less than the number of color attachments in the active <see cref="Framebuffer"/>.
+    /// Clears the color target at the given index of the active <see cref="Veldrid.Framebuffer"/>.
+    /// The index given must be less than the number of color attachments in the active <see cref="Veldrid.Framebuffer"/>.
     /// </summary>
     /// <param name="index">The color target index.</param>
     /// <param name="clearColor">The value to clear the target to.</param>
     public void ClearColorTarget(uint index, RgbaFloat clearColor)
     {
 #if VALIDATE_USAGE
-        if (_framebuffer == null)
+        if (Framebuffer == null)
         {
             throw new VeldridException(
                 "Cannot use ClearColorTarget. There is no Framebuffer bound."
             );
         }
 
-        if (_framebuffer.ColorTargets.Length <= index)
+        if (Framebuffer.ColorTargets.Length <= index)
         {
             throw new VeldridException(
                 "ClearColorTarget index must be less than the current Framebuffer's color target count."
@@ -437,8 +425,8 @@ public abstract class CommandList : DeviceResource, IDisposable
     private protected abstract void ClearColorTargetCore(uint index, RgbaFloat clearColor);
 
     /// <summary>
-    /// Clears the depth-stencil target of the active <see cref="Framebuffer"/>.
-    /// The active <see cref="Framebuffer"/> must have a depth attachment.
+    /// Clears the depth-stencil target of the active <see cref="Veldrid.Framebuffer"/>.
+    /// The active <see cref="Veldrid.Framebuffer"/> must have a depth attachment.
     /// With this overload, the stencil buffer is cleared to 0.
     /// </summary>
     /// <param name="depth">The value to clear the depth buffer to.</param>
@@ -448,22 +436,22 @@ public abstract class CommandList : DeviceResource, IDisposable
     }
 
     /// <summary>
-    /// Clears the depth-stencil target of the active <see cref="Framebuffer"/>.
-    /// The active <see cref="Framebuffer"/> must have a depth attachment.
+    /// Clears the depth-stencil target of the active <see cref="Veldrid.Framebuffer"/>.
+    /// The active <see cref="Veldrid.Framebuffer"/> must have a depth attachment.
     /// </summary>
     /// <param name="depth">The value to clear the depth buffer to.</param>
     /// <param name="stencil">The value to clear the stencil buffer to.</param>
     public void ClearDepthStencil(float depth, byte stencil)
     {
 #if VALIDATE_USAGE
-        if (_framebuffer == null)
+        if (Framebuffer == null)
         {
             throw new VeldridException(
                 "Cannot use ClearDepthStencil. There is no Framebuffer bound."
             );
         }
 
-        if (_framebuffer.DepthTarget == null)
+        if (Framebuffer.DepthTarget == null)
         {
             throw new VeldridException(
                 "The current Framebuffer has no depth target, so ClearDepthStencil cannot be used."
@@ -477,14 +465,14 @@ public abstract class CommandList : DeviceResource, IDisposable
     private protected abstract void ClearDepthStencilCore(float depth, byte stencil);
 
     /// <summary>
-    /// Sets all active viewports to cover the entire active <see cref="Framebuffer"/>.
+    /// Sets all active viewports to cover the entire active <see cref="Veldrid.Framebuffer"/>.
     /// </summary>
     public void SetFullViewports()
     {
-        Viewport viewport = new(0, 0, _framebuffer!.Width, _framebuffer.Height, 0, 1);
+        Viewport viewport = new(0, 0, Framebuffer!.Width, Framebuffer.Height, 0, 1);
         SetViewport(0, viewport);
 
-        int length = _framebuffer.ColorTargets.Length;
+        int length = Framebuffer.ColorTargets.Length;
         for (uint index = 1; index < length; index++)
         {
             SetViewport(index, viewport);
@@ -492,32 +480,32 @@ public abstract class CommandList : DeviceResource, IDisposable
     }
 
     /// <summary>
-    /// Sets the active viewport at the given index to cover the entire active <see cref="Framebuffer"/>.
+    /// Sets the active viewport at the given index to cover the entire active <see cref="Veldrid.Framebuffer"/>.
     /// </summary>
     /// <param name="index">The color target index.</param>
     public void SetFullViewport(uint index)
     {
-        SetViewport(index, new(0, 0, _framebuffer!.Width, _framebuffer.Height, 0, 1));
+        SetViewport(index, new(0, 0, Framebuffer!.Width, Framebuffer.Height, 0, 1));
     }
 
     /// <summary>
     /// Sets the active <see cref="Viewport"/> at the given index.
-    /// The index given must be less than the number of color attachments in the active <see cref="Framebuffer"/>.
+    /// The index given must be less than the number of color attachments in the active <see cref="Veldrid.Framebuffer"/>.
     /// </summary>
     /// <param name="index">The color target index.</param>
     /// <param name="viewport">The new <see cref="Viewport"/>.</param>
     public abstract void SetViewport(uint index, in Viewport viewport);
 
     /// <summary>
-    /// Sets all active scissor rectangles to cover the active <see cref="Framebuffer"/>.
+    /// Sets all active scissor rectangles to cover the active <see cref="Veldrid.Framebuffer"/>.
     /// </summary>
     public void SetFullScissorRects()
     {
-        uint width = _framebuffer!.Width;
-        uint height = _framebuffer.Height;
+        uint width = Framebuffer!.Width;
+        uint height = Framebuffer.Height;
         SetScissorRect(0, 0, 0, width, height);
 
-        int length = _framebuffer.ColorTargets.Length;
+        int length = Framebuffer.ColorTargets.Length;
         for (uint index = 1; index < length; index++)
         {
             SetScissorRect(index, 0, 0, width, height);
@@ -525,17 +513,17 @@ public abstract class CommandList : DeviceResource, IDisposable
     }
 
     /// <summary>
-    /// Sets the active scissor rectangle at the given index to cover the active <see cref="Framebuffer"/>.
+    /// Sets the active scissor rectangle at the given index to cover the active <see cref="Veldrid.Framebuffer"/>.
     /// </summary>
     /// <param name="index">The color target index.</param>
     public void SetFullScissorRect(uint index)
     {
-        SetScissorRect(index, 0, 0, _framebuffer!.Width, _framebuffer.Height);
+        SetScissorRect(index, 0, 0, Framebuffer!.Width, Framebuffer.Height);
     }
 
     /// <summary>
     /// Sets the active scissor rectangle at the given index.
-    /// The index given must be less than the number of color attachments in the active <see cref="Framebuffer"/>.
+    /// The index given must be less than the number of color attachments in the active <see cref="Veldrid.Framebuffer"/>.
     /// </summary>
     /// <param name="index">The color target index.</param>
     /// <param name="x">The X value of the scissor rectangle.</param>
@@ -1567,19 +1555,19 @@ public abstract class CommandList : DeviceResource, IDisposable
             );
         }
 
-        if (_framebuffer == null)
+        if (Framebuffer == null)
         {
             throw new VeldridException(
-                $"A {nameof(Framebuffer)} must be set in order to issue draw commands."
+                $"A {nameof(Veldrid.Framebuffer)} must be set in order to issue draw commands."
             );
         }
 
 #if VALIDATE_USAGE
-        if (!_graphicsPipeline.GraphicsOutputDescription.Equals(_framebuffer.OutputDescription))
+        if (!_graphicsPipeline.GraphicsOutputDescription.Equals(Framebuffer.OutputDescription))
         {
             throw new VeldridException(
                 $"The {nameof(OutputDescription)} of the current graphics {nameof(Pipeline)} "
-                    + $"is not compatible with the current {nameof(Framebuffer)}."
+                    + $"is not compatible with the current {nameof(Veldrid.Framebuffer)}."
             );
         }
 #endif
@@ -1662,67 +1650,43 @@ public abstract class CommandList : DeviceResource, IDisposable
         }
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendLiteral(string)"/>
-        public void AppendLiteral(string value)
-        {
-            _innerHandler.AppendLiteral(value);
-        }
+        public void AppendLiteral(string value) => _innerHandler.AppendLiteral(value);
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted{T}(T)"/>
-        public void AppendFormatted<T>(T value)
-        {
-            _innerHandler.AppendFormatted(value);
-        }
+        public void AppendFormatted<T>(T value) => _innerHandler.AppendFormatted(value);
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted{T}(T, string?)"/>
-        public void AppendFormatted<T>(T value, string? format)
-        {
+        public void AppendFormatted<T>(T value, string? format) =>
             _innerHandler.AppendFormatted(value, format);
-        }
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted{T}(T, int)"/>
-        public void AppendFormatted<T>(T value, int alignment)
-        {
+        public void AppendFormatted<T>(T value, int alignment) =>
             _innerHandler.AppendFormatted(value, alignment);
-        }
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted{T}(T, int, string?)"/>
-        public void AppendFormatted<T>(T value, int alignment, string? format)
-        {
+        public void AppendFormatted<T>(T value, int alignment, string? format) =>
             _innerHandler.AppendFormatted(value, alignment, format);
-        }
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted(ReadOnlySpan{char})"/>
-        public void AppendFormatted(ReadOnlySpan<char> value)
-        {
+        public void AppendFormatted(ReadOnlySpan<char> value) =>
             _innerHandler.AppendFormatted(value);
-        }
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted(ReadOnlySpan{char}, int, string?)"/>
         public void AppendFormatted(
             ReadOnlySpan<char> value,
-            int alignment = 0,
+            int alignment,
             string? format = null
-        )
-        {
-            _innerHandler.AppendFormatted(value, alignment, format);
-        }
+        ) => _innerHandler.AppendFormatted(value, alignment, format);
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted(string?)"/>
-        public void AppendFormatted(string? value)
-        {
-            _innerHandler.AppendFormatted(value);
-        }
+        public void AppendFormatted(string? value) => _innerHandler.AppendFormatted(value);
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted(string?, int, string?)"/>
-        public void AppendFormatted(string? value, int alignment = 0, string? format = null)
-        {
+        public void AppendFormatted(string? value, int alignment, string? format = null) =>
             _innerHandler.AppendFormatted(value, alignment, format);
-        }
 
         /// <inheritdoc cref="StringBuilder.AppendInterpolatedStringHandler.AppendFormatted(object?, int, string?)"/>
-        public void AppendFormatted(object? value, int alignment = 0, string? format = null)
-        {
+        public void AppendFormatted(object? value, int alignment = 0, string? format = null) =>
             _innerHandler.AppendFormatted(value, alignment, format);
-        }
     }
 }

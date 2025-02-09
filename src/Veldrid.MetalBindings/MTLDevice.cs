@@ -113,7 +113,7 @@ public readonly unsafe struct MTLDevice(IntPtr nativePtr)
     }
 
     public MTLCommandQueue newCommandQueue() =>
-        objc_msgSend<MTLCommandQueue>(NativePtr, sel_newCommandQueue);
+        new(IntPtr_objc_msgSend(NativePtr, sel_newCommandQueue));
 
     public MTLBuffer newBuffer(void* pointer, nuint length, MTLResourceOptions options)
     {

@@ -63,8 +63,7 @@ public class ImageSharpCubemapTexture
             Image.Load<Rgba32>(positiveYPath),
             Image.Load<Rgba32>(negativeYPath),
             Image.Load<Rgba32>(positiveZPath),
-            Image.Load<Rgba32>(negativeZPath),
-            true
+            Image.Load<Rgba32>(negativeZPath)
         ) { }
 
     public ImageSharpCubemapTexture(

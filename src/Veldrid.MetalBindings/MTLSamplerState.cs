@@ -2,7 +2,7 @@ using System;
 
 namespace Veldrid.MetalBindings;
 
-public struct MTLSamplerState
+public struct MTLSamplerState(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 }

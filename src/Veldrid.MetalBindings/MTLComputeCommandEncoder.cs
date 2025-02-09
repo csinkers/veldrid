@@ -3,9 +3,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLComputeCommandEncoder
+public readonly struct MTLComputeCommandEncoder(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public bool IsNull => NativePtr == IntPtr.Zero;
 

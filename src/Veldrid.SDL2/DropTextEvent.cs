@@ -1,6 +1,6 @@
 using System;
 
-namespace Veldrid.Sdl2;
+namespace Veldrid.SDL2;
 
 public ref struct DropTextEvent(ReadOnlySpan<byte> textUtf8, uint timestamp, uint windowId)
 {

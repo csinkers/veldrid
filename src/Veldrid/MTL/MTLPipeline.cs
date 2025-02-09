@@ -362,10 +362,7 @@ internal sealed class MTLPipeline : Pipeline
         return ret;
     }
 
-    void AddSpecializedFunction(MTLFunction function)
-    {
-        _specializedFunctions.Add(function);
-    }
+    void AddSpecializedFunction(MTLFunction function) => _specializedFunctions.Add(function);
 
     public override void Dispose()
     {
@@ -381,15 +378,10 @@ internal sealed class MTLPipeline : Pipeline
                 ObjectiveCRuntime.release(ComputePipelineState.NativePtr);
             }
 
-            if (_specializedFunctions != null)
-            {
-                foreach (MTLFunction function in _specializedFunctions)
-                {
-                    ObjectiveCRuntime.release(function.NativePtr);
-                }
-                _specializedFunctions.Clear();
-            }
+            foreach (MTLFunction function in _specializedFunctions)
+                ObjectiveCRuntime.release(function.NativePtr);
 
+            _specializedFunctions.Clear();
             _disposed = true;
         }
     }

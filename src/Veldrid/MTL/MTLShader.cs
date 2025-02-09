@@ -5,11 +5,10 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLShader : Shader
 {
-    readonly MTLGraphicsDevice _device;
     bool _disposed;
 
-    public MTLLibrary Library { get; private set; }
-    public MTLFunction Function { get; private set; }
+    public MTLLibrary Library { get; }
+    public MTLFunction Function { get; }
     public override string? Name { get; set; }
     public bool HasFunctionConstants { get; }
     public override bool IsDisposed => _disposed;
@@ -17,8 +16,6 @@ internal sealed class MTLShader : Shader
     public unsafe MTLShader(in ShaderDescription description, MTLGraphicsDevice gd)
         : base(description.Stage, description.EntryPoint)
     {
-        _device = gd;
-
         if (
             description.ShaderBytes.Length > 4
             && description.ShaderBytes[0] == 0x4d

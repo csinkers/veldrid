@@ -3,7 +3,7 @@ using System.Diagnostics;
 using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.Vulkan;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed class VkDescriptorPoolManager
 {
@@ -111,9 +111,12 @@ internal sealed class VkDescriptorPoolManager
 
     internal unsafe void DestroyAll()
     {
-        foreach (PoolInfo poolInfo in _pools)
+        lock (_lock)
         {
-            vkDestroyDescriptorPool(_gd.Device, poolInfo.Pool, null);
+            foreach (PoolInfo poolInfo in _pools)
+            {
+                vkDestroyDescriptorPool(_gd.Device, poolInfo.Pool, null);
+            }
         }
     }
 

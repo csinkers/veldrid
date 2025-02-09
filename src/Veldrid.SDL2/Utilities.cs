@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Veldrid.Sdl2;
+namespace Veldrid.SDL2;
 
 internal static class Utilities
 {

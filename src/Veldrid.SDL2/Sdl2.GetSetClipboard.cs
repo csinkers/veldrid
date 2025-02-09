@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Veldrid.Sdl2;
+namespace Veldrid.SDL2;
 
 public static unsafe partial class Sdl2Native
 {
@@ -15,7 +15,7 @@ public static unsafe partial class Sdl2Native
     /// <summary>
     /// </summary>
     /// <returns>
-    /// Pointer to UTF8 data. Has to be freed with <see cref="SDL_free(void*)"/>.
+    /// Pointer to UTF8 data. Has to be freed with <see cref="SDL_free"/>.
     /// </returns>
     public static byte* SDL_GetClipboardTextUtf8() => s_sdl_getClipboardText();
 

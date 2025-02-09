@@ -1,5 +1,6 @@
-﻿using Veldrid.Sdl2;
+﻿using Veldrid.SDL2;
 using Veldrid.StartupUtilities;
+using Veldrid.Tests.Utilities;
 using Xunit;
 
 namespace Veldrid.Tests;

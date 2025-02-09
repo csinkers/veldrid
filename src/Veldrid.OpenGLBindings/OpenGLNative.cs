@@ -1,9 +1,9 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Runtime.InteropServices;
 
-#nullable disable
-
-namespace Veldrid.OpenGLBinding;
+namespace Veldrid.OpenGLBindings;
 
 using unsafe DebugProc = delegate* unmanaged[Cdecl]<
     DebugSource,

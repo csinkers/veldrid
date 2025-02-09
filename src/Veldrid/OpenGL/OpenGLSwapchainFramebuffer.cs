@@ -2,7 +2,6 @@
 
 internal sealed class OpenGLSwapchainFramebuffer : Framebuffer
 {
-    readonly PixelFormat? _depthFormat;
     bool _disposed;
 
     public override string? Name { get; set; }
@@ -22,10 +21,10 @@ internal sealed class OpenGLSwapchainFramebuffer : Framebuffer
         bool disableSrgbConversion
     )
     {
-        _depthFormat = depthFormat;
         // This is wrong, but it's not really used.
         OutputAttachmentDescription? depthDesc =
-            _depthFormat != null ? new OutputAttachmentDescription(_depthFormat.Value) : null;
+            depthFormat != null ? new OutputAttachmentDescription(depthFormat.Value) : null;
+
         OutputDescription = new(depthDesc, new OutputAttachmentDescription(colorFormat));
 
         _colorTexture = new(
@@ -37,12 +36,12 @@ internal sealed class OpenGLSwapchainFramebuffer : Framebuffer
         );
         _colorTargets = [new(_colorTexture, 0)];
 
-        if (_depthFormat != null)
+        if (depthFormat != null)
         {
             _depthTexture = new(
                 width,
                 height,
-                _depthFormat.Value,
+                depthFormat.Value,
                 TextureUsage.DepthStencil,
                 TextureSampleCount.Count1
             );

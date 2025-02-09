@@ -24,7 +24,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             )
         );
 
-        MappedResource map = GD.Map(texture, MapMode.ReadWrite, 0);
+        _ = GD.Map(texture, MapMode.ReadWrite, 0);
         GD.Unmap(texture, 0);
     }
 
@@ -42,7 +42,7 @@ public abstract class TextureTestBase<T> : GraphicsDeviceTestBase<T>
             )
         );
 
-        MappedResource map = GD.Map(texture, MapMode.ReadWrite, 0);
+        _ = GD.Map(texture, MapMode.ReadWrite, 0);
         GD.Unmap(texture, 0);
     }
 

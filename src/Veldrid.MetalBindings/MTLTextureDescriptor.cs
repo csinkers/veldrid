@@ -3,11 +3,11 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLTextureDescriptor
+public readonly struct MTLTextureDescriptor(IntPtr nativePtr)
 {
     static readonly ObjCClass s_class = new("MTLTextureDescriptor"u8);
 
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public static MTLTextureDescriptor New() => s_class.AllocInit<MTLTextureDescriptor>();
 

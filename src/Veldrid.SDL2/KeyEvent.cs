@@ -1,4 +1,4 @@
-﻿namespace Veldrid;
+﻿namespace Veldrid.SDL2;
 
 public readonly struct KeyEvent(
     uint timestamp,

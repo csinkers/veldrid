@@ -14,12 +14,10 @@ namespace Veldrid;
 public unsafe class RenderDoc
 {
     readonly RENDERDOC_API_1_4_0 _api;
-    readonly IntPtr _nativeLib;
 
     RenderDoc(IntPtr lib)
     {
-        _nativeLib = lib;
-        IntPtr getApiExport = NativeLibrary.GetExport(_nativeLib, "RENDERDOC_GetAPI");
+        IntPtr getApiExport = NativeLibrary.GetExport(lib, "RENDERDOC_GetAPI");
         pRENDERDOC_GetAPI getApiFunc = Marshal.GetDelegateForFunctionPointer<pRENDERDOC_GetAPI>(
             getApiExport
         );
@@ -384,6 +382,7 @@ public unsafe class RenderDoc
     public static bool Load([MaybeNullWhen(false)] out RenderDoc renderDoc) =>
         Load(GetLibNames(), out renderDoc);
 
+    /// <summary>
     /// Attempts to load RenderDoc from the given path.
     /// </summary>
     /// <param name="renderDocLibPath">The path to the RenderDoc shared library.</param>

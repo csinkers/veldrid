@@ -1,3 +1,4 @@
+using Veldrid.Tests.Utilities;
 using Xunit;
 
 namespace Veldrid.Tests;

@@ -1,10 +1,10 @@
 ﻿using System;
 using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.Vulkan;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 using VulkanBuffer = TerraFX.Interop.Vulkan.VkBuffer;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkBuffer : DeviceBuffer, IResourceRefCountTarget
 {

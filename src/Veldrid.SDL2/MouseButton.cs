@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Veldrid;
+namespace Veldrid.SDL2;
 
 [Flags]
 public enum MouseButton

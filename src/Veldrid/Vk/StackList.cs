@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 /// <summary>
 /// A super-dangerous stack-only list which can hold up to 256 bytes of blittable data.
@@ -13,7 +13,8 @@ internal unsafe struct StackList<T>
 {
     public const int CapacityInBytes = 256;
 
-    fixed byte _storage[CapacityInBytes];
+    // ReSharper disable once UnusedMember.Local
+    fixed byte _storage[CapacityInBytes]; // Used via pointer arithmetic.
     uint _count;
 
     public uint Count => _count;
@@ -61,7 +62,7 @@ internal unsafe struct StackList<T, TSize>
     where T : struct
     where TSize : struct
 {
-#pragma warning disable 0169 // Unused field. This is used implicity because it controls the size of the structure on the stack.
+#pragma warning disable 0169 // Unused field. This is used implicitly because it controls the size of the structure on the stack.
     TSize _storage;
 #pragma warning restore 0169
     uint _count;

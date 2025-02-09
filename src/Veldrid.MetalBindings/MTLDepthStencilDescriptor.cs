@@ -21,13 +21,13 @@ public readonly struct MTLDepthStencilDescriptor(IntPtr ptr)
 
     public MTLStencilDescriptor backFaceStencil
     {
-        get => objc_msgSend<MTLStencilDescriptor>(NativePtr, sel_backFaceStencil);
+        get => new(IntPtr_objc_msgSend(NativePtr, sel_backFaceStencil));
         set => objc_msgSend(NativePtr, sel_setBackFaceStencil, value.NativePtr);
     }
 
     public MTLStencilDescriptor frontFaceStencil
     {
-        get => objc_msgSend<MTLStencilDescriptor>(NativePtr, sel_frontFaceStencil);
+        get => new(IntPtr_objc_msgSend(NativePtr, sel_frontFaceStencil));
         set => objc_msgSend(NativePtr, sel_setFrontFaceStencil, value.NativePtr);
     }
 

@@ -2,9 +2,9 @@ using System;
 
 namespace Veldrid.MetalBindings;
 
-public readonly struct MTLFunctionConstantValues
+public readonly struct MTLFunctionConstantValues(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public static MTLFunctionConstantValues New()
     {

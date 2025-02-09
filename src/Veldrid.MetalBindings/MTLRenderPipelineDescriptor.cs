@@ -18,21 +18,18 @@ public readonly struct MTLRenderPipelineDescriptor(IntPtr ptr)
 
     public MTLFunction vertexFunction
     {
-        get => objc_msgSend<MTLFunction>(NativePtr, sel_vertexFunction);
+        get => new(IntPtr_objc_msgSend(NativePtr, sel_vertexFunction));
         set => objc_msgSend(NativePtr, sel_setVertexFunction, value.NativePtr);
     }
 
     public MTLFunction fragmentFunction
     {
-        get => objc_msgSend<MTLFunction>(NativePtr, sel_fragmentFunction);
+        get => new(IntPtr_objc_msgSend(NativePtr, sel_fragmentFunction));
         set => objc_msgSend(NativePtr, sel_setFragmentFunction, value.NativePtr);
     }
 
     public MTLRenderPipelineColorAttachmentDescriptorArray colorAttachments =>
-        objc_msgSend<MTLRenderPipelineColorAttachmentDescriptorArray>(
-            NativePtr,
-            sel_colorAttachments
-        );
+        new(IntPtr_objc_msgSend(NativePtr, sel_colorAttachments));
 
     public MTLPixelFormat depthAttachmentPixelFormat
     {
@@ -53,7 +50,7 @@ public readonly struct MTLRenderPipelineDescriptor(IntPtr ptr)
     }
 
     public MTLVertexDescriptor vertexDescriptor =>
-        objc_msgSend<MTLVertexDescriptor>(NativePtr, sel_vertexDescriptor);
+        new(IntPtr_objc_msgSend(NativePtr, sel_vertexDescriptor));
 
     public Bool8 alphaToCoverageEnabled
     {

@@ -94,7 +94,7 @@ internal sealed class D3D11Swapchain : Swapchain
                 BufferUsage = Usage.RenderTargetOutput,
             };
 
-            using IDXGIFactory dxgiFactory = _gd.Adapter.GetParent<IDXGIFactory>()!;
+            using IDXGIFactory dxgiFactory = _gd.Adapter.GetParent<IDXGIFactory>();
             _dxgiSwapChain = dxgiFactory.CreateSwapChain(_gd.Device, dxgiSCDesc);
             dxgiFactory.MakeWindowAssociation(
                 win32Source.Hwnd,
@@ -119,7 +119,7 @@ internal sealed class D3D11Swapchain : Swapchain
             };
 
             // Get the Vortice.DXGI factory automatically created when initializing the Direct3D device.
-            using (IDXGIFactory2 dxgiFactory = _gd.Adapter.GetParent<IDXGIFactory2>()!)
+            using (IDXGIFactory2 dxgiFactory = _gd.Adapter.GetParent<IDXGIFactory2>())
             {
                 // Create the swap chain and get the highest version available.
                 using IDXGISwapChain1 swapChain1 = dxgiFactory.CreateSwapChainForComposition(

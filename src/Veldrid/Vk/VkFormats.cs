@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using TerraFX.Interop.Vulkan;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 using static VkBlendFactor;
 using static VkBlendOp;

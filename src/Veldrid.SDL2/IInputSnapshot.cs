@@ -2,9 +2,9 @@
 using System.Numerics;
 using System.Text;
 
-namespace Veldrid;
+namespace Veldrid.SDL2;
 
-public interface InputSnapshot
+public interface IInputSnapshot
 {
     ReadOnlySpan<Rune> InputEvents { get; }
     ReadOnlySpan<KeyEvent> KeyEvents { get; }

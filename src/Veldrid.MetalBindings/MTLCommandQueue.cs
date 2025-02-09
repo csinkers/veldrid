@@ -5,12 +5,12 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct MTLCommandQueue
+public readonly struct MTLCommandQueue(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLCommandBuffer commandBuffer() =>
-        objc_msgSend<MTLCommandBuffer>(NativePtr, sel_commandBuffer);
+        new(IntPtr_objc_msgSend(NativePtr, sel_commandBuffer));
 
     public void insertDebugCaptureBoundary() =>
         objc_msgSend(NativePtr, sel_insertDebugCaptureBoundary);

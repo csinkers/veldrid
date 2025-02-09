@@ -6,7 +6,7 @@ using static TerraFX.Interop.Vulkan.VkImageLayout;
 using static TerraFX.Interop.Vulkan.VkPipelineStageFlags;
 using static TerraFX.Interop.Vulkan.Vulkan;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal static unsafe class VulkanUtil
 {

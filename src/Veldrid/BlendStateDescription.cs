@@ -119,7 +119,7 @@ public struct BlendStateDescription : IEquatable<BlendStateDescription>
         );
     }
 
-    internal BlendStateDescription ShallowClone()
+    internal readonly BlendStateDescription ShallowClone()
     {
         BlendStateDescription result = this;
         result.AttachmentStates = Util.ShallowClone(result.AttachmentStates);

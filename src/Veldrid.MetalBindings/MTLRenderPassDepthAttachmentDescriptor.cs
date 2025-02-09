@@ -9,7 +9,7 @@ public readonly struct MTLRenderPassDepthAttachmentDescriptor(IntPtr ptr)
 
     public MTLTexture texture
     {
-        get => objc_msgSend<MTLTexture>(NativePtr, Selectors.texture);
+        get => new(IntPtr_objc_msgSend(NativePtr, Selectors.texture));
         set => objc_msgSend(NativePtr, Selectors.setTexture, value.NativePtr);
     }
 

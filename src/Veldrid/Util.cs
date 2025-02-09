@@ -34,10 +34,8 @@ internal static class Util
 
     internal static void EnsureArrayMinimumSize<T>(ref T[] array, uint size)
     {
-        if (array == null || array.Length < size)
-        {
+        if (array.Length < size)
             Array.Resize(ref array, (int)size);
-        }
     }
 
     internal static unsafe string GetString(byte* stringStart)
@@ -90,26 +88,18 @@ internal static class Util
 
     internal static void ClearArray<T>(T[] array)
     {
-        if (array != null)
-        {
-            Array.Clear(array, 0, array.Length);
-        }
+        Array.Clear(array, 0, array.Length);
     }
 
     public static uint Clamp(uint value, uint min, uint max)
     {
         if (value <= min)
-        {
             return min;
-        }
-        else if (value >= max)
-        {
+
+        if (value >= max)
             return max;
-        }
-        else
-        {
-            return value;
-        }
+
+        return value;
     }
 
     internal static void GetMipLevelAndArrayLayer(

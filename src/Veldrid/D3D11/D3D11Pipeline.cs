@@ -108,7 +108,7 @@ internal sealed class D3D11Pipeline : Pipeline
         }
     }
 
-    public D3D11Pipeline(D3D11ResourceCache cache, in ComputePipelineDescription description)
+    public D3D11Pipeline(in ComputePipelineDescription description)
         : base(description)
     {
         IsComputePipeline = true;

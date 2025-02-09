@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Text;
 using ImGuiNET;
+using Veldrid.SDL2;
 
 namespace Veldrid;
 
@@ -470,7 +471,7 @@ public class ImGuiRenderer : IDisposable
     /// <summary>
     /// Updates ImGui input and IO configuration state.
     /// </summary>
-    public void Update(float deltaSeconds, InputSnapshot snapshot)
+    public void Update(float deltaSeconds, IInputSnapshot snapshot)
     {
         BeginUpdate(deltaSeconds);
         UpdateImGuiInput(snapshot);
@@ -478,7 +479,7 @@ public class ImGuiRenderer : IDisposable
     }
 
     /// <summary>
-    /// Called before we handle the input in <see cref="Update(float, InputSnapshot)"/>.
+    /// Called before we handle the input in <see cref="Update(float, IInputSnapshot)"/>.
     /// This render ImGui and update the state.
     /// </summary>
     protected void BeginUpdate(float deltaSeconds)
@@ -490,7 +491,7 @@ public class ImGuiRenderer : IDisposable
     }
 
     /// <summary>
-    /// Called at the end of <see cref="Update(float, InputSnapshot)"/>.
+    /// Called at the end of <see cref="Update(float, IInputSnapshot)"/>.
     /// This tells ImGui that we are on the next frame.
     /// </summary>
     protected void EndUpdate()
@@ -628,7 +629,7 @@ public class ImGuiRenderer : IDisposable
             _ => ImGuiKey.None,
         };
 
-    static void UpdateImGuiInput(InputSnapshot snapshot)
+    static void UpdateImGuiInput(IInputSnapshot snapshot)
     {
         ImGuiIOPtr io = ImGui.GetIO();
 

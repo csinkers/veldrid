@@ -6,7 +6,7 @@ internal sealed class MTLResourceSet : ResourceSet
     public new BindableResource[] Resources { get; }
     public new MTLResourceLayout Layout { get; }
 
-    public MTLResourceSet(in ResourceSetDescription description, MTLGraphicsDevice gd)
+    public MTLResourceSet(in ResourceSetDescription description)
         : base(description)
     {
         Resources = Util.ShallowClone(description.BoundResources);

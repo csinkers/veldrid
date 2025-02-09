@@ -2,7 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using TerraFX.Interop.Vulkan;
-using Veldrid.Vulkan;
+using Veldrid.Vk;
 
 namespace Veldrid;
 
@@ -42,7 +42,7 @@ public unsafe class BackendInfoVulkan
     /// <summary>
     /// Gets the VkQueue which is used by the GraphicsDevice to submit graphics work.
     /// </summary>
-    public IntPtr GraphicsQueue => (IntPtr)_gd.GraphicsQueue.Value;
+    public IntPtr GraphicsQueue => _gd.GraphicsQueue;
 
     /// <summary>
     /// Gets the queue family index of the graphics VkQueue.

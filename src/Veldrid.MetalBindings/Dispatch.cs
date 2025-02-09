@@ -37,10 +37,10 @@ public enum QualityOfServiceLevel : long
 
 public struct DispatchQueue
 {
-    public readonly IntPtr NativePtr;
+    public IntPtr NativePtr;
 }
 
 public struct DispatchData
 {
-    public readonly IntPtr NativePtr;
+    public IntPtr NativePtr;
 }

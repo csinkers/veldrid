@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace Veldrid.Sdl2;
+namespace Veldrid.SDL2;
 
 /// <summary>
 /// A transparent wrapper over a pointer to a native SDL_GameController.

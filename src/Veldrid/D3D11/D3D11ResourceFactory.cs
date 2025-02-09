@@ -20,7 +20,7 @@ internal sealed class D3D11ResourceFactory : ResourceFactory, IDisposable
     }
 
     public override CommandList CreateCommandList(in CommandListDescription description) =>
-        new D3D11CommandList(_gd, description);
+        new D3D11CommandList(_gd);
 
     public override Framebuffer CreateFramebuffer(in FramebufferDescription description) =>
         new D3D11Framebuffer(_device, description);
@@ -32,7 +32,7 @@ internal sealed class D3D11ResourceFactory : ResourceFactory, IDisposable
     }
 
     public override Pipeline CreateComputePipeline(in ComputePipelineDescription description) =>
-        new D3D11Pipeline(_cache, description);
+        new D3D11Pipeline(description);
 
     public override ResourceLayout CreateResourceLayout(in ResourceLayoutDescription description) =>
         new D3D11ResourceLayout(description);

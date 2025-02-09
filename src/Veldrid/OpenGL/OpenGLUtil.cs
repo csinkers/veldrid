@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
-using Veldrid.OpenGLBinding;
-using static Veldrid.OpenGLBinding.OpenGLNative;
+using Veldrid.OpenGLBindings;
+using static Veldrid.OpenGLBindings.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -53,7 +53,7 @@ internal static class OpenGLUtil
         if (byteCount >= maxLabelLength)
         {
             name = name[..(maxLabelLength - 4)].ToString() + "...";
-            byteCount = Util.UTF8.GetByteCount(name);
+            _ = Util.UTF8.GetByteCount(name);
         }
 
         Span<byte> utf8Bytes = stackalloc byte[1024];

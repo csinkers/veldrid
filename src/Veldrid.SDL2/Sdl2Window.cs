@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static Veldrid.Sdl2.Sdl2Native;
+using static Veldrid.SDL2.Sdl2Native;
 
-namespace Veldrid.Sdl2;
+namespace Veldrid.SDL2;
 
 public delegate void SDLEventHandler(ref SDL_Event ev);
 
@@ -38,9 +38,9 @@ public unsafe class Sdl2Window
     public float PollIntervalInMs { get; set; }
 
     // Current input states
-    int _currentMouseX;
-    int _currentMouseY;
-    MouseButton _currentMouseDown;
+    // int _currentMouseX;
+    // int _currentMouseY;
+    // MouseButton _currentMouseDown;
     Vector2 _currentMouseDelta;
 
     // Cached Sdl2Window state (for threaded processing)
@@ -313,8 +313,8 @@ public unsafe class Sdl2Window
         if (_exists)
         {
             SDL_WarpMouseInWindow(_window, x, y);
-            _currentMouseX = x;
-            _currentMouseY = y;
+            // _currentMouseX = x;
+            // _currentMouseY = y;
         }
     }
 
@@ -374,7 +374,7 @@ public unsafe class Sdl2Window
                 return;
             }
 
-            double currentTick = sw.ElapsedTicks;
+            // double currentTick = sw.ElapsedTicks;
             double currentTimeMs = sw.ElapsedTicks * (1000.0 / Stopwatch.Frequency);
             if (LimitPollRate && currentTimeMs - previousPollTimeMs < PollIntervalInMs)
             {
@@ -406,7 +406,7 @@ public unsafe class Sdl2Window
         _events.Add(ev);
     }
 
-    public InputSnapshot PumpEvents()
+    public IInputSnapshot PumpEvents()
     {
         _currentMouseDelta = new();
         if (_threadedProcessing)
@@ -517,9 +517,6 @@ public unsafe class Sdl2Window
             case SDL_EventType.DropText:
                 SDL_DropEvent dropEvent = Unsafe.As<SDL_Event, SDL_DropEvent>(ref ev);
                 HandleDropEvent(dropEvent);
-                break;
-            default:
-                // Ignore
                 break;
         }
     }
@@ -633,12 +630,12 @@ public unsafe class Sdl2Window
         SimpleInputSnapshot snapshot = _privateSnapshot;
         if (down)
         {
-            _currentMouseDown |= button;
+            // _currentMouseDown |= button;
             snapshot.MouseDown |= button;
         }
         else
         {
-            _currentMouseDown &= ~button;
+            // _currentMouseDown &= ~button;
             snapshot.MouseDown &= ~button;
         }
 
@@ -678,8 +675,8 @@ public unsafe class Sdl2Window
     {
         Vector2 mousePos = new(mouseMotionEvent.x, mouseMotionEvent.y);
         Vector2 delta = new(mouseMotionEvent.xrel, mouseMotionEvent.yrel);
-        _currentMouseX = (int)mousePos.X;
-        _currentMouseY = (int)mousePos.Y;
+        // _currentMouseX = (int)mousePos.X;
+        // _currentMouseY = (int)mousePos.Y;
         _privateSnapshot.MousePosition = mousePos;
 
         if (!_firstMouseEvent)
@@ -787,10 +784,12 @@ public unsafe class Sdl2Window
         _cachedPosition.Value = new(x, y);
     }
 
+    /*
     MouseState GetCurrentMouseState()
     {
         return new(_currentMouseX, _currentMouseY, _currentMouseDown);
     }
+    */
 
     public Point ScreenToClient(Point p)
     {
@@ -842,7 +841,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    class SimpleInputSnapshot : InputSnapshot
+    class SimpleInputSnapshot : IInputSnapshot
     {
         public List<Rune> InputEvents { get; private set; } = new();
         public List<KeyEvent> KeyEvents { get; private set; } = new();
@@ -852,9 +851,9 @@ public unsafe class Sdl2Window
         public Vector2 WheelDelta { get; set; }
         public MouseButton MouseDown { get; set; }
 
-        ReadOnlySpan<Rune> InputSnapshot.InputEvents => CollectionsMarshal.AsSpan(InputEvents);
-        ReadOnlySpan<KeyEvent> InputSnapshot.KeyEvents => CollectionsMarshal.AsSpan(KeyEvents);
-        ReadOnlySpan<MouseButtonEvent> InputSnapshot.MouseEvents =>
+        ReadOnlySpan<Rune> IInputSnapshot.InputEvents => CollectionsMarshal.AsSpan(InputEvents);
+        ReadOnlySpan<KeyEvent> IInputSnapshot.KeyEvents => CollectionsMarshal.AsSpan(KeyEvents);
+        ReadOnlySpan<MouseButtonEvent> IInputSnapshot.MouseEvents =>
             CollectionsMarshal.AsSpan(MouseEvents);
 
         internal void Clear()

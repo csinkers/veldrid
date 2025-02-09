@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Veldrid.MetalBindings;
 
 // TODO: Technically this should be "pointer-sized",
@@ -13,5 +15,5 @@ public struct CGFloat(double value)
 
     public static implicit operator double(CGFloat cgf) => cgf.Value;
 
-    public override string ToString() => value.ToString();
+    public override string ToString() => value.ToString(CultureInfo.InvariantCulture);
 }

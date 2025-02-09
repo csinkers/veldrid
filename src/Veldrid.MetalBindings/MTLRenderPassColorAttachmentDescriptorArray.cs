@@ -5,9 +5,9 @@ using static Veldrid.MetalBindings.ObjectiveCRuntime;
 namespace Veldrid.MetalBindings;
 
 [StructLayout(LayoutKind.Sequential)]
-public struct MTLRenderPassColorAttachmentDescriptorArray
+public struct MTLRenderPassColorAttachmentDescriptorArray(IntPtr nativePtr)
 {
-    public readonly IntPtr NativePtr;
+    public readonly IntPtr NativePtr = nativePtr;
 
     public MTLRenderPassColorAttachmentDescriptor this[uint index]
     {

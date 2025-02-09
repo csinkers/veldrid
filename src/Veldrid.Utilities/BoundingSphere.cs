@@ -10,7 +10,7 @@ public struct BoundingSphere(Vector3 center, float radius)
     public Vector3 Center = center;
     public readonly float Radius = radius;
 
-    public override readonly string ToString()
+    public readonly override string ToString()
     {
         return string.Format("Center:{0}, Radius:{1}", Center, Radius);
     }

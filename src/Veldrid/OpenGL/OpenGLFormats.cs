@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Veldrid.OpenGLBinding;
+using Veldrid.OpenGLBindings;
 
 namespace Veldrid.OpenGL;
 

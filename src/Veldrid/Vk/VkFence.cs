@@ -2,7 +2,7 @@
 using static TerraFX.Interop.Vulkan.Vulkan;
 using VulkanFence = TerraFX.Interop.Vulkan.VkFence;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkFence : Fence, IResourceRefCountTarget
 {

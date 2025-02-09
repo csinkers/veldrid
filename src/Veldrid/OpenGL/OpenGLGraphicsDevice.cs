@@ -8,10 +8,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Veldrid.OpenGL.EAGL;
 using Veldrid.OpenGL.EntryList;
-using Veldrid.OpenGLBinding;
+using Veldrid.OpenGLBindings;
 using static Veldrid.OpenGL.EGL.EGLNative;
 using static Veldrid.OpenGL.OpenGLUtil;
-using static Veldrid.OpenGLBinding.OpenGLNative;
+using static Veldrid.OpenGLBindings.OpenGLNative;
 
 namespace Veldrid.OpenGL;
 
@@ -32,7 +32,6 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
     readonly ConcurrentQueue<IOpenGLDeferredResource> _resourcesToDispose = new();
     IntPtr _glContext;
     Action<IntPtr> _makeCurrent = _ => { };
-    Func<IntPtr> _getCurrentContext = () => IntPtr.Zero;
     Action<IntPtr> _deleteContext = _ => { };
     Action _clearCurrentContext = () => { };
     Action _swapBuffers = () => { };
@@ -96,7 +95,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         uint height
     )
     {
-        Init(options, platformInfo, width, height, true);
+        Init(options, platformInfo, width, height);
     }
 
     [MemberNotNull(
@@ -113,8 +112,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         GraphicsDeviceOptions options,
         OpenGLPlatformInfo platformInfo,
         uint width,
-        uint height,
-        bool loadFunctions
+        uint height
     )
     {
         IsUvOriginTopLeft = false;
@@ -124,7 +122,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         _syncToVBlank = options.SyncToVerticalBlank;
         _glContext = platformInfo.OpenGLContextHandle;
         _makeCurrent = platformInfo.MakeCurrent;
-        _getCurrentContext = platformInfo.GetCurrentContext;
+        // _getCurrentContext = platformInfo.GetCurrentContext;
         _deleteContext = platformInfo.DeleteContext;
         _clearCurrentContext = platformInfo.ClearCurrentContext;
         _swapBuffers = platformInfo.SwapBuffers;
@@ -706,12 +704,12 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             () => setCurrentContext(IntPtr.Zero),
             destroyContext,
             swapBuffers,
-            syncInterval => { },
+            _ => { },
             setSwapchainFramebuffer,
             resizeSwapchain
         );
 
-        Init(options, platformInfo, (uint)fbWidth, (uint)fbHeight, false);
+        Init(options, platformInfo, (uint)fbWidth, (uint)fbHeight);
     }
 
     [MemberNotNull(
@@ -939,7 +937,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             setSync
         );
 
-        Init(options, platformInfo, (uint)surfaceWidth, (uint)surfaceHeight, true);
+        Init(options, platformInfo, (uint)surfaceWidth, (uint)surfaceHeight);
     }
 
     static void ValidateSuccess(int result, string message)
@@ -981,13 +979,9 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
     int IncrementCount(OpenGLCommandList glCommandList)
     {
         if (_submittedCommandListCounts.TryGetValue(glCommandList, out int count))
-        {
             count += 1;
-        }
         else
-        {
             count = 1;
-        }
 
         _submittedCommandListCounts[glCommandList] = count;
         return count;
@@ -996,22 +990,15 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
     int DecrementCount(OpenGLCommandList glCommandList)
     {
         if (_submittedCommandListCounts.TryGetValue(glCommandList, out int count))
-        {
             count -= 1;
-        }
         else
-        {
             count = -1;
-        }
 
         if (count == 0)
-        {
             _submittedCommandListCounts.Remove(glCommandList);
-        }
         else
-        {
             _submittedCommandListCounts[glCommandList] = count;
-        }
+
         return count;
     }
 
@@ -1077,20 +1064,13 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         uint sizeInBytes,
         MapMode mode,
         uint subresource
-    )
-    {
-        return _executionThread.Map(resource, offsetInBytes, sizeInBytes, mode, subresource);
-    }
+    ) => _executionThread.Map(resource, offsetInBytes, sizeInBytes, mode, subresource);
 
-    private protected override void UnmapCore(MappableResource resource, uint subresource)
-    {
+    private protected override void UnmapCore(MappableResource resource, uint subresource) =>
         _executionThread.Unmap(resource, subresource);
-    }
 
-    internal void CreateBuffer(DeviceBuffer buffer, IntPtr initialData)
-    {
+    internal void CreateBuffer(DeviceBuffer buffer, IntPtr initialData) =>
         _executionThread.CreateBuffer(buffer, initialData);
-    }
 
     internal void ThrowIfMapped(MappableResource resource, uint subresource)
     {
@@ -1173,6 +1153,7 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         return Util.AssertSubtype<Fence, OpenGLFence>(fence).Wait(nanosecondTimeout);
     }
 
+    [SuppressMessage("ReSharper", "CoVariantArrayConversion")]
     public override bool WaitForFences(Fence[] fences, bool waitAll, ulong nanosecondTimeout)
     {
         int msTimeout;
@@ -1349,12 +1330,9 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
     {
         base.Dispose(disposing);
 
-        ExecutionThread? thread = Interlocked.Exchange(ref _executionThread!, null);
-        if (thread != null)
-        {
-            thread.FlushAndFinish();
-            thread.Terminate();
-        }
+        ExecutionThread thread = Interlocked.Exchange(ref _executionThread!, null);
+        thread.FlushAndFinish();
+        thread.Terminate();
 
         _selfHandle.Free();
     }
@@ -1387,7 +1365,6 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
         readonly AutoResetEvent _workResetEvent;
         readonly Action<IntPtr> _makeCurrent;
         readonly IntPtr _context;
-        readonly Thread _thread;
         bool _terminated;
         readonly List<Exception> _exceptions = new();
         readonly Queue<ManualResetEvent> _resetEventPool = new();
@@ -1406,8 +1383,8 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
             _makeCurrent = makeCurrent;
             _context = context;
 
-            _thread = new(Run) { IsBackground = true, Name = "OpenGL Worker" };
-            _thread.Start();
+            Thread thread = new(Run) { IsBackground = true, Name = "OpenGL Worker" };
+            thread.Start();
         }
 
         void Run()
@@ -1462,14 +1439,14 @@ internal sealed unsafe class OpenGLGraphicsDevice : GraphicsDevice
 
         void ReturnResetEvent(ManualResetEvent mre)
         {
-            if (_resetEventPool.Count > Environment.ProcessorCount)
-            {
-                mre.Dispose();
-                return;
-            }
-
             lock (_resetEventPool)
             {
+                if (_resetEventPool.Count > Environment.ProcessorCount)
+                {
+                    mre.Dispose();
+                    return;
+                }
+
                 _resetEventPool.Enqueue(mre);
                 mre.Reset();
             }

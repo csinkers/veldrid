@@ -82,7 +82,7 @@ public readonly struct BindableResource : IEquatable<BindableResource>
         if (Kind == kind)
         {
             Debug.Assert(Resource is T, "Resource is not of the correct Kind.");
-            return Unsafe.As<T>(Resource)!;
+            return Unsafe.As<T>(Resource);
         }
 
         ThrowMismatch(kind, Kind);

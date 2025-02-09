@@ -23,7 +23,6 @@ internal sealed class MTLSwapchainFramebuffer : MTLFramebufferBase
         PixelFormat? depthFormat,
         PixelFormat colorFormat
     )
-        : base()
     {
         _gd = gd;
         _parentSwapchain = parent;

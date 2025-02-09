@@ -3,10 +3,10 @@ using System.Linq;
 using TerraFX.Interop.Vulkan;
 using static TerraFX.Interop.Vulkan.VkFormat;
 using static TerraFX.Interop.Vulkan.Vulkan;
-using static Veldrid.Vulkan.VulkanUtil;
+using static Veldrid.Vk.VulkanUtil;
 using VulkanFence = TerraFX.Interop.Vulkan.VkFence;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
 {
@@ -18,7 +18,6 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
     readonly uint _presentQueueIndex;
     readonly VkQueue _presentQueue;
     bool _syncToVBlank;
-    readonly SwapchainSource _swapchainSource;
     readonly bool _colorSrgb;
     bool? _newSyncToVBlank;
     uint _currentImageIndex;
@@ -70,12 +69,12 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
     {
         _gd = gd;
         _syncToVBlank = description.SyncToVerticalBlank;
-        _swapchainSource = description.Source;
+        SwapchainSource swapchainSource = description.Source;
         _colorSrgb = description.ColorSrgb;
 
         _surface =
             existingSurface == VkSurfaceKHR.NULL
-                ? VkSurfaceUtil.CreateSurface(gd.Instance, _swapchainSource)
+                ? VkSurfaceUtil.CreateSurface(gd.Instance, swapchainSource)
                 : existingSurface;
 
         if (!GetPresentQueueIndex(out _presentQueueIndex))
@@ -91,7 +90,7 @@ internal sealed unsafe class VkSwapchain : Swapchain, IResourceRefCountTarget
         RefCount = new(this);
         PresentLock = new();
 
-        _framebuffer = new(gd, this, _surface, description);
+        _framebuffer = new(gd, this, description);
 
         CreateSwapchain(description.Width, description.Height);
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using TerraFX.Interop.Vulkan;
 
-namespace Veldrid.Vulkan;
+namespace Veldrid.Vk;
 
 internal abstract class VkFramebufferBase : Framebuffer, IResourceRefCountTarget
 {

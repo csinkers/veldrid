@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Veldrid;
+namespace Veldrid.SDL2;
 
 public struct Rectangle(int x, int y, int width, int height) : IEquatable<Rectangle>
 {
@@ -36,9 +36,9 @@ public struct Rectangle(int x, int y, int width, int height) : IEquatable<Rectan
             && Height.Equals(other.Height);
     }
 
-    public override readonly bool Equals(object? obj) => obj is Rectangle r && Equals(r);
+    public readonly override bool Equals(object? obj) => obj is Rectangle r && Equals(r);
 
-    public override readonly int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
+    public readonly override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
 
     public static bool operator ==(Rectangle left, Rectangle right) => left.Equals(right);
 

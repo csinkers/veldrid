@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Veldrid.NeoDemo.Objects;
+﻿namespace Veldrid.NeoDemo.Objects;
 
 public static class CommonMaterials
 {

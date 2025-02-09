@@ -2,7 +2,7 @@
 
 #pragma warning disable CA1069 // Enums values should not be duplicated
 
-namespace Veldrid.OpenGLBinding;
+namespace Veldrid.OpenGLBindings;
 
 public enum DrawBufferMode
 {
@@ -1761,7 +1761,7 @@ public enum BlitFramebufferFilter
     Linear = 9729,
 }
 
-public enum ErrorCode : int
+public enum ErrorCode
 {
     NoError = 0,
     InvalidEnum = 0x0500,
@@ -1779,7 +1779,7 @@ public enum ErrorCode : int
     TextureTooLargeExt = 0x8065,
 }
 
-public enum ProgramInterface : int
+public enum ProgramInterface
 {
     TransformFeedbackBuffer = 0x8C8E,
     AtomicCounterBuffer = 0x92C0,
@@ -1804,7 +1804,7 @@ public enum ProgramInterface : int
     TransformFeedbackVarying = 0x92F4,
 }
 
-public enum ProgramInterfaceParameterName : int
+public enum ProgramInterfaceParameterName
 {
     ActiveResources = 0x92F5,
     MaxNameLength = 0x92F6,
@@ -1812,14 +1812,14 @@ public enum ProgramInterfaceParameterName : int
     MaxNumCompatibleSubroutines = 0x92F8,
 }
 
-public enum TextureAccess : int
+public enum TextureAccess
 {
     ReadOnly = 0x88B8,
     WriteOnly = 0x88B9,
     ReadWrite = 0x88BA,
 }
 
-public enum SizedInternalFormat : int
+public enum SizedInternalFormat
 {
     Rgba8 = 0x8058,
     Rgba16 = 0x805B,
@@ -1853,7 +1853,7 @@ public enum SizedInternalFormat : int
     Rgba8i = 0x8D8E,
 }
 
-public enum MemoryBarrierFlags : int
+public enum MemoryBarrierFlags
 {
     VertexAttribArrayBarrierBit = 0x00000001,
     ElementArrayBarrierBit = 0x00000002,
@@ -1873,7 +1873,7 @@ public enum MemoryBarrierFlags : int
     AllBarrierBits = unchecked((int)0xFFFFFFFF),
 }
 
-public enum BufferAccess : int
+public enum BufferAccess
 {
     ReadOnly = 0x88B8,
     WriteOnly = 0x88B9,
@@ -1881,7 +1881,7 @@ public enum BufferAccess : int
 }
 
 [Flags]
-public enum BufferAccessMask : int
+public enum BufferAccessMask
 {
     Read = 0x0001,
     Write = 0x0002,
@@ -1894,7 +1894,7 @@ public enum BufferAccessMask : int
 }
 
 [Flags]
-public enum BufferStorageMask : int
+public enum BufferStorageMask
 {
     DynamicStorage = 0x100,
     ClientStorage = 0x200,
@@ -1904,7 +1904,7 @@ public enum BufferStorageMask : int
     MapCoherent = 0x80,
 }
 
-public enum StencilFunction : int
+public enum StencilFunction
 {
     Never = 0x0200,
     Less = 0x0201,
@@ -1916,7 +1916,7 @@ public enum StencilFunction : int
     Always = 0x0207,
 }
 
-public enum StencilOp : int
+public enum StencilOp
 {
     Zero = 0,
     Invert = 0x150A,
@@ -1928,7 +1928,7 @@ public enum StencilOp : int
     DecrWrap = 0x8508,
 }
 
-public enum ActiveUniformBlockParameter : int
+public enum ActiveUniformBlockParameter
 {
     UniformBlockReferencedByTessControlShader = 0x84F0,
     UniformBlockReferencedByTessEvaluationShader = 0x84F1,
@@ -1943,7 +1943,7 @@ public enum ActiveUniformBlockParameter : int
     UniformBlockReferencedByComputeShader = 0x90EC,
 }
 
-public enum GetTextureParameter : int
+public enum GetTextureParameter
 {
     TextureWidth = 0x1000,
     TextureHeight = 0x1001,

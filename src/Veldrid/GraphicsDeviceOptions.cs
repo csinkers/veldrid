@@ -31,19 +31,19 @@ public struct GraphicsDeviceOptions
     /// Specifies which model the rendering backend should use for binding resources. This can be overridden per-pipeline
     /// by specifying a value in <see cref="GraphicsPipelineDescription.ResourceBindingModel"/>.
     /// </summary>
-    public ResourceBindingModel ResourceBindingModel;
+    public readonly ResourceBindingModel ResourceBindingModel;
 
     /// <summary>
     /// Indicates whether a 0-to-1 depth range mapping is preferred. For OpenGL, this is not the default, and is not available
     /// on all systems.
     /// </summary>
-    public bool PreferDepthRangeZeroToOne;
+    public readonly bool PreferDepthRangeZeroToOne;
 
     /// <summary>
     /// Indicates whether a bottom-to-top-increasing clip space Y direction is preferred. For Vulkan, this is not the
     /// default, and may not be available on all systems.
     /// </summary>
-    public bool PreferStandardClipSpaceYDirection;
+    public readonly bool PreferStandardClipSpaceYDirection;
 
     /// <summary>
     /// Indicates whether the main Swapchain should use an sRGB format. This value is only used in cases where the properties

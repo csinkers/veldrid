@@ -12,12 +12,12 @@ public struct SpecializationConstant : IEquatable<SpecializationConstant>
     /// <summary>
     /// The constant variable ID, as defined in the <see cref="Shader"/>.
     /// </summary>
-    public uint ID;
+    public readonly uint ID;
 
     /// <summary>
     /// The type of data stored in this instance. Must be a scalar numeric type.
     /// </summary>
-    public ShaderConstantType Type;
+    public readonly ShaderConstantType Type;
 
     /// <summary>
     /// An 8-byte block storing the contents of the specialization value. This is treated as an untyped buffer and is

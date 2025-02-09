@@ -11,17 +11,17 @@ public struct SwapchainDescription : IEquatable<SwapchainDescription>
     /// The <see cref="SwapchainSource"/> which will be used as the target of rendering operations.
     /// This is a window-system-specific object which differs by platform.
     /// </summary>
-    public SwapchainSource Source;
+    public readonly SwapchainSource Source;
 
     /// <summary>
     /// The initial width of the Swapchain surface.
     /// </summary>
-    public uint Width;
+    public readonly uint Width;
 
     /// <summary>
     /// The initial height of the Swapchain surface.
     /// </summary>
-    public uint Height;
+    public readonly uint Height;
 
     /// <summary>
     /// The optional format of the depth target of the Swapchain's Framebuffer.
@@ -33,12 +33,12 @@ public struct SwapchainDescription : IEquatable<SwapchainDescription>
     /// <summary>
     /// Indicates whether presentation of the Swapchain will be synchronized to the window system's vertical refresh rate.
     /// </summary>
-    public bool SyncToVerticalBlank;
+    public readonly bool SyncToVerticalBlank;
 
     /// <summary>
     /// Indicates whether the color target of the Swapchain will use an sRGB PixelFormat.
     /// </summary>
-    public bool ColorSrgb;
+    public readonly bool ColorSrgb;
 
     /// <summary>
     /// Constructs a new SwapchainDescription.

@@ -5,10 +5,10 @@ namespace Veldrid;
 
 public struct Rectangle(int x, int y, int width, int height) : IEquatable<Rectangle>
 {
-    public int X = x;
-    public int Y = y;
-    public int Width = width;
-    public int Height = height;
+    public readonly int X = x;
+    public readonly int Y = y;
+    public readonly int Width = width;
+    public readonly int Height = height;
 
     public Rectangle(Point topLeft, Point size)
         : this(topLeft.X, topLeft.Y, size.X, size.Y) { }

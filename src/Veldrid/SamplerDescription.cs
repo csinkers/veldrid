@@ -55,7 +55,7 @@ public struct SamplerDescription : IEquatable<SamplerDescription>
     /// <summary>
     /// The constant color that is sampled when <see cref="SamplerAddressMode.Border"/> is used, or otherwise ignored.
     /// </summary>
-    public SamplerBorderColor BorderColor;
+    public readonly SamplerBorderColor BorderColor;
 
     /// <summary>
     /// Constructs a new SamplerDescription.

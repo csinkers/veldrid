@@ -10,13 +10,13 @@ public struct ResourceSetDescription : IEquatable<ResourceSetDescription>
     /// <summary>
     /// The <see cref="ResourceLayout"/> describing the number and kind of resources used.
     /// </summary>
-    public ResourceLayout Layout;
+    public readonly ResourceLayout Layout;
 
     /// <summary>
     /// An array of <see cref="BindableResource"/> objects.
     /// The number and type of resources must match those specified in the <see cref="ResourceLayout"/>.
     /// </summary>
-    public BindableResource[] BoundResources;
+    public readonly BindableResource[] BoundResources;
 
     /// <summary>
     /// Constructs a new ResourceSetDescription.

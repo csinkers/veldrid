@@ -10,32 +10,32 @@ public struct Viewport : IEquatable<Viewport>
     /// <summary>
     /// The minimum X value.
     /// </summary>
-    public float X;
+    public readonly float X;
 
     /// <summary>
     /// The minimum Y value.
     /// </summary>
-    public float Y;
+    public readonly float Y;
 
     /// <summary>
     /// The width.
     /// </summary>
-    public float Width;
+    public readonly float Width;
 
     /// <summary>
     /// The height.
     /// </summary>
-    public float Height;
+    public readonly float Height;
 
     /// <summary>
     /// The minimum depth.
     /// </summary>
-    public float MinDepth;
+    public readonly float MinDepth;
 
     /// <summary>
     /// The maximum depth.
     /// </summary>
-    public float MaxDepth;
+    public readonly float MaxDepth;
 
     /// <summary>
     /// Constructs a new Viewport.

@@ -10,22 +10,22 @@ public struct StencilBehaviorDescription : IEquatable<StencilBehaviorDescription
     /// <summary>
     /// The operation performed on samples that fail the stencil test.
     /// </summary>
-    public StencilOperation Fail;
+    public readonly StencilOperation Fail;
 
     /// <summary>
     /// The operation performed on samples that pass the stencil test.
     /// </summary>
-    public StencilOperation Pass;
+    public readonly StencilOperation Pass;
 
     /// <summary>
     /// The operation performed on samples that pass the stencil test but fail the depth test.
     /// </summary>
-    public StencilOperation DepthFail;
+    public readonly StencilOperation DepthFail;
 
     /// <summary>
     /// The comparison operator used in the stencil test.
     /// </summary>
-    public ComparisonKind Comparison;
+    public readonly ComparisonKind Comparison;
 
     /// <summary>
     /// Constructs a new StencilBehaviorDescription.

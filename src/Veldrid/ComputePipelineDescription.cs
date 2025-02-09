@@ -11,34 +11,34 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
     /// The compute <see cref="Shader"/> to be used in the Pipeline. This must be a Shader with
     /// <see cref="ShaderStages.Compute"/>.
     /// </summary>
-    public Shader ComputeShader;
+    public readonly Shader ComputeShader;
 
     /// <summary>
     /// An array of <see cref="ResourceLayout"/>, which controls the layout of shader resoruces in the <see cref="Pipeline"/>.
     /// </summary>
-    public ResourceLayout[] ResourceLayouts;
+    public readonly ResourceLayout[] ResourceLayouts;
 
     /// <summary>
     /// The X dimension of the thread group size.
     /// </summary>
-    public uint ThreadGroupSizeX;
+    public readonly uint ThreadGroupSizeX;
 
     /// <summary>
     /// The Y dimension of the thread group size.
     /// </summary>
-    public uint ThreadGroupSizeY;
+    public readonly uint ThreadGroupSizeY;
 
     /// <summary>
     /// The Z dimension of the thread group size.
     /// </summary>
-    public uint ThreadGroupSizeZ;
+    public readonly uint ThreadGroupSizeZ;
 
     /// <summary>
     /// An array of <see cref="SpecializationConstant"/> used to override specialization constants in the created
     /// <see cref="Pipeline"/>. Each element in this array describes a single ID-value pair, which will be matched with the
     /// constants specified in the <see cref="Shader"/>.
     /// </summary>
-    public SpecializationConstant[]? Specializations;
+    public readonly SpecializationConstant[]? Specializations;
 
     /// <summary>
     /// Constructs a new ComputePipelineDescription.

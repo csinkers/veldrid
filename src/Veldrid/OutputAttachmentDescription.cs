@@ -10,7 +10,7 @@ public struct OutputAttachmentDescription : IEquatable<OutputAttachmentDescripti
     /// <summary>
     /// The format of the <see cref="Texture"/> attachment.
     /// </summary>
-    public PixelFormat Format;
+    public readonly PixelFormat Format;
 
     /// <summary>
     /// Constructs a new <see cref="OutputAttachmentDescription"/>.

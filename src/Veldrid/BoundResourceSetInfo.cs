@@ -4,7 +4,7 @@ namespace Veldrid;
 
 internal struct BoundResourceSetInfo(ResourceSet set, ReadOnlySpan<uint> offsets)
 {
-    public ResourceSet Set = set;
+    public readonly ResourceSet Set = set;
     public SmallFixedOrDynamicArray Offsets = new(offsets);
 
     public unsafe bool Equals(ResourceSet set, ReadOnlySpan<uint> offsets)

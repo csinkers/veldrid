@@ -11,13 +11,13 @@ public struct VulkanDeviceOptions
     /// An array of required Vulkan instance extensions. Entries in this array will be enabled in the <see cref="GraphicsDevice"/>'s
     /// created <see cref="VkInstance"/>.
     /// </summary>
-    public string[] InstanceExtensions;
+    public readonly string[] InstanceExtensions;
 
     /// <summary>
     /// An array of required Vulkan device extensions. Entries in this array will be enabled in the <see cref="GraphicsDevice"/>'s
     /// created <see cref="VkDevice"/>.
     /// </summary>
-    public string[] DeviceExtensions;
+    public readonly string[] DeviceExtensions;
 
     /// <summary>
     /// Constructs a new <see cref="VulkanDeviceOptions"/>.

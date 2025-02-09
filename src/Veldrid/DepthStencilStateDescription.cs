@@ -25,7 +25,7 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     /// <summary>
     /// Controls whether the stencil test is enabled.
     /// </summary>
-    public bool StencilTestEnabled;
+    public readonly bool StencilTestEnabled;
 
     /// <summary>
     /// Controls how stencil tests are handled for pixels whose surface faces towards the camera.
@@ -40,17 +40,17 @@ public struct DepthStencilStateDescription : IEquatable<DepthStencilStateDescrip
     /// <summary>
     /// Controls the portion of the stencil buffer used for reading.
     /// </summary>
-    public byte StencilReadMask;
+    public readonly byte StencilReadMask;
 
     /// <summary>
     /// Controls the portion of the stencil buffer used for writing.
     /// </summary>
-    public byte StencilWriteMask;
+    public readonly byte StencilWriteMask;
 
     /// <summary>
     /// The reference value to use when doing a stencil test.
     /// </summary>
-    public uint StencilReference;
+    public readonly uint StencilReference;
 
     /// <summary>
     /// Constructs a new <see cref="DepthStencilStateDescription"/>. This describes a depth-stencil state with no stencil

@@ -8,7 +8,7 @@ internal struct DrawIndirectEntry(
 )
 {
     public Tracked<DeviceBuffer> IndirectBuffer = indirectBuffer;
-    public uint Offset = offset;
-    public uint DrawCount = drawCount;
-    public uint Stride = stride;
+    public readonly uint Offset = offset;
+    public readonly uint DrawCount = drawCount;
+    public readonly uint Stride = stride;
 }

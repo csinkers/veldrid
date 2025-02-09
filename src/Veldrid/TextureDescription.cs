@@ -10,32 +10,32 @@ public struct TextureDescription : IEquatable<TextureDescription>
     /// <summary>
     /// The total width, in texels.
     /// </summary>
-    public uint Width;
+    public readonly uint Width;
 
     /// <summary>
     /// The total height, in texels.
     /// </summary>
-    public uint Height;
+    public readonly uint Height;
 
     /// <summary>
     /// The total depth, in texels.
     /// </summary>
-    public uint Depth;
+    public readonly uint Depth;
 
     /// <summary>
     /// The number of mipmap levels.
     /// </summary>
-    public uint MipLevels;
+    public readonly uint MipLevels;
 
     /// <summary>
     /// The number of array layers.
     /// </summary>
-    public uint ArrayLayers;
+    public readonly uint ArrayLayers;
 
     /// <summary>
     /// The format of individual texture elements.
     /// </summary>
-    public PixelFormat Format;
+    public readonly PixelFormat Format;
 
     /// <summary>
     /// Controls how the Texture is permitted to be used. If the Texture will be sampled from a shader, then
@@ -49,7 +49,7 @@ public struct TextureDescription : IEquatable<TextureDescription>
     /// <summary>
     /// The type of Texture to create.
     /// </summary>
-    public TextureType Type;
+    public readonly TextureType Type;
 
     /// <summary>
     /// The number of samples. If equal to <see cref="TextureSampleCount.Count1"/>, this instance does not describe a

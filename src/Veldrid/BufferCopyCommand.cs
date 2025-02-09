@@ -11,17 +11,17 @@ public struct BufferCopyCommand(ulong readOffset, ulong writeOffset, ulong lengt
     /// <summary>
     /// An offset into the source at which the copy region begins.
     /// </summary>
-    public ulong ReadOffset = readOffset;
+    public readonly ulong ReadOffset = readOffset;
 
     /// <summary>
     /// An offset into the destination at which the data will be copied.
     /// </summary>
-    public ulong WriteOffset = writeOffset;
+    public readonly ulong WriteOffset = writeOffset;
 
     /// <summary>
     /// The number of bytes to copy.
     /// </summary>
-    public ulong Length = length;
+    public readonly ulong Length = length;
 
     public override readonly string ToString()
     {

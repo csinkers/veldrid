@@ -15,12 +15,12 @@ public struct OutputDescription : IEquatable<OutputDescription>
     /// <summary>
     /// An array of attachment descriptions, one for each color attachment. May be null or empty.
     /// </summary>
-    public OutputAttachmentDescription[]? ColorAttachments;
+    public readonly OutputAttachmentDescription[]? ColorAttachments;
 
     /// <summary>
     /// The number of samples in each target attachment.
     /// </summary>
-    public TextureSampleCount SampleCount;
+    public readonly TextureSampleCount SampleCount;
 
     /// <summary>
     /// Constructs a new <see cref="OutputDescription"/>.

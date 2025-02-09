@@ -5,7 +5,7 @@ namespace Veldrid.Tests.Utilities;
 
 internal class RgbaFloatFuzzyComparer : IEqualityComparer<RgbaFloat>
 {
-    public static RgbaFloatFuzzyComparer Instance = new();
+    public static readonly RgbaFloatFuzzyComparer Instance = new();
 
     public bool Equals(RgbaFloat x, RgbaFloat y)
     {

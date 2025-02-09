@@ -12,19 +12,19 @@ public struct FramebufferAttachmentDescription : IEquatable<FramebufferAttachmen
     /// <see cref="TextureUsage.RenderTarget"/> flag. For depth attachments, this resource must have been created with the
     /// <see cref="TextureUsage.DepthStencil"/> flag.
     /// </summary>
-    public Texture Target;
+    public readonly Texture Target;
 
     /// <summary>
     /// The array layer to render to. This value must be less than <see cref="Texture.ArrayLayers"/> in the target
     /// <see cref="Texture"/>.
     /// </summary>
-    public uint ArrayLayer;
+    public readonly uint ArrayLayer;
 
     /// <summary>
     /// The mip level to render to. This value must be less than <see cref="Texture.MipLevels"/> in the target
     /// <see cref="Texture"/>.
     /// </summary>
-    public uint MipLevel;
+    public readonly uint MipLevel;
 
     /// <summary>
     /// Constructs a new FramebufferAttachmentDescription.

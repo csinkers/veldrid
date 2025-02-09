@@ -81,9 +81,9 @@ internal sealed class MTLResourceLayout : ResourceLayout
         bool dynamicBuffer
     )
     {
-        public uint Slot = slot;
-        public ShaderStages Stages = stages;
-        public ResourceKind Kind = kind;
-        public bool DynamicBuffer = dynamicBuffer;
+        public readonly uint Slot = slot;
+        public readonly ShaderStages Stages = stages;
+        public readonly ResourceKind Kind = kind;
+        public readonly bool DynamicBuffer = dynamicBuffer;
     }
 }

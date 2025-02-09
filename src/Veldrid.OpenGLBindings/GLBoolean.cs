@@ -10,7 +10,7 @@ public struct GLboolean : IEquatable<GLboolean>
     /// <summary>
     /// The raw value of the <see cref="GLboolean"/>. A value of 0 represents "false", all other values represent "true".
     /// </summary>
-    public byte Value;
+    public readonly byte Value;
 
     /// <summary>
     /// Constructs a new <see cref="GLboolean"/> with the given raw value.

@@ -8,7 +8,7 @@ namespace Veldrid.Utilities;
 public struct BoundingSphere(Vector3 center, float radius)
 {
     public Vector3 Center = center;
-    public float Radius = radius;
+    public readonly float Radius = radius;
 
     public override readonly string ToString()
     {

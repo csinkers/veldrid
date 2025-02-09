@@ -17,7 +17,7 @@ public struct FramebufferDescription : IEquatable<FramebufferDescription>
     /// An array of color textures, all of which must have been created with <see cref="TextureUsage.RenderTarget"/>
     /// usage flags. May be null or empty.
     /// </summary>
-    public FramebufferAttachmentDescription[]? ColorTargets;
+    public readonly FramebufferAttachmentDescription[]? ColorTargets;
 
     /// <summary>
     /// Constructs a new <see cref="FramebufferDescription"/>.

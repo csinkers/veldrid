@@ -6,8 +6,8 @@ namespace Veldrid;
 [DebuggerDisplay("{DebuggerDisplayString,nq}")]
 public struct Point(int x, int y) : IEquatable<Point>
 {
-    public int X = x;
-    public int Y = y;
+    public readonly int X = x;
+    public readonly int Y = y;
 
     public readonly bool Equals(Point other) => X.Equals(other.X) && Y.Equals(other.Y);
 

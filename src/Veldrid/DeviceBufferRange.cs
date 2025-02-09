@@ -12,17 +12,17 @@ public struct DeviceBufferRange : IEquatable<DeviceBufferRange>
     /// <summary>
     /// The underlying <see cref="DeviceBuffer"/> that this range refers to.
     /// </summary>
-    public DeviceBuffer Buffer;
+    public readonly DeviceBuffer Buffer;
 
     /// <summary>
     /// The offset, in bytes, from the beginning of the buffer that this range starts at.
     /// </summary>
-    public uint Offset;
+    public readonly uint Offset;
 
     /// <summary>
     /// The total number of bytes that this range encompasses.
     /// </summary>
-    public uint SizeInBytes;
+    public readonly uint SizeInBytes;
 
     /// <summary>
     /// Constructs a new <see cref="DeviceBufferRange"/>.

@@ -2,7 +2,7 @@
 
 internal struct DispatchEntry(uint groupCountX, uint groupCountY, uint groupCountZ)
 {
-    public uint GroupCountX = groupCountX;
-    public uint GroupCountY = groupCountY;
-    public uint GroupCountZ = groupCountZ;
+    public readonly uint GroupCountX = groupCountX;
+    public readonly uint GroupCountY = groupCountY;
+    public readonly uint GroupCountZ = groupCountZ;
 }

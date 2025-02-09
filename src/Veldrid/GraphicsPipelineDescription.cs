@@ -26,7 +26,7 @@ public struct GraphicsPipelineDescription : IEquatable<GraphicsPipelineDescripti
     /// The <see cref="PrimitiveTopology"/> to use, which controls how a series of input vertices is interpreted by the
     /// <see cref="Pipeline"/>.
     /// </summary>
-    public PrimitiveTopology PrimitiveTopology;
+    public readonly PrimitiveTopology PrimitiveTopology;
 
     /// <summary>
     /// A description of the shader set to be used.
@@ -36,7 +36,7 @@ public struct GraphicsPipelineDescription : IEquatable<GraphicsPipelineDescripti
     /// <summary>
     /// An array of <see cref="ResourceLayout"/>, which controls the layout of shader resources in the <see cref="Pipeline"/>.
     /// </summary>
-    public ResourceLayout[] ResourceLayouts;
+    public readonly ResourceLayout[] ResourceLayouts;
 
     /// <summary>
     /// A description of the output attachments used by the <see cref="Pipeline"/>.

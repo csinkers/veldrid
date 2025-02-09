@@ -7,8 +7,8 @@ internal struct DrawEntry(
     uint instanceStart
 )
 {
-    public uint VertexCount = vertexCount;
-    public uint InstanceCount = instanceCount;
-    public uint VertexStart = vertexStart;
-    public uint InstanceStart = instanceStart;
+    public readonly uint VertexCount = vertexCount;
+    public readonly uint InstanceCount = instanceCount;
+    public readonly uint VertexStart = vertexStart;
+    public readonly uint InstanceStart = instanceStart;
 }

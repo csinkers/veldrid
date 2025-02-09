@@ -4,5 +4,5 @@ internal struct SetVertexBufferEntry(uint index, Tracked<DeviceBuffer> buffer, u
 {
     public readonly uint Index = index;
     public readonly Tracked<DeviceBuffer> Buffer = buffer;
-    public uint Offset = offset;
+    public readonly uint Offset = offset;
 }

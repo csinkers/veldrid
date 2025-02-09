@@ -10,27 +10,27 @@ public struct TextureViewDescription : IEquatable<TextureViewDescription>
     /// <summary>
     /// The desired target <see cref="Texture"/>.
     /// </summary>
-    public Texture Target;
+    public readonly Texture Target;
 
     /// <summary>
     /// The base mip level visible in the view. Must be less than <see cref="Texture.MipLevels"/>.
     /// </summary>
-    public uint BaseMipLevel;
+    public readonly uint BaseMipLevel;
 
     /// <summary>
     /// The number of mip levels visible in the view.
     /// </summary>
-    public uint MipLevels;
+    public readonly uint MipLevels;
 
     /// <summary>
     /// The base array layer visible in the view.
     /// </summary>
-    public uint BaseArrayLayer;
+    public readonly uint BaseArrayLayer;
 
     /// <summary>
     /// The number of array layers visible in the view.
     /// </summary>
-    public uint ArrayLayers;
+    public readonly uint ArrayLayers;
 
     /// <summary>
     /// An optional <see cref="PixelFormat"/> which specifies how the data within <see cref="Target"/> will be viewed.

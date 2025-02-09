@@ -10,7 +10,7 @@ public struct ShaderDescription : IEquatable<ShaderDescription>
     /// <summary>
     /// The shader stage this instance describes.
     /// </summary>
-    public ShaderStages Stage;
+    public readonly ShaderStages Stage;
 
     /// <summary>
     /// An array containing the raw shader bytes.
@@ -25,13 +25,13 @@ public struct ShaderDescription : IEquatable<ShaderDescription>
     /// <summary>
     /// The name of the entry point function in the shader module to be used in this stage.
     /// </summary>
-    public string EntryPoint;
+    public readonly string EntryPoint;
 
     /// <summary>
     /// Indicates whether the shader should be debuggable. This flag only has an effect if <see cref="ShaderBytes"/> contains
     /// shader code that will be compiled.
     /// </summary>
-    public bool Debug;
+    public readonly bool Debug;
 
     /// <summary>
     /// Constructs a new ShaderDescription.

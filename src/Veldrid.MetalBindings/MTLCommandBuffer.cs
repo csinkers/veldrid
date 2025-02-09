@@ -35,12 +35,12 @@ public readonly struct MTLCommandBuffer
 
     public MTLCommandBufferStatus status => (MTLCommandBufferStatus) uint_objc_msgSend(NativePtr, sel_status);
 
-    private static readonly Selector sel_renderCommandEncoderWithDescriptor = "renderCommandEncoderWithDescriptor:"u8;
-    private static readonly Selector sel_presentDrawable = "presentDrawable:"u8;
-    private static readonly Selector sel_commit = "commit"u8;
-    private static readonly Selector sel_blitCommandEncoder = "blitCommandEncoder"u8;
-    private static readonly Selector sel_computeCommandEncoder = "computeCommandEncoder"u8;
-    private static readonly Selector sel_waitUntilCompleted = "waitUntilCompleted"u8;
-    private static readonly Selector sel_addCompletedHandler = "addCompletedHandler:"u8;
-    private static readonly Selector sel_status = "status"u8;
+    static readonly Selector sel_renderCommandEncoderWithDescriptor = "renderCommandEncoderWithDescriptor:"u8;
+    static readonly Selector sel_presentDrawable = "presentDrawable:"u8;
+    static readonly Selector sel_commit = "commit"u8;
+    static readonly Selector sel_blitCommandEncoder = "blitCommandEncoder"u8;
+    static readonly Selector sel_computeCommandEncoder = "computeCommandEncoder"u8;
+    static readonly Selector sel_waitUntilCompleted = "waitUntilCompleted"u8;
+    static readonly Selector sel_addCompletedHandler = "addCompletedHandler:"u8;
+    static readonly Selector sel_status = "status"u8;
 }

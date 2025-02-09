@@ -11,5 +11,5 @@ public readonly struct NSObject
 
     public Bool8 IsKindOfClass(IntPtr @class) => bool8_objc_msgSend(NativePtr, sel_isKindOfClass, @class);
 
-    private static readonly Selector sel_isKindOfClass = "isKindOfClass:"u8;
+    static readonly Selector sel_isKindOfClass = "isKindOfClass:"u8;
 }

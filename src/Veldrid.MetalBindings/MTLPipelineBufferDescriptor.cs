@@ -15,6 +15,6 @@ public readonly struct MTLPipelineBufferDescriptor
         set => objc_msgSend(NativePtr, sel_setMutability, (uint)value);
     }
 
-    private static readonly Selector sel_mutability = "mutability"u8;
-    private static readonly Selector sel_setMutability = "setMutability:"u8;
+    static readonly Selector sel_mutability = "mutability"u8;
+    static readonly Selector sel_setMutability = "setMutability:"u8;
 }

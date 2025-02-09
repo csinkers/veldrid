@@ -1,17 +1,16 @@
-﻿namespace Veldrid
+﻿namespace Veldrid;
+
+public enum BindableResourceKind : byte
 {
-    public enum BindableResourceKind : byte
-    {
-        Null,
+    Null,
 
-        Texture,
+    Texture,
 
-        TextureView,
+    TextureView,
 
-        DeviceBuffer,
+    DeviceBuffer,
 
-        DeviceBufferRange,
+    DeviceBufferRange,
 
-        Sampler,
-    }
+    Sampler,
 }

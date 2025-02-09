@@ -5,7 +5,7 @@ namespace Veldrid.Utilities;
 
 internal static class FastParse
 {
-    private static readonly double[] _doubleExpLookup = GetDoubleExponents();
+    static readonly double[] _doubleExpLookup = GetDoubleExponents();
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static bool TryParseInt(ReadOnlySpan<char> s, out int result)
@@ -142,7 +142,7 @@ internal static class FastParse
         return false;
     }
 
-    private static double ProcessExponent(ReadOnlySpan<char> s, int i)
+    static double ProcessExponent(ReadOnlySpan<char> s, int i)
     {
         int expSign = 1;
         int exp = 0;
@@ -166,7 +166,7 @@ internal static class FastParse
         return exponent;
     }
 
-    private static double GetInversedBaseTen(int index)
+    static double GetInversedBaseTen(int index)
     {
         double[] array = _doubleExpLookup;
         if ((uint)index < (uint)array.Length)
@@ -175,7 +175,7 @@ internal static class FastParse
             return Math.Pow(10, -index);
     }
 
-    private static double[] GetDoubleExponents()
+    static double[] GetDoubleExponents()
     {
         double[] exps = new double[309];
 

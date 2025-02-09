@@ -27,10 +27,10 @@ public readonly struct MTLVertexAttributeDescriptor
         set => objc_msgSend(NativePtr, sel_setBufferIndex, value);
     }
 
-    private static readonly Selector sel_format = "format"u8;
-    private static readonly Selector sel_setFormat = "setFormat:"u8;
-    private static readonly Selector sel_offset = "offset"u8;
-    private static readonly Selector sel_setOffset = "setOffset:"u8;
-    private static readonly Selector sel_bufferIndex = "bufferIndex"u8;
-    private static readonly Selector sel_setBufferIndex = "setBufferIndex:"u8;
+    static readonly Selector sel_format = "format"u8;
+    static readonly Selector sel_setFormat = "setFormat:"u8;
+    static readonly Selector sel_offset = "offset"u8;
+    static readonly Selector sel_setOffset = "setOffset:"u8;
+    static readonly Selector sel_bufferIndex = "bufferIndex"u8;
+    static readonly Selector sel_setBufferIndex = "setBufferIndex:"u8;
 }

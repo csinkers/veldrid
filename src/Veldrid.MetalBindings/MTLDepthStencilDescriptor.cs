@@ -32,12 +32,12 @@ public readonly struct MTLDepthStencilDescriptor
         set => objc_msgSend(NativePtr, sel_setFrontFaceStencil, value.NativePtr);
     }
 
-    private static readonly Selector sel_depthCompareFunction = "depthCompareFunction"u8;
-    private static readonly Selector sel_setDepthCompareFunction = "setDepthCompareFunction:"u8;
-    private static readonly Selector sel_isDepthWriteEnabled = "isDepthWriteEnabled"u8;
-    private static readonly Selector sel_setDepthWriteEnabled = "setDepthWriteEnabled:"u8;
-    private static readonly Selector sel_backFaceStencil = "backFaceStencil"u8;
-    private static readonly Selector sel_setBackFaceStencil = "setBackFaceStencil:"u8;
-    private static readonly Selector sel_frontFaceStencil = "frontFaceStencil"u8;
-    private static readonly Selector sel_setFrontFaceStencil = "setFrontFaceStencil:"u8;
+    static readonly Selector sel_depthCompareFunction = "depthCompareFunction"u8;
+    static readonly Selector sel_setDepthCompareFunction = "setDepthCompareFunction:"u8;
+    static readonly Selector sel_isDepthWriteEnabled = "isDepthWriteEnabled"u8;
+    static readonly Selector sel_setDepthWriteEnabled = "setDepthWriteEnabled:"u8;
+    static readonly Selector sel_backFaceStencil = "backFaceStencil"u8;
+    static readonly Selector sel_setBackFaceStencil = "setBackFaceStencil:"u8;
+    static readonly Selector sel_frontFaceStencil = "frontFaceStencil"u8;
+    static readonly Selector sel_setFrontFaceStencil = "setFrontFaceStencil:"u8;
 }

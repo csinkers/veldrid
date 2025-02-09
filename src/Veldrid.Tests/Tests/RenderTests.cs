@@ -19,9 +19,9 @@ internal struct UIntVertexAttribsVertex
 internal struct UIntVertexAttribsInfo
 {
     public uint ColorNormalizationFactor;
-    private float padding0;
-    private float padding1;
-    private float padding2;
+    float padding0;
+    float padding1;
+    float padding2;
 }
 
 [StructLayout(LayoutKind.Sequential)]
@@ -29,7 +29,7 @@ public struct ColoredVertex
 {
     public Vector4 Color;
     public Vector2 Position;
-    private Vector2 _padding0;
+    Vector2 _padding0;
 }
 
 [StructLayout(LayoutKind.Sequential)]
@@ -317,7 +317,7 @@ public abstract class RenderTests<T> : GraphicsDeviceTestBase<T>
         public ushort A;
     }
 
-    private static ushort UShortNorm(float normalizedValue)
+    static ushort UShortNorm(float normalizedValue)
     {
         Debug.Assert(normalizedValue >= 0 && normalizedValue <= 1);
         return (ushort)(normalizedValue * ushort.MaxValue);

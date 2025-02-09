@@ -10,108 +10,108 @@ using Veldrid.SPIRV;
 
 using Matrix4x4 = System.Numerics.Matrix4x4;
 
-namespace Veldrid.VirtualReality.Sample
+namespace Veldrid.VirtualReality.Sample;
+
+internal class AssimpMesh : IDisposable
 {
-    internal class AssimpMesh : IDisposable
+    readonly GraphicsDevice _gd;
+    readonly List<IDisposable> _disposables = new();
+    readonly List<MeshPiece> _meshPieces = new();
+    readonly Pipeline _pipeline;
+    readonly DeviceBuffer _wvpBuffer;
+    readonly Texture _texture;
+    readonly TextureView _view;
+    readonly ResourceSet _rs;
+
+    public AssimpMesh(GraphicsDevice gd, OutputDescription outputs, string meshPath, string texturePath)
     {
-        private readonly GraphicsDevice _gd;
-        private readonly List<IDisposable> _disposables = new();
-        private readonly List<MeshPiece> _meshPieces = new();
-        private readonly Pipeline _pipeline;
-        private readonly DeviceBuffer _wvpBuffer;
-        private readonly Texture _texture;
-        private readonly TextureView _view;
-        private readonly ResourceSet _rs;
+        _gd = gd;
+        ResourceFactory factory = gd.ResourceFactory;
 
-        public AssimpMesh(GraphicsDevice gd, OutputDescription outputs, string meshPath, string texturePath)
-        {
-            _gd = gd;
-            ResourceFactory factory = gd.ResourceFactory;
+        Shader[] shaders = factory.CreateFromSpirv(
+            new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
+            new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"));
+        _disposables.Add(shaders[0]);
+        _disposables.Add(shaders[1]);
 
-            Shader[] shaders = factory.CreateFromSpirv(
-                new ShaderDescription(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
-                new ShaderDescription(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"));
-            _disposables.Add(shaders[0]);
-            _disposables.Add(shaders[1]);
+        ResourceLayout rl = factory.CreateResourceLayout(new ResourceLayoutDescription(
+            new ResourceLayoutElementDescription("WVP", ResourceKind.UniformBuffer, ShaderStages.Vertex),
+            new ResourceLayoutElementDescription("Input", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+            new ResourceLayoutElementDescription("InputSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+        _disposables.Add(rl);
 
-            ResourceLayout rl = factory.CreateResourceLayout(new ResourceLayoutDescription(
-                new ResourceLayoutElementDescription("WVP", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-                new ResourceLayoutElementDescription("Input", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                new ResourceLayoutElementDescription("InputSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
-            _disposables.Add(rl);
-
-            VertexLayoutDescription positionLayoutDesc = new(
-                new VertexElementDescription[]
-                {
-                    new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
-                });
-
-            VertexLayoutDescription texCoordLayoutDesc = new(
-                new VertexElementDescription[]
-                {
-                    new VertexElementDescription("UV", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                });
-
-            _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-                BlendStateDescription.SingleOverrideBlend,
-                DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerStateDescription.CullNone,
-                PrimitiveTopology.TriangleList,
-                new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { shaders[0], shaders[1] }),
-                rl,
-                outputs));
-            _disposables.Add(_pipeline);
-
-            _wvpBuffer = factory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
-            _disposables.Add(_wvpBuffer);
-
-            _texture = new ImageSharpTexture(texturePath, true, true).CreateDeviceTexture(gd, factory);
-            _view = factory.CreateTextureView(_texture);
-            _disposables.Add(_texture);
-            _disposables.Add(_view);
-
-            _rs = factory.CreateResourceSet(new ResourceSetDescription(rl, _wvpBuffer, _view, gd.Aniso4xSampler));
-            _disposables.Add(_rs);
-
-            AssimpContext ac = new();
-            Scene scene = ac.ImportFile(meshPath);
-
-            foreach (Mesh mesh in scene.Meshes)
+        VertexLayoutDescription positionLayoutDesc = new(
+            new VertexElementDescription[]
             {
-                DeviceBuffer positions = CreateDeviceBuffer(mesh.Vertices, BufferUsage.VertexBuffer);
-                DeviceBuffer texCoords = CreateDeviceBuffer(
-                    mesh.TextureCoordinateChannels[0].Select(v3=>new Vector2(v3.X, v3.Y)).ToArray(),
-                    BufferUsage.VertexBuffer);
-                DeviceBuffer indices = CreateDeviceBuffer(mesh.GetUnsignedIndices(), BufferUsage.IndexBuffer);
+                new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
+            });
 
-                _meshPieces.Add(new MeshPiece(positions, texCoords, indices));
-            }
-        }
-
-        public DeviceBuffer CreateDeviceBuffer<T>(IList<T> list, BufferUsage usage) where T : unmanaged
-        {
-            DeviceBuffer buffer = _gd.ResourceFactory.CreateBuffer(new BufferDescription((uint)(Unsafe.SizeOf<T>() * list.Count), usage));
-            _disposables.Add(buffer);
-            _gd.UpdateBuffer(buffer, 0, list.ToArray());
-            return buffer;
-        }
-
-        public void Render(CommandList cl, UBO ubo)
-        {
-            cl.UpdateBuffer(_wvpBuffer, 0, ubo);
-            cl.SetPipeline(_pipeline);
-            foreach (MeshPiece piece in _meshPieces)
+        VertexLayoutDescription texCoordLayoutDesc = new(
+            new VertexElementDescription[]
             {
-                cl.SetVertexBuffer(0, piece.Positions);
-                cl.SetVertexBuffer(1, piece.TexCoords);
-                cl.SetIndexBuffer(piece.Indices, IndexFormat.UInt32);
-                cl.SetGraphicsResourceSet(0, _rs);
-                cl.DrawIndexed(piece.IndexCount);
-            }
-        }
+                new VertexElementDescription("UV", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+            });
 
-        private const string vertexGlsl =
-@"
+        _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
+            BlendStateDescription.SingleOverrideBlend,
+            DepthStencilStateDescription.DepthOnlyLessEqual,
+            RasterizerStateDescription.CullNone,
+            PrimitiveTopology.TriangleList,
+            new ShaderSetDescription(new[] { positionLayoutDesc, texCoordLayoutDesc }, new Shader[] { shaders[0], shaders[1] }),
+            rl,
+            outputs));
+        _disposables.Add(_pipeline);
+
+        _wvpBuffer = factory.CreateBuffer(new BufferDescription(64 * 3, BufferUsage.UniformBuffer | BufferUsage.DynamicWrite));
+        _disposables.Add(_wvpBuffer);
+
+        _texture = new ImageSharpTexture(texturePath, true, true).CreateDeviceTexture(gd, factory);
+        _view = factory.CreateTextureView(_texture);
+        _disposables.Add(_texture);
+        _disposables.Add(_view);
+
+        _rs = factory.CreateResourceSet(new ResourceSetDescription(rl, _wvpBuffer, _view, gd.Aniso4xSampler));
+        _disposables.Add(_rs);
+
+        AssimpContext ac = new();
+        Scene scene = ac.ImportFile(meshPath);
+
+        foreach (Mesh mesh in scene.Meshes)
+        {
+            DeviceBuffer positions = CreateDeviceBuffer(mesh.Vertices, BufferUsage.VertexBuffer);
+            DeviceBuffer texCoords = CreateDeviceBuffer(
+                mesh.TextureCoordinateChannels[0].Select(v3=>new Vector2(v3.X, v3.Y)).ToArray(),
+                BufferUsage.VertexBuffer);
+            DeviceBuffer indices = CreateDeviceBuffer(mesh.GetUnsignedIndices(), BufferUsage.IndexBuffer);
+
+            _meshPieces.Add(new MeshPiece(positions, texCoords, indices));
+        }
+    }
+
+    public DeviceBuffer CreateDeviceBuffer<T>(IList<T> list, BufferUsage usage) where T : unmanaged
+    {
+        DeviceBuffer buffer = _gd.ResourceFactory.CreateBuffer(new BufferDescription((uint)(Unsafe.SizeOf<T>() * list.Count), usage));
+        _disposables.Add(buffer);
+        _gd.UpdateBuffer(buffer, 0, list.ToArray());
+        return buffer;
+    }
+
+    public void Render(CommandList cl, UBO ubo)
+    {
+        cl.UpdateBuffer(_wvpBuffer, 0, ubo);
+        cl.SetPipeline(_pipeline);
+        foreach (MeshPiece piece in _meshPieces)
+        {
+            cl.SetVertexBuffer(0, piece.Positions);
+            cl.SetVertexBuffer(1, piece.TexCoords);
+            cl.SetIndexBuffer(piece.Indices, IndexFormat.UInt32);
+            cl.SetGraphicsResourceSet(0, _rs);
+            cl.DrawIndexed(piece.IndexCount);
+        }
+    }
+
+    const string vertexGlsl =
+        @"
 #version 450
 
 layout (set = 0, binding = 0) uniform WVP
@@ -132,8 +132,9 @@ void main()
     fsin_UV = vsin_UV;
 }
 ";
-        private const string fragmentGlsl =
-@"
+
+    const string fragmentGlsl =
+        @"
 #version 450
 
 layout(set = 0, binding = 1) uniform texture2D Input;
@@ -154,40 +155,39 @@ void main()
 }
 ";
 
-        public void Dispose()
-        {
-            foreach (IDisposable disposable in _disposables) { disposable.Dispose(); }
-            _disposables.Clear();
-        }
-    }
-
-    internal class MeshPiece
+    public void Dispose()
     {
-        public DeviceBuffer Positions { get; }
-        public DeviceBuffer TexCoords { get; }
-        public DeviceBuffer Indices { get; }
-        public uint IndexCount { get; }
-
-        public MeshPiece(DeviceBuffer positions, DeviceBuffer texCoords, DeviceBuffer indices)
-        {
-            Positions = positions;
-            TexCoords = texCoords;
-            Indices = indices;
-            IndexCount = indices.SizeInBytes / sizeof(uint);
-        }
+        foreach (IDisposable disposable in _disposables) { disposable.Dispose(); }
+        _disposables.Clear();
     }
+}
 
-    internal struct UBO
+internal class MeshPiece
+{
+    public DeviceBuffer Positions { get; }
+    public DeviceBuffer TexCoords { get; }
+    public DeviceBuffer Indices { get; }
+    public uint IndexCount { get; }
+
+    public MeshPiece(DeviceBuffer positions, DeviceBuffer texCoords, DeviceBuffer indices)
     {
-        public Matrix4x4 Projection;
-        public Matrix4x4 View;
-        public Matrix4x4 World;
+        Positions = positions;
+        TexCoords = texCoords;
+        Indices = indices;
+        IndexCount = indices.SizeInBytes / sizeof(uint);
+    }
+}
 
-        public UBO(Matrix4x4 projection, Matrix4x4 view, Matrix4x4 world)
-        {
-            Projection = projection;
-            View = view;
-            World = world;
-        }
+internal struct UBO
+{
+    public Matrix4x4 Projection;
+    public Matrix4x4 View;
+    public Matrix4x4 World;
+
+    public UBO(Matrix4x4 projection, Matrix4x4 view, Matrix4x4 world)
+    {
+        Projection = projection;
+        View = view;
+        World = world;
     }
 }

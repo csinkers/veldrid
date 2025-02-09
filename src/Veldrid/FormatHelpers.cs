@@ -210,7 +210,7 @@ internal static class FormatHelpers
         }
     }
 
-    private static bool IsSrgbCounterpart(PixelFormat viewFormat, PixelFormat realFormat)
+    static bool IsSrgbCounterpart(PixelFormat viewFormat, PixelFormat realFormat)
     {
         throw new NotImplementedException();
     }

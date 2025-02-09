@@ -115,7 +115,7 @@ internal static class Util
         return persp;
     }
 
-    private static Matrix4x4 CreatePerspective(float fov, float aspectRatio, float near, float far)
+    static Matrix4x4 CreatePerspective(float fov, float aspectRatio, float near, float far)
     {
         if (fov <= 0.0f || fov >= MathF.PI)
             throw new ArgumentOutOfRangeException(nameof(fov));

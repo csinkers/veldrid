@@ -37,6 +37,6 @@ public readonly struct MTLRenderPassStencilAttachmentDescriptor
         set => objc_msgSend(NativePtr, Selectors.setSlice, value);
     }
 
-    private static readonly Selector sel_clearStencil = "clearStencil"u8;
-    private static readonly Selector sel_setClearStencil = "setClearStencil:"u8;
+    static readonly Selector sel_clearStencil = "clearStencil"u8;
+    static readonly Selector sel_setClearStencil = "setClearStencil:"u8;
 }

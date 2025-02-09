@@ -13,6 +13,6 @@ public readonly struct MTLVertexDescriptor
     public MTLVertexAttributeDescriptorArray attributes
         => objc_msgSend<MTLVertexAttributeDescriptorArray>(NativePtr, sel_attributes);
 
-    private static readonly Selector sel_layouts = "layouts"u8;
-    private static readonly Selector sel_attributes = "attributes"u8;
+    static readonly Selector sel_layouts = "layouts"u8;
+    static readonly Selector sel_attributes = "attributes"u8;
 }

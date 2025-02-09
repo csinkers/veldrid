@@ -58,7 +58,7 @@ internal static class ValidationHelpers
     }
 
     [Conditional("VALIDATE_USAGE")]
-    private static void ValidateResourceKind(ResourceKind kind, BindableResource resource, uint slot)
+    static void ValidateResourceKind(ResourceKind kind, BindableResource resource, uint slot)
     {
         switch (kind)
         {

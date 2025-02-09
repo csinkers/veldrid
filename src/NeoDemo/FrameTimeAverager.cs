@@ -2,11 +2,11 @@
 
 public class FrameTimeAverager
 {
-    private readonly double _timeLimit = 666;
+    readonly double _timeLimit = 666;
 
-    private double _accumulatedTime = 0;
-    private int _frameCount = 0;
-    private readonly double _decayRate = .3;
+    double _accumulatedTime = 0;
+    int _frameCount = 0;
+    readonly double _decayRate = .3;
 
     public double CurrentAverageFrameTimeSeconds { get; private set; }
     public double CurrentAverageFrameTimeMilliseconds => CurrentAverageFrameTimeSeconds * 1000.0;
@@ -33,7 +33,7 @@ public class FrameTimeAverager
         }
     }
 
-    private void Average()
+    void Average()
     {
         double total = _accumulatedTime;
         CurrentAverageFrameTimeSeconds =

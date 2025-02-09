@@ -8,7 +8,7 @@ namespace Veldrid.Utilities;
 internal ref struct ReadOnlySpanSplitter<T>
     where T : IEquatable<T>
 {
-    private int _offset;
+    int _offset;
 
     public ReadOnlySpan<T> Value { get; }
     public ReadOnlySpan<T> Separator { get; }
@@ -79,8 +79,8 @@ internal ref struct ReadOnlySpanSplitter<T>
     {
         return this;
     }
-        
-    private static ReadOnlySpan<T> Trim(ReadOnlySpan<T> span)
+
+    static ReadOnlySpan<T> Trim(ReadOnlySpan<T> span)
     {
         if (typeof(T) != typeof(char))
         {

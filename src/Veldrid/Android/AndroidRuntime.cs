@@ -8,7 +8,7 @@ namespace Veldrid.Android;
 /// </summary>
 internal static class AndroidRuntime
 {
-    private const string LibName = "android.so";
+    const string LibName = "android.so";
 
     [DllImport(LibName)]
     public static extern IntPtr ANativeWindow_fromSurface(IntPtr jniEnv, IntPtr surface);

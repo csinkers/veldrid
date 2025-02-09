@@ -10,13 +10,13 @@ namespace Veldrid.NeoDemo;
 
 public class Sdl2ControllerTracker : IDisposable
 {
-    private readonly int _controllerIndex;
-    private readonly SDL_GameController _controller;
+    readonly int _controllerIndex;
+    readonly SDL_GameController _controller;
 
     public string? ControllerName { get; }
 
-    private readonly Dictionary<SDL_GameControllerAxis, float> _axisValues = new();
-    private readonly Dictionary<SDL_GameControllerButton, bool> _buttons = new();
+    readonly Dictionary<SDL_GameControllerAxis, float> _axisValues = new();
+    readonly Dictionary<SDL_GameControllerButton, bool> _buttons = new();
 
     public unsafe Sdl2ControllerTracker(int index)
     {
@@ -55,7 +55,7 @@ public class Sdl2ControllerTracker : IDisposable
         return false;
     }
 
-    private void ProcessEvent(ref SDL_Event ev)
+    void ProcessEvent(ref SDL_Event ev)
     {
         switch (ev.type)
         {
@@ -77,7 +77,7 @@ public class Sdl2ControllerTracker : IDisposable
         }
     }
 
-    private static float Normalize(short value)
+    static float Normalize(short value)
     {
         return value < 0
             ? -(value / (float)short.MinValue)

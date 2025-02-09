@@ -12,8 +12,9 @@ public static unsafe partial class Sdl2Native
     public const int SDL_WINDOWPOS_CENTERED = 0x2FFF0000;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate SDL_Window SDL_CreateWindow_t(byte* title, int x, int y, int w, int h, SDL_WindowFlags flags);
-    private static SDL_CreateWindow_t s_sdl_createWindow = LoadFunction<SDL_CreateWindow_t>("SDL_CreateWindow");
+    delegate SDL_Window SDL_CreateWindow_t(byte* title, int x, int y, int w, int h, SDL_WindowFlags flags);
+
+    static SDL_CreateWindow_t s_sdl_createWindow = LoadFunction<SDL_CreateWindow_t>("SDL_CreateWindow");
 
     [SkipLocalsInit]
     public static SDL_Window SDL_CreateWindow(ReadOnlySpan<char> title, int x, int y, int w, int h, SDL_WindowFlags flags)
@@ -35,43 +36,51 @@ public static unsafe partial class Sdl2Native
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate SDL_Window SDL_CreateWindowFrom_t(IntPtr data);
-    private static SDL_CreateWindowFrom_t s_sdl_createWindowFrom = LoadFunction<SDL_CreateWindowFrom_t>("SDL_CreateWindowFrom");
+    delegate SDL_Window SDL_CreateWindowFrom_t(IntPtr data);
+
+    static SDL_CreateWindowFrom_t s_sdl_createWindowFrom = LoadFunction<SDL_CreateWindowFrom_t>("SDL_CreateWindowFrom");
     public static SDL_Window SDL_CreateWindowFrom(IntPtr data) => s_sdl_createWindowFrom(data);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_DestroyWindow_t(SDL_Window SDL2Window);
-    private static SDL_DestroyWindow_t s_sdl_destroyWindow = LoadFunction<SDL_DestroyWindow_t>("SDL_DestroyWindow");
+    delegate void SDL_DestroyWindow_t(SDL_Window SDL2Window);
+
+    static SDL_DestroyWindow_t s_sdl_destroyWindow = LoadFunction<SDL_DestroyWindow_t>("SDL_DestroyWindow");
     public static void SDL_DestroyWindow(SDL_Window Sdl2Window) => s_sdl_destroyWindow(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_GetWindowSize_t(SDL_Window SDL2Window, int* w, int* h);
-    private static SDL_GetWindowSize_t s_getWindowSize = LoadFunction<SDL_GetWindowSize_t>("SDL_GetWindowSize");
+    delegate void SDL_GetWindowSize_t(SDL_Window SDL2Window, int* w, int* h);
+
+    static SDL_GetWindowSize_t s_getWindowSize = LoadFunction<SDL_GetWindowSize_t>("SDL_GetWindowSize");
     public static void SDL_GetWindowSize(SDL_Window Sdl2Window, int* w, int* h) => s_getWindowSize(Sdl2Window, w, h);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_GetWindowPosition_t(SDL_Window SDL2Window, int* x, int* y);
-    private static SDL_GetWindowPosition_t s_getWindowPosition = LoadFunction<SDL_GetWindowPosition_t>("SDL_GetWindowPosition");
+    delegate void SDL_GetWindowPosition_t(SDL_Window SDL2Window, int* x, int* y);
+
+    static SDL_GetWindowPosition_t s_getWindowPosition = LoadFunction<SDL_GetWindowPosition_t>("SDL_GetWindowPosition");
     public static void SDL_GetWindowPosition(SDL_Window Sdl2Window, int* x, int* y) => s_getWindowPosition(Sdl2Window, x, y);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_SetWindowPosition_t(SDL_Window SDL2Window, int x, int y);
-    private static SDL_SetWindowPosition_t s_setWindowPosition = LoadFunction<SDL_SetWindowPosition_t>("SDL_SetWindowPosition");
+    delegate void SDL_SetWindowPosition_t(SDL_Window SDL2Window, int x, int y);
+
+    static SDL_SetWindowPosition_t s_setWindowPosition = LoadFunction<SDL_SetWindowPosition_t>("SDL_SetWindowPosition");
     public static void SDL_SetWindowPosition(SDL_Window Sdl2Window, int x, int y) => s_setWindowPosition(Sdl2Window, x, y);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_SetWindowSize_t(SDL_Window SDL2Window, int w, int h);
-    private static SDL_SetWindowSize_t s_setWindowSize = LoadFunction<SDL_SetWindowSize_t>("SDL_SetWindowSize");
+    delegate void SDL_SetWindowSize_t(SDL_Window SDL2Window, int w, int h);
+
+    static SDL_SetWindowSize_t s_setWindowSize = LoadFunction<SDL_SetWindowSize_t>("SDL_SetWindowSize");
     public static void SDL_SetWindowSize(SDL_Window Sdl2Window, int w, int h) => s_setWindowSize(Sdl2Window, w, h);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate string SDL_GetWindowTitle_t(SDL_Window SDL2Window);
-    private static SDL_GetWindowTitle_t s_getWindowTitle = LoadFunction<SDL_GetWindowTitle_t>("SDL_GetWindowTitle");
+    delegate string SDL_GetWindowTitle_t(SDL_Window SDL2Window);
+
+    static SDL_GetWindowTitle_t s_getWindowTitle = LoadFunction<SDL_GetWindowTitle_t>("SDL_GetWindowTitle");
     public static string SDL_GetWindowTitle(SDL_Window Sdl2Window) => s_getWindowTitle(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_SetWindowTitle_t(SDL_Window SDL2Window, byte* title);
-    private static SDL_SetWindowTitle_t s_setWindowTitle = LoadFunction<SDL_SetWindowTitle_t>("SDL_SetWindowTitle");
+    delegate void SDL_SetWindowTitle_t(SDL_Window SDL2Window, byte* title);
+
+    static SDL_SetWindowTitle_t s_setWindowTitle = LoadFunction<SDL_SetWindowTitle_t>("SDL_SetWindowTitle");
 
     [SkipLocalsInit]
     public static void SDL_SetWindowTitle(SDL_Window Sdl2Window, ReadOnlySpan<char> title)
@@ -93,103 +102,123 @@ public static unsafe partial class Sdl2Native
     }
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate SDL_WindowFlags SDL_GetWindowFlags_t(SDL_Window SDL2Window);
-    private static SDL_GetWindowFlags_t s_getWindowFlags = LoadFunction<SDL_GetWindowFlags_t>("SDL_GetWindowFlags");
+    delegate SDL_WindowFlags SDL_GetWindowFlags_t(SDL_Window SDL2Window);
+
+    static SDL_GetWindowFlags_t s_getWindowFlags = LoadFunction<SDL_GetWindowFlags_t>("SDL_GetWindowFlags");
     public static SDL_WindowFlags SDL_GetWindowFlags(SDL_Window Sdl2Window) => s_getWindowFlags(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_SetWindowBordered_t(SDL_Window SDL2Window, uint bordered);
-    private static SDL_SetWindowBordered_t s_setWindowBordered = LoadFunction<SDL_SetWindowBordered_t>("SDL_SetWindowBordered");
+    delegate void SDL_SetWindowBordered_t(SDL_Window SDL2Window, uint bordered);
+
+    static SDL_SetWindowBordered_t s_setWindowBordered = LoadFunction<SDL_SetWindowBordered_t>("SDL_SetWindowBordered");
     public static void SDL_SetWindowBordered(SDL_Window Sdl2Window, uint bordered) => s_setWindowBordered(Sdl2Window, bordered);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_MaximizeWindow_t(SDL_Window SDL2Window);
-    private static SDL_MaximizeWindow_t s_maximizeWindow = LoadFunction<SDL_MaximizeWindow_t>("SDL_MaximizeWindow");
+    delegate void SDL_MaximizeWindow_t(SDL_Window SDL2Window);
+
+    static SDL_MaximizeWindow_t s_maximizeWindow = LoadFunction<SDL_MaximizeWindow_t>("SDL_MaximizeWindow");
     public static void SDL_MaximizeWindow(SDL_Window Sdl2Window) => s_maximizeWindow(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_MinimizeWindow_t(SDL_Window SDL2Window);
-    private static SDL_MinimizeWindow_t s_minimizeWindow = LoadFunction<SDL_MinimizeWindow_t>("SDL_MinimizeWindow");
+    delegate void SDL_MinimizeWindow_t(SDL_Window SDL2Window);
+
+    static SDL_MinimizeWindow_t s_minimizeWindow = LoadFunction<SDL_MinimizeWindow_t>("SDL_MinimizeWindow");
     public static void SDL_MinimizeWindow(SDL_Window Sdl2Window) => s_minimizeWindow(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_RaiseWindow_t(SDL_Window SDL2Window);
-    private static SDL_RaiseWindow_t s_raiseWindow = LoadFunction<SDL_RaiseWindow_t>("SDL_RaiseWindow");
+    delegate void SDL_RaiseWindow_t(SDL_Window SDL2Window);
+
+    static SDL_RaiseWindow_t s_raiseWindow = LoadFunction<SDL_RaiseWindow_t>("SDL_RaiseWindow");
     public static void SDL_RaiseWindow(SDL_Window Sdl2Window) => s_raiseWindow(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_SetWindowFullscreen_t(SDL_Window Sdl2Window, SDL_FullscreenMode mode);
-    private static SDL_SetWindowFullscreen_t s_setWindowFullscreen = LoadFunction<SDL_SetWindowFullscreen_t>("SDL_SetWindowFullscreen");
+    delegate int SDL_SetWindowFullscreen_t(SDL_Window Sdl2Window, SDL_FullscreenMode mode);
+
+    static SDL_SetWindowFullscreen_t s_setWindowFullscreen = LoadFunction<SDL_SetWindowFullscreen_t>("SDL_SetWindowFullscreen");
     public static int SDL_SetWindowFullscreen(SDL_Window Sdl2Window, SDL_FullscreenMode mode) => s_setWindowFullscreen(Sdl2Window, mode);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_ShowWindow_t(SDL_Window SDL2Window);
-    private static SDL_ShowWindow_t s_showWindow = LoadFunction<SDL_ShowWindow_t>("SDL_ShowWindow");
+    delegate void SDL_ShowWindow_t(SDL_Window SDL2Window);
+
+    static SDL_ShowWindow_t s_showWindow = LoadFunction<SDL_ShowWindow_t>("SDL_ShowWindow");
     public static void SDL_ShowWindow(SDL_Window Sdl2Window) => s_showWindow(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_HideWindow_t(SDL_Window SDL2Window);
-    private static SDL_HideWindow_t s_hideWindow = LoadFunction<SDL_HideWindow_t>("SDL_HideWindow");
+    delegate void SDL_HideWindow_t(SDL_Window SDL2Window);
+
+    static SDL_HideWindow_t s_hideWindow = LoadFunction<SDL_HideWindow_t>("SDL_HideWindow");
     public static void SDL_HideWindow(SDL_Window Sdl2Window) => s_hideWindow(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate uint SDL_GetWindowID_t(SDL_Window SDL2Window);
-    private static SDL_GetWindowID_t s_getWindowID = LoadFunction<SDL_GetWindowID_t>("SDL_GetWindowID");
+    delegate uint SDL_GetWindowID_t(SDL_Window SDL2Window);
+
+    static SDL_GetWindowID_t s_getWindowID = LoadFunction<SDL_GetWindowID_t>("SDL_GetWindowID");
     public static uint SDL_GetWindowID(SDL_Window Sdl2Window) => s_getWindowID(Sdl2Window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_SetWindowOpacity_t(SDL_Window window, float opacity);
-    private static SDL_SetWindowOpacity_t s_setWindowOpacity = LoadFunction<SDL_SetWindowOpacity_t>("SDL_SetWindowOpacity");
+    delegate int SDL_SetWindowOpacity_t(SDL_Window window, float opacity);
+
+    static SDL_SetWindowOpacity_t s_setWindowOpacity = LoadFunction<SDL_SetWindowOpacity_t>("SDL_SetWindowOpacity");
     public static int SDL_SetWindowOpacity(SDL_Window Sdl2Window, float opacity) => s_setWindowOpacity(Sdl2Window, opacity);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_GetWindowOpacity_t(SDL_Window window, float* opacity);
-    private static SDL_GetWindowOpacity_t s_getWindowOpacity = LoadFunction<SDL_GetWindowOpacity_t>("SDL_GetWindowOpacity");
+    delegate int SDL_GetWindowOpacity_t(SDL_Window window, float* opacity);
+
+    static SDL_GetWindowOpacity_t s_getWindowOpacity = LoadFunction<SDL_GetWindowOpacity_t>("SDL_GetWindowOpacity");
     public static int SDL_GetWindowOpacity(SDL_Window Sdl2Window, float* opacity) => s_getWindowOpacity(Sdl2Window, opacity);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void SDL_SetWindowResizable_t(SDL_Window window, uint resizable);
-    private static SDL_SetWindowResizable_t s_setWindowResizable = LoadFunction<SDL_SetWindowResizable_t>("SDL_SetWindowResizable");
+    delegate void SDL_SetWindowResizable_t(SDL_Window window, uint resizable);
+
+    static SDL_SetWindowResizable_t s_setWindowResizable = LoadFunction<SDL_SetWindowResizable_t>("SDL_SetWindowResizable");
     public static void SDL_SetWindowResizable(SDL_Window window, uint resizable) => s_setWindowResizable(window, resizable);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_GetDisplayBounds_t(int displayIndex, Rectangle* rect);
-    private static SDL_GetDisplayBounds_t s_sdl_getDisplayBounds = LoadFunction<SDL_GetDisplayBounds_t>("SDL_GetDisplayBounds");
+    delegate int SDL_GetDisplayBounds_t(int displayIndex, Rectangle* rect);
+
+    static SDL_GetDisplayBounds_t s_sdl_getDisplayBounds = LoadFunction<SDL_GetDisplayBounds_t>("SDL_GetDisplayBounds");
     public static int SDL_GetDisplayBounds(int displayIndex, Rectangle* rect) => s_sdl_getDisplayBounds(displayIndex, rect);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_GetDisplayDPI_t(int displayIndex, float* ddpi, float* hdpi, float* vdpi);
-    private static SDL_GetDisplayDPI_t s_sdl_getDisplayDPI = LoadFunction<SDL_GetDisplayDPI_t>("SDL_GetDisplayDPI");
+    delegate int SDL_GetDisplayDPI_t(int displayIndex, float* ddpi, float* hdpi, float* vdpi);
+
+    static SDL_GetDisplayDPI_t s_sdl_getDisplayDPI = LoadFunction<SDL_GetDisplayDPI_t>("SDL_GetDisplayDPI");
     public static int SDL_GetDisplayDPI(int displayIndex, float* ddpi, float* hdpi, float* vdpi) => s_sdl_getDisplayDPI(displayIndex, ddpi, hdpi, vdpi);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_GL_GetDrawableSize_t(SDL_Window window, int* w, int* h);
-    private static SDL_GL_GetDrawableSize_t s_sdl_gl_getDrawableSize = LoadFunction<SDL_GL_GetDrawableSize_t>("SDL_GL_GetDrawableSize");
+    delegate int SDL_GL_GetDrawableSize_t(SDL_Window window, int* w, int* h);
+
+    static SDL_GL_GetDrawableSize_t s_sdl_gl_getDrawableSize = LoadFunction<SDL_GL_GetDrawableSize_t>("SDL_GL_GetDrawableSize");
     public static int SDL_GL_GetDrawableSize(SDL_Window window, int* w, int* h) => s_sdl_gl_getDrawableSize(window, w, h);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_GetWindowDisplayIndex_t(SDL_Window window);
-    private static SDL_GetWindowDisplayIndex_t s_sdl_getWindowDisplayIndex = LoadFunction<SDL_GetWindowDisplayIndex_t>("SDL_GetWindowDisplayIndex");
+    delegate int SDL_GetWindowDisplayIndex_t(SDL_Window window);
+
+    static SDL_GetWindowDisplayIndex_t s_sdl_getWindowDisplayIndex = LoadFunction<SDL_GetWindowDisplayIndex_t>("SDL_GetWindowDisplayIndex");
     public static int SDL_GetWindowDisplayIndex(SDL_Window window) => s_sdl_getWindowDisplayIndex(window);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_GetCurrentDisplayMode_t(int displayIndex, SDL_DisplayMode* mode);
-    private static SDL_GetCurrentDisplayMode_t s_sdl_getCurrentDisplayMode = LoadFunction<SDL_GetCurrentDisplayMode_t>("SDL_GetCurrentDisplayMode");
+    delegate int SDL_GetCurrentDisplayMode_t(int displayIndex, SDL_DisplayMode* mode);
+
+    static SDL_GetCurrentDisplayMode_t s_sdl_getCurrentDisplayMode = LoadFunction<SDL_GetCurrentDisplayMode_t>("SDL_GetCurrentDisplayMode");
     public static int SDL_GetCurrentDisplayMode(int displayIndex, SDL_DisplayMode* mode) => s_sdl_getCurrentDisplayMode(displayIndex, mode);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_GetDesktopDisplayMode_t(int displayIndex, SDL_DisplayMode* mode);
-    private static SDL_GetDesktopDisplayMode_t s_sdl_getDesktopDisplayMode = LoadFunction<SDL_GetDesktopDisplayMode_t>("SDL_GetDesktopDisplayMode");
+    delegate int SDL_GetDesktopDisplayMode_t(int displayIndex, SDL_DisplayMode* mode);
+
+    static SDL_GetDesktopDisplayMode_t s_sdl_getDesktopDisplayMode = LoadFunction<SDL_GetDesktopDisplayMode_t>("SDL_GetDesktopDisplayMode");
     public static int SDL_GetDesktopDisplayMode(int displayIndex, SDL_DisplayMode* mode) => s_sdl_getDesktopDisplayMode(displayIndex, mode);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate int SDL_GetNumVideoDisplays_t();
-    private static SDL_GetNumVideoDisplays_t s_sdl_getNumVideoDisplays = LoadFunction<SDL_GetNumVideoDisplays_t>("SDL_GetNumVideoDisplays");
+    delegate int SDL_GetNumVideoDisplays_t();
+
+    static SDL_GetNumVideoDisplays_t s_sdl_getNumVideoDisplays = LoadFunction<SDL_GetNumVideoDisplays_t>("SDL_GetNumVideoDisplays");
     public static int SDL_GetNumVideoDisplays() => s_sdl_getNumVideoDisplays();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private delegate bool SDL_SetHint_t(string name, string value);
-    private static SDL_SetHint_t s_sdl_setHint = LoadFunction<SDL_SetHint_t>("SDL_SetHint");
+    delegate bool SDL_SetHint_t(string name, string value);
+
+    static SDL_SetHint_t s_sdl_setHint = LoadFunction<SDL_SetHint_t>("SDL_SetHint");
     public static bool SDL_SetHint(string name, string value) => s_sdl_setHint(name, value);
 }
 

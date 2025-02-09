@@ -2,7 +2,7 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLResourceSet : ResourceSet
 {
-    private bool _disposed;
+    bool _disposed;
     public new BindableResource[] Resources { get; }
     public new MTLResourceLayout Layout { get; }
 

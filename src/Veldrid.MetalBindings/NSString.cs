@@ -42,7 +42,7 @@ public readonly unsafe struct NSString
         return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(utf8Ptr);
     }
 
-    private static readonly ObjCClass s_class = new("NSString"u8);
-    private static readonly Selector sel_initWithCharacters = "initWithCharacters:length:"u8;
-    private static readonly Selector sel_utf8String = "UTF8String"u8;
+    static readonly ObjCClass s_class = new("NSString"u8);
+    static readonly Selector sel_initWithCharacters = "initWithCharacters:length:"u8;
+    static readonly Selector sel_utf8String = "UTF8String"u8;
 }

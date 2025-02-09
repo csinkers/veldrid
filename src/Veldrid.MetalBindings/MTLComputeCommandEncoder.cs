@@ -9,14 +9,14 @@ public readonly struct MTLComputeCommandEncoder
 
     public bool IsNull => NativePtr == IntPtr.Zero;
 
-    private static readonly Selector sel_setComputePipelineState = "setComputePipelineState:"u8;
-    private static readonly Selector sel_setBuffer = "setBuffer:offset:atIndex:"u8;
-    private static readonly Selector sel_dispatchThreadgroups0 = "dispatchThreadgroups:threadsPerThreadgroup:"u8;
-    private static readonly Selector sel_dispatchThreadgroups1 = "dispatchThreadgroupsWithIndirectBuffer:indirectBufferOffset:threadsPerThreadgroup:"u8;
-    private static readonly Selector sel_endEncoding = "endEncoding"u8;
-    private static readonly Selector sel_setTexture = "setTexture:atIndex:"u8;
-    private static readonly Selector sel_setSamplerState = "setSamplerState:atIndex:"u8;
-    private static readonly Selector sel_setBytes = "setBytes:length:atIndex:"u8;
+    static readonly Selector sel_setComputePipelineState = "setComputePipelineState:"u8;
+    static readonly Selector sel_setBuffer = "setBuffer:offset:atIndex:"u8;
+    static readonly Selector sel_dispatchThreadgroups0 = "dispatchThreadgroups:threadsPerThreadgroup:"u8;
+    static readonly Selector sel_dispatchThreadgroups1 = "dispatchThreadgroupsWithIndirectBuffer:indirectBufferOffset:threadsPerThreadgroup:"u8;
+    static readonly Selector sel_endEncoding = "endEncoding"u8;
+    static readonly Selector sel_setTexture = "setTexture:atIndex:"u8;
+    static readonly Selector sel_setSamplerState = "setSamplerState:atIndex:"u8;
+    static readonly Selector sel_setBytes = "setBytes:length:atIndex:"u8;
 
     public void setComputePipelineState(MTLComputePipelineState state)
         => objc_msgSend(NativePtr, sel_setComputePipelineState, state.NativePtr);

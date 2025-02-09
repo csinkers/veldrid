@@ -69,14 +69,14 @@ public readonly struct CAMetalLayer
         set => objc_msgSend(NativePtr, "setDisplaySyncEnabled:"u8, value);
     }
 
-    private static readonly ObjCClass s_class = new ObjCClass("CAMetalLayer"u8);
-    private static readonly Selector sel_device = "device"u8;
-    private static readonly Selector sel_setDevice = "setDevice:"u8;
-    private static readonly Selector sel_pixelFormat = "pixelFormat"u8;
-    private static readonly Selector sel_setPixelFormat = "setPixelFormat:"u8;
-    private static readonly Selector sel_framebufferOnly = "framebufferOnly"u8;
-    private static readonly Selector sel_setFramebufferOnly = "setFramebufferOnly:"u8;
-    private static readonly Selector sel_drawableSize = "drawableSize"u8;
-    private static readonly Selector sel_setDrawableSize = "setDrawableSize:"u8;
-    private static readonly Selector sel_nextDrawable = "nextDrawable"u8;
+    static readonly ObjCClass s_class = new ObjCClass("CAMetalLayer"u8);
+    static readonly Selector sel_device = "device"u8;
+    static readonly Selector sel_setDevice = "setDevice:"u8;
+    static readonly Selector sel_pixelFormat = "pixelFormat"u8;
+    static readonly Selector sel_setPixelFormat = "setPixelFormat:"u8;
+    static readonly Selector sel_framebufferOnly = "framebufferOnly"u8;
+    static readonly Selector sel_setFramebufferOnly = "setFramebufferOnly:"u8;
+    static readonly Selector sel_drawableSize = "drawableSize"u8;
+    static readonly Selector sel_setDrawableSize = "setDrawableSize:"u8;
+    static readonly Selector sel_nextDrawable = "nextDrawable"u8;
 }

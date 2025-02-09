@@ -12,7 +12,7 @@ namespace Veldrid.Utilities;
 /// </summary>
 public class MtlParser
 {
-    private readonly ParseContext _pc = new();
+    readonly ParseContext _pc = new();
 
     /// <summary>
     /// Parses a <see cref="MtlFile"/> from the given array of text lines.
@@ -66,15 +66,15 @@ public class MtlParser
         return _pc.FinalizeFile();
     }
 
-    private class ParseContext
+    class ParseContext
     {
-        private static readonly char[] s_whitespaceChars = new char[] { ' ' };
+        static readonly char[] s_whitespaceChars = new char[] { ' ' };
 
-        private readonly List<MaterialDefinition> _definitions = new();
-        private MaterialDefinition? _currentDefinition;
+        readonly List<MaterialDefinition> _definitions = new();
+        MaterialDefinition? _currentDefinition;
 
-        private int _currentLine;
-        private string? _currentLineText;
+        int _currentLine;
+        string? _currentLineText;
 
         public void Process(string line)
         {
@@ -189,7 +189,7 @@ public class MtlParser
             }
         }
 
-        private MaterialDefinition GetCurrentDefinition()
+        MaterialDefinition GetCurrentDefinition()
         {
             if (_currentDefinition == null)
             {
@@ -198,7 +198,7 @@ public class MtlParser
             return _currentDefinition;
         }
 
-        private void FinalizeCurrentMaterial()
+        void FinalizeCurrentMaterial()
         {
             if (_currentDefinition != null)
             {
@@ -217,7 +217,7 @@ public class MtlParser
             return new MtlFile(_definitions);
         }
 
-        private Vector3 ParseVector3(string xStr, string yStr, string zStr, string location)
+        Vector3 ParseVector3(string xStr, string yStr, string zStr, string location)
         {
             try
             {
@@ -233,7 +233,7 @@ public class MtlParser
             }
         }
 
-        private Vector2 ParseVector2(string xStr, string yStr, string location)
+        Vector2 ParseVector2(string xStr, string yStr, string location)
         {
             try
             {
@@ -248,7 +248,7 @@ public class MtlParser
             }
         }
 
-        private int ParseInt(string intStr, string location)
+        int ParseInt(string intStr, string location)
         {
             try
             {
@@ -261,7 +261,7 @@ public class MtlParser
             }
         }
 
-        private float ParseFloat(string intStr, string location)
+        float ParseFloat(string intStr, string location)
         {
             try
             {
@@ -274,7 +274,7 @@ public class MtlParser
             }
         }
 
-        private void ExpectExactly(string[] pieces, int count, string name)
+        void ExpectExactly(string[] pieces, int count, string name)
         {
             if (pieces.Length != count + 1)
             {
@@ -288,7 +288,7 @@ public class MtlParser
             }
         }
 
-        private void ExpectAtLeast(string[] pieces, int count, string name)
+        void ExpectAtLeast(string[] pieces, int count, string name)
         {
             if (pieces.Length < count + 1)
             {
@@ -302,7 +302,7 @@ public class MtlParser
             }
         }
 
-        private MtlParseException CreateParseException(string location, Exception e)
+        MtlParseException CreateParseException(string location, Exception e)
         {
             string message = string.Format("An error ocurred while parsing {0} on line {1}, \"{2}\"", location, _currentLine, _currentLineText);
             return new MtlParseException(message, e);

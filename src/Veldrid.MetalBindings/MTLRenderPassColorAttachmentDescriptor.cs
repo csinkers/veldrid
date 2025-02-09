@@ -61,6 +61,6 @@ public readonly struct MTLRenderPassColorAttachmentDescriptor
         set => objc_msgSend(NativePtr, Selectors.setLevel, value);
     }
 
-    private static readonly Selector sel_clearColor = "clearColor"u8;
-    private static readonly Selector sel_setClearColor = "setClearColor:"u8;
+    static readonly Selector sel_clearColor = "clearColor"u8;
+    static readonly Selector sel_setClearColor = "setClearColor:"u8;
 }

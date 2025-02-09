@@ -73,7 +73,7 @@ public static class VeldridStartup
         return window;
     }
 
-    private static SDL_WindowFlags GetWindowFlags(WindowState state)
+    static SDL_WindowFlags GetWindowFlags(WindowState state)
     {
         return state switch
         {
@@ -168,10 +168,10 @@ public static class VeldridStartup
     }
 
 #if !EXCLUDE_METAL_BACKEND
-    private static unsafe GraphicsDevice CreateMetalGraphicsDevice(GraphicsDeviceOptions options, Sdl2Window window)
+    static unsafe GraphicsDevice CreateMetalGraphicsDevice(GraphicsDeviceOptions options, Sdl2Window window)
         => CreateMetalGraphicsDevice(options, window, options.SwapchainSrgbFormat);
 
-    private static unsafe GraphicsDevice CreateMetalGraphicsDevice(
+    static unsafe GraphicsDevice CreateMetalGraphicsDevice(
         GraphicsDeviceOptions options,
         Sdl2Window window,
         bool colorSrgb)
@@ -226,7 +226,7 @@ public static class VeldridStartup
         return gd;
     }
 
-    private static unsafe VkSurfaceSource GetSurfaceSource(SDL_SysWMinfo sysWmInfo)
+    static unsafe VkSurfaceSource GetSurfaceSource(SDL_SysWMinfo sysWmInfo)
     {
         switch (sysWmInfo.subsystem)
         {
@@ -394,17 +394,17 @@ public static class VeldridStartup
     }
 #endif
 
-    private static unsafe string GetString(byte* stringStart)
+    static unsafe string GetString(byte* stringStart)
     {
         return Marshal.PtrToStringUTF8((IntPtr)stringStart) ?? "";
     }
 
 #if !EXCLUDE_OPENGL_BACKEND
-    private static readonly object s_glVersionLock = new();
-    private static (int Major, int Minor)? s_maxSupportedGLVersion;
-    private static (int Major, int Minor)? s_maxSupportedGLESVersion;
+    static readonly object s_glVersionLock = new();
+    static (int Major, int Minor)? s_maxSupportedGLVersion;
+    static (int Major, int Minor)? s_maxSupportedGLESVersion;
 
-    private static (int Major, int Minor) GetMaxGLVersion(bool gles)
+    static (int Major, int Minor) GetMaxGLVersion(bool gles)
     {
         lock (s_glVersionLock)
         {
@@ -420,7 +420,7 @@ public static class VeldridStartup
         }
     }
 
-    private static (int Major, int Minor) TestMaxVersion(bool gles)
+    static (int Major, int Minor) TestMaxVersion(bool gles)
     {
         (int, int)[] testVersions = gles
             ? new[] { (3, 2), (3, 0) }
@@ -434,7 +434,7 @@ public static class VeldridStartup
         return (0, 0);
     }
 
-    private static unsafe bool TestIndividualGLVersion(bool gles, int major, int minor)
+    static unsafe bool TestIndividualGLVersion(bool gles, int major, int minor)
     {
         SDL_GLProfile profileMask = gles ? SDL_GLProfile.ES : SDL_GLProfile.Core;
 

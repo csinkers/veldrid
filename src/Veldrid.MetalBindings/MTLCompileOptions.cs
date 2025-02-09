@@ -28,9 +28,9 @@ public readonly struct MTLCompileOptions
         set => objc_msgSend(NativePtr, sel_setLanguageVersion, (uint)value);
     }
 
-    private static readonly ObjCClass s_class = new("MTLCompileOptions"u8);
-    private static readonly Selector sel_fastMathEnabled = "fastMathEnabled"u8;
-    private static readonly Selector sel_setFastMathEnabled = "setFastMathEnabled:"u8;
-    private static readonly Selector sel_languageVersion = "languageVersion"u8;
-    private static readonly Selector sel_setLanguageVersion = "setLanguageVersion:"u8;
+    static readonly ObjCClass s_class = new("MTLCompileOptions"u8);
+    static readonly Selector sel_fastMathEnabled = "fastMathEnabled"u8;
+    static readonly Selector sel_setFastMathEnabled = "setFastMathEnabled:"u8;
+    static readonly Selector sel_languageVersion = "languageVersion"u8;
+    static readonly Selector sel_setLanguageVersion = "setLanguageVersion:"u8;
 }

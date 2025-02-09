@@ -5,8 +5,8 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLFence : Fence
 {
-    private readonly ManualResetEvent _mre;
-    private bool _disposed;
+    readonly ManualResetEvent _mre;
+    bool _disposed;
 
     public MTLFence(bool signaled)
     {

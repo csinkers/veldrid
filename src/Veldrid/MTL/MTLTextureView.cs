@@ -4,8 +4,8 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLTextureView : TextureView
 {
-    private readonly bool _hasTextureView;
-    private bool _disposed;
+    readonly bool _hasTextureView;
+    bool _disposed;
 
     public MetalBindings.MTLTexture TargetDeviceTexture { get; }
 

@@ -3,7 +3,7 @@ namespace Veldrid.MTL;
 // A fake Texture object representing swapchain Textures.
 internal sealed class MTLPlaceholderTexture : Texture
 {
-    private bool _disposed;
+    bool _disposed;
 
     public override string? Name { get; set; }
 

@@ -1,34 +1,33 @@
 ﻿using System;
 
-namespace Veldrid
-{
-    internal struct BoundResourceSetInfo
-    {
-        public ResourceSet Set;
-        public SmallFixedOrDynamicArray Offsets;
+namespace Veldrid;
 
-        public BoundResourceSetInfo(ResourceSet set, ReadOnlySpan<uint> offsets)
+internal struct BoundResourceSetInfo
+{
+    public ResourceSet Set;
+    public SmallFixedOrDynamicArray Offsets;
+
+    public BoundResourceSetInfo(ResourceSet set, ReadOnlySpan<uint> offsets)
+    {
+        Set = set;
+        Offsets = new SmallFixedOrDynamicArray(offsets);
+    }
+
+    public unsafe bool Equals(ResourceSet set, ReadOnlySpan<uint> offsets)
+    {
+        if (set != Set || offsets.Length != Offsets.Count)
         {
-            Set = set;
-            Offsets = new SmallFixedOrDynamicArray(offsets);
+            return false;
         }
 
-        public unsafe bool Equals(ResourceSet set, ReadOnlySpan<uint> offsets)
+        for (uint i = 0; i < offsets.Length; i++)
         {
-            if (set != Set || offsets.Length != Offsets.Count)
+            if (offsets[(int)i] != Offsets.Get(i))
             {
                 return false;
             }
-
-            for (uint i = 0; i < offsets.Length; i++)
-            {
-                if (offsets[(int)i] != Offsets.Get(i))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
+
+        return true;
     }
 }

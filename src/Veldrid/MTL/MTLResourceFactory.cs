@@ -5,7 +5,7 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLResourceFactory : ResourceFactory
 {
-    private readonly MTLGraphicsDevice _gd;
+    readonly MTLGraphicsDevice _gd;
 
     public MTLResourceFactory(MTLGraphicsDevice gd)
         : base(gd.Features)

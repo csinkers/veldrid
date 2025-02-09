@@ -5,7 +5,7 @@ namespace Veldrid.Tests.Utilities;
 
 internal class FileShaderProvider : IShaderProvider
 {
-    private readonly string _directory;
+    readonly string _directory;
 
     public FileShaderProvider(string directory)
     {

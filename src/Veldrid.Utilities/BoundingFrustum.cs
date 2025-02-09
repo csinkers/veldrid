@@ -200,7 +200,7 @@ public struct BoundingFrustum
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void PlaneIntersection(Plane p1, Plane p2, Plane p3, out Vector3 intersection)
+    static void PlaneIntersection(Plane p1, Plane p2, Plane p3, out Vector3 intersection)
     {
         // Formula: http://geomalgorithms.com/a05-_intersect-1.html
         // The formula assumes that there is only a single intersection point.

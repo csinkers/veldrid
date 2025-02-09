@@ -8,6 +8,6 @@ public struct MaterialProperties
 {
     public Vector3 SpecularIntensity;
     public float SpecularPower;
-    private Vector3 _padding0;
+    Vector3 _padding0;
     public float Reflectivity;
 }

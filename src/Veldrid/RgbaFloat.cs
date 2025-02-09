@@ -9,7 +9,7 @@ namespace Veldrid;
 /// </summary>
 public readonly struct RgbaFloat : IEquatable<RgbaFloat>
 {
-    private readonly Vector4 _channels;
+    readonly Vector4 _channels;
 
     /// <summary>
     /// The red component.

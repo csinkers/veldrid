@@ -38,6 +38,6 @@ public readonly struct MTLLibrary
         return new MTLFunction(function);
     }
 
-    private static readonly Selector sel_newFunctionWithName = "newFunctionWithName:"u8;
-    private static readonly Selector sel_newFunctionWithNameConstantValues = "newFunctionWithName:constantValues:error:"u8;
+    static readonly Selector sel_newFunctionWithName = "newFunctionWithName:"u8;
+    static readonly Selector sel_newFunctionWithNameConstantValues = "newFunctionWithName:constantValues:error:"u8;
 }

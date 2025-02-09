@@ -6,8 +6,8 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLShader : Shader
 {
-    private readonly MTLGraphicsDevice _device;
-    private bool _disposed;
+    readonly MTLGraphicsDevice _device;
+    bool _disposed;
 
     public MTLLibrary Library { get; private set; }
     public MTLFunction Function { get; private set; }

@@ -4,7 +4,7 @@ namespace Veldrid.MetalBindings;
 
 public readonly struct NSAutoreleasePool : IDisposable
 {
-    private static readonly ObjCClass s_class = new("NSAutoreleasePool"u8);
+    static readonly ObjCClass s_class = new("NSAutoreleasePool"u8);
 
     public readonly IntPtr NativePtr;
 

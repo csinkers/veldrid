@@ -16,7 +16,7 @@ public readonly struct MTLComputePipelineDescriptor
     public MTLPipelineBufferDescriptorArray buffers
         => objc_msgSend<MTLPipelineBufferDescriptorArray>(NativePtr, sel_buffers);
 
-    private static readonly Selector sel_computeFunction = "computeFunction"u8;
-    private static readonly Selector sel_setComputeFunction = "setComputeFunction:"u8;
-    private static readonly Selector sel_buffers = "buffers"u8;
+    static readonly Selector sel_computeFunction = "computeFunction"u8;
+    static readonly Selector sel_setComputeFunction = "setComputeFunction:"u8;
+    static readonly Selector sel_buffers = "buffers"u8;
 }

@@ -5,7 +5,7 @@ namespace Veldrid.MetalBindings;
 
 public static unsafe class Dispatch
 {
-    private const string LibdispatchLocation = @"/usr/lib/system/libdispatch.dylib";
+    const string LibdispatchLocation = @"/usr/lib/system/libdispatch.dylib";
 
     [DllImport(LibdispatchLocation)]
     public static extern DispatchQueue dispatch_get_global_queue(QualityOfServiceLevel identifier, ulong flags);

@@ -23,5 +23,5 @@ public struct Point : IEquatable<Point>
     public static bool operator ==(Point left, Point right) => left.Equals(right);
     public static bool operator !=(Point left, Point right) => !left.Equals(right);
 
-    private string DebuggerDisplayString => ToString();
+    string DebuggerDisplayString => ToString();
 }

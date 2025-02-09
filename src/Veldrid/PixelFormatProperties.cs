@@ -28,7 +28,7 @@ public struct PixelFormatProperties
     /// </summary>
     public readonly uint MaxArrayLayers;
 
-    private readonly uint _sampleCounts;
+    readonly uint _sampleCounts;
 
     /// <summary>
     /// Gets a value indicating whether or not the given <see cref="TextureSampleCount"/> is supported.

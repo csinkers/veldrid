@@ -6,7 +6,7 @@ namespace Veldrid.MetalBindings;
 
 public static unsafe class ObjectiveCRuntime
 {
-    private const string ObjCLibrary = "/usr/lib/libobjc.A.dylib";
+    const string ObjCLibrary = "/usr/lib/libobjc.A.dylib";
 
     [DllImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
     public static extern void objc_msgSend(IntPtr receiver, Selector selector);

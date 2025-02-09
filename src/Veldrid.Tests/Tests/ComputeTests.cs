@@ -12,7 +12,7 @@ using Xunit;
 namespace Veldrid.Tests;
 
 [StructLayout(LayoutKind.Sequential)]
-struct FillValueStruct
+internal struct FillValueStruct
 {
     /// <summary>
     /// The value we fill the 3d texture with.
@@ -118,7 +118,7 @@ void main()
     /// <summary>
     /// Returns the number of texels in the texture that DO NOT match the fill value.
     /// </summary>
-    private static int CountTexelsNotFilledAtDepth<TexelType>(GraphicsDevice device, Texture texture, TexelType fillValue, uint depth)
+    static int CountTexelsNotFilledAtDepth<TexelType>(GraphicsDevice device, Texture texture, TexelType fillValue, uint depth)
         where TexelType : unmanaged
     {
         ResourceFactory factory = device.ResourceFactory;
@@ -178,8 +178,8 @@ void main()
     {
         public uint Width;
         public uint Height;
-        private uint _padding1;
-        private uint _padding2;
+        uint _padding1;
+        uint _padding2;
     }
 
     [SkippableFact]
@@ -251,8 +251,8 @@ void main()
     {
         public uint Width;
         public uint Height;
-        private uint _padding1;
-        private uint _padding2;
+        uint _padding1;
+        uint _padding2;
     }
         
     [SkippableFact]

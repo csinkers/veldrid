@@ -45,6 +45,6 @@ public readonly struct MTLRenderPassDepthAttachmentDescriptor
         set => objc_msgSend(NativePtr, Selectors.setLevel, value);
     }
 
-    private static readonly Selector sel_clearDepth = "clearDepth"u8;
-    private static readonly Selector sel_setClearDepth = "setClearDepth:"u8;
+    static readonly Selector sel_clearDepth = "clearDepth"u8;
+    static readonly Selector sel_setClearDepth = "setClearDepth:"u8;
 }

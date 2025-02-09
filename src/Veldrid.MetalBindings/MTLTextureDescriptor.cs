@@ -5,7 +5,7 @@ namespace Veldrid.MetalBindings;
 
 public readonly struct MTLTextureDescriptor
 {
-    private static readonly ObjCClass s_class = new("MTLTextureDescriptor"u8);
+    static readonly ObjCClass s_class = new("MTLTextureDescriptor"u8);
 
     public readonly IntPtr NativePtr;
 
@@ -83,26 +83,26 @@ public readonly struct MTLTextureDescriptor
         set => objc_msgSend(NativePtr, sel_setTextureUsage, (uint)value);
     }
 
-    private static readonly Selector sel_textureType = "textureType"u8;
-    private static readonly Selector sel_setTextureType = "setTextureType:"u8;
-    private static readonly Selector sel_width = "width"u8;
-    private static readonly Selector sel_setWidth = "setWidth:"u8;
-    private static readonly Selector sel_height = "height"u8;
-    private static readonly Selector sel_setHeight = "setHeight:"u8;
-    private static readonly Selector sel_depth = "depth"u8;
-    private static readonly Selector sel_setDepth = "setDepth:"u8;
-    private static readonly Selector sel_mipmapLevelCount = "mipmapLevelCount"u8;
-    private static readonly Selector sel_setMipmapLevelCount = "setMipmapLevelCount:"u8;
-    private static readonly Selector sel_sampleCount = "sampleCount"u8;
-    private static readonly Selector sel_setSampleCount = "setSampleCount:"u8;
-    private static readonly Selector sel_arrayLength = "arrayLength"u8;
-    private static readonly Selector sel_setArrayLength = "setArrayLength:"u8;
-    private static readonly Selector sel_resourceOptions = "resourceOptions"u8;
-    private static readonly Selector sel_setResourceOptions = "setResourceOptions:"u8;
-    private static readonly Selector sel_cpuCacheMode = "cpuCacheMode"u8;
-    private static readonly Selector sel_setCpuCacheMode = "setCpuCacheMode:"u8;
-    private static readonly Selector sel_storageMode = "storageMode"u8;
-    private static readonly Selector sel_setStorageMode = "setStorageMode:"u8;
-    private static readonly Selector sel_textureUsage = "textureUsage"u8;
-    private static readonly Selector sel_setTextureUsage = "setTextureUsage:"u8;
+    static readonly Selector sel_textureType = "textureType"u8;
+    static readonly Selector sel_setTextureType = "setTextureType:"u8;
+    static readonly Selector sel_width = "width"u8;
+    static readonly Selector sel_setWidth = "setWidth:"u8;
+    static readonly Selector sel_height = "height"u8;
+    static readonly Selector sel_setHeight = "setHeight:"u8;
+    static readonly Selector sel_depth = "depth"u8;
+    static readonly Selector sel_setDepth = "setDepth:"u8;
+    static readonly Selector sel_mipmapLevelCount = "mipmapLevelCount"u8;
+    static readonly Selector sel_setMipmapLevelCount = "setMipmapLevelCount:"u8;
+    static readonly Selector sel_sampleCount = "sampleCount"u8;
+    static readonly Selector sel_setSampleCount = "setSampleCount:"u8;
+    static readonly Selector sel_arrayLength = "arrayLength"u8;
+    static readonly Selector sel_setArrayLength = "setArrayLength:"u8;
+    static readonly Selector sel_resourceOptions = "resourceOptions"u8;
+    static readonly Selector sel_setResourceOptions = "setResourceOptions:"u8;
+    static readonly Selector sel_cpuCacheMode = "cpuCacheMode"u8;
+    static readonly Selector sel_setCpuCacheMode = "setCpuCacheMode:"u8;
+    static readonly Selector sel_storageMode = "storageMode"u8;
+    static readonly Selector sel_setStorageMode = "setStorageMode:"u8;
+    static readonly Selector sel_textureUsage = "textureUsage"u8;
+    static readonly Selector sel_setTextureUsage = "setTextureUsage:"u8;
 }

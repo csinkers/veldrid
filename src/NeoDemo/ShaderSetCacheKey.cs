@@ -28,7 +28,7 @@ public struct ShaderSetCacheKey : IEquatable<ShaderSetCacheKey>
         return hash;
     }
 
-    private bool ArraysEqual<T>(T[] a, T[] b) where T : IEquatable<T>
+    bool ArraysEqual<T>(T[] a, T[] b) where T : IEquatable<T>
     {
         if (a.Length != b.Length) { return false; }
 

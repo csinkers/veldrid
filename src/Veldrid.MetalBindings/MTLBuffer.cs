@@ -25,9 +25,9 @@ public readonly struct MTLBuffer
     public void removeAllDebugMarkers()
         => ObjectiveCRuntime.objc_msgSend(NativePtr, sel_removeAllDebugMarkers);
 
-    private static readonly Selector sel_contents = "contents"u8;
-    private static readonly Selector sel_length = "length"u8;
-    private static readonly Selector sel_didModifyRange = "didModifyRange:"u8;
-    private static readonly Selector sel_addDebugMarker = "addDebugMarker:range:"u8;
-    private static readonly Selector sel_removeAllDebugMarkers = "removeAllDebugMarkers"u8;
+    static readonly Selector sel_contents = "contents"u8;
+    static readonly Selector sel_length = "length"u8;
+    static readonly Selector sel_didModifyRange = "didModifyRange:"u8;
+    static readonly Selector sel_addDebugMarker = "addDebugMarker:range:"u8;
+    static readonly Selector sel_removeAllDebugMarkers = "removeAllDebugMarkers"u8;
 }

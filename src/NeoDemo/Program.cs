@@ -1,6 +1,6 @@
 ﻿namespace Veldrid.NeoDemo;
 
-class Program
+internal class Program
 {
     unsafe static void Main(string[] args)
     {

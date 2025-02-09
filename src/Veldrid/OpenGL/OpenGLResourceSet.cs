@@ -1,24 +1,23 @@
-﻿namespace Veldrid.OpenGL
+﻿namespace Veldrid.OpenGL;
+
+internal sealed class OpenGLResourceSet : ResourceSet
 {
-    internal sealed class OpenGLResourceSet : ResourceSet
+    bool _disposed;
+
+    public new OpenGLResourceLayout Layout { get; }
+    public new BindableResource[] Resources { get; }
+    public override string? Name { get; set; }
+
+    public override bool IsDisposed => _disposed;
+
+    public OpenGLResourceSet(in ResourceSetDescription description) : base(description)
     {
-        private bool _disposed;
+        Layout = Util.AssertSubtype<ResourceLayout, OpenGLResourceLayout>(description.Layout);
+        Resources = Util.ShallowClone(description.BoundResources);
+    }
 
-        public new OpenGLResourceLayout Layout { get; }
-        public new BindableResource[] Resources { get; }
-        public override string? Name { get; set; }
-
-        public override bool IsDisposed => _disposed;
-
-        public OpenGLResourceSet(in ResourceSetDescription description) : base(description)
-        {
-            Layout = Util.AssertSubtype<ResourceLayout, OpenGLResourceLayout>(description.Layout);
-            Resources = Util.ShallowClone(description.BoundResources);
-        }
-
-        public override void Dispose()
-        {
-            _disposed = true;
-        }
+    public override void Dispose()
+    {
+        _disposed = true;
     }
 }

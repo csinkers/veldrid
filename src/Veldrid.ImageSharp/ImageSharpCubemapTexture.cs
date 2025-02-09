@@ -41,12 +41,13 @@ public class ImageSharpCubemapTexture
     /// <summary>
     /// Provides standardized access to the cubemap texture array
     /// </summary>
-    private const int PositiveXArrayLayer = 0;
-    private const int NegativeXArrayLayer = 1;
-    private const int PositiveYArrayLayer = 2;
-    private const int NegativeYArrayLayer = 3;
-    private const int PositiveZArrayLayer = 4;
-    private const int NegativeZArrayLayer = 5;
+    const int PositiveXArrayLayer = 0;
+
+    const int NegativeXArrayLayer = 1;
+    const int PositiveYArrayLayer = 2;
+    const int NegativeYArrayLayer = 3;
+    const int PositiveZArrayLayer = 4;
+    const int NegativeZArrayLayer = 5;
 
     public ImageSharpCubemapTexture(
         string positiveXPath,

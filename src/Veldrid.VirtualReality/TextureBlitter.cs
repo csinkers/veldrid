@@ -7,12 +7,12 @@ namespace Veldrid.VirtualReality;
 
 internal class TextureBlitter : IDisposable
 {
-    private readonly ResourceLayout _rl;
-    private readonly ResourceLayout _sampleRegionLayout;
-    private readonly Pipeline _pipeline;
-    private readonly DeviceBuffer _sampleRegionUB;
-    private readonly ResourceSet _sampleRegionSet;
-    private Vector4 _lastMinMaxUV;
+    readonly ResourceLayout _rl;
+    readonly ResourceLayout _sampleRegionLayout;
+    readonly Pipeline _pipeline;
+    readonly DeviceBuffer _sampleRegionUB;
+    readonly ResourceSet _sampleRegionSet;
+    Vector4 _lastMinMaxUV;
 
     public ResourceLayout ResourceLayout => _rl;
 
@@ -83,7 +83,7 @@ internal class TextureBlitter : IDisposable
         _sampleRegionLayout.Dispose();
     }
 
-    private const string vertexGlsl =
+    const string vertexGlsl =
         @"
 #version 450
 #extension GL_KHR_vulkan_glsl : enable
@@ -104,7 +104,8 @@ void main()
     fsin_UV = QuadInfos[gl_VertexIndex].zw;
 }
 ";
-    private const string fragmentGlsl =
+
+    const string fragmentGlsl =
         @"
 #version 450
 

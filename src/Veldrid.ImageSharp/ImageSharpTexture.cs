@@ -60,7 +60,7 @@ public class ImageSharpTexture
         return CreateTextureViaUpdate(gd, factory);
     }
 
-    private unsafe Texture CreateTextureViaStaging(GraphicsDevice gd, ResourceFactory factory)
+    unsafe Texture CreateTextureViaStaging(GraphicsDevice gd, ResourceFactory factory)
     {
         Texture staging = factory.CreateTexture(
             TextureDescription.Texture2D(Width, Height, MipLevels, 1, Format, TextureUsage.Staging));
@@ -112,7 +112,7 @@ public class ImageSharpTexture
         return ret;
     }
 
-    private unsafe Texture CreateTextureViaUpdate(GraphicsDevice gd, ResourceFactory factory)
+    unsafe Texture CreateTextureViaUpdate(GraphicsDevice gd, ResourceFactory factory)
     {
         Texture tex = factory.CreateTexture(TextureDescription.Texture2D(
             Width, Height, MipLevels, 1, Format, TextureUsage.Sampled));

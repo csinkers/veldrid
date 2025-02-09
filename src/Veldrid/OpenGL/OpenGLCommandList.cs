@@ -3,266 +3,265 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Veldrid.OpenGL.EntryList;
 
-namespace Veldrid.OpenGL
+namespace Veldrid.OpenGL;
+
+internal sealed class OpenGLCommandList : CommandList
 {
-    internal sealed class OpenGLCommandList : CommandList
+    readonly OpenGLGraphicsDevice _gd;
+    OpenGLCommandEntryList _currentCommands = null!;
+    bool _disposed;
+
+    internal OpenGLCommandEntryList CurrentCommands => _currentCommands;
+    internal OpenGLGraphicsDevice Device => _gd;
+
+    readonly object _lock = new();
+    readonly Stack<OpenGLCommandEntryList> _availableLists = new();
+    readonly List<OpenGLCommandEntryList> _submittedLists = new();
+
+    public override string? Name { get; set; }
+
+    public override bool IsDisposed => _disposed;
+
+    public OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListDescription description)
+        : base(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
     {
-        private readonly OpenGLGraphicsDevice _gd;
-        private OpenGLCommandEntryList _currentCommands = null!;
-        private bool _disposed;
+        _gd = gd;
+    }
 
-        internal OpenGLCommandEntryList CurrentCommands => _currentCommands;
-        internal OpenGLGraphicsDevice Device => _gd;
-
-        private readonly object _lock = new();
-        private readonly Stack<OpenGLCommandEntryList> _availableLists = new();
-        private readonly List<OpenGLCommandEntryList> _submittedLists = new();
-
-        public override string? Name { get; set; }
-
-        public override bool IsDisposed => _disposed;
-
-        public OpenGLCommandList(OpenGLGraphicsDevice gd, in CommandListDescription description)
-            : base(description, gd.Features, gd.UniformBufferMinOffsetAlignment, gd.StructuredBufferMinOffsetAlignment)
+    public override void Begin()
+    {
+        ClearCachedState();
+        if (_currentCommands != null)
         {
-            _gd = gd;
+            _currentCommands.Dispose();
         }
 
-        public override void Begin()
+        _currentCommands = GetFreeCommandList();
+        _currentCommands.Begin();
+    }
+
+    OpenGLCommandEntryList GetFreeCommandList()
+    {
+        lock (_lock)
         {
-            ClearCachedState();
-            if (_currentCommands != null)
+            if (_availableLists.TryPop(out OpenGLCommandEntryList? ret))
             {
-                _currentCommands.Dispose();
+                return ret;
             }
-
-            _currentCommands = GetFreeCommandList();
-            _currentCommands.Begin();
-        }
-
-        private OpenGLCommandEntryList GetFreeCommandList()
-        {
-            lock (_lock)
+            else
             {
-                if (_availableLists.TryPop(out OpenGLCommandEntryList? ret))
-                {
-                    return ret;
-                }
-                else
-                {
-                    return new OpenGLCommandEntryList(this);
-                }
+                return new OpenGLCommandEntryList(this);
             }
         }
+    }
 
-        private protected override void ClearColorTargetCore(uint index, RgbaFloat clearColor)
+    private protected override void ClearColorTargetCore(uint index, RgbaFloat clearColor)
+    {
+        _currentCommands.ClearColorTarget(index, clearColor);
+    }
+
+    private protected override void ClearDepthStencilCore(float depth, byte stencil)
+    {
+        _currentCommands.ClearDepthTarget(depth, stencil);
+    }
+
+    private protected override void DrawCore(uint vertexCount, uint instanceCount, uint vertexStart, uint instanceStart)
+    {
+        _currentCommands.Draw(vertexCount, instanceCount, vertexStart, instanceStart);
+    }
+
+    private protected override void DrawIndexedCore(uint indexCount, uint instanceCount, uint indexStart, int vertexOffset, uint instanceStart)
+    {
+        _currentCommands.DrawIndexed(indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
+    }
+
+    protected override void DrawIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    {
+        _currentCommands.DrawIndirect(indirectBuffer, offset, drawCount, stride);
+    }
+
+    protected override void DrawIndexedIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
+    {
+        _currentCommands.DrawIndexedIndirect(indirectBuffer, offset, drawCount, stride);
+    }
+
+    public override void Dispatch(uint groupCountX, uint groupCountY, uint groupCountZ)
+    {
+        _currentCommands.Dispatch(groupCountX, groupCountY, groupCountZ);
+    }
+
+    protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
+    {
+        _currentCommands.DispatchIndirect(indirectBuffer, offset);
+    }
+
+    protected override void ResolveTextureCore(Texture source, Texture destination)
+    {
+        _currentCommands.ResolveTexture(source, destination);
+    }
+
+    public override void End()
+    {
+        _currentCommands.End();
+    }
+
+    protected override void SetFramebufferCore(Framebuffer fb)
+    {
+        _currentCommands.SetFramebuffer(fb);
+    }
+
+    private protected override void SetIndexBufferCore(DeviceBuffer buffer, IndexFormat format, uint offset)
+    {
+        if (_gd.IsDebug)
         {
-            _currentCommands.ClearColorTarget(index, clearColor);
+            _gd.ThrowIfMapped(buffer, 0);
         }
+        _currentCommands.SetIndexBuffer(buffer, format, offset);
+    }
 
-        private protected override void ClearDepthStencilCore(float depth, byte stencil)
+    private protected override void SetPipelineCore(Pipeline pipeline)
+    {
+        _currentCommands.SetPipeline(pipeline);
+    }
+
+    protected override void SetGraphicsResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    {
+        _currentCommands.SetGraphicsResourceSet(slot, rs, dynamicOffsets);
+    }
+
+    protected override void SetComputeResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
+    {
+        _currentCommands.SetComputeResourceSet(slot, rs, dynamicOffsets);
+    }
+
+    public override void SetScissorRect(uint index, uint x, uint y, uint width, uint height)
+    {
+        _currentCommands.SetScissorRect(index, x, y, width, height);
+    }
+
+    private protected override void SetVertexBufferCore(uint index, DeviceBuffer buffer, uint offset)
+    {
+        if (_gd.IsDebug)
         {
-            _currentCommands.ClearDepthTarget(depth, stencil);
+            _gd.ThrowIfMapped(buffer, 0);
         }
+        _currentCommands.SetVertexBuffer(index, buffer, offset);
+    }
 
-        private protected override void DrawCore(uint vertexCount, uint instanceCount, uint vertexStart, uint instanceStart)
+    public override void SetViewport(uint index, in Viewport viewport)
+    {
+        _currentCommands.SetViewport(index, viewport);
+    }
+
+    internal void Reset()
+    {
+        _currentCommands.Reset();
+    }
+
+    private protected override void UpdateBufferCore(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
+    {
+        _currentCommands.UpdateBuffer(buffer, bufferOffsetInBytes, source, sizeInBytes);
+    }
+
+    protected override void CopyBufferCore(
+        DeviceBuffer source,
+        DeviceBuffer destination,
+        ReadOnlySpan<BufferCopyCommand> commands)
+    {
+        _currentCommands.CopyBuffer(source, destination, commands);
+    }
+
+    protected override void CopyTextureCore(
+        Texture source,
+        uint srcX, uint srcY, uint srcZ,
+        uint srcMipLevel,
+        uint srcBaseArrayLayer,
+        Texture destination,
+        uint dstX, uint dstY, uint dstZ,
+        uint dstMipLevel,
+        uint dstBaseArrayLayer,
+        uint width, uint height, uint depth,
+        uint layerCount)
+    {
+        _currentCommands.CopyTexture(
+            source,
+            srcX, srcY, srcZ,
+            srcMipLevel,
+            srcBaseArrayLayer,
+            destination,
+            dstX, dstY, dstZ,
+            dstMipLevel,
+            dstBaseArrayLayer,
+            width, height, depth,
+            layerCount);
+    }
+
+    private protected override void GenerateMipmapsCore(Texture texture)
+    {
+        _currentCommands.GenerateMipmaps(texture);
+    }
+
+    public void OnSubmitted(OpenGLCommandEntryList entryList)
+    {
+        _currentCommands = null!;
+        lock (_lock)
         {
-            _currentCommands.Draw(vertexCount, instanceCount, vertexStart, instanceStart);
+            Debug.Assert(!_submittedLists.Contains(entryList));
+            _submittedLists.Add(entryList);
+
+            Debug.Assert(!_availableLists.Contains(entryList));
         }
+    }
 
-        private protected override void DrawIndexedCore(uint indexCount, uint instanceCount, uint indexStart, int vertexOffset, uint instanceStart)
+    public void OnCompleted(OpenGLCommandEntryList entryList)
+    {
+        lock (_lock)
         {
-            _currentCommands.DrawIndexed(indexCount, instanceCount, indexStart, vertexOffset, instanceStart);
+            entryList.Reset();
+
+            Debug.Assert(!_availableLists.Contains(entryList));
+            _availableLists.Push(entryList);
+
+            Debug.Assert(_submittedLists.Contains(entryList));
+            _submittedLists.Remove(entryList);
         }
+    }
 
-        protected override void DrawIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
-        {
-            _currentCommands.DrawIndirect(indirectBuffer, offset, drawCount, stride);
-        }
+    private protected override void PushDebugGroupCore(ReadOnlySpan<char> name)
+    {
+        _currentCommands.PushDebugGroup(name.ToString());
+    }
 
-        protected override void DrawIndexedIndirectCore(DeviceBuffer indirectBuffer, uint offset, uint drawCount, uint stride)
-        {
-            _currentCommands.DrawIndexedIndirect(indirectBuffer, offset, drawCount, stride);
-        }
+    private protected override void PopDebugGroupCore()
+    {
+        _currentCommands.PopDebugGroup();
+    }
 
-        public override void Dispatch(uint groupCountX, uint groupCountY, uint groupCountZ)
-        {
-            _currentCommands.Dispatch(groupCountX, groupCountY, groupCountZ);
-        }
+    private protected override void InsertDebugMarkerCore(ReadOnlySpan<char> name)
+    {
+        _currentCommands.InsertDebugMarker(name.ToString());
+    }
 
-        protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
-        {
-            _currentCommands.DispatchIndirect(indirectBuffer, offset);
-        }
+    public override void Dispose()
+    {
+        _gd.EnqueueDisposal(this);
+    }
 
-        protected override void ResolveTextureCore(Texture source, Texture destination)
+    public void DestroyResources()
+    {
+        lock (_lock)
         {
-            _currentCommands.ResolveTexture(source, destination);
-        }
-
-        public override void End()
-        {
-            _currentCommands.End();
-        }
-
-        protected override void SetFramebufferCore(Framebuffer fb)
-        {
-            _currentCommands.SetFramebuffer(fb);
-        }
-
-        private protected override void SetIndexBufferCore(DeviceBuffer buffer, IndexFormat format, uint offset)
-        {
-            if (_gd.IsDebug)
+            _currentCommands?.Dispose();
+            foreach (OpenGLCommandEntryList list in _availableLists)
             {
-                _gd.ThrowIfMapped(buffer, 0);
+                list.Dispose();
             }
-            _currentCommands.SetIndexBuffer(buffer, format, offset);
-        }
-
-        private protected override void SetPipelineCore(Pipeline pipeline)
-        {
-            _currentCommands.SetPipeline(pipeline);
-        }
-
-        protected override void SetGraphicsResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
-        {
-            _currentCommands.SetGraphicsResourceSet(slot, rs, dynamicOffsets);
-        }
-
-        protected override void SetComputeResourceSetCore(uint slot, ResourceSet rs, ReadOnlySpan<uint> dynamicOffsets)
-        {
-            _currentCommands.SetComputeResourceSet(slot, rs, dynamicOffsets);
-        }
-
-        public override void SetScissorRect(uint index, uint x, uint y, uint width, uint height)
-        {
-            _currentCommands.SetScissorRect(index, x, y, width, height);
-        }
-
-        private protected override void SetVertexBufferCore(uint index, DeviceBuffer buffer, uint offset)
-        {
-            if (_gd.IsDebug)
+            foreach (OpenGLCommandEntryList list in _submittedLists)
             {
-                _gd.ThrowIfMapped(buffer, 0);
+                list.Dispose();
             }
-            _currentCommands.SetVertexBuffer(index, buffer, offset);
-        }
 
-        public override void SetViewport(uint index, in Viewport viewport)
-        {
-            _currentCommands.SetViewport(index, viewport);
-        }
-
-        internal void Reset()
-        {
-            _currentCommands.Reset();
-        }
-
-        private protected override void UpdateBufferCore(DeviceBuffer buffer, uint bufferOffsetInBytes, IntPtr source, uint sizeInBytes)
-        {
-            _currentCommands.UpdateBuffer(buffer, bufferOffsetInBytes, source, sizeInBytes);
-        }
-
-        protected override void CopyBufferCore(
-            DeviceBuffer source,
-            DeviceBuffer destination,
-            ReadOnlySpan<BufferCopyCommand> commands)
-        {
-            _currentCommands.CopyBuffer(source, destination, commands);
-        }
-
-        protected override void CopyTextureCore(
-            Texture source,
-            uint srcX, uint srcY, uint srcZ,
-            uint srcMipLevel,
-            uint srcBaseArrayLayer,
-            Texture destination,
-            uint dstX, uint dstY, uint dstZ,
-            uint dstMipLevel,
-            uint dstBaseArrayLayer,
-            uint width, uint height, uint depth,
-            uint layerCount)
-        {
-            _currentCommands.CopyTexture(
-                source,
-                srcX, srcY, srcZ,
-                srcMipLevel,
-                srcBaseArrayLayer,
-                destination,
-                dstX, dstY, dstZ,
-                dstMipLevel,
-                dstBaseArrayLayer,
-                width, height, depth,
-                layerCount);
-        }
-
-        private protected override void GenerateMipmapsCore(Texture texture)
-        {
-            _currentCommands.GenerateMipmaps(texture);
-        }
-
-        public void OnSubmitted(OpenGLCommandEntryList entryList)
-        {
-            _currentCommands = null!;
-            lock (_lock)
-            {
-                Debug.Assert(!_submittedLists.Contains(entryList));
-                _submittedLists.Add(entryList);
-
-                Debug.Assert(!_availableLists.Contains(entryList));
-            }
-        }
-
-        public void OnCompleted(OpenGLCommandEntryList entryList)
-        {
-            lock (_lock)
-            {
-                entryList.Reset();
-
-                Debug.Assert(!_availableLists.Contains(entryList));
-                _availableLists.Push(entryList);
-
-                Debug.Assert(_submittedLists.Contains(entryList));
-                _submittedLists.Remove(entryList);
-            }
-        }
-
-        private protected override void PushDebugGroupCore(ReadOnlySpan<char> name)
-        {
-            _currentCommands.PushDebugGroup(name.ToString());
-        }
-
-        private protected override void PopDebugGroupCore()
-        {
-            _currentCommands.PopDebugGroup();
-        }
-
-        private protected override void InsertDebugMarkerCore(ReadOnlySpan<char> name)
-        {
-            _currentCommands.InsertDebugMarker(name.ToString());
-        }
-
-        public override void Dispose()
-        {
-            _gd.EnqueueDisposal(this);
-        }
-
-        public void DestroyResources()
-        {
-            lock (_lock)
-            {
-                _currentCommands?.Dispose();
-                foreach (OpenGLCommandEntryList list in _availableLists)
-                {
-                    list.Dispose();
-                }
-                foreach (OpenGLCommandEntryList list in _submittedLists)
-                {
-                    list.Dispose();
-                }
-
-                _disposed = true;
-            }
+            _disposed = true;
         }
     }
 }

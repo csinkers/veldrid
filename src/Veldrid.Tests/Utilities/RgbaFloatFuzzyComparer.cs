@@ -15,7 +15,7 @@ internal class RgbaFloatFuzzyComparer : IEqualityComparer<RgbaFloat>
                && FuzzyEquals(x.A, y.A);
     }
 
-    private bool FuzzyEquals(float x, float y)
+    bool FuzzyEquals(float x, float y)
     {
         return Math.Abs(x - y) < 1e-5;
     }

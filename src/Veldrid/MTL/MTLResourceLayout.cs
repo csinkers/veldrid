@@ -2,8 +2,8 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLResourceLayout : ResourceLayout
 {
-    private readonly ResourceBindingInfo[] _bindingInfosByVdIndex;
-    private bool _disposed;
+    readonly ResourceBindingInfo[] _bindingInfosByVdIndex;
+    bool _disposed;
     public uint BufferCount { get; }
     public uint TextureCount { get; }
     public uint SamplerCount { get; }

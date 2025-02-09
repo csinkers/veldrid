@@ -13,6 +13,6 @@ public readonly struct MTLCommandQueue
 
     public void insertDebugCaptureBoundary() => objc_msgSend(NativePtr, sel_insertDebugCaptureBoundary);
 
-    private static readonly Selector sel_commandBuffer = "commandBuffer"u8;
-    private static readonly Selector sel_insertDebugCaptureBoundary = "insertDebugCaptureBoundary"u8;
+    static readonly Selector sel_commandBuffer = "commandBuffer"u8;
+    static readonly Selector sel_insertDebugCaptureBoundary = "insertDebugCaptureBoundary"u8;
 }

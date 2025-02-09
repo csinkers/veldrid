@@ -43,16 +43,16 @@ public readonly struct MTLStencilDescriptor
         set => objc_msgSend(NativePtr, sel_setWriteMask, value);
     }
 
-    private static readonly Selector sel_depthFailureOperation = "depthFailureOperation"u8;
-    private static readonly Selector sel_stencilFailureOperation = "stencilFailureOperation"u8;
-    private static readonly Selector sel_setStencilFailureOperation = "setStencilFailureOperation:"u8;
-    private static readonly Selector sel_setDepthFailureOperation = "setDepthFailureOperation:"u8;
-    private static readonly Selector sel_depthStencilPassOperation = "depthStencilPassOperation"u8;
-    private static readonly Selector sel_setDepthStencilPassOperation = "setDepthStencilPassOperation:"u8;
-    private static readonly Selector sel_stencilCompareFunction = "stencilCompareFunction"u8;
-    private static readonly Selector sel_setStencilCompareFunction = "setStencilCompareFunction:"u8;
-    private static readonly Selector sel_readMask = "readMask"u8;
-    private static readonly Selector sel_setReadMask = "setReadMask:"u8;
-    private static readonly Selector sel_writeMask = "writeMask"u8;
-    private static readonly Selector sel_setWriteMask = "setWriteMask:"u8;
+    static readonly Selector sel_depthFailureOperation = "depthFailureOperation"u8;
+    static readonly Selector sel_stencilFailureOperation = "stencilFailureOperation"u8;
+    static readonly Selector sel_setStencilFailureOperation = "setStencilFailureOperation:"u8;
+    static readonly Selector sel_setDepthFailureOperation = "setDepthFailureOperation:"u8;
+    static readonly Selector sel_depthStencilPassOperation = "depthStencilPassOperation"u8;
+    static readonly Selector sel_setDepthStencilPassOperation = "setDepthStencilPassOperation:"u8;
+    static readonly Selector sel_stencilCompareFunction = "stencilCompareFunction"u8;
+    static readonly Selector sel_setStencilCompareFunction = "setStencilCompareFunction:"u8;
+    static readonly Selector sel_readMask = "readMask"u8;
+    static readonly Selector sel_setReadMask = "setReadMask:"u8;
+    static readonly Selector sel_writeMask = "writeMask"u8;
+    static readonly Selector sel_setWriteMask = "setWriteMask:"u8;
 }

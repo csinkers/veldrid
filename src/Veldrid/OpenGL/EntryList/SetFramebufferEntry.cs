@@ -1,12 +1,11 @@
-﻿namespace Veldrid.OpenGL.EntryList
-{
-    internal struct SetFramebufferEntry
-    {
-        public readonly Tracked<Framebuffer> Framebuffer;
+﻿namespace Veldrid.OpenGL.EntryList;
 
-        public SetFramebufferEntry(Tracked<Framebuffer> fb)
-        {
-            Framebuffer = fb;
-        }
+internal struct SetFramebufferEntry
+{
+    public readonly Tracked<Framebuffer> Framebuffer;
+
+    public SetFramebufferEntry(Tracked<Framebuffer> fb)
+    {
+        Framebuffer = fb;
     }
 }

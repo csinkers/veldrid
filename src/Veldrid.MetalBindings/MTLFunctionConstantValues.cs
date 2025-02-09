@@ -16,7 +16,7 @@ public readonly struct MTLFunctionConstantValues
         ObjectiveCRuntime.objc_msgSend(NativePtr, sel_setConstantValuetypeatIndex, value, (uint)type, index);
     }
 
-    private static readonly ObjCClass s_class = new("MTLFunctionConstantValues"u8);
+    static readonly ObjCClass s_class = new("MTLFunctionConstantValues"u8);
 
-    private static readonly Selector sel_setConstantValuetypeatIndex = "setConstantValue:type:atIndex:"u8;
+    static readonly Selector sel_setConstantValuetypeatIndex = "setConstantValue:type:atIndex:"u8;
 }

@@ -27,10 +27,10 @@ public readonly struct MTLVertexBufferLayoutDescriptor
         set => objc_msgSend(NativePtr, sel_setStepRate, value);
     }
 
-    private static readonly Selector sel_stepFunction = "stepFunction"u8;
-    private static readonly Selector sel_setStepFunction = "setStepFunction:"u8;
-    private static readonly Selector sel_stride = "stride"u8;
-    private static readonly Selector sel_setStride = "setStride:"u8;
-    private static readonly Selector sel_stepRate = "stepRate"u8;
-    private static readonly Selector sel_setStepRate = "setStepRate:"u8;
+    static readonly Selector sel_stepFunction = "stepFunction"u8;
+    static readonly Selector sel_setStepFunction = "setStepFunction:"u8;
+    static readonly Selector sel_stride = "stride"u8;
+    static readonly Selector sel_setStride = "setStride:"u8;
+    static readonly Selector sel_stepRate = "stepRate"u8;
+    static readonly Selector sel_setStepRate = "setStepRate:"u8;
 }

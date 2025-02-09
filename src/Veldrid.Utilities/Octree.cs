@@ -16,9 +16,9 @@ public delegate int RayCastFilter<T>(Ray ray, T item, List<RayCastHit<T>> hits);
 /// <typeparam name="T">The type stored in the octree.</typeparam>
 public class Octree<T>
 {
-    private OctreeNode<T> _currentRoot;
+    OctreeNode<T> _currentRoot;
 
-    private List<OctreeItem<T>> _pendingMoveStage = new();
+    List<OctreeItem<T>> _pendingMoveStage = new();
 
     public Octree(BoundingBox boundingBox, int maxChildren)
     {
@@ -142,17 +142,17 @@ public class Octree<T>
 [DebuggerDisplay("{DebuggerDisplayString,nq}")]
 public class OctreeNode<T>
 {
-    private readonly List<OctreeItem<T>> _items = new();
-    private readonly OctreeNodeCache _nodeCache;
-    private OctreeNode<T>[] _children = Array.Empty<OctreeNode<T>>();
-    private BoundingBox _bounds;
+    readonly List<OctreeItem<T>> _items = new();
+    readonly OctreeNodeCache _nodeCache;
+    OctreeNode<T>[] _children = Array.Empty<OctreeNode<T>>();
+    BoundingBox _bounds;
 
     public BoundingBox Bounds { get { return _bounds; } set { _bounds = value; } }
     public int MaxChildren { get; private set; }
     public OctreeNode<T>[] Children { get => _children; private set => _children = value; }
     public OctreeNode<T>? Parent { get; private set; }
 
-    private const int NumChildNodes = 8;
+    const int NumChildNodes = 8;
 
     public static OctreeNode<T> CreateNewTree(ref BoundingBox bounds, int maxChildren)
     {
@@ -185,7 +185,7 @@ public class OctreeNode<T>
         return CoreAddRootItem(octreeItem);
     }
 
-    private OctreeNode<T> CoreAddRootItem(OctreeItem<T> octreeItem)
+    OctreeNode<T> CoreAddRootItem(OctreeItem<T> octreeItem)
     {
         OctreeNode<T> root = this;
         bool result = CoreAddItem(octreeItem);
@@ -274,7 +274,7 @@ public class OctreeNode<T>
         octreeItem.Bounds = newBounds;
     }
 
-    private OctreeNode<T> GetRootNode()
+    OctreeNode<T> GetRootNode()
     {
         if (Parent == null)
         {
@@ -307,7 +307,7 @@ public class OctreeNode<T>
         return true;
     }
 
-    private void ConsiderConsolidation()
+    void ConsiderConsolidation()
     {
         if (_children.Length > 0 && GetItemCount() < MaxChildren)
         {
@@ -316,7 +316,7 @@ public class OctreeNode<T>
         }
     }
 
-    private void ConsolidateChildren()
+    void ConsolidateChildren()
     {
         for (int i = 0; i < _children.Length; i++)
         {
@@ -396,7 +396,7 @@ public class OctreeNode<T>
         return CoreGetPreciseBounds(ref min, ref max);
     }
 
-    private BoundingBox CoreGetPreciseBounds(ref Vector3 min, ref Vector3 max)
+    BoundingBox CoreGetPreciseBounds(ref Vector3 min, ref Vector3 max)
     {
         for (int i = 0; i < _items.Count; i++)
         {
@@ -425,7 +425,7 @@ public class OctreeNode<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void CoreGetContainedObjects(ref BoundingFrustum frustum, List<T> results, Func<T, bool>? filter)
+    void CoreGetContainedObjects(ref BoundingFrustum frustum, List<T> results, Func<T, bool>? filter)
     {
         ContainmentType ct = frustum.Contains(_bounds);
         if (ct == ContainmentType.Contains)
@@ -468,7 +468,7 @@ public class OctreeNode<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void CoreGetAllContainedObjects(List<T> results, Func<T, bool>? filter)
+    void CoreGetAllContainedObjects(List<T> results, Func<T, bool>? filter)
     {
         for (int i = 0; i < _items.Count; i++)
         {
@@ -494,7 +494,7 @@ public class OctreeNode<T>
         RecycleNode();
     }
 
-    private void RecycleNode(bool recycleChildren = true)
+    void RecycleNode(bool recycleChildren = true)
     {
         if (recycleChildren)
         {
@@ -505,7 +505,7 @@ public class OctreeNode<T>
         _nodeCache.AddNode(this);
     }
 
-    private void RecycleChildren()
+    void RecycleChildren()
     {
         if (_children.Length != 0)
         {
@@ -519,7 +519,7 @@ public class OctreeNode<T>
         }
     }
 
-    private bool CoreAddItem(OctreeItem<T> item)
+    bool CoreAddItem(OctreeItem<T> item)
     {
         if (Bounds.Contains(item.Bounds) != ContainmentType.Contains)
         {
@@ -562,7 +562,7 @@ public class OctreeNode<T>
     }
 
     // Splits the node into 8 children
-    private OctreeNode<T>? SplitChildren(BoundingBox itemBounds, OctreeNode<T>? existingChild)
+    OctreeNode<T>? SplitChildren(BoundingBox itemBounds, OctreeNode<T>? existingChild)
     {
         Debug.Assert(_children.Length == 0, "Children must be empty before SplitChildren is called.");
 
@@ -618,7 +618,7 @@ public class OctreeNode<T>
         return childBigEnough;
     }
 
-    private void PushItemsToChildren()
+    void PushItemsToChildren()
     {
         for (int i = 0; i < _items.Count; i++)
         {
@@ -645,7 +645,7 @@ public class OctreeNode<T>
 #endif
     }
 
-    private OctreeNode<T> ResizeAndAdd(OctreeItem<T> octreeItem)
+    OctreeNode<T> ResizeAndAdd(OctreeItem<T> octreeItem)
     {
         OctreeNode<T> oldRoot = this;
         Vector3 oldRootCenter = Bounds.GetCenter();
@@ -700,7 +700,7 @@ public class OctreeNode<T>
     {
     }
 
-    private OctreeNode(ref BoundingBox bounds, int maxChildren, OctreeNodeCache nodeCache, OctreeNode<T>? parent)
+    OctreeNode(ref BoundingBox bounds, int maxChildren, OctreeNodeCache nodeCache, OctreeNode<T>? parent)
     {
         Bounds = bounds;
         MaxChildren = maxChildren;
@@ -708,7 +708,7 @@ public class OctreeNode<T>
         Parent = parent;
     }
 
-    private void Reset(ref BoundingBox newBounds)
+    void Reset(ref BoundingBox newBounds)
     {
         Bounds = newBounds;
 
@@ -819,7 +819,7 @@ public class OctreeNode<T>
         }
     }
 
-    private string DebuggerDisplayString
+    string DebuggerDisplayString
     {
         get
         {
@@ -827,11 +827,11 @@ public class OctreeNode<T>
         }
     }
 
-    private class OctreeNodeCache
+    class OctreeNodeCache
     {
-        private readonly Stack<OctreeNode<T>> _cachedNodes = new();
-        private readonly Stack<OctreeNode<T>[]> _cachedChildren = new();
-        private readonly Stack<OctreeItem<T>> _cachedItems = new();
+        readonly Stack<OctreeNode<T>> _cachedNodes = new();
+        readonly Stack<OctreeNode<T>[]> _cachedChildren = new();
+        readonly Stack<OctreeItem<T>> _cachedItems = new();
 
         public int MaxChildren { get; private set; }
 
@@ -936,7 +936,7 @@ public class OctreeNode<T>
             return octreeItem;
         }
 
-        private OctreeNode<T> CreateNewNode(ref BoundingBox bounds)
+        OctreeNode<T> CreateNewNode(ref BoundingBox bounds)
         {
             OctreeNode<T> node = new(ref bounds, MaxChildren, this, null);
             return node;

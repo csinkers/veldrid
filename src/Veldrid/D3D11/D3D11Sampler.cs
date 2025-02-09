@@ -2,63 +2,62 @@
 using Vortice.Direct3D11;
 using Vortice.Mathematics;
 
-namespace Veldrid.D3D11
+namespace Veldrid.D3D11;
+
+internal sealed class D3D11Sampler : Sampler
 {
-    internal sealed class D3D11Sampler : Sampler
+    string? _name;
+
+    public ID3D11SamplerState DeviceSampler { get; }
+
+    public D3D11Sampler(ID3D11Device device, in SamplerDescription description)
     {
-        private string? _name;
+        ComparisonFunction comparision = description.ComparisonKind == null
+            ? ComparisonFunction.Never
+            : D3D11Formats.VdToD3D11ComparisonFunc(description.ComparisonKind.Value);
 
-        public ID3D11SamplerState DeviceSampler { get; }
-
-        public D3D11Sampler(ID3D11Device device, in SamplerDescription description)
+        Vortice.Direct3D11.SamplerDescription samplerStateDesc = new()
         {
-            ComparisonFunction comparision = description.ComparisonKind == null
-                ? ComparisonFunction.Never
-                : D3D11Formats.VdToD3D11ComparisonFunc(description.ComparisonKind.Value);
+            AddressU = D3D11Formats.VdToD3D11AddressMode(description.AddressModeU),
+            AddressV = D3D11Formats.VdToD3D11AddressMode(description.AddressModeV),
+            AddressW = D3D11Formats.VdToD3D11AddressMode(description.AddressModeW),
+            Filter = D3D11Formats.ToD3D11Filter(description.Filter, description.ComparisonKind.HasValue),
+            MinLOD = description.MinimumLod,
+            MaxLOD = description.MaximumLod,
+            MaxAnisotropy = (int)description.MaximumAnisotropy,
+            ComparisonFunc = comparision,
+            MipLODBias = description.LodBias,
+            BorderColor = ToRawColor4(description.BorderColor)
+        };
 
-            Vortice.Direct3D11.SamplerDescription samplerStateDesc = new()
-            {
-                AddressU = D3D11Formats.VdToD3D11AddressMode(description.AddressModeU),
-                AddressV = D3D11Formats.VdToD3D11AddressMode(description.AddressModeV),
-                AddressW = D3D11Formats.VdToD3D11AddressMode(description.AddressModeW),
-                Filter = D3D11Formats.ToD3D11Filter(description.Filter, description.ComparisonKind.HasValue),
-                MinLOD = description.MinimumLod,
-                MaxLOD = description.MaximumLod,
-                MaxAnisotropy = (int)description.MaximumAnisotropy,
-                ComparisonFunc = comparision,
-                MipLODBias = description.LodBias,
-                BorderColor = ToRawColor4(description.BorderColor)
-            };
+        DeviceSampler = device.CreateSamplerState(samplerStateDesc);
+    }
 
-            DeviceSampler = device.CreateSamplerState(samplerStateDesc);
-        }
-
-        private static Color4 ToRawColor4(SamplerBorderColor borderColor)
+    static Color4 ToRawColor4(SamplerBorderColor borderColor)
+    {
+        return borderColor switch
         {
-            return borderColor switch
-            {
-                SamplerBorderColor.TransparentBlack => new Color4(0, 0, 0, 0),
-                SamplerBorderColor.OpaqueBlack => new Color4(0, 0, 0, 1),
-                SamplerBorderColor.OpaqueWhite => new Color4(1, 1, 1, 1),
-                _ => Illegal.Value<SamplerBorderColor, Color4>(),
-            };
-        }
+            SamplerBorderColor.TransparentBlack => new Color4(0, 0, 0, 0),
+            SamplerBorderColor.OpaqueBlack => new Color4(0, 0, 0, 1),
+            SamplerBorderColor.OpaqueWhite => new Color4(1, 1, 1, 1),
+            _ => Illegal.Value<SamplerBorderColor, Color4>(),
+        };
+    }
 
-        public override string? Name
+    public override string? Name
+    {
+        get => _name;
+        set
         {
-            get => _name;
-            set
-            {
-                _name = value;
-                DeviceSampler.DebugName = value!;
-            }
+            _name = value;
+            DeviceSampler.DebugName = value!;
         }
+    }
 
-        public override bool IsDisposed => DeviceSampler.NativePointer == IntPtr.Zero;
+    public override bool IsDisposed => DeviceSampler.NativePointer == IntPtr.Zero;
 
-        public override void Dispose()
-        {
-            DeviceSampler.Dispose();
-        }
+    public override void Dispose()
+    {
+        DeviceSampler.Dispose();
     }
 }

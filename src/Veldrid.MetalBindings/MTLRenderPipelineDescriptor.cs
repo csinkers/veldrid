@@ -59,18 +59,18 @@ public readonly struct MTLRenderPipelineDescriptor
         set => objc_msgSend(NativePtr, sel_setAlphaToCoverageEnabled, value);
     }
 
-    private static readonly Selector sel_vertexFunction = "vertexFunction"u8;
-    private static readonly Selector sel_setVertexFunction = "setVertexFunction:"u8;
-    private static readonly Selector sel_fragmentFunction = "fragmentFunction"u8;
-    private static readonly Selector sel_setFragmentFunction = "setFragmentFunction:"u8;
-    private static readonly Selector sel_colorAttachments = "colorAttachments"u8;
-    private static readonly Selector sel_depthAttachmentPixelFormat = "depthAttachmentPixelFormat"u8;
-    private static readonly Selector sel_setDepthAttachmentPixelFormat = "setDepthAttachmentPixelFormat:"u8;
-    private static readonly Selector sel_stencilAttachmentPixelFormat = "stencilAttachmentPixelFormat"u8;
-    private static readonly Selector sel_setStencilAttachmentPixelFormat = "setStencilAttachmentPixelFormat:"u8;
-    private static readonly Selector sel_sampleCount = "sampleCount"u8;
-    private static readonly Selector sel_setSampleCount = "setSampleCount:"u8;
-    private static readonly Selector sel_vertexDescriptor = "vertexDescriptor"u8;
-    private static readonly Selector sel_isAlphaToCoverageEnabled = "isAlphaToCoverageEnabled"u8;
-    private static readonly Selector sel_setAlphaToCoverageEnabled = "setAlphaToCoverageEnabled:"u8;
+    static readonly Selector sel_vertexFunction = "vertexFunction"u8;
+    static readonly Selector sel_setVertexFunction = "setVertexFunction:"u8;
+    static readonly Selector sel_fragmentFunction = "fragmentFunction"u8;
+    static readonly Selector sel_setFragmentFunction = "setFragmentFunction:"u8;
+    static readonly Selector sel_colorAttachments = "colorAttachments"u8;
+    static readonly Selector sel_depthAttachmentPixelFormat = "depthAttachmentPixelFormat"u8;
+    static readonly Selector sel_setDepthAttachmentPixelFormat = "setDepthAttachmentPixelFormat:"u8;
+    static readonly Selector sel_stencilAttachmentPixelFormat = "stencilAttachmentPixelFormat"u8;
+    static readonly Selector sel_setStencilAttachmentPixelFormat = "setStencilAttachmentPixelFormat:"u8;
+    static readonly Selector sel_sampleCount = "sampleCount"u8;
+    static readonly Selector sel_setSampleCount = "setSampleCount:"u8;
+    static readonly Selector sel_vertexDescriptor = "vertexDescriptor"u8;
+    static readonly Selector sel_isAlphaToCoverageEnabled = "isAlphaToCoverageEnabled"u8;
+    static readonly Selector sel_setAlphaToCoverageEnabled = "setAlphaToCoverageEnabled:"u8;
 }

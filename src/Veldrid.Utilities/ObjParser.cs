@@ -13,13 +13,13 @@ namespace Veldrid.Utilities;
 /// </summary>
 public class ObjParser
 {
-    private const int InitialReadBufferSize = 1024 * 8;
+    const int InitialReadBufferSize = 1024 * 8;
 
-    private static readonly char[] _whitespaceChar = new[] { ' ' };
-    private static readonly char _slashChar = '/';
+    static readonly char[] _whitespaceChar = new[] { ' ' };
+    static readonly char _slashChar = '/';
 
-    private readonly ParseContext _pc = new();
-    private char[]? _readBuffer;
+    readonly ParseContext _pc = new();
+    char[]? _readBuffer;
 
     /// <summary>
     /// Parses an <see cref="ObjFile"/> from the given raw text lines.
@@ -122,21 +122,21 @@ public class ObjParser
         return _pc.FinalizeFile();
     }
 
-    private class ParseContext
+    class ParseContext
     {
-        private List<Vector3> _positions = new();
-        private List<Vector3> _normals = new();
-        private List<Vector2> _texCoords = new();
+        List<Vector3> _positions = new();
+        List<Vector3> _normals = new();
+        List<Vector2> _texCoords = new();
 
-        private List<ObjFile.MeshGroup> _groups = new();
+        List<ObjFile.MeshGroup> _groups = new();
 
-        private string? _currentGroupName;
-        private string? _currentMaterial;
-        private int _currentSmoothingGroup;
-        private List<ObjFile.Face> _currentGroupFaces = new();
+        string? _currentGroupName;
+        string? _currentMaterial;
+        int _currentSmoothingGroup;
+        List<ObjFile.Face> _currentGroupFaces = new();
 
-        private int _currentLine;
-        private string? _materialLibName;
+        int _currentLine;
+        string? _materialLibName;
 
         public void Process(ReadOnlySpan<char> line)
         {
@@ -229,7 +229,7 @@ public class ObjParser
             }
         }
 
-        private void DiscoverMaterialLib(ReadOnlySpan<char> libName)
+        void DiscoverMaterialLib(ReadOnlySpan<char> libName)
         {
             if (_materialLibName != null)
             {
@@ -240,7 +240,7 @@ public class ObjParser
             _materialLibName = libName.ToString();
         }
 
-        private void ProcessFaceLine(
+        void ProcessFaceLine(
             scoped ref ReadOnlySpanSplitter<char> splitter,
             ReadOnlySpan<char> piece1, ReadOnlySpan<char> piece2)
         {
@@ -257,7 +257,7 @@ public class ObjParser
             }
         }
 
-        private ObjFile.FaceVertex ParseFaceVertex(ReadOnlySpan<char> faceComponents)
+        ObjFile.FaceVertex ParseFaceVertex(ReadOnlySpan<char> faceComponents)
         {
             if (faceComponents.IsEmpty)
                 ThrowExceptionForWrongFaceCount("There must be at least one face component");
@@ -287,7 +287,7 @@ public class ObjParser
         }
 
         [DoesNotReturn]
-        private void ThrowExceptionForWrongFaceCount(string message)
+        void ThrowExceptionForWrongFaceCount(string message)
         {
             throw new ObjParseException($"{message}, on line {_currentLine}.");
         }
@@ -313,7 +313,7 @@ public class ObjParser
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void FinalizeFaceVertex(
+        static void FinalizeFaceVertex(
             int positionOffset, int normalOffset, int texCoordOffset,
             ref ObjFile.FaceVertex vertex)
         {
@@ -364,7 +364,7 @@ public class ObjParser
             return new ObjFile(_positions.ToArray(), _normals.ToArray(), _texCoords.ToArray(), _groups.ToArray(), _materialLibName);
         }
 
-        private Vector3 ParseVector3(ReadOnlySpan<char> xStr, ReadOnlySpan<char> yStr, ReadOnlySpan<char> zStr, string location)
+        Vector3 ParseVector3(ReadOnlySpan<char> xStr, ReadOnlySpan<char> yStr, ReadOnlySpan<char> zStr, string location)
         {
             if (FastParse.TryParseDouble(xStr, out double x, out _) &&
                 FastParse.TryParseDouble(yStr, out double y, out _) &&
@@ -376,7 +376,7 @@ public class ObjParser
             return default;
         }
 
-        private Vector2 ParseVector2(ReadOnlySpan<char> xStr, ReadOnlySpan<char> yStr, string location)
+        Vector2 ParseVector2(ReadOnlySpan<char> xStr, ReadOnlySpan<char> yStr, string location)
         {
             if (FastParse.TryParseDouble(xStr, out double x, out _) &&
                 FastParse.TryParseDouble(yStr, out double y, out _))
@@ -387,7 +387,7 @@ public class ObjParser
             return default;
         }
 
-        private int ParseInt(ReadOnlySpan<char> intStr, string location)
+        int ParseInt(ReadOnlySpan<char> intStr, string location)
         {
             if (FastParse.TryParseInt(intStr, out int result))
             {
@@ -397,7 +397,7 @@ public class ObjParser
             return default;
         }
 
-        private void ExpectPieces(
+        void ExpectPieces(
             ref ReadOnlySpanSplitter<char> pieces, string name, bool exact,
             out ReadOnlySpan<char> piece0, out ReadOnlySpan<char> piece1, out ReadOnlySpan<char> piece2)
         {
@@ -423,7 +423,7 @@ public class ObjParser
             piece2 = default;
         }
 
-        private void ExpectPieces(
+        void ExpectPieces(
             scoped ref ReadOnlySpanSplitter<char> pieces, string name, bool exact,
             out ReadOnlySpan<char> piece0, out ReadOnlySpan<char> piece1)
         {
@@ -444,7 +444,7 @@ public class ObjParser
             piece1 = default;
         }
 
-        private void ExpectPieces(
+        void ExpectPieces(
             ref ReadOnlySpanSplitter<char> pieces, string name, bool exact,
             out ReadOnlySpan<char> piece)
         {
@@ -461,7 +461,7 @@ public class ObjParser
         }
 
         [DoesNotReturn]
-        private void ThrowExpectPiecesException(string amount, string name, bool exact)
+        void ThrowExpectPiecesException(string amount, string name, bool exact)
         {
             string message = string.Format(
                 "Expected {0} {1} components to a line starting with {2}, on line {3}.",
@@ -473,7 +473,7 @@ public class ObjParser
         }
 
         [DoesNotReturn]
-        private void ThrowParseException(string location)
+        void ThrowParseException(string location)
         {
             string message = string.Format("An error ocurred while parsing {0} on line {1}.", location, _currentLine);
             throw new ObjParseException(message, new FormatException());

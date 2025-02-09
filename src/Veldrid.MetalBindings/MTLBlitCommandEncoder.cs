@@ -99,11 +99,11 @@ public readonly struct MTLBlitCommandEncoder
             destinationLevel,
             destinationOrigin);
 
-    private static readonly Selector sel_copyFromBuffer0 = "copyFromBuffer:sourceOffset:toBuffer:destinationOffset:size:"u8;
-    private static readonly Selector sel_copyFromBuffer1 = "copyFromBuffer:sourceOffset:sourceBytesPerRow:sourceBytesPerImage:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:"u8;
-    private static readonly Selector sel_copyFromTexture0 = "copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toBuffer:destinationOffset:destinationBytesPerRow:destinationBytesPerImage:"u8;
-    private static readonly Selector sel_copyFromTexture1 = "copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:"u8;
-    private static readonly Selector sel_generateMipmapsForTexture = "generateMipmapsForTexture:"u8;
-    private static readonly Selector sel_synchronizeResource = "synchronizeResource:"u8;
-    private static readonly Selector sel_endEncoding = "endEncoding"u8;
+    static readonly Selector sel_copyFromBuffer0 = "copyFromBuffer:sourceOffset:toBuffer:destinationOffset:size:"u8;
+    static readonly Selector sel_copyFromBuffer1 = "copyFromBuffer:sourceOffset:sourceBytesPerRow:sourceBytesPerImage:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:"u8;
+    static readonly Selector sel_copyFromTexture0 = "copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toBuffer:destinationOffset:destinationBytesPerRow:destinationBytesPerImage:"u8;
+    static readonly Selector sel_copyFromTexture1 = "copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:"u8;
+    static readonly Selector sel_generateMipmapsForTexture = "generateMipmapsForTexture:"u8;
+    static readonly Selector sel_synchronizeResource = "synchronizeResource:"u8;
+    static readonly Selector sel_endEncoding = "endEncoding"u8;
 }

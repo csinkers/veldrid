@@ -5,8 +5,8 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLBuffer : DeviceBuffer
 {
-    private string? _name;
-    private bool _disposed;
+    string? _name;
+    bool _disposed;
 
     public override string? Name
     {

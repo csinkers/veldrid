@@ -9,8 +9,8 @@ namespace Veldrid.Tests;
 
 public static class TestUtils
 {
-    private static readonly bool InitializedSdl2;
-    private static readonly string? InitializationFailedMessage;
+    static readonly bool InitializedSdl2;
+    static readonly string? InitializationFailedMessage;
 
     static unsafe TestUtils()
     {
@@ -191,7 +191,7 @@ public static class TestUtils
         return Encoding.UTF8.GetString(stringStart, characters);
     }
 
-    private class WindowClosable : IDisposable
+    class WindowClosable : IDisposable
     {
         public Sdl2Window Window { get; }
 
@@ -210,10 +210,10 @@ public static class TestUtils
 public abstract class GraphicsDeviceTestBase<T> : IDisposable
     where T : IGraphicsDeviceCreator
 {
-    private readonly GraphicsDevice _gd;
-    private readonly DisposeCollectorResourceFactory _factory;
-    private readonly RenderDoc? _renderDoc;
-    private readonly T _deviceCreator;
+    readonly GraphicsDevice _gd;
+    readonly DisposeCollectorResourceFactory _factory;
+    readonly RenderDoc? _renderDoc;
+    readonly T _deviceCreator;
 
     public GraphicsDevice GD => _gd;
     public ResourceFactory RF => _factory;
@@ -334,7 +334,7 @@ public class VulkanDeviceCreator : IGraphicsDeviceCreator
 
 public class VulkanDeviceCreatorWithMainSwapchain : IGraphicsDeviceCreator, IDisposable
 {
-    private IDisposable? window;
+    IDisposable? window;
 
     public void CreateGraphicsDevice(out GraphicsDevice? gd)
     {
@@ -377,7 +377,7 @@ public class OpenGLDeviceCreator : WindowedDeviceCreator
 
 public class OpenGLESDeviceCreator : IGraphicsDeviceCreator, IDisposable
 {
-    private IDisposable? window;
+    IDisposable? window;
 
     public void CreateGraphicsDevice(out GraphicsDevice? gd)
     {

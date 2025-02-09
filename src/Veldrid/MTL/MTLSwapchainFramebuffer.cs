@@ -5,13 +5,13 @@ namespace Veldrid.MTL;
 
 internal sealed class MTLSwapchainFramebuffer : MTLFramebufferBase
 {
-    private readonly MTLGraphicsDevice _gd;
-    private readonly MTLPlaceholderTexture _placeholderTexture;
-    private MTLTexture? _depthTexture;
-    private readonly MTLSwapchain _parentSwapchain;
-    private bool _disposed;
+    readonly MTLGraphicsDevice _gd;
+    readonly MTLPlaceholderTexture _placeholderTexture;
+    MTLTexture? _depthTexture;
+    readonly MTLSwapchain _parentSwapchain;
+    bool _disposed;
 
-    private readonly PixelFormat? _depthFormat;
+    readonly PixelFormat? _depthFormat;
 
     public override bool IsDisposed => _disposed;
 
@@ -46,7 +46,7 @@ internal sealed class MTLSwapchainFramebuffer : MTLFramebufferBase
         Height = height;
     }
 
-    private void RecreateDepthTexture(uint width, uint height)
+    void RecreateDepthTexture(uint width, uint height)
     {
         Debug.Assert(_depthFormat.HasValue);
         if (_depthTexture != null)

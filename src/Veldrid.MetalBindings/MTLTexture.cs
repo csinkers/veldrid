@@ -41,6 +41,6 @@ public readonly unsafe struct MTLTexture
         return new MTLTexture(ret);
     }
 
-    private static readonly Selector sel_replaceRegion = "replaceRegion:mipmapLevel:slice:withBytes:bytesPerRow:bytesPerImage:"u8;
-    private static readonly Selector sel_newTextureView = "newTextureViewWithPixelFormat:textureType:levels:slices:"u8;
+    static readonly Selector sel_replaceRegion = "replaceRegion:mipmapLevel:slice:withBytes:bytesPerRow:bytesPerImage:"u8;
+    static readonly Selector sel_newTextureView = "newTextureViewWithPixelFormat:textureType:levels:slices:"u8;
 }

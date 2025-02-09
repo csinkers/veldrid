@@ -21,35 +21,35 @@ public unsafe class Sdl2Window
     public delegate void TextInputAction(TextInputEvent textInput);
     public delegate void TextEditingAction(TextEditingEvent textEditing);
 
-    private readonly List<SDL_Event> _events = new();
-    private IntPtr _window;
+    readonly List<SDL_Event> _events = new();
+    IntPtr _window;
     public uint WindowID { get; private set; }
-    private bool _exists;
+    bool _exists;
 
-    private SimpleInputSnapshot _publicSnapshot = new();
-    private SimpleInputSnapshot _privateSnapshot = new();
-    private SimpleInputSnapshot _privateBackbuffer = new();
+    SimpleInputSnapshot _publicSnapshot = new();
+    SimpleInputSnapshot _privateSnapshot = new();
+    SimpleInputSnapshot _privateBackbuffer = new();
 
     // Threaded Sdl2Window flags
-    private readonly bool _threadedProcessing;
+    readonly bool _threadedProcessing;
 
-    private bool _shouldClose;
+    bool _shouldClose;
     public bool LimitPollRate { get; set; }
     public float PollIntervalInMs { get; set; }
 
     // Current input states
-    private int _currentMouseX;
-    private int _currentMouseY;
-    private MouseButton _currentMouseDown;
-    private Vector2 _currentMouseDelta;
+    int _currentMouseX;
+    int _currentMouseY;
+    MouseButton _currentMouseDown;
+    Vector2 _currentMouseDelta;
 
     // Cached Sdl2Window state (for threaded processing)
-    private BufferedValue<Point> _cachedPosition = new();
-    private BufferedValue<Point> _cachedSize = new();
-    private string? _cachedWindowTitle;
-    private bool _newWindowTitleReceived;
-    private bool _firstMouseEvent = true;
-    private Func<bool>? _closeRequestedHandler;
+    BufferedValue<Point> _cachedPosition = new();
+    BufferedValue<Point> _cachedSize = new();
+    string? _cachedWindowTitle;
+    bool _newWindowTitleReceived;
+    bool _firstMouseEvent = true;
+    Func<bool>? _closeRequestedHandler;
 
     public Sdl2Window(string title, int x, int y, int width, int height, SDL_WindowFlags flags, bool threadedProcessing)
     {
@@ -116,7 +116,7 @@ public unsafe class Sdl2Window
 
     public string? Title { get => _cachedWindowTitle; set => SetWindowTitle(value); }
 
-    private void SetWindowTitle(string? value)
+    void SetWindowTitle(string? value)
     {
         _cachedWindowTitle = value;
         _newWindowTitleReceived = true;
@@ -308,7 +308,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private bool CloseCore()
+    bool CloseCore()
     {
         if (_closeRequestedHandler?.Invoke() ?? false)
         {
@@ -325,7 +325,7 @@ public unsafe class Sdl2Window
         return true;
     }
 
-    private void WindowOwnerRoutine(object? state)
+    void WindowOwnerRoutine(object? state)
     {
         WindowParams wp = (WindowParams)state!;
         _window = wp.Create();
@@ -359,7 +359,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private void PostWindowCreated(SDL_WindowFlags flags)
+    void PostWindowCreated(SDL_WindowFlags flags)
     {
         RefreshCachedPosition();
         RefreshCachedSize();
@@ -396,7 +396,7 @@ public unsafe class Sdl2Window
         return _publicSnapshot;
     }
 
-    private void ProcessEvents(SDLEventHandler? eventHandler)
+    void ProcessEvents(SDLEventHandler? eventHandler)
     {
         CheckNewWindowTitle();
 
@@ -422,7 +422,7 @@ public unsafe class Sdl2Window
         ProcessEvents(eventHandler);
     }
 
-    private unsafe void HandleEvent(ref SDL_Event ev)
+    unsafe void HandleEvent(ref SDL_Event ev)
     {
         switch (ev.type)
         {
@@ -482,7 +482,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private void CheckNewWindowTitle()
+    void CheckNewWindowTitle()
     {
         if (_newWindowTitleReceived)
         {
@@ -491,7 +491,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private static int ParseTextEvent(ReadOnlySpan<byte> utf8, Span<Rune> runes)
+    static int ParseTextEvent(ReadOnlySpan<byte> utf8, Span<Rune> runes)
     {
         int byteCount = utf8.IndexOf((byte)0);
         if (byteCount != -1)
@@ -507,7 +507,7 @@ public unsafe class Sdl2Window
         return runeCount;
     }
 
-    private void HandleTextInputEvent(SDL_TextInputEvent textInputEvent)
+    void HandleTextInputEvent(SDL_TextInputEvent textInputEvent)
     {
         ReadOnlySpan<byte> utf8 = new(textInputEvent.text, SDL_TextInputEvent.MaxTextSize);
         Span<Rune> runes = stackalloc Rune[SDL_TextInputEvent.MaxTextSize];
@@ -526,7 +526,7 @@ public unsafe class Sdl2Window
         TextInput?.Invoke(inputEvent);
     }
 
-    private void HandleTextEditingEvent(SDL_TextEditingEvent textEditingEvent)
+    void HandleTextEditingEvent(SDL_TextEditingEvent textEditingEvent)
     {
         ReadOnlySpan<byte> utf8 = new(textEditingEvent.text, SDL_TextEditingEvent.MaxTextSize);
         Span<Rune> runes = stackalloc Rune[SDL_TextEditingEvent.MaxTextSize];
@@ -541,7 +541,7 @@ public unsafe class Sdl2Window
         TextEditing?.Invoke(editingEvent);
     }
 
-    private void HandleMouseWheelEvent(SDL_MouseWheelEvent mouseWheelEvent)
+    void HandleMouseWheelEvent(SDL_MouseWheelEvent mouseWheelEvent)
     {
         Vector2 delta = new(mouseWheelEvent.x, mouseWheelEvent.y);
 
@@ -555,7 +555,7 @@ public unsafe class Sdl2Window
         MouseWheel?.Invoke(wheelEvent);
     }
 
-    private void HandleDropEvent(SDL_DropEvent dropEvent)
+    void HandleDropEvent(SDL_DropEvent dropEvent)
     {
         if (dropEvent.file != null)
         {
@@ -584,7 +584,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private void HandleMouseButtonEvent(SDL_MouseButtonEvent mouseButtonEvent)
+    void HandleMouseButtonEvent(SDL_MouseButtonEvent mouseButtonEvent)
     {
         MouseButton button = MapMouseButton(mouseButtonEvent.button);
         bool down = mouseButtonEvent.state == 1;
@@ -619,7 +619,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private static MouseButton MapMouseButton(SDL_MouseButton button)
+    static MouseButton MapMouseButton(SDL_MouseButton button)
     {
         return button switch
         {
@@ -632,7 +632,7 @@ public unsafe class Sdl2Window
         };
     }
 
-    private void HandleMouseMotionEvent(SDL_MouseMotionEvent mouseMotionEvent)
+    void HandleMouseMotionEvent(SDL_MouseMotionEvent mouseMotionEvent)
     {
         Vector2 mousePos = new(mouseMotionEvent.x, mouseMotionEvent.y);
         Vector2 delta = new(mouseMotionEvent.xrel, mouseMotionEvent.yrel);
@@ -654,7 +654,7 @@ public unsafe class Sdl2Window
         _firstMouseEvent = false;
     }
 
-    private void HandleKeyboardEvent(SDL_KeyboardEvent keyboardEvent)
+    void HandleKeyboardEvent(SDL_KeyboardEvent keyboardEvent)
     {
         KeyEvent keyEvent = new(
             keyboardEvent.timestamp,
@@ -676,7 +676,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private void HandleWindowEvent(SDL_WindowEvent windowEvent)
+    void HandleWindowEvent(SDL_WindowEvent windowEvent)
     {
         switch (windowEvent.@event)
         {
@@ -721,27 +721,27 @@ public unsafe class Sdl2Window
         }
     }
 
-    private void HandleResizedMessage()
+    void HandleResizedMessage()
     {
         RefreshCachedSize();
         Resized?.Invoke();
     }
 
-    private void RefreshCachedSize()
+    void RefreshCachedSize()
     {
         int w, h;
         SDL_GetWindowSize(_window, &w, &h);
         _cachedSize.Value = new Point(w, h);
     }
 
-    private void RefreshCachedPosition()
+    void RefreshCachedPosition()
     {
         int x, y;
         SDL_GetWindowPosition(_window, &x, &y);
         _cachedPosition.Value = new Point(x, y);
     }
 
-    private MouseState GetCurrentMouseState()
+    MouseState GetCurrentMouseState()
     {
         return new MouseState(_currentMouseX, _currentMouseY, _currentMouseDown);
     }
@@ -752,24 +752,24 @@ public unsafe class Sdl2Window
         return new Point(p.X - position.X, p.Y - position.Y);
     }
 
-    private void SetWindowPosition(int x, int y)
+    void SetWindowPosition(int x, int y)
     {
         SDL_SetWindowPosition(_window, x, y);
         _cachedPosition.Value = new Point(x, y);
     }
 
-    private Point GetWindowSize()
+    Point GetWindowSize()
     {
         return _cachedSize;
     }
 
-    private void SetWindowSize(int width, int height)
+    void SetWindowSize(int width, int height)
     {
         SDL_SetWindowSize(_window, width, height);
         _cachedSize.Value = new Point(width, height);
     }
 
-    private IntPtr GetUnderlyingWindowHandle()
+    IntPtr GetUnderlyingWindowHandle()
     {
         SDL_SysWMinfo wmInfo;
         SDL_GetVersion(&wmInfo.version);
@@ -796,7 +796,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private class SimpleInputSnapshot : InputSnapshot
+    class SimpleInputSnapshot : InputSnapshot
     {
         public List<Rune> InputEvents { get; private set; } = new List<Rune>();
         public List<KeyEvent> KeyEvents { get; private set; } = new List<KeyEvent>();
@@ -837,7 +837,7 @@ public unsafe class Sdl2Window
         }
     }
 
-    private class WindowParams
+    class WindowParams
     {
         public int X { get; set; }
         public int Y { get; set; }
@@ -877,14 +877,14 @@ public class BufferedValue<T> where T : struct
         }
     }
 
-    private ValueHolder Current = new();
-    private ValueHolder Back = new();
+    ValueHolder Current = new();
+    ValueHolder Back = new();
 
     public static implicit operator T(BufferedValue<T> bv) => bv.Value;
 
-    private string DebuggerDisplayString => $"{Current.Value}";
+    string DebuggerDisplayString => $"{Current.Value}";
 
-    private class ValueHolder
+    class ValueHolder
     {
         public T Value;
     }

@@ -34,7 +34,7 @@ internal unsafe class TextureDataReaderWriter
         return new WidePixel(r, g, b, a);
     }
 
-    private ulong? ReadBits(byte* pixelPtr, int bitOffset, int numBits)
+    ulong? ReadBits(byte* pixelPtr, int bitOffset, int numBits)
     {
         if (numBits == 0)
         {
@@ -94,7 +94,7 @@ internal unsafe class TextureDataReaderWriter
         return new WidePixel(r, g, b, a);
     }
 
-    private bool IsBitSet(byte* basePtr, int bit)
+    bool IsBitSet(byte* basePtr, int bit)
     {
         int index = Math.DivRem(bit, 8, out int remainder);
         byte val = basePtr[index];
@@ -102,7 +102,7 @@ internal unsafe class TextureDataReaderWriter
         return (val & mask) != 0;
     }
 
-    private void SetBit(byte* basePtr, int bit)
+    void SetBit(byte* basePtr, int bit)
     {
         int index = Math.DivRem(bit, 8, out int remainder);
         byte val = basePtr[index];

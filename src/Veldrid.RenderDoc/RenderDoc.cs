@@ -13,10 +13,10 @@ namespace Veldrid;
 /// </summary>
 public unsafe class RenderDoc
 {
-    private readonly RENDERDOC_API_1_4_0 _api;
-    private readonly IntPtr _nativeLib;
+    readonly RENDERDOC_API_1_4_0 _api;
+    readonly IntPtr _nativeLib;
 
-    private unsafe RenderDoc(IntPtr lib)
+    unsafe RenderDoc(IntPtr lib)
     {
         _nativeLib = lib;
         IntPtr getApiExport = NativeLibrary.GetExport(_nativeLib, "RENDERDOC_GetAPI");
@@ -365,7 +365,7 @@ public unsafe class RenderDoc
         return false;
     }
 
-    private static bool Load(string[] renderDocLibPaths, [MaybeNullWhen(false)] out RenderDoc renderDoc)
+    static bool Load(string[] renderDocLibPaths, [MaybeNullWhen(false)] out RenderDoc renderDoc)
     {
         foreach (string path in renderDocLibPaths)
         {
@@ -378,7 +378,7 @@ public unsafe class RenderDoc
         return false;
     }
 
-    private static string[] GetLibNames()
+    static string[] GetLibNames()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {

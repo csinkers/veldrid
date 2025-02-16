@@ -51,7 +51,7 @@ public class ObjParser
     /// <summary>
     /// Parses an <see cref="ObjFile"/> from the given text stream.
     /// </summary>
-    /// <param name="reader">The <see cref="Stream"/> to read from.</param>
+    /// <param name="stream">The <see cref="Stream"/> to read from.</param>
     /// <returns>A new <see cref="ObjFile"/>.</returns>
     public ObjFile Parse(Stream stream)
     {

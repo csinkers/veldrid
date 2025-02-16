@@ -209,17 +209,11 @@ internal static class FormatHelpers
     {
         if (IsCompressedFormat(realFormat))
         {
-            return IsSrgbCounterpart(viewFormat, realFormat);
+            // return IsSrgbCounterpart(viewFormat, realFormat); // TODO
+            throw new NotImplementedException();
         }
-        else
-        {
-            return GetViewFamilyFormat(viewFormat) == GetViewFamilyFormat(realFormat);
-        }
-    }
 
-    static bool IsSrgbCounterpart(PixelFormat viewFormat, PixelFormat realFormat)
-    {
-        throw new NotImplementedException();
+        return GetViewFamilyFormat(viewFormat) == GetViewFamilyFormat(realFormat);
     }
 
     [SuppressMessage(

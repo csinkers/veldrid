@@ -52,8 +52,7 @@ internal class Skybox(
             top,
             bottom,
             right,
-            left,
-            true
+            left
         );
 
         Texture textureCube = imageSharpCubemapTexture.CreateDeviceTexture(gd, factory);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Veldrid.SPIRV;
 
-namespace Veldrid.Oculus.Sample;
+namespace Veldrid.VirtualReality.Sample;
 
 internal static class ShaderHelper
 {

@@ -996,6 +996,7 @@ internal enum ovrTextureMiscFlags
     AutoGenerateMips = 0x0008,
 }
 
+[Flags]
 internal enum ovrTextureBindFlags
 {
     None,

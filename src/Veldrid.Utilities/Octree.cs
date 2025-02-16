@@ -33,31 +33,19 @@ public class Octree<T>(BoundingBox boundingBox, int maxChildren)
 
     public void GetContainedObjects(BoundingFrustum frustum, List<T> results)
     {
-        if (results == null)
-        {
-            throw new ArgumentNullException(nameof(results));
-        }
-
+        ArgumentNullException.ThrowIfNull(results);
         _currentRoot.GetContainedObjects(ref frustum, results);
     }
 
     public void GetContainedObjects(BoundingFrustum frustum, List<T> results, Func<T, bool> filter)
     {
-        if (results == null)
-        {
-            throw new ArgumentNullException(nameof(results));
-        }
-
+        ArgumentNullException.ThrowIfNull(results);
         _currentRoot.GetContainedObjects(ref frustum, results, filter);
     }
 
     public int RayCast(Ray ray, List<RayCastHit<T>> hits, RayCastFilter<T> filter)
     {
-        if (hits == null)
-        {
-            throw new ArgumentNullException(nameof(hits));
-        }
-
+        ArgumentNullException.ThrowIfNull(hits);
         return _currentRoot.RayCast(ray, hits, filter);
     }
 
@@ -74,14 +62,10 @@ public class Octree<T>(BoundingBox boundingBox, int maxChildren)
     public bool RemoveItem(T item)
     {
         if (!_currentRoot.TryGetContainedOctreeItem(item, out OctreeItem<T>? octreeItem))
-        {
             return false;
-        }
-        else
-        {
-            RemoveItem(octreeItem);
-            return true;
-        }
+
+        RemoveItem(octreeItem);
+        return true;
     }
 
     public void RemoveItem(OctreeItem<T> octreeItem)
@@ -98,23 +82,18 @@ public class Octree<T>(BoundingBox boundingBox, int maxChildren)
                 item + " is not contained in the octree. It cannot be moved."
             );
         }
-        else
-        {
-            MoveItem(octreeItem, newBounds);
-        }
+
+        MoveItem(octreeItem, newBounds);
     }
 
     public void MoveItem(OctreeItem<T> octreeItem, BoundingBox newBounds)
     {
         if (newBounds.ContainsNaN())
-        {
             throw new VeldridException("Invalid bounds: " + newBounds);
-        }
+
         OctreeNode<T>? newRoot = octreeItem.Container?.MoveContainedItem(octreeItem, newBounds);
         if (newRoot != null)
-        {
             _currentRoot = newRoot;
-        }
 
         _currentRoot = _currentRoot.TryTrimChildren();
     }
@@ -141,50 +120,30 @@ public class OctreeNode<T>
 {
     readonly List<OctreeItem<T>> _items = [];
     readonly OctreeNodeCache _nodeCache;
-    OctreeNode<T>[] _children = [];
-    BoundingBox _bounds;
 
-    public BoundingBox Bounds
-    {
-        get { return _bounds; }
-        set { _bounds = value; }
-    }
-    public int MaxChildren { get; private set; }
-    public OctreeNode<T>[] Children
-    {
-        get => _children;
-        private set => _children = value;
-    }
+    public BoundingBox Bounds { get; set; }
+    public int MaxChildren { get; }
+    public OctreeNode<T>[] Children { get; private set; } = [];
     public OctreeNode<T>? Parent { get; private set; }
 
     const int NumChildNodes = 8;
 
-    public static OctreeNode<T> CreateNewTree(ref BoundingBox bounds, int maxChildren)
-    {
-        return new(ref bounds, maxChildren, new(maxChildren), null);
-    }
+    public static OctreeNode<T> CreateNewTree(ref BoundingBox bounds, int maxChildren) =>
+        new(ref bounds, maxChildren, new(maxChildren), null);
 
-    public OctreeNode<T> AddItem(BoundingBox itemBounds, T item)
-    {
-        return AddItem(itemBounds, item, out _);
-    }
+    public OctreeNode<T> AddItem(BoundingBox itemBounds, T item) =>
+        AddItem(itemBounds, item, out _);
 
-    public OctreeNode<T> AddItem(ref BoundingBox itemBounds, T item)
-    {
-        return AddItem(ref itemBounds, item, out _);
-    }
+    public OctreeNode<T> AddItem(ref BoundingBox itemBounds, T item) =>
+        AddItem(ref itemBounds, item, out _);
 
-    public OctreeNode<T> AddItem(BoundingBox itemBounds, T item, out OctreeItem<T> itemContainer)
-    {
-        return AddItem(ref itemBounds, item, out itemContainer);
-    }
+    public OctreeNode<T> AddItem(BoundingBox itemBounds, T item, out OctreeItem<T> itemContainer) =>
+        AddItem(ref itemBounds, item, out itemContainer);
 
     public OctreeNode<T> AddItem(ref BoundingBox itemBounds, T item, out OctreeItem<T> octreeItem)
     {
         if (Parent != null)
-        {
             throw new VeldridException("Can only add items to the root Octree node.");
-        }
 
         octreeItem = _nodeCache.GetOctreeItem(ref itemBounds, item);
         return CoreAddRootItem(octreeItem);
@@ -195,9 +154,7 @@ public class OctreeNode<T>
         OctreeNode<T> root = this;
         bool result = CoreAddItem(octreeItem);
         if (!result)
-        {
             root = ResizeAndAdd(octreeItem);
-        }
 
         return root;
     }
@@ -211,9 +168,7 @@ public class OctreeNode<T>
 
         OctreeNode<T>? container = item.Container;
         if (container == null)
-        {
             return null;
-        }
 
         if (!container._items.Contains(item))
         {
@@ -229,9 +184,9 @@ public class OctreeNode<T>
             newRoot = null;
 
             // It may have moved into the bounds of a child node.
-            for (int i = 0; i < _children.Length; i++)
+            for (int i = 0; i < Children.Length; i++)
             {
-                if (_children[i].CoreAddItem(item))
+                if (Children[i].CoreAddItem(item))
                 {
                     _items.Remove(item);
                     break;
@@ -245,9 +200,7 @@ public class OctreeNode<T>
 
             OctreeNode<T> node = container;
             while (node.Parent != null && !node.CoreAddItem(item))
-            {
                 node = node.Parent;
-            }
 
             if (item.Container == null)
             {
@@ -274,10 +227,9 @@ public class OctreeNode<T>
                 "Cannot mark item as moved which doesn't belong to this OctreeNode."
             );
         }
+
         if (newBounds.ContainsNaN())
-        {
             throw new VeldridException("Invalid bounds: " + newBounds);
-        }
 
         octreeItem.HasPendingMove = true;
         octreeItem.Bounds = newBounds;
@@ -286,15 +238,11 @@ public class OctreeNode<T>
     OctreeNode<T> GetRootNode()
     {
         if (Parent == null)
-        {
             return this;
-        }
 
         OctreeNode<T> root = Parent;
         while (root.Parent != null)
-        {
             root = root.Parent;
-        }
 
         return root;
     }
@@ -303,9 +251,7 @@ public class OctreeNode<T>
     {
         OctreeNode<T>? container = octreeItem.Container;
         if (container == null || !container._items.Remove(octreeItem))
-        {
             return false;
-        }
 
         container.Parent?.ConsiderConsolidation();
 
@@ -315,7 +261,7 @@ public class OctreeNode<T>
 
     void ConsiderConsolidation()
     {
-        if (_children.Length > 0 && GetItemCount() < MaxChildren)
+        if (Children.Length > 0 && GetItemCount() < MaxChildren)
         {
             ConsolidateChildren();
             Parent?.ConsiderConsolidation();
@@ -324,9 +270,9 @@ public class OctreeNode<T>
 
     void ConsolidateChildren()
     {
-        for (int i = 0; i < _children.Length; i++)
+        for (int i = 0; i < Children.Length; i++)
         {
-            OctreeNode<T> child = _children[i];
+            OctreeNode<T> child = Children[i];
             child.ConsolidateChildren();
 
             foreach (OctreeItem<T> childItem in child._items)
@@ -377,26 +323,17 @@ public class OctreeNode<T>
     public int RayCast(Ray ray, List<RayCastHit<T>> hits, RayCastFilter<T> filter)
     {
         if (!ray.Intersects(Bounds))
-        {
             return 0;
-        }
-        else
-        {
-            int numHits = 0;
-            foreach (OctreeItem<T> item in _items)
-            {
-                if (ray.Intersects(item.Bounds))
-                {
-                    numHits += filter(ray, item.Item, hits);
-                }
-            }
-            for (int i = 0; i < _children.Length; i++)
-            {
-                numHits += _children[i].RayCast(ray, hits, filter);
-            }
 
-            return numHits;
-        }
+        int numHits = 0;
+        foreach (OctreeItem<T> item in _items)
+            if (ray.Intersects(item.Bounds))
+                numHits += filter(ray, item.Item, hits);
+
+        for (int i = 0; i < Children.Length; i++)
+            numHits += Children[i].RayCast(ray, hits, filter);
+
+        return numHits;
     }
 
     public BoundingBox GetPreciseBounds()
@@ -415,10 +352,8 @@ public class OctreeNode<T>
             max = Vector3.Max(max, item.Bounds.Max);
         }
 
-        for (int i = 0; i < _children.Length; i++)
-        {
-            _children[i].CoreGetPreciseBounds(ref min, ref max);
-        }
+        for (int i = 0; i < Children.Length; i++)
+            Children[i].CoreGetPreciseBounds(ref min, ref max);
 
         return new(min, max);
     }
@@ -426,10 +361,8 @@ public class OctreeNode<T>
     public int GetItemCount()
     {
         int count = _items.Count;
-        for (int i = 0; i < _children.Length; i++)
-        {
-            count += _children[i].GetItemCount();
-        }
+        for (int i = 0; i < Children.Length; i++)
+            count += Children[i].GetItemCount();
 
         return count;
     }
@@ -441,7 +374,7 @@ public class OctreeNode<T>
         Func<T, bool>? filter
     )
     {
-        ContainmentType ct = frustum.Contains(_bounds);
+        ContainmentType ct = frustum.Contains(Bounds);
         if (ct == ContainmentType.Contains)
         {
             CoreGetAllContainedObjects(results, filter);
@@ -459,9 +392,10 @@ public class OctreeNode<T>
                     }
                 }
             }
-            for (int i = 0; i < _children.Length; i++)
+
+            for (int i = 0; i < Children.Length; i++)
             {
-                _children[i].CoreGetContainedObjects(ref frustum, results, filter);
+                Children[i].CoreGetContainedObjects(ref frustum, results, filter);
             }
         }
     }
@@ -469,16 +403,11 @@ public class OctreeNode<T>
     public IEnumerable<OctreeItem<T>> GetAllOctreeItems()
     {
         foreach (OctreeItem<T> item in _items)
-        {
             yield return item;
-        }
+
         foreach (OctreeNode<T> child in Children)
-        {
-            foreach (OctreeItem<T> childItem in child.GetAllOctreeItems())
-            {
-                yield return childItem;
-            }
-        }
+        foreach (OctreeItem<T> childItem in child.GetAllOctreeItems())
+            yield return childItem;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -488,22 +417,17 @@ public class OctreeNode<T>
         {
             OctreeItem<T> octreeItem = _items[i];
             if (filter == null || filter(octreeItem.Item))
-            {
                 results.Add(octreeItem.Item);
-            }
         }
-        for (int i = 0; i < _children.Length; i++)
-        {
-            _children[i].CoreGetAllContainedObjects(results, filter);
-        }
+
+        for (int i = 0; i < Children.Length; i++)
+            Children[i].CoreGetAllContainedObjects(results, filter);
     }
 
     public void Clear()
     {
         if (Parent != null)
-        {
             throw new VeldridException("Can only clear the root OctreeNode.");
-        }
 
         RecycleNode();
     }
@@ -511,9 +435,7 @@ public class OctreeNode<T>
     void RecycleNode(bool recycleChildren = true)
     {
         if (recycleChildren)
-        {
             RecycleChildren();
-        }
 
         _items.Clear();
         _nodeCache.AddNode(this);
@@ -521,26 +443,22 @@ public class OctreeNode<T>
 
     void RecycleChildren()
     {
-        if (_children.Length != 0)
+        if (Children.Length != 0)
         {
-            for (int i = 0; i < _children.Length; i++)
-            {
-                _children[i].RecycleNode();
-            }
+            for (int i = 0; i < Children.Length; i++)
+                Children[i].RecycleNode();
 
-            _nodeCache.AddAndClearChildrenArray(_children);
-            _children = [];
+            _nodeCache.AddAndClearChildrenArray(Children);
+            Children = [];
         }
     }
 
     bool CoreAddItem(OctreeItem<T> item)
     {
         if (Bounds.Contains(item.Bounds) != ContainmentType.Contains)
-        {
             return false;
-        }
 
-        if (_items.Count >= MaxChildren && _children.Length == 0)
+        if (_items.Count >= MaxChildren && Children.Length == 0)
         {
             OctreeNode<T>? newNode = SplitChildren(item.Bounds, null);
             if (newNode != null)
@@ -553,23 +471,17 @@ public class OctreeNode<T>
                 return true;
             }
         }
-        else if (_children.Length > 0)
+        else if (Children.Length > 0)
         {
-            for (int i = 0; i < _children.Length; i++)
-            {
-                if (_children[i].CoreAddItem(item))
-                {
+            for (int i = 0; i < Children.Length; i++)
+                if (Children[i].CoreAddItem(item))
                     return true;
-                }
-            }
         }
 
         // Couldn't fit in any children.
 #if DEBUG
-        foreach (OctreeNode<T> child in _children)
-        {
+        foreach (OctreeNode<T> child in Children)
             Debug.Assert(child.Bounds.Contains(item.Bounds) != ContainmentType.Contains);
-        }
 #endif
 
         _items.Add(item);
@@ -582,12 +494,12 @@ public class OctreeNode<T>
     OctreeNode<T>? SplitChildren(BoundingBox itemBounds, OctreeNode<T>? existingChild)
     {
         Debug.Assert(
-            _children.Length == 0,
+            Children.Length == 0,
             "Children must be empty before SplitChildren is called."
         );
 
         OctreeNode<T>? childBigEnough = null;
-        _children = _nodeCache.GetChildrenArray();
+        Children = _nodeCache.GetChildrenArray();
         Vector3 center = Bounds.GetCenter();
         Vector3 dimensions = Bounds.GetDimensions();
 
@@ -604,16 +516,11 @@ public class OctreeNode<T>
                     Vector3 min = childCenter - quaterDimensions;
                     Vector3 max = childCenter + quaterDimensions;
                     BoundingBox childBounds = new(min, max);
-                    OctreeNode<T> newChild;
 
-                    if (existingChild != null && existingChild.Bounds == childBounds)
-                    {
-                        newChild = existingChild;
-                    }
-                    else
-                    {
-                        newChild = _nodeCache.GetNode(ref childBounds);
-                    }
+                    OctreeNode<T> newChild =
+                        existingChild != null && existingChild.Bounds == childBounds
+                            ? existingChild
+                            : _nodeCache.GetNode(ref childBounds);
 
                     if (childBounds.Contains(itemBounds) == ContainmentType.Contains)
                     {
@@ -622,7 +529,7 @@ public class OctreeNode<T>
                     }
 
                     newChild.Parent = this;
-                    _children[i] = newChild;
+                    Children[i] = newChild;
                     i++;
                 }
             }
@@ -630,10 +537,8 @@ public class OctreeNode<T>
 
         PushItemsToChildren();
 #if DEBUG
-        for (int g = 0; g < _children.Length; g++)
-        {
-            Debug.Assert(_children[g] != null);
-        }
+        for (int g = 0; g < Children.Length; g++)
+            Debug.Assert(Children[g] != null);
 #endif
         return childBigEnough;
     }
@@ -643,9 +548,9 @@ public class OctreeNode<T>
         for (int i = 0; i < _items.Count; i++)
         {
             OctreeItem<T> item = _items[i];
-            for (int c = 0; c < _children.Length; c++)
+            for (int c = 0; c < Children.Length; c++)
             {
-                if (_children[c].CoreAddItem(item))
+                if (Children[c].CoreAddItem(item))
                 {
                     _items.Remove(item);
                     i--;
@@ -657,10 +562,10 @@ public class OctreeNode<T>
 #if DEBUG
         for (int i = 0; i < _items.Count; i++)
         {
-            for (int c = 0; c < _children.Length; c++)
+            for (int c = 0; c < Children.Length; c++)
             {
                 Debug.Assert(
-                    _children[c].Bounds.Contains(_items[i].Bounds) != ContainmentType.Contains
+                    Children[c].Bounds.Contains(_items[i].Bounds) != ContainmentType.Contains
                 );
             }
         }
@@ -674,38 +579,23 @@ public class OctreeNode<T>
         Vector3 oldRootHalfExtents = Bounds.GetDimensions() * 0.5f;
 
         Vector3 expandDirection = Vector3.Normalize(octreeItem.Bounds.GetCenter() - oldRootCenter);
-        Vector3 newCenter = oldRootCenter;
-        if (expandDirection.X >= 0) // oldRoot = Left
-        {
-            newCenter.X += oldRootHalfExtents.X;
-        }
-        else
-        {
-            newCenter.X -= oldRootHalfExtents.X;
-        }
-
-        if (expandDirection.Y >= 0) // oldRoot = Bottom
-        {
-            newCenter.Y += oldRootHalfExtents.Y;
-        }
-        else
-        {
-            newCenter.Y -= oldRootHalfExtents.Y;
-        }
-
-        if (expandDirection.Z >= 0) // oldRoot = Far
-        {
-            newCenter.Z += oldRootHalfExtents.Z;
-        }
-        else
-        {
-            newCenter.Z -= oldRootHalfExtents.Z;
-        }
+        Vector3 newCenter = new(
+            expandDirection.X >= 0 // oldRoot = Left
+                ? oldRootCenter.X + oldRootHalfExtents.X
+                : oldRootCenter.X - oldRootHalfExtents.X,
+            expandDirection.Y >= 0 // oldRoot = Bottom
+                ? oldRootCenter.Y + oldRootHalfExtents.Y
+                : oldRootCenter.Y - oldRootHalfExtents.Y,
+            expandDirection.Z >= 0 // oldRoot = Far
+                ? oldRootCenter.Z + oldRootHalfExtents.Z
+                : oldRootCenter.Z - oldRootHalfExtents.Z
+        );
 
         BoundingBox newRootBounds = new(
             newCenter - oldRootHalfExtents * 2f,
             newCenter + oldRootHalfExtents * 2f
         );
+
         OctreeNode<T> newRoot = _nodeCache.GetNode(ref newRootBounds);
         OctreeNode<T>? fittingNode = newRoot.SplitChildren(octreeItem.Bounds, oldRoot);
         if (fittingNode != null)
@@ -715,12 +605,11 @@ public class OctreeNode<T>
                 succeeded,
                 "Octree node returned from SplitChildren must fit the item given to it."
             );
+
             return newRoot;
         }
-        else
-        {
-            return newRoot.CoreAddRootItem(octreeItem);
-        }
+
+        return newRoot.CoreAddRootItem(octreeItem);
     }
 
     public OctreeNode(BoundingBox box, int maxChildren)
@@ -746,10 +635,10 @@ public class OctreeNode<T>
         _items.Clear();
         Parent = null;
 
-        if (_children.Length != 0)
+        if (Children.Length != 0)
         {
             _nodeCache.AddAndClearChildrenArray(Children);
-            _children = [];
+            Children = [];
         }
     }
 
@@ -774,14 +663,13 @@ public class OctreeNode<T>
             }
         }
 
-        for (int i = 0; i < _children.Length; i++)
+        for (int i = 0; i < Children.Length; i++)
         {
-            OctreeNode<T> child = _children[i];
+            OctreeNode<T> child = Children[i];
             Debug.Assert(child != null, "node child cannot be null.");
+
             if (child.TryGetContainedOctreeItem(item, out octreeItem))
-            {
                 return true;
-            }
         }
 
         octreeItem = null;
@@ -794,69 +682,54 @@ public class OctreeNode<T>
     /// </summary>
     internal OctreeNode<T> TryTrimChildren()
     {
-        if (_items.Count == 0)
+        if (_items.Count != 0)
+            return this;
+
+        OctreeNode<T>? loneChild = null;
+        for (int i = 0; i < Children.Length; i++)
         {
-            OctreeNode<T>? loneChild = null;
-            for (int i = 0; i < _children.Length; i++)
+            OctreeNode<T> child = Children[i];
+            if (child.GetItemCount() != 0)
             {
-                OctreeNode<T> child = _children[i];
-                if (child.GetItemCount() != 0)
-                {
-                    if (loneChild != null)
-                    {
-                        return this;
-                    }
-                    else
-                    {
-                        loneChild = child;
-                    }
-                }
-            }
+                if (loneChild != null)
+                    return this;
 
-            if (loneChild != null)
-            {
-                // Recycle excess
-                for (int i = 0; i < _children.Length; i++)
-                {
-                    OctreeNode<T> child = _children[i];
-                    if (child != loneChild)
-                    {
-                        child.RecycleNode();
-                    }
-                }
-
-                RecycleNode(recycleChildren: false);
-
-                // Return lone child in use
-                loneChild.Parent = null;
-                return loneChild;
+                loneChild = child;
             }
         }
 
-        return this;
+        if (loneChild == null)
+            return this;
+
+        // Recycle excess
+        for (int i = 0; i < Children.Length; i++)
+        {
+            OctreeNode<T> child = Children[i];
+            if (child != loneChild)
+                child.RecycleNode();
+        }
+
+        RecycleNode(recycleChildren: false);
+
+        // Return lone child in use
+        loneChild.Parent = null;
+        return loneChild;
     }
 
     internal void CollectPendingMoves(List<OctreeItem<T>> pendingMoves)
     {
-        for (int i = 0; i < _children.Length; i++)
-        {
-            _children[i].CollectPendingMoves(pendingMoves);
-        }
+        for (int i = 0; i < Children.Length; i++)
+            Children[i].CollectPendingMoves(pendingMoves);
 
         for (int i = 0; i < _items.Count; i++)
         {
             OctreeItem<T> item = _items[i];
             if (item.HasPendingMove)
-            {
                 pendingMoves.Add(item);
-            }
         }
     }
 
-    string DebuggerDisplayString
-    {
-        get { return string.Format("{0} - {1}, Items:{2}", Bounds.Min, Bounds.Max, _items.Count); }
-    }
+    string DebuggerDisplayString => $"{Bounds.Min} - {Bounds.Max}, Items:{_items.Count}";
 
     class OctreeNodeCache(int maxChildren)
     {
@@ -864,36 +737,36 @@ public class OctreeNode<T>
         readonly Stack<OctreeNode<T>[]> _cachedChildren = new();
         readonly Stack<OctreeItem<T>> _cachedItems = new();
 
-        public int MaxChildren { get; private set; } = maxChildren;
-
-        public int MaxCachedItemCount { get; set; } = 100;
+        public int MaxChildren { get; } = maxChildren;
+        public int MaxCachedItemCount => 100;
 
         public void AddNode(OctreeNode<T> child)
         {
             Debug.Assert(!_cachedNodes.Contains(child));
-            if (_cachedNodes.Count < MaxCachedItemCount)
-            {
-                for (int i = 0; i < child._items.Count; i++)
-                {
-                    OctreeItem<T> item = child._items[i];
-                    item.Item = default;
-                    item.Container = null;
-                }
-                child.Parent = null;
-                child._children = [];
+            if (_cachedNodes.Count >= MaxCachedItemCount)
+                return;
 
-                _cachedNodes.Push(child);
+            for (int i = 0; i < child._items.Count; i++)
+            {
+                OctreeItem<T> item = child._items[i];
+                item.Item = default;
+                item.Container = null;
             }
+
+            child.Parent = null;
+            child.Children = [];
+
+            _cachedNodes.Push(child);
         }
 
         public void AddOctreeItem(OctreeItem<T> octreeItem)
         {
-            if (_cachedItems.Count < MaxCachedItemCount)
-            {
-                octreeItem.Item = default;
-                octreeItem.Container = null;
-                _cachedItems.Push(octreeItem);
-            }
+            if (_cachedItems.Count >= MaxCachedItemCount)
+                return;
+
+            octreeItem.Item = default;
+            octreeItem.Container = null;
+            _cachedItems.Push(octreeItem);
         }
 
         public OctreeNode<T> GetNode(ref BoundingBox bounds)
@@ -904,23 +777,19 @@ public class OctreeNode<T>
                 node.Reset(ref bounds);
                 return node;
             }
-            else
-            {
-                return CreateNewNode(ref bounds);
-            }
+
+            return CreateNewNode(ref bounds);
         }
 
         public void AddAndClearChildrenArray(OctreeNode<T>[] children)
         {
-            if (_cachedChildren.Count < MaxCachedItemCount)
-            {
-                for (int i = 0; i < children.Length; i++)
-                {
-                    children[i] = null!;
-                }
+            if (_cachedChildren.Count >= MaxCachedItemCount)
+                return;
 
-                _cachedChildren.Push(children);
-            }
+            for (int i = 0; i < children.Length; i++)
+                children[i] = null!;
+
+            _cachedChildren.Push(children);
         }
 
         public OctreeNode<T>[] GetChildrenArray()
@@ -938,10 +807,8 @@ public class OctreeNode<T>
 
                 return children;
             }
-            else
-            {
-                return new OctreeNode<T>[NumChildNodes];
-            }
+
+            return new OctreeNode<T>[NumChildNodes];
         }
 
         public OctreeItem<T> GetOctreeItem(ref BoundingBox bounds, T item)
@@ -972,7 +839,7 @@ public class OctreeNode<T>
 
 public class OctreeItem<T>(ref BoundingBox bounds, T item)
 {
-    /// <summary>The node this item directly resides in. /// </summary>
+    /// <summary>The node this item directly resides in.</summary>
     public OctreeNode<T>? Container;
     public BoundingBox Bounds = bounds;
 
@@ -981,8 +848,5 @@ public class OctreeItem<T>(ref BoundingBox bounds, T item)
 
     public bool HasPendingMove { get; set; }
 
-    public override string ToString()
-    {
-        return string.Format("{0}, {1}", Bounds, Item);
-    }
+    public override string ToString() => $"{Bounds}, {Item}";
 }

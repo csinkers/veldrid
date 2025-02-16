@@ -11,15 +11,30 @@ using Veldrid.StartupUtilities;
 
 namespace Veldrid.VirtualReality.Sample;
 
-internal class Program
+internal static class Program
 {
+    const double MotionSpeed = 2.0;
     static Vector3 _userPosition;
-    static readonly double _motionSpeed = 2.0;
     static bool _useOculus;
-    static bool _switchVRContext;
+    static bool _switchVrContext;
 
     static void Main(string[] args)
     {
+        GraphicsBackend backend = GraphicsBackend.Direct3D11;
+        foreach (var arg in args)
+        {
+            switch (arg.ToUpperInvariant())
+            {
+                case "-VK":
+                    backend = GraphicsBackend.Vulkan;
+                    break;
+
+                case "-GL":
+                    backend = GraphicsBackend.OpenGL;
+                    break;
+            }
+        }
+
         _useOculus = true;
         if (!VRContext.IsOculusSupported())
         {
@@ -47,11 +62,11 @@ internal class Program
             ? VRContext.CreateOculus(options)
             : VRContext.CreateOpenVR(options);
 
-        GraphicsBackend backend = GraphicsBackend.Direct3D11;
-
-        bool debug = false;
+        bool debug =
 #if DEBUG
-        debug = true;
+            backend != GraphicsBackend.Vulkan; // Oculus runtime causes validation errors.
+#else
+            false;
 #endif
 
         GraphicsDeviceOptions gdo = new(
@@ -63,12 +78,6 @@ internal class Program
             true,
             true
         );
-
-        if (backend == GraphicsBackend.Vulkan)
-        {
-            // Oculus runtime causes validation errors.
-            gdo.Debug = false;
-        }
 
         (GraphicsDevice gd, Swapchain sc) = CreateDeviceAndSwapchain(
             window,
@@ -175,12 +184,12 @@ internal class Program
                         if (ImGui.MenuItem("Oculus", null, _useOculus) && !_useOculus)
                         {
                             _useOculus = true;
-                            _switchVRContext = true;
+                            _switchVrContext = true;
                         }
                         if (ImGui.MenuItem("OpenVR", null, !_useOculus) && _useOculus)
                         {
                             _useOculus = false;
-                            _switchVRContext = true;
+                            _switchVrContext = true;
                         }
 
                         ImGui.EndMenu();
@@ -245,9 +254,9 @@ internal class Program
 
             vrContext.SubmitFrame();
 
-            if (_switchVRContext)
+            if (_switchVrContext)
             {
-                _switchVRContext = false;
+                _switchVrContext = false;
                 vrContext.Dispose();
                 vrContext = _useOculus ? VRContext.CreateOculus() : VRContext.CreateOpenVR();
                 vrContext.Initialize(gd);
@@ -302,34 +311,27 @@ internal class Program
         Vector3 motionDir = Vector3.Zero;
 
         if (InputTracker.GetKey(Key.W))
-        {
             motionDir += -Vector3.UnitZ;
-        }
+
         if (InputTracker.GetKey(Key.A))
-        {
             motionDir += -Vector3.UnitX;
-        }
+
         if (InputTracker.GetKey(Key.S))
-        {
             motionDir += Vector3.UnitZ;
-        }
+
         if (InputTracker.GetKey(Key.D))
-        {
             motionDir += Vector3.UnitX;
-        }
+
         if (InputTracker.GetKey(Key.Q))
-        {
             motionDir += -Vector3.UnitY;
-        }
+
         if (InputTracker.GetKey(Key.E))
-        {
             motionDir += Vector3.UnitY;
-        }
 
         if (motionDir != Vector3.Zero)
         {
             motionDir = Vector3.Normalize(motionDir);
-            _userPosition += motionDir * (float)(deltaSeconds * _motionSpeed);
+            _userPosition += motionDir * (float)(deltaSeconds * MotionSpeed);
         }
     }
 

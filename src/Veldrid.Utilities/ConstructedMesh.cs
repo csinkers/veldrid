@@ -27,10 +27,11 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
     public abstract IndexFormat IndexFormat { get; }
 
     /// <summary>
-    /// Constructs a <see cref="VertexBuffer"/> from this <see cref="MeshData"/>.
+    /// Constructs a vertex <see cref="DeviceBuffer"/> from this <see cref="ConstructedMesh"/>.
     /// </summary>
     /// <param name="factory">The <see cref="ResourceFactory"/> to use for device resource creation.</param>
-    /// <returns></returns>
+    /// <param name="cl">The command list to use for updating the buffer</param>
+    /// <returns>The created buffer</returns>
     public DeviceBuffer CreateVertexBuffer(ResourceFactory factory, CommandList cl)
     {
         DeviceBuffer vb = factory.CreateBuffer(
@@ -44,10 +45,11 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
     }
 
     /// <summary>
-    /// Constructs a <see cref="IndexBuffer"/> from this <see cref="MeshData"/>.
+    /// Constructs an index <see cref="DeviceBuffer"/> from this <see cref="ConstructedMesh"/>.
     /// </summary>
     /// <param name="factory">The <see cref="ResourceFactory"/> to use for device resource creation.</param>
-    /// <returns></returns>
+    /// <param name="cl">The command list to use for updating the buffer</param>
+    /// <returns>The created buffer</returns>
     public abstract DeviceBuffer CreateIndexBuffer(ResourceFactory factory, CommandList cl);
 
     /// <summary>

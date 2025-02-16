@@ -33,7 +33,7 @@ internal class OpenVRContext : VRContext
     {
         _options = options;
         EVRInitError initError = EVRInitError.None;
-        CVRSystem? vrSystem = OVR.Init(ref initError, EVRApplicationType.VRApplication_Scene);
+        CVRSystem? vrSystem = OVR.Init(ref initError);
         if (initError != EVRInitError.None || vrSystem == null)
         {
             throw new VeldridException(

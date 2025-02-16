@@ -5,7 +5,7 @@ namespace Veldrid.Utilities;
 
 internal static class FastParse
 {
-    static readonly double[] _doubleExpLookup = GetDoubleExponents();
+    static readonly double[] DoubleExpLookup = GetDoubleExponents();
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static bool TryParseInt(ReadOnlySpan<char> s, out int result)
@@ -20,21 +20,21 @@ internal static class FastParse
             sign = -1;
             i = 1;
         }
-        else if (c > '9' || c < '0')
+        else if (c is > '9' or < '0')
         {
             goto Fail;
         }
         else
         {
             i = 1;
-            r = 10 * r + (c - '0');
+            r = c - '0';
             sign = 1;
         }
 
         for (; i < s.Length; i++)
         {
             c = s[i];
-            if (c > '9' || c < '0')
+            if (c is > '9' or < '0')
             {
                 goto Fail;
             }
@@ -69,7 +69,7 @@ internal static class FastParse
             sign = -1;
             i = 1;
         }
-        else if (c > '9' || c < '0')
+        else if (c is > '9' or < '0')
         {
             goto Fail;
         }
@@ -83,14 +83,14 @@ internal static class FastParse
         for (; i < s.Length; i++)
         {
             c = s[i];
-            if (c > '9' || c < '0')
+            if (c is > '9' or < '0')
             {
                 if (c == decimalSeparator)
                 {
                     i++;
                     goto DecimalPoint;
                 }
-                else if (c == 'e' || c == 'E')
+                else if (c is 'e' or 'E')
                 {
                     goto DecimalPoint;
                 }
@@ -115,9 +115,9 @@ internal static class FastParse
         for (; i < s.Length; i++)
         {
             c = s[i];
-            if (c > '9' || c < '0')
+            if (c is > '9' or < '0')
             {
-                if (c == 'e' || c == 'E')
+                if (c is 'e' or 'E')
                 {
                     exponent = ProcessExponent(s, i);
                     break;
@@ -155,13 +155,10 @@ internal static class FastParse
         for (i++; i < s.Length; i++)
         {
             char c = s[i];
-            if (c > '9' || c < '0')
+            if (c is (> '9' or < '0') and '-')
             {
-                if (c == '-')
-                {
-                    expSign = -1;
-                    continue;
-                }
+                expSign = -1;
+                continue;
             }
 
             exp = 10 * exp + (c - '0');
@@ -173,11 +170,8 @@ internal static class FastParse
 
     static double GetInversedBaseTen(int index)
     {
-        double[] array = _doubleExpLookup;
-        if ((uint)index < (uint)array.Length)
-            return array[index];
-        else
-            return Math.Pow(10, -index);
+        double[] array = DoubleExpLookup;
+        return (uint)index < (uint)array.Length ? array[index] : Math.Pow(10, -index);
     }
 
     static double[] GetDoubleExponents()

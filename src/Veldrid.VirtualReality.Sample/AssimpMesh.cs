@@ -18,8 +18,6 @@ internal class AssimpMesh : IDisposable
     readonly List<MeshPiece> _meshPieces = [];
     readonly Pipeline _pipeline;
     readonly DeviceBuffer _wvpBuffer;
-    readonly Texture _texture;
-    readonly TextureView _view;
     readonly ResourceSet _rs;
 
     public AssimpMesh(
@@ -33,10 +31,10 @@ internal class AssimpMesh : IDisposable
         ResourceFactory factory = gd.ResourceFactory;
 
         Shader[] shaders = factory.CreateFromSpirv(
-            new(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
+            new(ShaderStages.Vertex, Encoding.ASCII.GetBytes(VertexGlsl), "main"),
             new ShaderDescription(
                 ShaderStages.Fragment,
-                Encoding.ASCII.GetBytes(fragmentGlsl),
+                Encoding.ASCII.GetBytes(FragmentGlsl),
                 "main"
             )
         );
@@ -65,21 +63,11 @@ internal class AssimpMesh : IDisposable
         _disposables.Add(rl);
 
         VertexLayoutDescription positionLayoutDesc = new(
-            new VertexElementDescription[]
-            {
-                new(
-                    "Position",
-                    VertexElementSemantic.TextureCoordinate,
-                    VertexElementFormat.Float3
-                ),
-            }
+            [new("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3)]
         );
 
         VertexLayoutDescription texCoordLayoutDesc = new(
-            new VertexElementDescription[]
-            {
-                new("UV", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-            }
+            [new("UV", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2)]
         );
 
         _pipeline = factory.CreateGraphicsPipeline(
@@ -100,12 +88,15 @@ internal class AssimpMesh : IDisposable
         );
         _disposables.Add(_wvpBuffer);
 
-        _texture = new ImageSharpTexture(texturePath, true, true).CreateDeviceTexture(gd, factory);
-        _view = factory.CreateTextureView(_texture);
-        _disposables.Add(_texture);
-        _disposables.Add(_view);
+        Texture texture = new ImageSharpTexture(texturePath, true, true).CreateDeviceTexture(
+            gd,
+            factory
+        );
+        TextureView view = factory.CreateTextureView(texture);
+        _disposables.Add(texture);
+        _disposables.Add(view);
 
-        _rs = factory.CreateResourceSet(new(rl, _wvpBuffer, _view, gd.Aniso4xSampler));
+        _rs = factory.CreateResourceSet(new(rl, _wvpBuffer, view, gd.Aniso4xSampler));
         _disposables.Add(_rs);
 
         AssimpContext ac = new();
@@ -152,7 +143,7 @@ internal class AssimpMesh : IDisposable
         }
     }
 
-    const string vertexGlsl =
+    const string VertexGlsl =
         @"
 #version 450
 
@@ -175,7 +166,7 @@ void main()
 }
 ";
 
-    const string fragmentGlsl =
+    const string FragmentGlsl =
         @"
 #version 450
 

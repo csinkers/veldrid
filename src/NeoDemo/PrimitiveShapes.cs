@@ -3,14 +3,19 @@ using Veldrid.Utilities;
 
 namespace Veldrid.NeoDemo;
 
-public static partial class PrimitiveShapes
+public static class PrimitiveShapes
 {
     public static ConstructedMesh16 Plane(int width, int height, int uvUnit)
     {
-        float halfWidth = width / 2;
-        float halfHeight = height / 2;
+        int hw = width / 2;
+        int hh = height / 2;
+        float halfWidth = hh;
+        float halfHeight = hw;
 
-        Vector2 uvScale = new(width / uvUnit, height / uvUnit);
+        int uvScaleX = width / uvUnit;
+        int uvScaleY = height / uvUnit;
+
+        Vector2 uvScale = new(uvScaleX, uvScaleY);
 
         VertexPositionNormalTexture[] vertices =
         [

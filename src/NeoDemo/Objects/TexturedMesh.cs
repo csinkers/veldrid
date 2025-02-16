@@ -179,7 +179,6 @@ public class TexturedMesh : CullRenderable
         _shadowMapResourceSets = CreateShadowMapResourceSets(
             gd.ResourceFactory,
             disposeFactory,
-            cl,
             sc,
             projViewCombinedLayout,
             worldLayout
@@ -422,7 +421,6 @@ public class TexturedMesh : CullRenderable
     ResourceSet[] CreateShadowMapResourceSets(
         ResourceFactory sharedFactory,
         ResourceFactory disposeFactory,
-        CommandList cl,
         SceneContext sc,
         ResourceLayout projViewLayout,
         ResourceLayout worldLayout
@@ -436,16 +434,19 @@ public class TexturedMesh : CullRenderable
                 i == 0 ? sc.LightViewProjectionBuffer0
                 : i == 1 ? sc.LightViewProjectionBuffer1
                 : sc.LightViewProjectionBuffer2;
+
             ret[i * 2] = StaticResourceCache.GetResourceSet(
                 sharedFactory,
                 new(projViewLayout, viewProjBuffer)
             );
+
             ResourceSet worldRS = disposeFactory.CreateResourceSet(
                 new(
                     worldLayout,
                     new DeviceBufferRange(_worldAndInverseBuffer!, _uniformOffset, 128)
                 )
             );
+
             ret[i * 2 + 1] = worldRS;
         }
 
@@ -510,15 +511,15 @@ public class TexturedMesh : CullRenderable
                 renderPass == RenderPasses.ShadowMapNear ? 0
                 : renderPass == RenderPasses.ShadowMapMid ? 1
                 : 2;
-            RenderShadowMap(cl, sc, shadowMapIndex);
+            RenderShadowMap(cl, shadowMapIndex);
         }
         else if (renderPass == RenderPasses.Standard || renderPass == RenderPasses.AlphaBlend)
         {
-            RenderStandard(cl, sc, false);
+            RenderStandard(cl, false);
         }
         else if (renderPass == RenderPasses.ReflectionMap)
         {
-            RenderStandard(cl, sc, true);
+            RenderStandard(cl, true);
         }
     }
 
@@ -532,7 +533,7 @@ public class TexturedMesh : CullRenderable
         gd.UpdateBuffer(_worldAndInverseBuffer!, _uniformOffset * 2, ref wai);
     }
 
-    void RenderShadowMap(CommandList cl, SceneContext sc, int shadowMapIndex)
+    void RenderShadowMap(CommandList cl, int shadowMapIndex)
     {
         cl.SetVertexBuffer(0, _vb!);
         cl.SetIndexBuffer(_ib!, _meshData.IndexFormat);
@@ -543,7 +544,7 @@ public class TexturedMesh : CullRenderable
         cl.DrawIndexed((uint)_indexCount, 1, 0, 0, 0);
     }
 
-    void RenderStandard(CommandList cl, SceneContext sc, bool reflectionPass)
+    void RenderStandard(CommandList cl, bool reflectionPass)
     {
         cl.SetVertexBuffer(0, _vb!);
         cl.SetIndexBuffer(_ib!, _meshData.IndexFormat);

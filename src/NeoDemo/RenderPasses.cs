@@ -3,7 +3,7 @@
 namespace Veldrid.NeoDemo;
 
 [Flags]
-public enum RenderPasses : int
+public enum RenderPasses
 {
     Standard = 1 << 0,
     AlphaBlend = 1 << 1,

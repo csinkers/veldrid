@@ -19,6 +19,7 @@ public static class ShaderHelper
 #if DEBUG
         debug = true;
 #endif
+
         Shader[] shaders = factory.CreateFromSpirv(
             new(ShaderStages.Vertex, vsBytes, "main", debug),
             new(ShaderStages.Fragment, fsBytes, "main", debug),

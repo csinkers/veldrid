@@ -1,21 +1,15 @@
 ﻿namespace Veldrid.NeoDemo;
 
-public class FrameTimeAverager
+public class FrameTimeAverager(double maxTimeSeconds)
 {
-    readonly double _timeLimit = 666;
+    const double DecayRate = .3;
 
     double _accumulatedTime;
     int _frameCount;
-    readonly double _decayRate = .3;
 
     public double CurrentAverageFrameTimeSeconds { get; private set; }
     public double CurrentAverageFrameTimeMilliseconds => CurrentAverageFrameTimeSeconds * 1000.0;
     public double CurrentAverageFramesPerSecond => 1 / CurrentAverageFrameTimeSeconds;
-
-    public FrameTimeAverager(double maxTimeSeconds)
-    {
-        _timeLimit = maxTimeSeconds;
-    }
 
     public void Reset()
     {
@@ -27,18 +21,16 @@ public class FrameTimeAverager
     {
         _accumulatedTime += seconds;
         _frameCount++;
-        if (_accumulatedTime >= _timeLimit)
-        {
+        if (_accumulatedTime >= maxTimeSeconds)
             Average();
-        }
     }
 
     void Average()
     {
         double total = _accumulatedTime;
+        double average = total / _frameCount;
         CurrentAverageFrameTimeSeconds =
-            (CurrentAverageFrameTimeSeconds * _decayRate)
-            + ((total / _frameCount) * (1 - _decayRate));
+            CurrentAverageFrameTimeSeconds * DecayRate + average * (1 - DecayRate);
 
         _accumulatedTime = 0;
         _frameCount = 0;

@@ -314,8 +314,6 @@ public class Scene
 
         cl.PushDebugGroup("Duplicator");
         cl.SetFramebuffer(sc.DuplicatorFramebuffer);
-        fbWidth = sc.DuplicatorFramebuffer.Width;
-        fbHeight = sc.DuplicatorFramebuffer.Height;
         cl.SetFullViewports();
         Render(
             gd,
@@ -334,8 +332,6 @@ public class Scene
 
         cl.PushDebugGroup("Swapchain Pass");
         cl.SetFramebuffer(gd.SwapchainFramebuffer!);
-        fbWidth = gd.SwapchainFramebuffer!.Width;
-        fbHeight = gd.SwapchainFramebuffer.Height;
         cl.SetFullViewports();
         Render(
             gd,
@@ -355,10 +351,10 @@ public class Scene
         cl.End();
 
         _resourceUpdateCL!.Begin();
+
         foreach (Renderable renderable in _allPerFrameRenderablesSet)
-        {
             renderable.UpdatePerFrameResources(gd, _resourceUpdateCL, sc);
-        }
+
         _resourceUpdateCL.End();
 
         gd.SubmitCommands(_resourceUpdateCL);
@@ -833,15 +829,15 @@ public class Scene
     readonly HashSet<Renderable> _allPerFrameRenderablesSet = [];
     readonly RenderQueue[] _renderQueues = Enumerable
         .Range(0, 4)
-        .Select(i => new RenderQueue())
+        .Select(_ => new RenderQueue())
         .ToArray();
     readonly List<CullRenderable>[] _cullableStage = Enumerable
         .Range(0, 4)
-        .Select(i => new List<CullRenderable>())
+        .Select(_ => new List<CullRenderable>())
         .ToArray();
     readonly List<Renderable>[] _renderableStage = Enumerable
         .Range(0, 4)
-        .Select(i => new List<Renderable>())
+        .Select(_ => new List<Renderable>())
         .ToArray();
 
     void CollectVisibleObjects(

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Numerics;
 using ImGuiNET;
@@ -18,17 +19,16 @@ public class NeoDemo
     Sdl2Window _window;
     GraphicsDevice _gd;
     readonly Scene _scene;
-    readonly ImGuiRenderable _igRenderable;
     readonly SceneContext _sc = new();
     bool _windowResized;
     bool _recreateWindow = true;
 
-    static readonly double _desiredFrameLengthSeconds = 1.0 / 60.0;
-    static readonly bool _limitFrameRate = false;
-    static readonly FrameTimeAverager _fta = new(0.666);
+    const double DesiredFrameLengthSeconds = 1.0 / 60.0;
+    public bool LimitFrameRate { get; set; } = false;
+    readonly FrameTimeAverager _fta = new(0.666);
     CommandList _frameCommands;
 
-    event Action<int, int> _resizeHandled;
+    event Action<int, int>? ResizeHandled;
 
     readonly string[] _msaaOptions = ["Off", "2x", "4x", "8x", "16x", "32x"];
     int _msaaOption;
@@ -58,6 +58,7 @@ public class NeoDemo
             WindowInitialState = WindowState.Normal,
             WindowTitle = "Veldrid NeoDemo",
         };
+
         GraphicsDeviceOptions gdOptions = new(
             false,
             null,
@@ -67,9 +68,11 @@ public class NeoDemo
             true,
             _colorSrgb
         );
+
 #if DEBUG
         gdOptions.Debug = true;
 #endif
+
         VeldridStartup.CreateWindowAndGraphicsDevice(
             windowCI,
             gdOptions,
@@ -90,10 +93,10 @@ public class NeoDemo
 
         _sc.SetCurrentScene(_scene);
 
-        _igRenderable = new(_window.Width, _window.Height);
-        _resizeHandled += (w, h) => _igRenderable.WindowResized(w, h);
-        _scene.AddRenderable(_igRenderable);
-        _scene.AddUpdateable(_igRenderable);
+        ImGuiRenderable igRenderable = new(_window.Width, _window.Height);
+        ResizeHandled += (w, h) => igRenderable.WindowResized(w, h);
+        _scene.AddRenderable(igRenderable);
+        _scene.AddUpdateable(igRenderable);
 
         Skybox skybox = Skybox.LoadDefaultSkybox();
         _scene.AddRenderable(skybox);
@@ -107,22 +110,22 @@ public class NeoDemo
         }
 
         ShadowmapDrawer texDrawIndexeder = new(() => _window, () => _sc.NearShadowMapView);
-        _resizeHandled += (w, h) => texDrawIndexeder.OnWindowResized();
+        ResizeHandled += (_, _) => texDrawIndexeder.OnWindowResized();
         texDrawIndexeder.Position = new(10, 25);
         _scene.AddRenderable(texDrawIndexeder);
 
         ShadowmapDrawer texDrawIndexeder2 = new(() => _window, () => _sc.MidShadowMapView);
-        _resizeHandled += (w, h) => texDrawIndexeder2.OnWindowResized();
+        ResizeHandled += (_, _) => texDrawIndexeder2.OnWindowResized();
         texDrawIndexeder2.Position = new(20 + texDrawIndexeder2.Size.X, 25);
         _scene.AddRenderable(texDrawIndexeder2);
 
         ShadowmapDrawer texDrawIndexeder3 = new(() => _window, () => _sc.FarShadowMapView);
-        _resizeHandled += (w, h) => texDrawIndexeder3.OnWindowResized();
+        ResizeHandled += (_, _) => texDrawIndexeder3.OnWindowResized();
         texDrawIndexeder3.Position = new(30 + (texDrawIndexeder3.Size.X * 2), 25);
         _scene.AddRenderable(texDrawIndexeder3);
 
         ShadowmapDrawer reflectionTexDrawer = new(() => _window, () => _sc.ReflectionColorView);
-        _resizeHandled += (w, h) => reflectionTexDrawer.OnWindowResized();
+        ResizeHandled += (_, _) => reflectionTexDrawer.OnWindowResized();
         reflectionTexDrawer.Position = new(40 + (reflectionTexDrawer.Size.X * 3), 25);
         _scene.AddRenderable(reflectionTexDrawer);
 
@@ -260,13 +263,7 @@ public class NeoDemo
         string name
     )
     {
-        TexturedMesh mesh = new(
-            name,
-            meshData,
-            texData,
-            alphaTexData,
-            materialProps ?? CommonMaterials.Brick
-        );
+        TexturedMesh mesh = new(name, meshData, texData, alphaTexData, materialProps);
         mesh.Transform.Position = position;
         mesh.Transform.Rotation = rotation;
         mesh.Transform.Scale = scale;
@@ -284,7 +281,7 @@ public class NeoDemo
             double deltaSeconds =
                 (currentFrameTicks - previousFrameTicks) / (double)Stopwatch.Frequency;
 
-            while (_limitFrameRate && deltaSeconds < _desiredFrameLengthSeconds)
+            while (LimitFrameRate && deltaSeconds < DesiredFrameLengthSeconds)
             {
                 currentFrameTicks = sw.ElapsedTicks;
                 deltaSeconds =
@@ -298,9 +295,7 @@ public class NeoDemo
             InputTracker.UpdateFrameInput(snapshot, _window);
             Update((float)deltaSeconds);
             if (!_window.Exists)
-            {
                 break;
-            }
 
             Draw();
         }
@@ -713,21 +708,21 @@ public class NeoDemo
                 ref props.SpecularIntensity.X,
                 0f,
                 10f,
-                props.SpecularIntensity.X.ToString()
+                props.SpecularIntensity.X.ToString(CultureInfo.InvariantCulture)
             )
             | ImGui.SliderFloat(
                 "Power",
                 ref props.SpecularPower,
                 0f,
                 1000f,
-                props.SpecularPower.ToString()
+                props.SpecularPower.ToString(CultureInfo.InvariantCulture)
             )
             | ImGui.SliderFloat(
                 "Reflectivity",
                 ref props.Reflectivity,
                 0f,
                 1f,
-                props.Reflectivity.ToString()
+                props.Reflectivity.ToString(CultureInfo.InvariantCulture)
             )
         )
         {
@@ -754,7 +749,7 @@ public class NeoDemo
 
             _gd.ResizeMainWindow((uint)width, (uint)height);
             _scene.Camera.WindowResized(width, height);
-            _resizeHandled?.Invoke(width, height);
+            ResizeHandled?.Invoke(width, height);
             CommandList cl = _gd.ResourceFactory.CreateCommandList();
             cl.Begin();
             _sc.RecreateWindowSizedResources(_gd, cl);

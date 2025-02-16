@@ -4,7 +4,7 @@ namespace Veldrid.NeoDemo;
 
 internal class Program
 {
-    static unsafe void Main(string[] args)
+    static unsafe void Main()
     {
         SDL_version version;
         Sdl2Native.SDL_GetVersion(&version);

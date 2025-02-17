@@ -21,14 +21,14 @@ public unsafe class Sdl2Window
     public delegate void TextInputAction(TextInputEvent textInput);
     public delegate void TextEditingAction(TextEditingEvent textEditing);
 
-    readonly List<SDL_Event> _events = new();
+    readonly List<SDL_Event> _events = [];
     IntPtr _window;
     public uint WindowID { get; private set; }
     bool _exists;
 
-    readonly SimpleInputSnapshot _publicSnapshot = new();
-    SimpleInputSnapshot _privateSnapshot = new();
-    readonly SimpleInputSnapshot _privateBackbuffer = new();
+    readonly InputSnapshot _publicSnapshot = new();
+    InputSnapshot _privateSnapshot = new();
+    readonly InputSnapshot _privateBackbuffer = new();
 
     // Threaded Sdl2Window flags
     readonly bool _threadedProcessing;
@@ -406,12 +406,12 @@ public unsafe class Sdl2Window
         _events.Add(ev);
     }
 
-    public IInputSnapshot PumpEvents()
+    public InputSnapshot PumpEvents()
     {
         _currentMouseDelta = new();
         if (_threadedProcessing)
         {
-            SimpleInputSnapshot snapshot = Interlocked.Exchange(
+            InputSnapshot snapshot = Interlocked.Exchange(
                 ref _privateSnapshot,
                 _privateBackbuffer
             );
@@ -552,7 +552,7 @@ public unsafe class Sdl2Window
         Span<Rune> runes = stackalloc Rune[SDL_TextInputEvent.MaxTextSize];
         runes = runes[..ParseTextEvent(utf8, runes)];
 
-        SimpleInputSnapshot snapshot = _privateSnapshot;
+        InputSnapshot snapshot = _privateSnapshot;
         for (int i = 0; i < runes.Length; i++)
         {
             snapshot.InputEvents.Add(runes[i]);
@@ -582,7 +582,7 @@ public unsafe class Sdl2Window
     {
         Vector2 delta = new(mouseWheelEvent.x, mouseWheelEvent.y);
 
-        SimpleInputSnapshot snapshot = _privateSnapshot;
+        InputSnapshot snapshot = _privateSnapshot;
         snapshot.WheelDelta += delta;
 
         MouseWheelEvent wheelEvent = new(
@@ -627,7 +627,7 @@ public unsafe class Sdl2Window
         MouseButton button = MapMouseButton(mouseButtonEvent.button);
         bool down = mouseButtonEvent.state == 1;
 
-        SimpleInputSnapshot snapshot = _privateSnapshot;
+        InputSnapshot snapshot = _privateSnapshot;
         if (down)
         {
             // _currentMouseDown |= button;
@@ -841,48 +841,6 @@ public unsafe class Sdl2Window
         }
     }
 
-    class SimpleInputSnapshot : IInputSnapshot
-    {
-        public List<Rune> InputEvents { get; private set; } = new();
-        public List<KeyEvent> KeyEvents { get; private set; } = new();
-        public List<MouseButtonEvent> MouseEvents { get; private set; } = new();
-
-        public Vector2 MousePosition { get; set; }
-        public Vector2 WheelDelta { get; set; }
-        public MouseButton MouseDown { get; set; }
-
-        ReadOnlySpan<Rune> IInputSnapshot.InputEvents => CollectionsMarshal.AsSpan(InputEvents);
-        ReadOnlySpan<KeyEvent> IInputSnapshot.KeyEvents => CollectionsMarshal.AsSpan(KeyEvents);
-        ReadOnlySpan<MouseButtonEvent> IInputSnapshot.MouseEvents =>
-            CollectionsMarshal.AsSpan(MouseEvents);
-
-        internal void Clear()
-        {
-            InputEvents.Clear();
-            KeyEvents.Clear();
-            MouseEvents.Clear();
-            WheelDelta = Vector2.Zero;
-        }
-
-        public void CopyTo(SimpleInputSnapshot other)
-        {
-            Debug.Assert(this != other);
-
-            other.InputEvents.Clear();
-            other.InputEvents.AddRange(InputEvents);
-
-            other.MouseEvents.Clear();
-            other.MouseEvents.AddRange(MouseEvents);
-
-            other.KeyEvents.Clear();
-            other.KeyEvents.AddRange(KeyEvents);
-
-            other.MousePosition = MousePosition;
-            other.WheelDelta = WheelDelta;
-            other.MouseDown = MouseDown;
-        }
-    }
-
     class WindowParams
     {
         public int X { get; set; }
@@ -896,17 +854,9 @@ public unsafe class Sdl2Window
 
         public ManualResetEvent? ResetEvent { get; set; }
 
-        public SDL_Window Create()
-        {
-            if (WindowHandle != IntPtr.Zero)
-            {
-                return SDL_CreateWindowFrom(WindowHandle);
-            }
-            else
-            {
-                return SDL_CreateWindow(Title, X, Y, Width, Height, WindowFlags);
-            }
-        }
+        public SDL_Window Create() => WindowHandle != IntPtr.Zero
+            ? SDL_CreateWindowFrom(WindowHandle)
+            : SDL_CreateWindow(Title, X, Y, Width, Height, WindowFlags);
     }
 }
 
@@ -916,20 +866,20 @@ public class BufferedValue<T>
 {
     public T Value
     {
-        get => Current.Value;
+        get => _current.Value;
         set
         {
-            Back.Value = value;
-            Back = Interlocked.Exchange(ref Current, Back);
+            _back.Value = value;
+            _back = Interlocked.Exchange(ref _current, _back);
         }
     }
 
-    ValueHolder Current = new();
-    ValueHolder Back = new();
+    ValueHolder _current = new();
+    ValueHolder _back = new();
 
     public static implicit operator T(BufferedValue<T> bv) => bv.Value;
 
-    string DebuggerDisplayString => $"{Current.Value}";
+    string DebuggerDisplayString => $"{_current.Value}";
 
     class ValueHolder
     {

@@ -54,6 +54,8 @@ public enum Key
     Num0 = SDL_Scancode.SDL_SCANCODE_0,
 
     Return = SDL_Scancode.SDL_SCANCODE_RETURN,
+    Enter = Return,
+
     Escape = SDL_Scancode.SDL_SCANCODE_ESCAPE,
     Backspace = SDL_Scancode.SDL_SCANCODE_BACKSPACE,
     Tab = SDL_Scancode.SDL_SCANCODE_TAB,
@@ -110,6 +112,7 @@ public enum Key
     /// layout on ANSI keyboards.
     /// </summary>
     Grave = SDL_Scancode.SDL_SCANCODE_GRAVE,
+    Tilde = Grave,
 
     Comma = SDL_Scancode.SDL_SCANCODE_COMMA,
     Period = SDL_Scancode.SDL_SCANCODE_PERIOD,

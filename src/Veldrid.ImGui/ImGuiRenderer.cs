@@ -471,7 +471,7 @@ public class ImGuiRenderer : IDisposable
     /// <summary>
     /// Updates ImGui input and IO configuration state.
     /// </summary>
-    public void Update(float deltaSeconds, IInputSnapshot snapshot)
+    public void Update(float deltaSeconds, InputSnapshot snapshot)
     {
         BeginUpdate(deltaSeconds);
         UpdateImGuiInput(snapshot);
@@ -479,7 +479,7 @@ public class ImGuiRenderer : IDisposable
     }
 
     /// <summary>
-    /// Called before we handle the input in <see cref="Update(float, IInputSnapshot)"/>.
+    /// Called before we handle the input in <see cref="Update(float, InputSnapshot)"/>.
     /// This render ImGui and update the state.
     /// </summary>
     protected void BeginUpdate(float deltaSeconds)
@@ -491,7 +491,7 @@ public class ImGuiRenderer : IDisposable
     }
 
     /// <summary>
-    /// Called at the end of <see cref="Update(float, IInputSnapshot)"/>.
+    /// Called at the end of <see cref="Update(float, InputSnapshot)"/>.
     /// This tells ImGui that we are on the next frame.
     /// </summary>
     protected void EndUpdate()
@@ -629,7 +629,7 @@ public class ImGuiRenderer : IDisposable
             _ => ImGuiKey.None,
         };
 
-    static void UpdateImGuiInput(IInputSnapshot snapshot)
+    static void UpdateImGuiInput(InputSnapshot snapshot)
     {
         ImGuiIOPtr io = ImGui.GetIO();
 

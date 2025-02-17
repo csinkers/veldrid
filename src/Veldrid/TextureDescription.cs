@@ -58,7 +58,7 @@ public struct TextureDescription : IEquatable<TextureDescription>
     public TextureSampleCount SampleCount;
 
     /// <summary>
-    /// Contsructs a new TextureDescription describing a non-multisampled <see cref="Texture"/>.
+    /// Constructs a new TextureDescription describing a non-multisampled <see cref="Texture"/>.
     /// </summary>
     /// <param name="width">The total width, in texels.</param>
     /// <param name="height">The total height, in texels.</param>
@@ -95,7 +95,7 @@ public struct TextureDescription : IEquatable<TextureDescription>
     }
 
     /// <summary>
-    /// Contsructs a new TextureDescription.
+    /// Constructs a new TextureDescription.
     /// </summary>
     /// <param name="width">The total width, in texels.</param>
     /// <param name="height">The total height, in texels.</param>

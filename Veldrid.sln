@@ -3,40 +3,41 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid", "Veldrid\Veldrid.csproj", "{60D56E4A-FA7A-4664-BEF0-0A29F41518BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid", "src\Veldrid\Veldrid.csproj", "{60D56E4A-FA7A-4664-BEF0-0A29F41518BF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.SDL2", "Veldrid.SDL2\Veldrid.SDL2.csproj", "{8B11C7C1-EA56-4449-B7A4-ECBB17D566C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.SDL2", "src\Veldrid.SDL2\Veldrid.SDL2.csproj", "{8B11C7C1-EA56-4449-B7A4-ECBB17D566C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoDemo", "NeoDemo\NeoDemo.csproj", "{5359D055-6DD0-47FE-BA32-F6FDFAAFE999}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoDemo", "src\NeoDemo\NeoDemo.csproj", "{5359D055-6DD0-47FE-BA32-F6FDFAAFE999}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.StartupUtilities", "Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj", "{A2DA940F-F006-42AD-B4AA-50766B32A9EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.StartupUtilities", "src\Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj", "{A2DA940F-F006-42AD-B4AA-50766B32A9EA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.Utilities", "Veldrid.Utilities\Veldrid.Utilities.csproj", "{3C8555BB-2BD9-4973-BFD9-DCAFDCD5955D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.Utilities", "src\Veldrid.Utilities\Veldrid.Utilities.csproj", "{3C8555BB-2BD9-4973-BFD9-DCAFDCD5955D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.ImageSharp", "Veldrid.ImageSharp\Veldrid.ImageSharp.csproj", "{B1AEBA69-C61C-41E7-9126-2087B3D5CAFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.ImageSharp", "src\Veldrid.ImageSharp\Veldrid.ImageSharp.csproj", "{B1AEBA69-C61C-41E7-9126-2087B3D5CAFA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.ImGui", "Veldrid.ImGui\Veldrid.ImGui.csproj", "{CC4A7F71-EF76-4D29-BF63-90E2F28D7C93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.ImGui", "src\Veldrid.ImGui\Veldrid.ImGui.csproj", "{CC4A7F71-EF76-4D29-BF63-90E2F28D7C93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.OpenGLBindings", "Veldrid.OpenGLBindings\Veldrid.OpenGLBindings.csproj", "{6E93B2E1-BF0B-4268-94BA-E951ECC4DD7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.OpenGLBindings", "src\Veldrid.OpenGLBindings\Veldrid.OpenGLBindings.csproj", "{6E93B2E1-BF0B-4268-94BA-E951ECC4DD7F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.Tests", "Veldrid.Tests\Veldrid.Tests.csproj", "{63CBCF9E-E4B6-4932-90FA-4671F7351685}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.Tests", "src\Veldrid.Tests\Veldrid.Tests.csproj", "{63CBCF9E-E4B6-4932-90FA-4671F7351685}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.MetalBindings", "Veldrid.MetalBindings\Veldrid.MetalBindings.csproj", "{6647F17C-02E9-4EF2-B882-40E22A187744}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.MetalBindings", "src\Veldrid.MetalBindings\Veldrid.MetalBindings.csproj", "{6647F17C-02E9-4EF2-B882-40E22A187744}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.VirtualReality", "Veldrid.VirtualReality\Veldrid.VirtualReality.csproj", "{26E05692-5C34-4457-96E6-DF65296284D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.VirtualReality", "src\Veldrid.VirtualReality\Veldrid.VirtualReality.csproj", "{26E05692-5C34-4457-96E6-DF65296284D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.VirtualReality.Sample", "Veldrid.VirtualReality.Sample\Veldrid.VirtualReality.Sample.csproj", "{830C467F-6068-4BCD-B8B8-6EAD72321350}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.VirtualReality.Sample", "src\Veldrid.VirtualReality.Sample\Veldrid.VirtualReality.Sample.csproj", "{830C467F-6068-4BCD-B8B8-6EAD72321350}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.RenderDoc", "Veldrid.RenderDoc\Veldrid.RenderDoc.csproj", "{AFAEF056-CAD3-4C32-AEC3-AAC35A251295}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.RenderDoc", "src\Veldrid.RenderDoc\Veldrid.RenderDoc.csproj", "{AFAEF056-CAD3-4C32-AEC3-AAC35A251295}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.SPIRV", "..\modules\veldrid-spirv\src\Veldrid.SPIRV\Veldrid.SPIRV.csproj", "{F37654B2-E5BF-469B-889D-0037CADEBB12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.SPIRV", "modules\veldrid-spirv\src\Veldrid.SPIRV\Veldrid.SPIRV.csproj", "{F37654B2-E5BF-469B-889D-0037CADEBB12}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.Tests.Android", "Veldrid.Tests.Android\Veldrid.Tests.Android.csproj", "{03A34E8B-FBCC-41FE-A22B-FC32844B2D91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.Tests.Android", "src\Veldrid.Tests.Android\Veldrid.Tests.Android.csproj", "{03A34E8B-FBCC-41FE-A22B-FC32844B2D91}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1B48ED9F-A31F-4625-A1D2-1473582568B1}"
 	ProjectSection(SolutionItems) = preProject
 		..\.editorconfig = ..\.editorconfig
 		..\Directory.Build.props = ..\Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
 EndProject
 Global

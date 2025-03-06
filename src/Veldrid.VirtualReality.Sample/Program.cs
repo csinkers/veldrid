@@ -129,7 +129,7 @@ internal static class Program
             double deltaSeconds = newFrameTime - lastFrameTime;
             lastFrameTime = newFrameTime;
 
-            IInputSnapshot snapshot = window.PumpEvents();
+            InputSnapshot snapshot = window.PumpEvents();
             if (!window.Exists)
             {
                 break;

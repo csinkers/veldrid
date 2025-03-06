@@ -291,7 +291,7 @@ public class NeoDemo
             previousFrameTicks = currentFrameTicks;
 
             Sdl2Events.ProcessEvents();
-            IInputSnapshot snapshot = _window.PumpEvents();
+            InputSnapshot snapshot = _window.PumpEvents();
             InputTracker.UpdateFrameInput(snapshot, _window);
             Update((float)deltaSeconds);
             if (!_window.Exists)

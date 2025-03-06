@@ -1,8 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <DocumentationFile Condition="'$(Configuration)' == 'Release'">$(BinDir)/$(AssemblyName).xml</DocumentationFile>
+    <PackageId>Sinkers.Veldrid.ImGui</PackageId>
+    <PackageTags>3D Graphics Direct3D DirectX Vulkan OpenGL Metal Core Standard Game ImGui</PackageTags>
     <RootNamespace>Veldrid</RootNamespace>
+    <DocumentationFile Condition="'$(Configuration)' == 'Release'">$(BinDir)/$(AssemblyName).xml</DocumentationFile>
+    <Description>ImGui integration for Veldrid. Provides a simple interface for rendering and interacting with ImGui.NET.</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -51,19 +54,8 @@
     <PackageReference Include="ImGui.NET" Version="1.91.6.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(UseStableVersions)' == 'true'">
-    <PackageReference Include="Veldrid" Version="4.5.0" />
-    <PackageReference Include="Veldrid.SDL2" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(UseStableVersions)' != 'true'">
+  <ItemGroup>
     <ProjectReference Include="..\Veldrid\Veldrid.csproj" />
     <ProjectReference Include="..\Veldrid.SDL2\Veldrid.SDL2.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <Description>ImGui integration for Veldrid. Provides a simple interface for rendering and interacting with ImGui.NET.</Description>
-    <PackageTags>3D Graphics Direct3D DirectX Vulkan OpenGL Metal Core Standard Game ImGui</PackageTags>
-  </PropertyGroup>
-
 </Project>

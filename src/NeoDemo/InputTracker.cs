@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 using Veldrid.SDL2;
 
@@ -7,49 +6,45 @@ namespace Veldrid.NeoDemo;
 
 public static class InputTracker
 {
-    static readonly HashSet<Key> _currentlyPressedKeys = new();
-    static readonly HashSet<Key> _newKeysThisFrame = new();
+    static readonly HashSet<Key> CurrentlyPressedKeys = new();
+    static readonly HashSet<Key> NewKeysThisFrame = new();
 
-    static readonly HashSet<MouseButton> _currentlyPressedMouseButtons = new();
-    static readonly HashSet<MouseButton> _newMouseButtonsThisFrame = new();
+    static readonly HashSet<MouseButton> CurrentlyPressedMouseButtons = new();
+    static readonly HashSet<MouseButton> NewMouseButtonsThisFrame = new();
 
     public static Vector2 MousePosition;
     public static Vector2 MouseDelta;
-    public static IInputSnapshot? FrameSnapshot { get; private set; }
+    public static InputSnapshot? FrameSnapshot { get; private set; }
 
-    public static bool GetKey(Key key) => _currentlyPressedKeys.Contains(key);
+    public static bool GetKey(Key key) => CurrentlyPressedKeys.Contains(key);
 
-    public static bool GetKeyDown(Key key) => _newKeysThisFrame.Contains(key);
+    public static bool GetKeyDown(Key key) => NewKeysThisFrame.Contains(key);
 
     public static bool GetMouseButton(MouseButton button) =>
-        _currentlyPressedMouseButtons.Contains(button);
+        CurrentlyPressedMouseButtons.Contains(button);
 
     public static bool GetMouseButtonDown(MouseButton button) =>
-        _newMouseButtonsThisFrame.Contains(button);
+        NewMouseButtonsThisFrame.Contains(button);
 
-    public static void UpdateFrameInput(IInputSnapshot snapshot, Sdl2Window window)
+    public static void UpdateFrameInput(InputSnapshot snapshot, Sdl2Window window)
     {
         FrameSnapshot = snapshot;
-        _newKeysThisFrame.Clear();
-        _newMouseButtonsThisFrame.Clear();
+        NewKeysThisFrame.Clear();
+        NewMouseButtonsThisFrame.Clear();
 
         MousePosition = snapshot.MousePosition;
         MouseDelta = window.MouseDelta;
 
-        ReadOnlySpan<KeyEvent> keyEvents = snapshot.KeyEvents;
-        for (int i = 0; i < keyEvents.Length; i++)
+        foreach (KeyEvent ke in snapshot.KeyEvents)
         {
-            KeyEvent ke = keyEvents[i];
             if (ke.Down)
                 KeyDown(ke.Physical);
             else
                 KeyUp(ke.Physical);
         }
 
-        ReadOnlySpan<MouseButtonEvent> mouseEvents = snapshot.MouseEvents;
-        for (int i = 0; i < mouseEvents.Length; i++)
+        foreach (MouseButtonEvent me in snapshot.MouseEvents)
         {
-            MouseButtonEvent me = mouseEvents[i];
             if (me.Down)
                 MouseDown(me.MouseButton);
             else
@@ -59,25 +54,25 @@ public static class InputTracker
 
     static void MouseUp(MouseButton mouseButton)
     {
-        _currentlyPressedMouseButtons.Remove(mouseButton);
-        _newMouseButtonsThisFrame.Remove(mouseButton);
+        CurrentlyPressedMouseButtons.Remove(mouseButton);
+        NewMouseButtonsThisFrame.Remove(mouseButton);
     }
 
     static void MouseDown(MouseButton mouseButton)
     {
-        if (_currentlyPressedMouseButtons.Add(mouseButton))
-            _newMouseButtonsThisFrame.Add(mouseButton);
+        if (CurrentlyPressedMouseButtons.Add(mouseButton))
+            NewMouseButtonsThisFrame.Add(mouseButton);
     }
 
     static void KeyUp(Key key)
     {
-        _currentlyPressedKeys.Remove(key);
-        _newKeysThisFrame.Remove(key);
+        CurrentlyPressedKeys.Remove(key);
+        NewKeysThisFrame.Remove(key);
     }
 
     static void KeyDown(Key key)
     {
-        if (_currentlyPressedKeys.Add(key))
-            _newKeysThisFrame.Add(key);
+        if (CurrentlyPressedKeys.Add(key))
+            NewKeysThisFrame.Add(key);
     }
 }

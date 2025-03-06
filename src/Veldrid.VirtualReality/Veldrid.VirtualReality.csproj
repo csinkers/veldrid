@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Sinkers.Veldrid.VirtualReality</PackageId>
+    <PackageTags>VR Virual Reality OpenVR Oculus 3D Graphics Direct3D DirectX Vulkan OpenGL Core Standard Game</PackageTags>
+    <Description>Virtual Reality integration for Veldrid, supporting both OpenVR and Oculus SDK.</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
 
-  <ItemGroup Condition="'$(UseStableVersions)' == 'true'">
-    <PackageReference Include="Veldrid.SPIRV" Version="1.0.14" />
-    <PackageReference Include="Veldrid" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(UseStableVersions)' != 'true'">
+  <ItemGroup>
     <ProjectReference Include="..\..\modules\veldrid-spirv\src\Veldrid.SPIRV\Veldrid.SPIRV.csproj" />
     <ProjectReference Include="..\Veldrid\Veldrid.csproj" />
   </ItemGroup>
-
 
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)runtimes\win-x64\native\openvr_api.dll">
@@ -18,10 +18,4 @@
       <Pack>true</Pack>
     </Content>
   </ItemGroup>
-  
-  <PropertyGroup>
-    <Description>Virtual Reality integration for Veldrid, supporting both OpenVR and Oculus SDK.</Description>
-    <PackageTags>VR Virual Reality OpenVR Oculus 3D Graphics Direct3D DirectX Vulkan OpenGL Core Standard Game</PackageTags>
-  </PropertyGroup>
-
 </Project>

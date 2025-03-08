@@ -1,0 +1,54 @@
+name: Veldrid Generate Release
+
+on:
+  push:
+    tags: ["*.*.*"]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  build_windows:
+    runs-on: windows-latest # for DirectX
+
+    steps:
+    - uses: actions/checkout@v4.2.2
+      with:
+        fetch-depth: 0
+        submodules: 'recursive'
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4.3.0
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Exclude projects
+      working-directory: ./src
+      run: >
+        dotnet sln remove
+        Veldrid.Tests.Android/Veldrid.Tests.Android.csproj
+
+    - name: Restore dependencies
+      run: dotnet restore src
+
+    - name: Build
+      run: dotnet build --no-restore src
+      env:
+        MINVER_VERSION: ${{ vars.MINVER_VERSION }}
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal src --filter "Backend=D3D11"
+
+    - name: Build Packages
+      run: dotnet pack src -c Release
+
+    - name: Publish tagged release to nuget.org
+      if: secrets.NUGET_SOURCE != '' || secrets.NUGET_KEY != ''
+      run: dotnet nuget push bin\Packages\Release\*.nupkg --source ${{ secrets.NUGET_SOURCE }} --api-key ${{secrets.NUGET_KEY}}
+
+#    - name: Generate GitHub Release
+#      uses: softprops/action-gh-release@v1
+#      with:
+#        files: |
+#          bin\Packages\Release\*.nupkg

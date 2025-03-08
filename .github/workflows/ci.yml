@@ -26,17 +26,17 @@ jobs:
         dotnet-version: 9.0.x
 
     - name: Exclude projects
-      working-directory: ./src
+      working-directory: .
       run: >
         dotnet sln remove
         Veldrid.Tests.Android/Veldrid.Tests.Android.csproj
 
     - name: Restore dependencies
-      run: dotnet restore src
+      run: dotnet restore .
 
     - name: Build
-      run: dotnet build --no-restore src
+      run: dotnet build --no-restore .
 
     - name: Test
-      run: dotnet test --no-build --verbosity normal src --filter "Backend=D3D11"
+      run: dotnet test --no-build --verbosity normal . --filter "Backend=D3D11"
 

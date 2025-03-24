@@ -11,7 +11,7 @@ public struct GraphicsDeviceOptions
     public bool Debug;
 
     /// <summary>
-    /// Indicates whether the Graphicsdevice will include a "main" Swapchain. If this value is true, then the GraphicsDevice
+    /// Indicates whether the GraphicsDevice will include a "main" Swapchain. If this value is true, then the GraphicsDevice
     /// must be created with one of the overloads that provides Swapchain source information.
     /// </summary>
     public bool HasMainSwapchain;

@@ -33,6 +33,9 @@ public struct IndirectDrawIndexedArguments : IEquatable<IndirectDrawIndexedArgum
     /// </summary>
     public uint FirstInstance;
 
+    /// <summary>
+    /// Checks for equality between two <see cref="IndirectDrawIndexedArguments"/> instances.
+    /// </summary>
     public bool Equals(IndirectDrawIndexedArguments other) =>
         IndexCount == other.IndexCount
         && InstanceCount == other.InstanceCount
@@ -40,9 +43,15 @@ public struct IndirectDrawIndexedArguments : IEquatable<IndirectDrawIndexedArgum
         && VertexOffset == other.VertexOffset
         && FirstInstance == other.FirstInstance;
 
+    /// <summary>
+    /// Checks for equality with another object.
+    /// </summary>
     public override bool Equals(object? obj) =>
         obj is IndirectDrawIndexedArguments other && Equals(other);
 
+    /// <summary>
+    /// Returns the hash code for this instance.
+    /// </summary>
     public override int GetHashCode() =>
         HashCode.Combine(IndexCount, InstanceCount, FirstIndex, VertexOffset, FirstInstance);
 }

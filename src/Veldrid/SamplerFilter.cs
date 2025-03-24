@@ -26,7 +26,7 @@ public enum SamplerFilter : byte
     MinPoint_MagLinear_MipLinear,
 
     /// <summary>
-    /// Linear interpolation is used for minifcation; point sampling is used for magnification and mip-level sampling.
+    /// Linear interpolation is used for minification; point sampling is used for magnification and mip-level sampling.
     /// </summary>
     MinLinear_MagPoint_MipPoint,
 

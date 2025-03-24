@@ -68,25 +68,21 @@ public struct ShaderDescription : IEquatable<ShaderDescription>
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
     /// <returns>True if all elements and if array instances are equal; false otherwise.</returns>
-    public bool Equals(ShaderDescription other)
-    {
-        return Stage == other.Stage
-            && ShaderBytes == other.ShaderBytes
-            && EntryPoint.Equals(other.EntryPoint)
-            && Debug.Equals(other.Debug);
-    }
+    public bool Equals(ShaderDescription other) =>
+        Stage == other.Stage
+        && ShaderBytes == other.ShaderBytes
+        && EntryPoint.Equals(other.EntryPoint)
+        && Debug.Equals(other.Debug);
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-    public override int GetHashCode()
-    {
-        return HashHelper.Combine(
+    public override int GetHashCode() =>
+        HashHelper.Combine(
             (int)Stage,
             ShaderBytes.GetHashCode(),
             EntryPoint.GetHashCode(),
             Debug.GetHashCode()
         );
-    }
 }

@@ -35,18 +35,13 @@ public struct ResourceSetDescription : IEquatable<ResourceSetDescription>
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
     /// <returns>True if all elements and all array elements are equal; false otherwise.</returns>
-    public bool Equals(ResourceSetDescription other)
-    {
-        return Layout.Equals(other.Layout)
-            && Util.ArrayEqualsEquatable(BoundResources, other.BoundResources);
-    }
+    public bool Equals(ResourceSetDescription other) =>
+        Layout.Equals(other.Layout)
+        && Util.ArrayEqualsEquatable(BoundResources, other.BoundResources);
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-    public override int GetHashCode()
-    {
-        return HashHelper.Combine(Layout.GetHashCode(), HashHelper.Array(BoundResources));
-    }
+    public override int GetHashCode() => HashHelper.Combine(Layout.GetHashCode(), HashHelper.Array(BoundResources));
 }

@@ -13,10 +13,7 @@ internal unsafe struct SmallFixedOrDynamicArray : IDisposable
     fixed uint FixedData[MaxFixedValues];
     public uint[]? Data;
 
-    public uint Get(uint i)
-    {
-        return Count > MaxFixedValues ? Data![i] : FixedData[i];
-    }
+    public uint Get(uint i) => Count > MaxFixedValues ? Data![i] : FixedData[i];
 
     public SmallFixedOrDynamicArray(ReadOnlySpan<uint> offsets)
     {

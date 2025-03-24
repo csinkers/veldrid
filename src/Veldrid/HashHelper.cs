@@ -8,20 +8,9 @@ internal static class HashHelper
         return ((int)rol5 + value1) ^ value2;
     }
 
-    public static int Combine(int value1, int value2, int value3)
-    {
-        return Combine(value1, Combine(value2, value3));
-    }
-
-    public static int Combine(int value1, int value2, int value3, int value4)
-    {
-        return Combine(value1, Combine(value2, Combine(value3, value4)));
-    }
-
-    public static int Combine(int value1, int value2, int value3, int value4, int value5)
-    {
-        return Combine(value1, Combine(value2, Combine(value3, Combine(value4, value5))));
-    }
+    public static int Combine(int value1, int value2, int value3) => Combine(value1, Combine(value2, value3));
+    public static int Combine(int value1, int value2, int value3, int value4) => Combine(value1, Combine(value2, Combine(value3, value4)));
+    public static int Combine(int value1, int value2, int value3, int value4, int value5) => Combine(value1, Combine(value2, Combine(value3, Combine(value4, value5))));
 
     public static int Combine(
         int value1,
@@ -30,13 +19,11 @@ internal static class HashHelper
         int value4,
         int value5,
         int value6
-    )
-    {
-        return Combine(
+    ) =>
+        Combine(
             value1,
             Combine(value2, Combine(value3, Combine(value4, Combine(value5, value6))))
         );
-    }
 
     public static int Combine(
         int value1,
@@ -46,16 +33,14 @@ internal static class HashHelper
         int value5,
         int value6,
         int value7
-    )
-    {
-        return Combine(
+    ) =>
+        Combine(
             value1,
             Combine(
                 value2,
                 Combine(value3, Combine(value4, Combine(value5, Combine(value6, value7))))
             )
         );
-    }
 
     public static int Combine(
         int value1,
@@ -66,9 +51,8 @@ internal static class HashHelper
         int value6,
         int value7,
         int value8
-    )
-    {
-        return Combine(
+    ) =>
+        Combine(
             value1,
             Combine(
                 value2,
@@ -78,7 +62,6 @@ internal static class HashHelper
                 )
             )
         );
-    }
 
     public static int Combine(
         int value1,
@@ -90,9 +73,8 @@ internal static class HashHelper
         int value7,
         int value8,
         int value9
-    )
-    {
-        return Combine(
+    ) =>
+        Combine(
             value1,
             Combine(
                 value2,
@@ -105,7 +87,6 @@ internal static class HashHelper
                 )
             )
         );
-    }
 
     public static int Combine(
         int value1,
@@ -118,9 +99,8 @@ internal static class HashHelper
         int value8,
         int value9,
         int value10
-    )
-    {
-        return Combine(
+    ) =>
+        Combine(
             value1,
             Combine(
                 value2,
@@ -139,20 +119,15 @@ internal static class HashHelper
                 )
             )
         );
-    }
 
     public static int Array<T>(T[]? items)
     {
         if (items == null || items.Length == 0)
-        {
             return 0;
-        }
 
         int hash = items[0]?.GetHashCode() ?? 0;
         for (int i = 1; i < items.Length; i++)
-        {
             hash = Combine(hash, items[i]?.GetHashCode() ?? i);
-        }
 
         return hash;
     }

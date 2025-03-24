@@ -12,13 +12,24 @@ using static Veldrid.SDL2.Sdl2Native;
 
 namespace Veldrid.SDL2;
 
+/// <summary>
+/// Handler for SDL2 events.
+/// </summary>
+/// <param name="ev"></param>
 public delegate void SDLEventHandler(ref SDL_Event ev);
 
+/// <summary>
+/// Represents a window created by SDL2.
+/// </summary>
 public unsafe class Sdl2Window
 {
+    /// <summary>Event raised when a file is dragged and dropped on the window</summary>
     public delegate void DropFileAction(DropFileEvent file);
+    /// <summary>Event raised when text is dragged and dropped on the window</summary>
     public delegate void DropTextAction(DropTextEvent text);
+    /// <summary>Event raised text is input</summary>
     public delegate void TextInputAction(TextInputEvent textInput);
+    /// <summary>Event raised when text is edited</summary>
     public delegate void TextEditingAction(TextEditingEvent textEditing);
 
     readonly List<SDL_Event> _events = [];
@@ -860,6 +871,10 @@ public unsafe class Sdl2Window
     }
 }
 
+/// <summary>
+/// Helper to allow atomic updating of a value-type.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 [DebuggerDisplay("{DebuggerDisplayString,nq}")]
 public class BufferedValue<T>
     where T : struct

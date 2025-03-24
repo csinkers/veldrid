@@ -35,7 +35,7 @@ public struct PixelFormatProperties
     readonly uint _sampleCounts;
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <see cref="TextureSampleCount"/> is supported.
+    /// Gets a value indicating whether the given <see cref="TextureSampleCount"/> is supported.
     /// </summary>
     /// <param name="count">The <see cref="TextureSampleCount"/> to query.</param>
     /// <returns>True if the sample count is supported; false otherwise.</returns>

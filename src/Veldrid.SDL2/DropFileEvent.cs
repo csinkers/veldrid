@@ -2,6 +2,9 @@
 
 namespace Veldrid.SDL2;
 
+/// <summary>
+/// Event for when a file is dropped on the window.
+/// </summary>
 public readonly ref struct DropFileEvent(
     ReadOnlySpan<byte> fileNameUtf8,
     uint timestamp,

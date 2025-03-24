@@ -19,6 +19,9 @@ public struct VulkanDeviceOptions
     /// </summary>
     public readonly string[] DeviceExtensions;
 
+    /// <summary>
+    /// Constructs a new <see cref="VulkanDeviceOptions"/> with default values.
+    /// </summary>
     public VulkanDeviceOptions()
     {
         InstanceExtensions = [];

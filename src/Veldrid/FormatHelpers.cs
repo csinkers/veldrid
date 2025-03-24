@@ -11,53 +11,49 @@ internal static class FormatHelpers
         "IDE0066:Convert switch statement to expression",
         Justification = "<Pending>"
     )]
-    public static int GetElementCount(VertexElementFormat format)
-    {
-        switch (format)
+    public static int GetElementCount(VertexElementFormat format) =>
+        format switch
         {
-            case VertexElementFormat.Float1:
-            case VertexElementFormat.UInt1:
-            case VertexElementFormat.Int1:
-            case VertexElementFormat.Half1:
-                return 1;
-            case VertexElementFormat.Float2:
-            case VertexElementFormat.Byte2_Norm:
-            case VertexElementFormat.Byte2:
-            case VertexElementFormat.SByte2_Norm:
-            case VertexElementFormat.SByte2:
-            case VertexElementFormat.UShort2_Norm:
-            case VertexElementFormat.UShort2:
-            case VertexElementFormat.Short2_Norm:
-            case VertexElementFormat.Short2:
-            case VertexElementFormat.UInt2:
-            case VertexElementFormat.Int2:
-            case VertexElementFormat.Half2:
-                return 2;
-            case VertexElementFormat.Float3:
-            case VertexElementFormat.UInt3:
-            case VertexElementFormat.Int3:
-                return 3;
-            case VertexElementFormat.Float4:
-            case VertexElementFormat.Byte4_Norm:
-            case VertexElementFormat.Byte4:
-            case VertexElementFormat.SByte4_Norm:
-            case VertexElementFormat.SByte4:
-            case VertexElementFormat.UShort4_Norm:
-            case VertexElementFormat.UShort4:
-            case VertexElementFormat.Short4_Norm:
-            case VertexElementFormat.Short4:
-            case VertexElementFormat.UInt4:
-            case VertexElementFormat.Int4:
-            case VertexElementFormat.Half4:
-                return 4;
-            default:
-                return Illegal.Value<VertexElementFormat, int>();
-        }
-    }
+            VertexElementFormat.Float1
+                or VertexElementFormat.UInt1
+                or VertexElementFormat.Int1
+                or VertexElementFormat.Half1 => 1,
 
-    internal static uint GetSampleCountUInt32(TextureSampleCount sampleCount)
-    {
-        return sampleCount switch
+            VertexElementFormat.Float2
+                or VertexElementFormat.Byte2_Norm
+                or VertexElementFormat.Byte2
+                or VertexElementFormat.SByte2_Norm
+                or VertexElementFormat.SByte2
+                or VertexElementFormat.UShort2_Norm
+                or VertexElementFormat.UShort2
+                or VertexElementFormat.Short2_Norm
+                or VertexElementFormat.Short2
+                or VertexElementFormat.UInt2
+                or VertexElementFormat.Int2
+                or VertexElementFormat.Half2 => 2,
+
+            VertexElementFormat.Float3
+                or VertexElementFormat.UInt3
+                or VertexElementFormat.Int3 => 3,
+
+            VertexElementFormat.Float4
+                or VertexElementFormat.Byte4_Norm
+                or VertexElementFormat.Byte4
+                or VertexElementFormat.SByte4_Norm
+                or VertexElementFormat.SByte4
+                or VertexElementFormat.UShort4_Norm
+                or VertexElementFormat.UShort4
+                or VertexElementFormat.Short4_Norm
+                or VertexElementFormat.Short4
+                or VertexElementFormat.UInt4
+                or VertexElementFormat.Int4
+                or VertexElementFormat.Half4 => 4,
+
+            _ => Illegal.Value<VertexElementFormat, int>()
+        };
+
+    internal static uint GetSampleCountUInt32(TextureSampleCount sampleCount) =>
+        sampleCount switch
         {
             TextureSampleCount.Count1 => 1,
             TextureSampleCount.Count2 => 2,
@@ -68,41 +64,18 @@ internal static class FormatHelpers
             TextureSampleCount.Count64 => 64,
             _ => Illegal.Value<TextureSampleCount, uint>(),
         };
-    }
 
-    internal static bool IsExactStencilFormat(PixelFormat format)
-    {
-        return format == PixelFormat.D16_UNorm_S8_UInt
-            || format == PixelFormat.D24_UNorm_S8_UInt
-            || format == PixelFormat.D32_Float_S8_UInt;
-    }
+    internal static bool IsExactStencilFormat(PixelFormat format) => format is PixelFormat.D16_UNorm_S8_UInt or PixelFormat.D24_UNorm_S8_UInt or PixelFormat.D32_Float_S8_UInt;
+    internal static bool IsStencilFormat(PixelFormat format) => IsExactStencilFormat(format);
+    internal static bool IsExactDepthFormat(PixelFormat format) => format is PixelFormat.D16_UNorm or PixelFormat.D32_Float;
 
-    internal static bool IsStencilFormat(PixelFormat format)
-    {
-        return IsExactStencilFormat(format);
-    }
+    internal static bool IsDepthFormat(PixelFormat format) =>
+        format == PixelFormat.R16_UNorm
+        || format == PixelFormat.R32_Float
+        || IsExactDepthFormat(format);
 
-    internal static bool IsExactDepthFormat(PixelFormat format)
-    {
-        return format == PixelFormat.D16_UNorm || format == PixelFormat.D32_Float;
-    }
-
-    internal static bool IsDepthFormat(PixelFormat format)
-    {
-        return format == PixelFormat.R16_UNorm
-            || format == PixelFormat.R32_Float
-            || IsExactDepthFormat(format);
-    }
-
-    internal static bool IsExactDepthStencilFormat(PixelFormat format)
-    {
-        return IsExactDepthFormat(format) || IsExactStencilFormat(format);
-    }
-
-    internal static bool IsDepthStencilFormat(PixelFormat format)
-    {
-        return IsDepthFormat(format) || IsStencilFormat(format);
-    }
+    internal static bool IsExactDepthStencilFormat(PixelFormat format) => IsExactDepthFormat(format) || IsExactStencilFormat(format);
+    internal static bool IsDepthStencilFormat(PixelFormat format) => IsDepthFormat(format) || IsStencilFormat(format);
 
     internal static bool IsDepthFormatPreferred(PixelFormat format, TextureUsage usage)
     {
@@ -121,26 +94,24 @@ internal static class FormatHelpers
         return false;
     }
 
-    internal static bool IsCompressedFormat(PixelFormat format)
-    {
-        return format == PixelFormat.BC1_Rgb_UNorm
-            || format == PixelFormat.BC1_Rgb_UNorm_SRgb
-            || format == PixelFormat.BC1_Rgba_UNorm
-            || format == PixelFormat.BC1_Rgba_UNorm_SRgb
-            || format == PixelFormat.BC2_UNorm
-            || format == PixelFormat.BC2_UNorm_SRgb
-            || format == PixelFormat.BC3_UNorm
-            || format == PixelFormat.BC3_UNorm_SRgb
-            || format == PixelFormat.BC4_UNorm
-            || format == PixelFormat.BC4_SNorm
-            || format == PixelFormat.BC5_UNorm
-            || format == PixelFormat.BC5_SNorm
-            || format == PixelFormat.BC7_UNorm
-            || format == PixelFormat.BC7_UNorm_SRgb
-            || format == PixelFormat.ETC2_R8_G8_B8_UNorm
-            || format == PixelFormat.ETC2_R8_G8_B8_A1_UNorm
-            || format == PixelFormat.ETC2_R8_G8_B8_A8_UNorm;
-    }
+    internal static bool IsCompressedFormat(PixelFormat format) =>
+        format is PixelFormat.BC1_Rgb_UNorm
+            or PixelFormat.BC1_Rgb_UNorm_SRgb
+            or PixelFormat.BC1_Rgba_UNorm
+            or PixelFormat.BC1_Rgba_UNorm_SRgb
+            or PixelFormat.BC2_UNorm
+            or PixelFormat.BC2_UNorm_SRgb
+            or PixelFormat.BC3_UNorm
+            or PixelFormat.BC3_UNorm_SRgb
+            or PixelFormat.BC4_UNorm
+            or PixelFormat.BC4_SNorm
+            or PixelFormat.BC5_UNorm
+            or PixelFormat.BC5_SNorm
+            or PixelFormat.BC7_UNorm
+            or PixelFormat.BC7_UNorm_SRgb
+            or PixelFormat.ETC2_R8_G8_B8_UNorm
+            or PixelFormat.ETC2_R8_G8_B8_A1_UNorm
+            or PixelFormat.ETC2_R8_G8_B8_A8_UNorm;
 
     internal static uint GetRowPitch(uint width, PixelFormat format)
     {
@@ -177,33 +148,29 @@ internal static class FormatHelpers
         "IDE0066:Convert switch statement to expression",
         Justification = "<Pending>"
     )]
-    public static uint GetBlockSizeInBytes(PixelFormat format)
-    {
-        switch (format)
+    public static uint GetBlockSizeInBytes(PixelFormat format) =>
+        format switch
         {
-            case PixelFormat.BC1_Rgb_UNorm:
-            case PixelFormat.BC1_Rgb_UNorm_SRgb:
-            case PixelFormat.BC1_Rgba_UNorm:
-            case PixelFormat.BC1_Rgba_UNorm_SRgb:
-            case PixelFormat.BC4_UNorm:
-            case PixelFormat.BC4_SNorm:
-            case PixelFormat.ETC2_R8_G8_B8_UNorm:
-            case PixelFormat.ETC2_R8_G8_B8_A1_UNorm:
-                return 8;
-            case PixelFormat.BC2_UNorm:
-            case PixelFormat.BC2_UNorm_SRgb:
-            case PixelFormat.BC3_UNorm:
-            case PixelFormat.BC3_UNorm_SRgb:
-            case PixelFormat.BC5_UNorm:
-            case PixelFormat.BC5_SNorm:
-            case PixelFormat.BC7_UNorm:
-            case PixelFormat.BC7_UNorm_SRgb:
-            case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
-                return 16;
-            default:
-                return Illegal.Value<PixelFormat, uint>();
-        }
-    }
+            PixelFormat.BC1_Rgb_UNorm
+                or PixelFormat.BC1_Rgb_UNorm_SRgb
+                or PixelFormat.BC1_Rgba_UNorm
+                or PixelFormat.BC1_Rgba_UNorm_SRgb
+                or PixelFormat.BC4_UNorm
+                or PixelFormat.BC4_SNorm
+                or PixelFormat.ETC2_R8_G8_B8_UNorm
+                or PixelFormat.ETC2_R8_G8_B8_A1_UNorm => 8,
+
+            PixelFormat.BC2_UNorm
+                or PixelFormat.BC2_UNorm_SRgb
+                or PixelFormat.BC3_UNorm
+                or PixelFormat.BC3_UNorm_SRgb
+                or PixelFormat.BC5_UNorm
+                or PixelFormat.BC5_SNorm
+                or PixelFormat.BC7_UNorm
+                or PixelFormat.BC7_UNorm_SRgb
+                or PixelFormat.ETC2_R8_G8_B8_A8_UNorm => 16,
+            _ => Illegal.Value<PixelFormat, uint>()
+        };
 
     internal static bool IsFormatViewCompatible(PixelFormat viewFormat, PixelFormat realFormat)
     {
@@ -221,39 +188,30 @@ internal static class FormatHelpers
         "IDE0066:Convert switch statement to expression",
         Justification = "<Pending>"
     )]
-    internal static uint GetNumRows(uint height, PixelFormat format)
-    {
-        switch (format)
+    internal static uint GetNumRows(uint height, PixelFormat format) =>
+        format switch
         {
-            case PixelFormat.BC1_Rgb_UNorm:
-            case PixelFormat.BC1_Rgb_UNorm_SRgb:
-            case PixelFormat.BC1_Rgba_UNorm:
-            case PixelFormat.BC1_Rgba_UNorm_SRgb:
-            case PixelFormat.BC2_UNorm:
-            case PixelFormat.BC2_UNorm_SRgb:
-            case PixelFormat.BC3_UNorm:
-            case PixelFormat.BC3_UNorm_SRgb:
-            case PixelFormat.BC4_UNorm:
-            case PixelFormat.BC4_SNorm:
-            case PixelFormat.BC5_UNorm:
-            case PixelFormat.BC5_SNorm:
-            case PixelFormat.BC7_UNorm:
-            case PixelFormat.BC7_UNorm_SRgb:
-            case PixelFormat.ETC2_R8_G8_B8_UNorm:
-            case PixelFormat.ETC2_R8_G8_B8_A1_UNorm:
-            case PixelFormat.ETC2_R8_G8_B8_A8_UNorm:
-                return (height + 3) / 4;
+            PixelFormat.BC1_Rgb_UNorm
+                or PixelFormat.BC1_Rgb_UNorm_SRgb
+                or PixelFormat.BC1_Rgba_UNorm
+                or PixelFormat.BC1_Rgba_UNorm_SRgb
+                or PixelFormat.BC2_UNorm
+                or PixelFormat.BC2_UNorm_SRgb
+                or PixelFormat.BC3_UNorm
+                or PixelFormat.BC3_UNorm_SRgb
+                or PixelFormat.BC4_UNorm
+                or PixelFormat.BC4_SNorm
+                or PixelFormat.BC5_UNorm
+                or PixelFormat.BC5_SNorm
+                or PixelFormat.BC7_UNorm
+                or PixelFormat.BC7_UNorm_SRgb
+                or PixelFormat.ETC2_R8_G8_B8_UNorm
+                or PixelFormat.ETC2_R8_G8_B8_A1_UNorm
+                or PixelFormat.ETC2_R8_G8_B8_A8_UNorm => (height + 3) / 4,
+            _ => height
+        };
 
-            default:
-                return height;
-        }
-    }
-
-    internal static uint GetDepthPitch(uint rowPitch, uint height, PixelFormat format)
-    {
-        return rowPitch * GetNumRows(height, format);
-    }
-
+    internal static uint GetDepthPitch(uint rowPitch, uint height, PixelFormat format) => rowPitch * GetNumRows(height, format);
     internal static uint GetRegionSize(uint width, uint height, uint depth, PixelFormat format)
     {
         uint blockSizeInBytes;
@@ -290,84 +248,69 @@ internal static class FormatHelpers
         "IDE0066:Convert switch statement to expression",
         Justification = "<Pending>"
     )]
-    internal static PixelFormat GetViewFamilyFormat(PixelFormat format)
-    {
-        switch (format)
+    internal static PixelFormat GetViewFamilyFormat(PixelFormat format) =>
+        format switch
         {
-            case PixelFormat.R32_G32_B32_A32_Float:
-            case PixelFormat.R32_G32_B32_A32_UInt:
-            case PixelFormat.R32_G32_B32_A32_SInt:
-                return PixelFormat.R32_G32_B32_A32_Float;
-            case PixelFormat.R16_G16_B16_A16_Float:
-            case PixelFormat.R16_G16_B16_A16_UNorm:
-            case PixelFormat.R16_G16_B16_A16_UInt:
-            case PixelFormat.R16_G16_B16_A16_SNorm:
-            case PixelFormat.R16_G16_B16_A16_SInt:
-                return PixelFormat.R16_G16_B16_A16_Float;
-            case PixelFormat.R32_G32_Float:
-            case PixelFormat.R32_G32_UInt:
-            case PixelFormat.R32_G32_SInt:
-                return PixelFormat.R32_G32_Float;
-            case PixelFormat.R10_G10_B10_A2_UNorm:
-            case PixelFormat.R10_G10_B10_A2_UInt:
-                return PixelFormat.R10_G10_B10_A2_UNorm;
-            case PixelFormat.R8_G8_B8_A8_UNorm:
-            case PixelFormat.R8_G8_B8_A8_UNorm_SRgb:
-            case PixelFormat.R8_G8_B8_A8_UInt:
-            case PixelFormat.R8_G8_B8_A8_SNorm:
-            case PixelFormat.R8_G8_B8_A8_SInt:
-                return PixelFormat.R8_G8_B8_A8_UNorm;
-            case PixelFormat.R16_G16_Float:
-            case PixelFormat.R16_G16_UNorm:
-            case PixelFormat.R16_G16_UInt:
-            case PixelFormat.R16_G16_SNorm:
-            case PixelFormat.R16_G16_SInt:
-                return PixelFormat.R16_G16_Float;
-            case PixelFormat.R32_Float:
-            case PixelFormat.R32_UInt:
-            case PixelFormat.R32_SInt:
-                return PixelFormat.R32_Float;
-            case PixelFormat.R8_G8_UNorm:
-            case PixelFormat.R8_G8_UInt:
-            case PixelFormat.R8_G8_SNorm:
-            case PixelFormat.R8_G8_SInt:
-                return PixelFormat.R8_G8_UNorm;
-            case PixelFormat.R16_Float:
-            case PixelFormat.R16_UNorm:
-            case PixelFormat.R16_UInt:
-            case PixelFormat.R16_SNorm:
-            case PixelFormat.R16_SInt:
-                return PixelFormat.R16_Float;
-            case PixelFormat.R8_UNorm:
-            case PixelFormat.R8_UInt:
-            case PixelFormat.R8_SNorm:
-            case PixelFormat.R8_SInt:
-                return PixelFormat.R8_UNorm;
-            case PixelFormat.BC1_Rgba_UNorm:
-            case PixelFormat.BC1_Rgba_UNorm_SRgb:
-            case PixelFormat.BC1_Rgb_UNorm:
-            case PixelFormat.BC1_Rgb_UNorm_SRgb:
-                return PixelFormat.BC1_Rgba_UNorm;
-            case PixelFormat.BC2_UNorm:
-            case PixelFormat.BC2_UNorm_SRgb:
-                return PixelFormat.BC2_UNorm;
-            case PixelFormat.BC3_UNorm:
-            case PixelFormat.BC3_UNorm_SRgb:
-                return PixelFormat.BC3_UNorm;
-            case PixelFormat.BC4_UNorm:
-            case PixelFormat.BC4_SNorm:
-                return PixelFormat.BC4_UNorm;
-            case PixelFormat.BC5_UNorm:
-            case PixelFormat.BC5_SNorm:
-                return PixelFormat.BC5_UNorm;
-            case PixelFormat.B8_G8_R8_A8_UNorm:
-            case PixelFormat.B8_G8_R8_A8_UNorm_SRgb:
-                return PixelFormat.B8_G8_R8_A8_UNorm;
-            case PixelFormat.BC7_UNorm:
-            case PixelFormat.BC7_UNorm_SRgb:
-                return PixelFormat.BC7_UNorm;
-            default:
-                return format;
-        }
-    }
+            PixelFormat.R32_G32_B32_A32_Float
+                or PixelFormat.R32_G32_B32_A32_UInt
+                or PixelFormat.R32_G32_B32_A32_SInt => PixelFormat.R32_G32_B32_A32_Float,
+
+            PixelFormat.R16_G16_B16_A16_Float
+                or PixelFormat.R16_G16_B16_A16_UNorm
+                or PixelFormat.R16_G16_B16_A16_UInt
+                or PixelFormat.R16_G16_B16_A16_SNorm
+                or PixelFormat.R16_G16_B16_A16_SInt => PixelFormat.R16_G16_B16_A16_Float,
+
+            PixelFormat.R32_G32_Float
+                or PixelFormat.R32_G32_UInt
+                or PixelFormat.R32_G32_SInt => PixelFormat.R32_G32_Float,
+
+            PixelFormat.R10_G10_B10_A2_UNorm
+                or PixelFormat.R10_G10_B10_A2_UInt => PixelFormat.R10_G10_B10_A2_UNorm,
+
+            PixelFormat.R8_G8_B8_A8_UNorm
+                or PixelFormat.R8_G8_B8_A8_UNorm_SRgb
+                or PixelFormat.R8_G8_B8_A8_UInt
+                or PixelFormat.R8_G8_B8_A8_SNorm
+                or PixelFormat.R8_G8_B8_A8_SInt => PixelFormat.R8_G8_B8_A8_UNorm,
+
+            PixelFormat.R16_G16_Float
+                or PixelFormat.R16_G16_UNorm
+                or PixelFormat.R16_G16_UInt
+                or PixelFormat.R16_G16_SNorm
+                or PixelFormat.R16_G16_SInt => PixelFormat.R16_G16_Float,
+
+            PixelFormat.R32_Float
+                or PixelFormat.R32_UInt
+                or PixelFormat.R32_SInt => PixelFormat.R32_Float,
+
+            PixelFormat.R8_G8_UNorm
+                or PixelFormat.R8_G8_UInt
+                or PixelFormat.R8_G8_SNorm
+                or PixelFormat.R8_G8_SInt => PixelFormat.R8_G8_UNorm,
+
+            PixelFormat.R16_Float
+                or PixelFormat.R16_UNorm
+                or PixelFormat.R16_UInt
+                or PixelFormat.R16_SNorm
+                or PixelFormat.R16_SInt => PixelFormat.R16_Float,
+
+            PixelFormat.R8_UNorm
+                or PixelFormat.R8_UInt
+                or PixelFormat.R8_SNorm
+                or PixelFormat.R8_SInt => PixelFormat.R8_UNorm,
+
+            PixelFormat.BC1_Rgba_UNorm
+                or PixelFormat.BC1_Rgba_UNorm_SRgb
+                or PixelFormat.BC1_Rgb_UNorm
+                or PixelFormat.BC1_Rgb_UNorm_SRgb => PixelFormat.BC1_Rgba_UNorm,
+
+            PixelFormat.BC2_UNorm or PixelFormat.BC2_UNorm_SRgb => PixelFormat.BC2_UNorm,
+            PixelFormat.BC3_UNorm or PixelFormat.BC3_UNorm_SRgb => PixelFormat.BC3_UNorm,
+            PixelFormat.BC4_UNorm or PixelFormat.BC4_SNorm => PixelFormat.BC4_UNorm,
+            PixelFormat.BC5_UNorm or PixelFormat.BC5_SNorm => PixelFormat.BC5_UNorm,
+            PixelFormat.B8_G8_R8_A8_UNorm or PixelFormat.B8_G8_R8_A8_UNorm_SRgb => PixelFormat.B8_G8_R8_A8_UNorm,
+            PixelFormat.BC7_UNorm or PixelFormat.BC7_UNorm_SRgb => PixelFormat.BC7_UNorm,
+            _ => format
+        };
 }

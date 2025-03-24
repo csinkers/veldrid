@@ -14,7 +14,7 @@ public struct ComputePipelineDescription : IEquatable<ComputePipelineDescription
     public readonly Shader ComputeShader;
 
     /// <summary>
-    /// An array of <see cref="ResourceLayout"/>, which controls the layout of shader resoruces in the <see cref="Pipeline"/>.
+    /// An array of <see cref="ResourceLayout"/>, which controls the layout of shader resources in the <see cref="Pipeline"/>.
     /// </summary>
     public readonly ResourceLayout[] ResourceLayouts;
 

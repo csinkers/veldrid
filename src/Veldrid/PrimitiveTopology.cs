@@ -1,7 +1,7 @@
 ﻿namespace Veldrid;
 
 /// <summary>
-/// Determines how a sequence of vertices is interepreted by the rasterizer.
+/// Determines how a sequence of vertices is interpreted by the rasterizer.
 /// </summary>
 public enum PrimitiveTopology : byte
 {

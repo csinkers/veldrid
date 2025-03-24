@@ -21,7 +21,7 @@ public struct IndirectDrawArguments
     public uint FirstVertex;
 
     /// <summary>
-    /// The first instance to draw. Subsequent instances are incrmented by 1.
+    /// The first instance to draw. Subsequent instances are incremented by 1.
     /// </summary>
     public uint FirstInstance;
 }

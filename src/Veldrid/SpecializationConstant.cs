@@ -21,7 +21,7 @@ public struct SpecializationConstant : IEquatable<SpecializationConstant>
 
     /// <summary>
     /// An 8-byte block storing the contents of the specialization value. This is treated as an untyped buffer and is
-    /// interepreted according to <see cref="Type"/>.
+    /// interpreted according to <see cref="Type"/>.
     /// </summary>
     public ulong Data;
 
@@ -31,7 +31,7 @@ public struct SpecializationConstant : IEquatable<SpecializationConstant>
     /// <param name="id">The constant variable ID, as defined in the <see cref="Shader"/>.</param>
     /// <param name="type">The type of data stored in this instance. Must be a scalar numeric type.</param>
     /// <param name="data">An 8-byte block storing the contents of the specialization value. This is treated as an untyped
-    /// buffer and is interepreted according to <see cref="Type"/>.</param>
+    /// buffer and is interpreted according to <see cref="Type"/>.</param>
     public SpecializationConstant(uint id, ShaderConstantType type, ulong data)
     {
         ID = id;

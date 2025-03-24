@@ -96,7 +96,7 @@ public enum PixelFormat : byte
     R10_G10_B10_A2_UInt,
 
     /// <summary>
-    /// A 32-bit packed format. The 11-bit R componnent occupies bits 0..10, the 11-bit G component occupies bits 11..21,
+    /// A 32-bit packed format. The 11-bit R component occupies bits 0..10, the 11-bit G component occupies bits 11..21,
     /// and the 10-bit B component occupies bits 22..31. Each value is an unsigned floating point value.
     /// </summary>
     R11_G11_B10_Float,

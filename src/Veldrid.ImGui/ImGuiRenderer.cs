@@ -312,6 +312,9 @@ public class ImGuiRenderer : IDisposable
         return rsi.ResourceSet;
     }
 
+    /// <summary>
+    /// Clears all cached image resources.
+    /// </summary>
     public void ClearCachedImageResources()
     {
         foreach (IDisposable resource in _ownedResources)

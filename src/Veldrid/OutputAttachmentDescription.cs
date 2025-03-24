@@ -26,17 +26,11 @@ public struct OutputAttachmentDescription : IEquatable<OutputAttachmentDescripti
     /// </summary>
     /// <param name="other">The instance to compare to.</param>
     /// <returns>True if all elements are equal; false otherwise.</returns>
-    public bool Equals(OutputAttachmentDescription other)
-    {
-        return Format == other.Format;
-    }
+    public bool Equals(OutputAttachmentDescription other) => Format == other.Format;
 
     /// <summary>
     /// Returns the hash code for this instance.
     /// </summary>
     /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-    public override int GetHashCode()
-    {
-        return (int)Format;
-    }
+    public override int GetHashCode() => (int)Format;
 }

@@ -30,6 +30,11 @@ internal static class ShaderHelper
                 throw new InvalidOperationException();
         }
 
-        return new(fixClipZ, invertY, specializations.ToArray());
+        return new CrossCompileOptions
+        {
+            FixClipSpaceZ = fixClipZ,
+            InvertVertexOutputY = invertY,
+            Specializations = specializations.ToArray()
+        };
     }
 }

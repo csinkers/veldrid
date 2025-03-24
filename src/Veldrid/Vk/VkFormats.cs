@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using TerraFX.Interop.Vulkan;
+using Veldrid.SPIRV;
 
 namespace Veldrid.Vk;
 

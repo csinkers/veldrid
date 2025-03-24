@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Veldrid.MetalBindings;
+using Veldrid.SPIRV;
 
 namespace Veldrid.MTL;
 
@@ -345,9 +346,7 @@ internal sealed class MTLPipeline : Pipeline
         ObjectiveCRuntime.release(mtlDesc.NativePtr);
     }
 
-    static unsafe MTLFunctionConstantValues CreateConstantValues(
-        SpecializationConstant[]? specializations
-    )
+    static unsafe MTLFunctionConstantValues CreateConstantValues(SpecializationConstant[]? specializations)
     {
         MTLFunctionConstantValues ret = MTLFunctionConstantValues.New();
         if (specializations != null)
@@ -355,7 +354,8 @@ internal sealed class MTLPipeline : Pipeline
             foreach (SpecializationConstant sc in specializations)
             {
                 MTLDataType mtlType = MTLFormats.VdVoMTLShaderConstantType(sc.Type);
-                ret.setConstantValuetypeatIndex(&sc.Data, mtlType, sc.ID);
+                ulong data = sc.Data;
+                ret.setConstantValuetypeatIndex(&data, mtlType, sc.Id);
             }
         }
 

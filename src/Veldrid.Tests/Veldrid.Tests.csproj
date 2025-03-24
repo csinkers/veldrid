@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Veldrid\Veldrid.csproj" />
+    <ProjectReference Include="..\Veldrid.Utilities\Veldrid.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="xunit" Version="2.8.1" />
     <PackageReference Include="xunit.console" Version="2.8.1" />
@@ -17,12 +22,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
-    <ProjectReference Include="..\..\modules\veldrid-spirv\src\Veldrid.SPIRV\Veldrid.SPIRV.csproj" />
-    <ProjectReference Include="..\Veldrid.RenderDoc\Veldrid.RenderDoc.csproj" />
-    <ProjectReference Include="..\Veldrid.SDL2\Veldrid.SDL2.csproj" />
-    <ProjectReference Include="..\Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj" />
-    <ProjectReference Include="..\Veldrid.Utilities\Veldrid.Utilities.csproj" />
-    <ProjectReference Include="..\Veldrid\Veldrid.csproj" />
   </ItemGroup>
 
   <ItemGroup>

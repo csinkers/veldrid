@@ -18,20 +18,18 @@ internal static class TestShaders
         return new(stage, ShaderProvider.ReadAllBytes(path), "main");
     }
 
-    public static Shader[] LoadVertexFragment(ResourceFactory factory, string setName)
-    {
-        return factory.CreateFromSpirv(
+    public static Shader[] LoadVertexFragment(ResourceFactory factory, string setName) =>
+        factory.CreateFromSpirv(
             GetShaderDescription(ShaderStages.Vertex, setName),
             GetShaderDescription(ShaderStages.Fragment, setName),
-            new(false, false, [new(100, false)])
+            new CrossCompileOptions { Specializations = [new(100, false)] }
         );
-    }
 
     public static Shader LoadCompute(ResourceFactory factory, string setName)
     {
         return factory.CreateFromSpirv(
             GetShaderDescription(ShaderStages.Compute, setName),
-            new CrossCompileOptions(false, false, [new(100, false)])
+            new CrossCompileOptions { Specializations = [new(100, false)] }
         );
     }
 }

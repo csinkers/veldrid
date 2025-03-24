@@ -40,11 +40,17 @@ public static class ShaderHelper
         SpecializationConstant[] specializations = GetSpecializations(gd);
 
         bool fixClipZ =
-            (gd.BackendType == GraphicsBackend.OpenGL || gd.BackendType == GraphicsBackend.OpenGLES)
+            gd.BackendType is GraphicsBackend.OpenGL or GraphicsBackend.OpenGLES
             && !gd.IsDepthRangeZeroToOne;
-        bool invertY = false;
 
-        return new(fixClipZ, invertY, specializations);
+        bool invertY = false;
+        return new CrossCompileOptions
+        {
+            FixClipSpaceZ =
+            fixClipZ,
+            InvertVertexOutputY = invertY,
+            Specializations = specializations
+        };
     }
 
     public static SpecializationConstant[] GetSpecializations(GraphicsDevice gd)

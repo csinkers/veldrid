@@ -36,7 +36,7 @@ internal class TextureBlitter : IDisposable
         Shader[] shaders = factory.CreateFromSpirv(
             new(ShaderStages.Vertex, Encoding.ASCII.GetBytes(vertexGlsl), "main"),
             new(ShaderStages.Fragment, Encoding.ASCII.GetBytes(fragmentGlsl), "main"),
-            new(false, false, specConstants)
+            new CrossCompileOptions { Specializations = specConstants }
         );
 
         _rl = factory.CreateResourceLayout(

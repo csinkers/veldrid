@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using TerraFX.Interop.Vulkan;
+using Veldrid.SPIRV;
 using static TerraFX.Interop.Vulkan.Vulkan;
 using static Veldrid.Vk.VulkanUtil;
 using VulkanPipeline = TerraFX.Interop.Vulkan.VkPipeline;
@@ -251,7 +252,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 byte* srcData = (byte*)&data;
                 uint dataSize = VkFormats.GetSpecializationConstantSize(specDescs[i].Type);
                 Unsafe.CopyBlock(fullSpecData + specOffset, srcData, dataSize);
-                mapEntries[i].constantID = specDescs[i].ID;
+                mapEntries[i].constantID = specDescs[i].Id;
                 mapEntries[i].offset = specOffset;
                 mapEntries[i].size = dataSize;
                 specOffset += dataSize;
@@ -490,7 +491,7 @@ internal sealed unsafe class VkPipeline : Pipeline, IResourceRefCountTarget
                 byte* srcData = (byte*)&data;
                 uint dataSize = VkFormats.GetSpecializationConstantSize(specDescs[i].Type);
                 Unsafe.CopyBlock(fullSpecData + specOffset, srcData, dataSize);
-                mapEntries[i].constantID = specDescs[i].ID;
+                mapEntries[i].constantID = specDescs[i].Id;
                 mapEntries[i].offset = specOffset;
                 mapEntries[i].size = dataSize;
                 specOffset += dataSize;

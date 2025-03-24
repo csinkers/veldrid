@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using Veldrid.SPIRV;
 
 namespace Veldrid;
 
@@ -441,4 +443,183 @@ public abstract class ResourceFactory
     /// <param name="description">The desired properties of the created object.</param>
     /// <returns>A new <see cref="Swapchain"/>.</returns>
     public abstract Swapchain CreateSwapchain(in SwapchainDescription description);
+
+    /// <summary>
+    /// Creates a vertex and fragment shader pair from the given <see cref="ShaderDescription"/> pair containing SPIR-V
+    /// bytecode or GLSL source code.
+    /// </summary>
+    /// <param name="vertexShaderDescription">The vertex shader's description. <see cref="ShaderDescription.ShaderBytes"/>
+    /// should contain SPIR-V bytecode or Vulkan-style GLSL source code which can be compiled to SPIR-V.</param>
+    /// <param name="fragmentShaderDescription">The fragment shader's description.
+    /// <see cref="ShaderDescription.ShaderBytes"/> should contain SPIR-V bytecode or Vulkan-style GLSL source code which
+    /// can be compiled to SPIR-V.</param>
+    /// <returns>A two-element array, containing the vertex shader (element 0) and the fragment shader (element 1).</returns>
+    public Shader[] CreateFromSpirv(
+        ShaderDescription vertexShaderDescription,
+        ShaderDescription fragmentShaderDescription
+    ) =>
+        CreateFromSpirv(
+            vertexShaderDescription,
+            fragmentShaderDescription,
+            CrossCompileOptions.Default
+        );
+
+    /// <summary>
+    /// Creates a vertex and fragment shader pair from the given <see cref="ShaderDescription"/> pair containing SPIR-V
+    /// bytecode or GLSL source code.
+    /// </summary>
+    /// <param name="vertexShaderDescription">The vertex shader's description. <see cref="ShaderDescription.ShaderBytes"/>
+    /// should contain SPIR-V bytecode or Vulkan-style GLSL source code which can be compiled to SPIR-V.</param>
+    /// <param name="fragmentShaderDescription">The fragment shader's description.
+    /// <see cref="ShaderDescription.ShaderBytes"/> should contain SPIR-V bytecode or Vulkan-style GLSL source code which
+    /// can be compiled to SPIR-V.</param>
+    /// <param name="options">The <see cref="CrossCompileOptions"/> which will control the parameters used to translate the
+    /// shaders from SPIR-V to the target language.</param>
+    /// <returns>A two-element array, containing the vertex shader (element 0) and the fragment shader (element 1).</returns>
+    public Shader[] CreateFromSpirv(
+        ShaderDescription vertexShaderDescription,
+        ShaderDescription fragmentShaderDescription,
+        CrossCompileOptions options
+    )
+    {
+        GraphicsBackend backend = BackendType;
+        Shader vertexShader;
+        Shader fragmentShader;
+        if (backend == GraphicsBackend.Vulkan)
+        {
+            vertexShaderDescription.ShaderBytes = EnsureSpirv(vertexShaderDescription);
+            fragmentShaderDescription.ShaderBytes = EnsureSpirv(fragmentShaderDescription);
+
+            vertexShader = CreateShader(vertexShaderDescription);
+            fragmentShader = CreateShader(fragmentShaderDescription);
+        }
+        else
+        {
+            CrossCompileTarget target = GetCompilationTarget(BackendType);
+            VertexFragmentCompilationResult compilationResult = SpirvCompilation.CompileVertexFragment(
+                vertexShaderDescription.ShaderBytes,
+                fragmentShaderDescription.ShaderBytes,
+                target,
+                options
+            );
+
+            if (compilationResult.VertexShader == null)
+                throw new SpirvCompilationException("Failed to compile vertex shader");
+
+            if (compilationResult.FragmentShader == null)
+                throw new SpirvCompilationException("Failed to compile fragment shader");
+
+            string vertexEntryPoint =
+                backend == GraphicsBackend.Metal && vertexShaderDescription.EntryPoint == "main"
+                    ? "main0"
+                    : vertexShaderDescription.EntryPoint;
+
+            byte[] vertexBytes = GetBytes(backend, compilationResult.VertexShader);
+            vertexShader = CreateShader(new(vertexShaderDescription.Stage, vertexBytes, vertexEntryPoint));
+
+            string fragmentEntryPoint =
+                backend == GraphicsBackend.Metal && fragmentShaderDescription.EntryPoint == "main"
+                    ? "main0"
+                    : fragmentShaderDescription.EntryPoint;
+
+            byte[] fragmentBytes = GetBytes(backend, compilationResult.FragmentShader);
+            fragmentShader = CreateShader(new(fragmentShaderDescription.Stage, fragmentBytes, fragmentEntryPoint));
+        }
+
+        return [vertexShader, fragmentShader];
+    }
+
+    /// <summary>
+    /// Creates a compute shader from the given <see cref="ShaderDescription"/> containing SPIR-V bytecode or GLSL source
+    /// code.
+    /// </summary>
+    /// <param name="computeShaderDescription">The compute shader's description.
+    /// <see cref="ShaderDescription.ShaderBytes"/> should contain SPIR-V bytecode or Vulkan-style GLSL source code which
+    /// can be compiled to SPIR-V.</param>
+    /// <returns>The compiled compute <see cref="Shader"/>.</returns>
+    public Shader CreateFromSpirv(
+        ShaderDescription computeShaderDescription
+    ) => CreateFromSpirv(computeShaderDescription, CrossCompileOptions.Default);
+
+    /// <summary>
+    /// Creates a compute shader from the given <see cref="ShaderDescription"/> containing SPIR-V bytecode or GLSL source
+    /// code.
+    /// </summary>
+    /// <param name="computeShaderDescription">The compute shader's description.
+    /// <see cref="ShaderDescription.ShaderBytes"/> should contain SPIR-V bytecode or Vulkan-style GLSL source code which
+    /// can be compiled to SPIR-V.</param>
+    /// <param name="options">The <see cref="CrossCompileOptions"/> which will control the parameters used to translate the
+    /// shaders from SPIR-V to the target language.</param>
+    /// <returns>The compiled compute <see cref="Shader"/>.</returns>
+    public Shader CreateFromSpirv(ShaderDescription computeShaderDescription, CrossCompileOptions options)
+    {
+        GraphicsBackend backend = BackendType;
+        if (backend == GraphicsBackend.Vulkan)
+        {
+            computeShaderDescription.ShaderBytes = EnsureSpirv(computeShaderDescription);
+            return CreateShader(computeShaderDescription);
+        }
+
+        CrossCompileTarget target = GetCompilationTarget(BackendType);
+        ComputeCompilationResult compilationResult = SpirvCompilation.CompileCompute(
+            computeShaderDescription.ShaderBytes,
+            target,
+            options
+        );
+
+        string computeEntryPoint =
+            backend == GraphicsBackend.Metal && computeShaderDescription.EntryPoint == "main"
+                ? "main0"
+                : computeShaderDescription.EntryPoint;
+
+        byte[] computeBytes = GetBytes(backend, compilationResult.ComputeShader);
+
+        return CreateShader(
+            new(computeShaderDescription.Stage, computeBytes, computeEntryPoint)
+        );
+    }
+
+    static byte[] EnsureSpirv(ShaderDescription description)
+    {
+        if (SpirvUtil.HasSpirvHeader(description.ShaderBytes))
+            return description.ShaderBytes;
+
+        SpirvCompilationResult glslCompileResult = SpirvCompilation.CompileGlslToSpirv(
+            description.ShaderBytes,
+            null,
+            GetShadercKind(description.Stage),
+            new GlslCompileOptions(description.Debug, []));
+
+        return glslCompileResult.SpirvBytes;
+    }
+
+    static byte[] GetBytes(GraphicsBackend backend, string code) =>
+        backend switch
+        {
+            GraphicsBackend.Direct3D11 or GraphicsBackend.OpenGL or GraphicsBackend.OpenGLES => Encoding.ASCII.GetBytes(code), 
+            GraphicsBackend.Metal => Encoding.UTF8.GetBytes(code),
+            _ => throw new SpirvCompilationException($"Invalid GraphicsBackend: {backend}"),
+        };
+
+    static CrossCompileTarget GetCompilationTarget(GraphicsBackend backend) =>
+        backend switch
+        {
+            GraphicsBackend.Direct3D11 => CrossCompileTarget.HLSL,
+            GraphicsBackend.OpenGL => CrossCompileTarget.GLSL,
+            GraphicsBackend.Metal => CrossCompileTarget.MSL,
+            GraphicsBackend.OpenGLES => CrossCompileTarget.ESSL,
+            _ => throw new SpirvCompilationException($"Invalid GraphicsBackend: {backend}"),
+        };
+
+    static ShadercShaderKind GetShadercKind(ShaderStages stage) =>
+        stage switch
+        {
+            ShaderStages.Vertex => ShadercShaderKind.Vertex,
+            ShaderStages.Geometry => ShadercShaderKind.Geometry,
+            ShaderStages.TessellationControl => ShadercShaderKind.TessellationControl,
+            ShaderStages.TessellationEvaluation => ShadercShaderKind.TessellationEvaluation,
+            ShaderStages.Fragment => ShadercShaderKind.Fragment,
+            ShaderStages.Compute => ShadercShaderKind.Compute,
+            _ => throw new SpirvCompilationException($"Invalid shader stage: {stage}")
+        };
 }

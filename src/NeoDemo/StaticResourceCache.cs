@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Veldrid.ImageSharp;
+using Veldrid.SPIRV;
 
 namespace Veldrid.NeoDemo;
 

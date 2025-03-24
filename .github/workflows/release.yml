@@ -43,9 +43,12 @@ jobs:
     - name: Build Packages
       run: dotnet pack . -c Release
 
-    - name: Publish tagged release to nuget.org
-      if: secrets.NUGET_SOURCE != '' || secrets.NUGET_KEY != ''
-      run: dotnet nuget push bin\Packages\Release\*.nupkg --source ${{ secrets.NUGET_SOURCE }} --api-key ${{secrets.NUGET_KEY}}
+    - name: Push to NuGet
+      env:
+        SOURCE: ${{ secrets.NUGET_SOURCE }}
+        API_KEY: ${{ secrets.NUGET_API_KEY }}
+      if: env.SOURCE != '' || env.API_KEY != ''
+      run: dotnet nuget push ./**/*.nupkg --source ${{ env.SOURCE }} --api-key ${{ env.API_KEY }}
 
 #    - name: Generate GitHub Release
 #      uses: softprops/action-gh-release@v1

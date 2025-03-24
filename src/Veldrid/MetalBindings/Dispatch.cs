@@ -35,6 +35,7 @@ internal enum QualityOfServiceLevel : long
     QOS_CLASS_UNSPECIFIED = 0,
 }
 
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 internal struct DispatchQueue
 {
     public IntPtr NativePtr;
@@ -44,3 +45,4 @@ internal struct DispatchData
 {
     public IntPtr NativePtr;
 }
+#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value

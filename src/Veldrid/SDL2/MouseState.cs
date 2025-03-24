@@ -3,7 +3,7 @@
 /// <summary>
 /// The current state of the mouse
 /// </summary>
-public readonly struct MouseState(int X, int Y, MouseButton MouseDown)
+public record struct MouseState(int X, int Y, MouseButton MouseDown)
 {
     /// <summary>
     /// Check if a particular button is pressed

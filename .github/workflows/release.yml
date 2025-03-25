@@ -9,7 +9,7 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 jobs:
-  build_windows:
+  build_packages:
     runs-on: windows-latest # for DirectX
 
     steps:
@@ -33,22 +33,26 @@ jobs:
       run: dotnet restore .
 
     - name: Build
-      run: dotnet build --no-restore .
+      run: dotnet build --no-restore -c Release .
       env:
         MINVER_VERSION: ${{ vars.MINVER_VERSION }}
 
     - name: Test
-      run: dotnet test --no-build --verbosity normal . --filter "Backend=D3D11"
+      run: dotnet test --no-build -c Release --verbosity normal . --filter "Backend=D3D11"
 
-    - name: Build Packages
-      run: dotnet pack . -c Release
+    - name: Pack
+      run: dotnet pack -c Release .
 
     - name: Push to NuGet
       env:
         SOURCE: ${{ secrets.NUGET_SOURCE }}
         API_KEY: ${{ secrets.NUGET_API_KEY }}
       if: env.SOURCE != '' || env.API_KEY != ''
-      run: dotnet nuget push ./**/Sinkers*.nupkg --source ${{ env.SOURCE }} --api-key ${{ env.API_KEY }}
+      run: |
+        $files = Get-ChildItem -Path . -Filter 'Sinkers.*.nupkg' -Recurse
+        foreach ($file in $files) {
+          dotnet nuget push $file.FullName --source ${{ env.SOURCE }} --api-key ${{ env.API_KEY }}
+        }
 
 #    - name: Generate GitHub Release
 #      uses: softprops/action-gh-release@v1

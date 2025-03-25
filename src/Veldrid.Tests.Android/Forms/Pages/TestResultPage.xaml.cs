@@ -2,7 +2,7 @@
 
 namespace Veldrid.Tests.Android.Forms.Pages;
 
-internal partial class TestResultPage : ContentPage
+public partial class TestResultPage : ContentPage
 {
     public TestResultPage()
     {

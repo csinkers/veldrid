@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace Veldrid.Tests.Android.Forms.Pages;
 
-internal partial class CreditsPage : ContentPage
+public partial class CreditsPage : ContentPage
 {
     public ICommand LaunchUrl { get; } = new DelegateCommand<string>(OnLaunchUrl);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 
 namespace Veldrid.SDL2;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 /// <summary>
 /// A transparent wrapper over a pointer representing an SDL Renderer object.
@@ -16,3 +17,4 @@ public struct SDL_Renderer(IntPtr pointer)
 
     public static implicit operator SDL_Renderer(IntPtr pointer) => new(pointer);
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

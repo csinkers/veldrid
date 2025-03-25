@@ -12,14 +12,8 @@
     <OutputPath>$([System.IO.Path]::GetFullPath('$(BinDir)$(Configuration)'))\$(MSBuildProjectName)</OutputPath>
     <BaseIntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(BinDir)obj\$(MSBuildProjectName)'))\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)</IntermediateOutputPath>
+
     <PackageOutputPath>$(BinDir)Packages\$(Configuration)</PackageOutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <VorticeWindowsVersion>3.5.0</VorticeWindowsVersion>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>Copyright 2020 (c) Eric Mellino. All rights reserved.</Copyright>
@@ -30,6 +24,10 @@
     <EmbedAllSources>true</EmbedAllSources>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <VorticeWindowsVersion>3.5.0</VorticeWindowsVersion>
   </PropertyGroup>
 
   <PropertyGroup>

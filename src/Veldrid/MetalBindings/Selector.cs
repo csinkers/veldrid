@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 
 namespace Veldrid.MetalBindings;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public readonly unsafe struct Selector
 {
@@ -39,3 +40,4 @@ public readonly unsafe struct Selector
 
     public static implicit operator Selector(ReadOnlySpan<byte> utf8) => new(utf8);
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

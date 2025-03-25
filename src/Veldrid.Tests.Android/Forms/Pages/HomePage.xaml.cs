@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace Veldrid.Tests.Android.Forms.Pages;
 
-internal partial class HomePage : ContentPage
+public partial class HomePage : ContentPage
 {
     static readonly RunStatusToColorConverter RunStatusConverter = new();
 

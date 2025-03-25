@@ -2,6 +2,7 @@
 
 namespace Veldrid.SDL2;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public static partial class Sdl2Native
 {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -21,3 +22,4 @@ public enum SDLInitFlags : uint
     Haptic = 0x00001000u,
     GameController = 0x00002000u,
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

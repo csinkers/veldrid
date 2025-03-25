@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using static Veldrid.SDL2.Sdl2Native;
 
 namespace Veldrid.SDL2;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 /// <summary>
 /// Handler for SDL2 events.
@@ -914,3 +915,4 @@ internal class BufferedValue<T>
         public T Value;
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

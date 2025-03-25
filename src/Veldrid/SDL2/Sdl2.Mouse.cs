@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 
 namespace Veldrid.SDL2;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 /// <summary>
 /// A transparent wrapper over a pointer representing an SDL Sdl2Cursor object.
@@ -161,3 +162,4 @@ public static partial class Sdl2Native
     /// </summary>
     public static void SDL_SetCursor(SDL_Cursor cursor) => s_sdl_setCursor(cursor);
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

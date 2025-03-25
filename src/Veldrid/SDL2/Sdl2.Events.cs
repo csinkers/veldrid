@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Veldrid.SDL2;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public static unsafe partial class Sdl2Native
 {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -743,3 +744,4 @@ public unsafe struct SDL_DropEvent
     /// <summary>the window that was dropped on, if any</summary>
     public uint windowID;
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

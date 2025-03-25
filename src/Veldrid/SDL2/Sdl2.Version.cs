@@ -2,6 +2,7 @@
 
 namespace Veldrid.SDL2;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public static unsafe partial class Sdl2Native
 {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -20,3 +21,4 @@ public struct SDL_version
     public byte minor;
     public byte patch;
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

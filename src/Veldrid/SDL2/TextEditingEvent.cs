@@ -2,6 +2,7 @@
 using System.Text;
 
 namespace Veldrid.SDL2;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public readonly ref struct TextEditingEvent(
     uint timestamp,
@@ -17,3 +18,4 @@ public readonly ref struct TextEditingEvent(
     public int Offset { get; } = offset;
     public int Length { get; } = length;
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

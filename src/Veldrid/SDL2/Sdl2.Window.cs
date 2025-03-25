@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Veldrid.SDL2;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public static unsafe partial class Sdl2Native
 {
     /// <summary>
@@ -438,3 +439,4 @@ public unsafe struct SDL_DisplayMode
     public void* driverdata;
 }
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

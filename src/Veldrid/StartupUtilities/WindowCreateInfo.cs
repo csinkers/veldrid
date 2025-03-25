@@ -1,6 +1,7 @@
 ﻿using Veldrid.SDL2;
 
 namespace Veldrid.StartupUtilities;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public struct WindowCreateInfo(
     int x,
@@ -18,3 +19,4 @@ public struct WindowCreateInfo(
     public WindowState WindowInitialState = windowInitialState;
     public string WindowTitle = windowTitle;
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

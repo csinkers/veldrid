@@ -5,6 +5,10 @@ using System.Runtime.InteropServices;
 
 namespace Veldrid.SDL2;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+/// <summary>
+/// Provides access to the native methods of SDL2.
+/// </summary>
 public static unsafe partial class Sdl2Native
 {
     static Lazy<IntPtr> LibHandle { get; } = new(LoadSdl2);
@@ -79,3 +83,4 @@ public static unsafe partial class Sdl2Native
         s_sdl_free(ptr);
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

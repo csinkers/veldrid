@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Veldrid.SDL2;
 
 namespace Veldrid.StartupUtilities;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public static class VeldridStartup
 {
@@ -549,3 +550,4 @@ public static class VeldridStartup
     }
 #endif
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

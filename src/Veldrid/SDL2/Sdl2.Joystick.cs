@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 
 namespace Veldrid.SDL2;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 /// <summary>
 /// A transparent wrapper over a pointer to a native SDL_Joystick.
@@ -44,3 +45,4 @@ public static partial class Sdl2Native
     public static int SDL_JoystickInstanceID(SDL_Joystick joystick) =>
         s_sdl_joystickInstanceID(joystick);
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

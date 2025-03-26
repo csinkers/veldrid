@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Veldrid.OpenGLBindings;
+using Veldrid.SPIRV;
 
 namespace Veldrid.OpenGL;
 

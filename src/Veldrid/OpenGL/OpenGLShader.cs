@@ -1,5 +1,6 @@
 ﻿using System;
 using Veldrid.OpenGLBindings;
+using Veldrid.SPIRV;
 using static Veldrid.OpenGL.OpenGLUtil;
 using static Veldrid.OpenGLBindings.OpenGLNative;
 

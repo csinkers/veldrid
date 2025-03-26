@@ -1,4 +1,6 @@
-﻿namespace Veldrid.D3D11;
+﻿using Veldrid.SPIRV;
+
+namespace Veldrid.D3D11;
 
 internal sealed class D3D11ResourceLayout : ResourceLayout
 {

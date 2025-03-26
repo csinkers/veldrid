@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Veldrid.ImageSharp;
+using Veldrid.SPIRV;
 using Veldrid.Utilities;
 
 namespace Veldrid.NeoDemo.Objects;

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Veldrid.MetalBindings;
+using Veldrid.SPIRV;
 
 namespace Veldrid.MTL;
 

@@ -1,3 +1,5 @@
+using Veldrid.SPIRV;
+
 namespace Veldrid.MTL;
 
 internal sealed class MTLResourceLayout : ResourceLayout

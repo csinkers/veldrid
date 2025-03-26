@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Veldrid.NeoDemo.Objects;
+using Veldrid.SPIRV;
 
 namespace Veldrid.NeoDemo;
 

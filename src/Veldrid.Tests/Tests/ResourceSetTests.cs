@@ -1,4 +1,5 @@
-﻿using Veldrid.Tests.Utilities;
+﻿using Veldrid.SPIRV;
+using Veldrid.Tests.Utilities;
 using Xunit;
 
 namespace Veldrid.Tests;

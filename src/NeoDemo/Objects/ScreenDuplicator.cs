@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Veldrid.SPIRV;
 using Veldrid.Utilities;
 
 namespace Veldrid.NeoDemo.Objects;

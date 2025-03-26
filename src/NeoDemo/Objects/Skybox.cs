@@ -2,6 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid.ImageSharp;
+using Veldrid.SPIRV;
 using Veldrid.Utilities;
 
 namespace Veldrid.NeoDemo.Objects;

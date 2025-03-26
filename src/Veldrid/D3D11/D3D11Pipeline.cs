@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Veldrid.SPIRV;
 using Vortice.Direct3D11;
 
 namespace Veldrid.D3D11;

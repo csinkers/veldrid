@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Veldrid.SPIRV;
 using Vortice;
 using Vortice.Direct3D11;
 using Vortice.Mathematics;

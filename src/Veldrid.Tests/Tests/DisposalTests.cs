@@ -1,3 +1,4 @@
+using Veldrid.SPIRV;
 using Veldrid.Tests.Utilities;
 using Xunit;
 

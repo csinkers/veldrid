@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Veldrid.MetalBindings;
+using Veldrid.SPIRV;
 
 namespace Veldrid.MTL;
 

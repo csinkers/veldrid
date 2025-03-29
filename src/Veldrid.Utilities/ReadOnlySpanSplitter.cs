@@ -23,9 +23,7 @@ internal ref struct ReadOnlySpanSplitter<T>
     )
     {
         if ((splitOptions & StringSplitOptions.TrimEntries) != 0)
-        {
             value = Trim(value);
-        }
 
         Value = value;
         Separator = separator;
@@ -35,7 +33,7 @@ internal ref struct ReadOnlySpanSplitter<T>
     public bool MoveNext()
     {
         TryMove:
-        ReadOnlySpan<T> span = Value.Slice(_offset);
+        ReadOnlySpan<T> span = Value[_offset..];
 
         // Empty separator in IndexOf always returns 0.
         // Check span length to not loop forever on end.
@@ -43,7 +41,7 @@ internal ref struct ReadOnlySpanSplitter<T>
 
         if (next != -1)
         {
-            span = span.Slice(0, next);
+            span = span[..next];
             _offset += span.Length + Separator.Length;
 
             if ((SplitOptions & StringSplitOptions.TrimEntries) != 0)
@@ -60,7 +58,6 @@ internal ref struct ReadOnlySpanSplitter<T>
         {
             // This is the remainder of Value.
             _offset += span.Length;
-
             Debug.Assert(_offset == Value.Length);
         }
         else
@@ -76,29 +73,22 @@ internal ref struct ReadOnlySpanSplitter<T>
         return true;
     }
 
-    public readonly ReadOnlySpanSplitter<T> GetEnumerator()
-    {
-        return this;
-    }
+    public readonly ReadOnlySpanSplitter<T> GetEnumerator() => this;
 
     static ReadOnlySpan<T> Trim(ReadOnlySpan<T> span)
     {
         if (typeof(T) != typeof(char))
-        {
             return span;
-        }
 
         ReadOnlySpan<char> charSpan = MemoryMarshal.CreateReadOnlySpan(
             ref Unsafe.As<T, char>(ref MemoryMarshal.GetReference(span)),
-            span.Length
-        );
+            span.Length);
 
         charSpan = charSpan.Trim();
 
         ReadOnlySpan<T> tSpan = MemoryMarshal.CreateReadOnlySpan(
             ref Unsafe.As<char, T>(ref MemoryMarshal.GetReference(charSpan)),
-            charSpan.Length
-        );
+            charSpan.Length);
 
         return tSpan;
     }

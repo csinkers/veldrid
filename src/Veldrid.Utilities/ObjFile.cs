@@ -5,7 +5,7 @@ using System.Numerics;
 namespace Veldrid.Utilities;
 
 /// <summary>
-/// Represents a parset Wavefront OBJ file.
+/// Represents a parsed Wavefront OBJ file.
 /// </summary>
 public class ObjFile(
     Vector3[] positions,
@@ -15,13 +15,10 @@ public class ObjFile(
     string? materialLibName
 )
 {
-    public Vector3[] Positions { get; } =
-        positions ?? throw new ArgumentNullException(nameof(positions));
+    public Vector3[] Positions { get; } = positions ?? throw new ArgumentNullException(nameof(positions));
     public Vector3[] Normals { get; } = normals ?? throw new ArgumentNullException(nameof(normals));
-    public Vector2[] TexCoords { get; } =
-        texCoords ?? throw new ArgumentNullException(nameof(texCoords));
-    public MeshGroup[] MeshGroups { get; } =
-        meshGroups ?? throw new ArgumentNullException(nameof(meshGroups));
+    public Vector2[] TexCoords { get; } = texCoords ?? throw new ArgumentNullException(nameof(texCoords));
+    public MeshGroup[] MeshGroups { get; } = meshGroups ?? throw new ArgumentNullException(nameof(meshGroups));
     public string? MaterialLibName { get; } = materialLibName;
 
     /// <summary>
@@ -189,22 +186,16 @@ public class ObjFile(
     VertexPositionNormalTexture ConstructVertex(
         FaceVertex key,
         FaceVertex adjacent1,
-        FaceVertex adjacent2
-    )
+        FaceVertex adjacent2)
     {
         Vector3 position = Positions[key.PositionIndex - 1];
-        Vector3 normal;
-        if (key.NormalIndex == -1)
-        {
-            normal = ComputeNormal(key, adjacent1, adjacent2);
-        }
-        else
-        {
-            normal = Normals[key.NormalIndex - 1];
-        }
+        Vector3 normal = key.NormalIndex == -1
+            ? ComputeNormal(key, adjacent1, adjacent2)
+            : Normals[key.NormalIndex - 1];
 
-        Vector2 texCoord =
-            key.TexCoordIndex == -1 ? Vector2.Zero : TexCoords[key.TexCoordIndex - 1];
+        Vector2 texCoord = key.TexCoordIndex == -1
+            ? Vector2.Zero
+            : TexCoords[key.TexCoordIndex - 1];
 
         return new(position, normal, texCoord);
     }
@@ -273,17 +264,12 @@ public class ObjFile(
         /// </summary>
         public int TexCoordIndex = texCoordIndex;
 
-        public readonly bool Equals(FaceVertex other)
-        {
-            return PositionIndex == other.PositionIndex
-                && NormalIndex == other.NormalIndex
-                && TexCoordIndex == other.TexCoordIndex;
-        }
+        public readonly bool Equals(FaceVertex other) =>
+            PositionIndex == other.PositionIndex
+            && NormalIndex == other.NormalIndex
+            && TexCoordIndex == other.TexCoordIndex;
 
-        public readonly override bool Equals(object? obj)
-        {
-            return obj is FaceVertex value && Equals(value);
-        }
+        public readonly override bool Equals(object? obj) => obj is FaceVertex value && Equals(value);
 
 #pragma warning disable IDE0070 // Use 'System.HashCode'
         public readonly override int GetHashCode()
@@ -299,15 +285,13 @@ public class ObjFile(
             }
         }
 
-        public readonly override string ToString()
-        {
-            return string.Format(
+        public readonly override string ToString() =>
+            string.Format(
                 "Pos:{0}, Normal:{1}, TexCoord:{2}",
                 PositionIndex,
                 NormalIndex,
                 TexCoordIndex
             );
-        }
     }
 
     /// <summary>

@@ -37,12 +37,8 @@ public struct BoundingFrustum(
         ref Plane planes = ref Unsafe.AsRef(in Left);
 
         for (nuint i = 0; i < 6; i++)
-        {
             if (Plane.DotCoordinate(Unsafe.Add(ref planes, i), point) < 0)
-            {
                 return ContainmentType.Disjoint;
-            }
-        }
 
         return ContainmentType.Contains;
     }
@@ -56,13 +52,10 @@ public struct BoundingFrustum(
         {
             float distance = Plane.DotCoordinate(Unsafe.Add(ref planes, i), sphere.Center);
             if (distance < -sphere.Radius)
-            {
                 return ContainmentType.Disjoint;
-            }
-            else if (distance < sphere.Radius)
-            {
+
+            if (distance < sphere.Radius)
                 result = ContainmentType.Intersects;
-            }
         }
 
         return result;
@@ -101,18 +94,14 @@ public struct BoundingFrustum(
             // If the positive vertex is outside (behind plane), the box is disjoint.
             float positiveDistance = Plane.DotCoordinate(plane, positive);
             if (positiveDistance < 0)
-            {
                 return ContainmentType.Disjoint;
-            }
 
             // If the negative vertex is outside (behind plane), the box is intersecting.
             // Because the above check failed, the positive vertex is in front of the plane,
             // and the negative vertex is behind. Thus, the box is intersecting this plane.
             float negativeDistance = Plane.DotCoordinate(plane, negative);
             if (negativeDistance < 0)
-            {
                 result = ContainmentType.Intersects;
-            }
         }
 
         return result;
@@ -124,25 +113,15 @@ public struct BoundingFrustum(
         other.GetCorners(out FrustumCorners corners);
         Vector3* cornersPtr = (Vector3*)&corners;
         for (nuint i = 0; i < 8; i++)
-        {
             if (Contains(cornersPtr[i]) != ContainmentType.Disjoint)
-            {
                 pointsContained++;
-            }
-        }
 
-        if (pointsContained == 8)
+        return pointsContained switch
         {
-            return ContainmentType.Contains;
-        }
-        else if (pointsContained == 0)
-        {
-            return ContainmentType.Disjoint;
-        }
-        else
-        {
-            return ContainmentType.Intersects;
-        }
+            8 => ContainmentType.Contains,
+            0 => ContainmentType.Disjoint,
+            _ => ContainmentType.Intersects
+        };
     }
 
     public readonly FrustumCorners GetCorners()

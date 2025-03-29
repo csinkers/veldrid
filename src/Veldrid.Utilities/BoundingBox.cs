@@ -116,9 +116,7 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
         nuint stride = (nuint)pointStride;
         nuint pointCount = (nuint)pointBytes.Length / stride;
         if (pointCount < 1)
-        {
             return new(offset, offset);
-        }
 
         ref byte ptr = ref MemoryMarshal.GetReference(pointBytes);
         ref byte endPtr = ref Unsafe.Add(ref ptr, pointCount * stride);
@@ -156,34 +154,22 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
     }
 
     public static BoundingBox Combine(BoundingBox box1, BoundingBox box2)
-    {
-        return new(Vector3.Min(box1.Min, box2.Min), Vector3.Max(box1.Max, box2.Max));
-    }
+        => new(Vector3.Min(box1.Min, box2.Min), Vector3.Max(box1.Max, box2.Max));
 
     public static bool operator ==(BoundingBox first, BoundingBox second)
-    {
-        return first.Equals(second);
-    }
+        => first.Equals(second);
 
     public static bool operator !=(BoundingBox first, BoundingBox second)
-    {
-        return !first.Equals(second);
-    }
+        => !first.Equals(second);
 
     public readonly bool Equals(BoundingBox other)
-    {
-        return Min == other.Min && Max == other.Max;
-    }
+        => Min == other.Min && Max == other.Max;
 
     public readonly override string ToString()
-    {
-        return string.Format("Min:{0}, Max:{1}", Min, Max);
-    }
+        => $"Min:{Min}, Max:{Max}";
 
     public readonly override bool Equals(object? obj)
-    {
-        return obj is BoundingBox box && Equals(box);
-    }
+        => obj is BoundingBox box && Equals(box);
 
     public readonly override int GetHashCode()
     {
@@ -212,13 +198,11 @@ public struct BoundingBox(Vector3 min, Vector3 max) : IEquatable<BoundingBox>
         corners.FarTopRight = new(Max.X, Max.Y, Min.Z);
     }
 
-    public readonly bool ContainsNaN()
-    {
-        return float.IsNaN(Min.X)
-            || float.IsNaN(Min.Y)
-            || float.IsNaN(Min.Z)
-            || float.IsNaN(Max.X)
-            || float.IsNaN(Max.Y)
-            || float.IsNaN(Max.Z);
-    }
+    public readonly bool ContainsNaN() =>
+        float.IsNaN(Min.X)
+        || float.IsNaN(Min.Y)
+        || float.IsNaN(Min.Z)
+        || float.IsNaN(Max.X)
+        || float.IsNaN(Max.Y)
+        || float.IsNaN(Max.Z);
 }

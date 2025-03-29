@@ -11,7 +11,7 @@ namespace Veldrid.Utilities;
 public class ConstructedMesh32 : ConstructedMesh
 {
     /// <summary>
-    /// The the first index array of the mesh.
+    /// The first index array of the mesh.
     /// </summary>
     public uint[] Indices { get; }
 
@@ -40,6 +40,7 @@ public class ConstructedMesh32 : ConstructedMesh
         DeviceBuffer ib = factory.CreateBuffer(
             new((uint)Indices.Length * sizeof(uint), BufferUsage.IndexBuffer)
         );
+
         cl.UpdateBuffer(ib, 0, Indices);
         return ib;
     }
@@ -57,28 +58,24 @@ public class ConstructedMesh32 : ConstructedMesh
             Vector3 v1 = vertices[indices[i + 1]].Position;
             Vector3 v2 = vertices[indices[i + 2]].Position;
 
-            if (ray.Intersects(v0, v1, v2, out float newDistance))
-            {
-                if (newDistance < distance)
-                {
-                    distance = newDistance;
+            if (!ray.Intersects(v0, v1, v2, out float newDistance))
+                continue;
 
-                    if (any)
-                    {
-                        return true;
-                    }
-                }
-                result = true;
+            if (newDistance < distance)
+            {
+                distance = newDistance;
+
+                if (any)
+                    return true;
             }
+
+            result = true;
         }
 
         return result;
     }
 
-    public RayEnumerator RayCast(Ray ray)
-    {
-        return new(this, ray);
-    }
+    public RayEnumerator RayCast(Ray ray) => new(this, ray);
 
     public struct RayEnumerator(ConstructedMesh32 mesh, Ray ray) : IEnumerator<float>
     {
@@ -88,7 +85,7 @@ public class ConstructedMesh32 : ConstructedMesh
             mesh ?? throw new ArgumentNullException(nameof(mesh));
         public Ray Ray { get; } = ray;
 
-        public float Current { get; private set; } = default;
+        public float Current { get; private set; } = 0;
         object? IEnumerator.Current => Current;
 
         public bool MoveNext()
@@ -109,21 +106,17 @@ public class ConstructedMesh32 : ConstructedMesh
                 }
             }
 
-            Current = default;
+            Current = 0;
             return false;
         }
 
         public void Reset()
         {
-            Current = default;
+            Current = 0;
             _indexOffset = 0;
         }
 
-        public RayEnumerator GetEnumerator()
-        {
-            return this;
-        }
-
+        public RayEnumerator GetEnumerator() => this;
         public void Dispose() { }
     }
 }

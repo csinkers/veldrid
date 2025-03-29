@@ -11,7 +11,7 @@ namespace Veldrid.Utilities;
 public class ConstructedMesh16 : ConstructedMesh
 {
     /// <summary>
-    /// The the first index array of the mesh.
+    /// The first index array of the mesh.
     /// </summary>
     public ushort[] Indices { get; }
 
@@ -40,6 +40,7 @@ public class ConstructedMesh16 : ConstructedMesh
         DeviceBuffer ib = factory.CreateBuffer(
             new((uint)Indices.Length * sizeof(ushort), BufferUsage.IndexBuffer)
         );
+
         cl.UpdateBuffer(ib, 0, Indices);
         return ib;
     }
@@ -54,39 +55,32 @@ public class ConstructedMesh16 : ConstructedMesh
             Vector3 v1 = Vertices[Indices[i + 1]].Position;
             Vector3 v2 = Vertices[Indices[i + 2]].Position;
 
-            if (ray.Intersects(v0, v1, v2, out float newDistance))
+            if (!ray.Intersects(v0, v1, v2, out float newDistance))
+                continue;
+
+            if (newDistance < distance)
             {
-                if (newDistance < distance)
-                {
-                    distance = newDistance;
-
-                    if (any)
-                    {
-                        return true;
-                    }
-                }
-
-                result = true;
+                distance = newDistance;
+                if (any)
+                    return true;
             }
+
+            result = true;
         }
 
         return result;
     }
 
-    public RayEnumerator RayCast(Ray ray)
-    {
-        return new(this, ray);
-    }
+    public RayEnumerator RayCast(Ray ray) => new(this, ray);
 
     public struct RayEnumerator(ConstructedMesh16 mesh, Ray ray) : IEnumerator<float>
     {
         int _indexOffset = 0;
 
-        public ConstructedMesh16 Mesh { get; } =
-            mesh ?? throw new ArgumentNullException(nameof(mesh));
+        public ConstructedMesh16 Mesh { get; } = mesh ?? throw new ArgumentNullException(nameof(mesh));
         public Ray Ray { get; } = ray;
 
-        public float Current { get; private set; } = default;
+        public float Current { get; private set; } = 0;
         object? IEnumerator.Current => Current;
 
         public bool MoveNext()
@@ -107,13 +101,13 @@ public class ConstructedMesh16 : ConstructedMesh
                 }
             }
 
-            Current = default;
+            Current = 0;
             return false;
         }
 
         public void Reset()
         {
-            Current = default;
+            Current = 0;
             _indexOffset = 0;
         }
 

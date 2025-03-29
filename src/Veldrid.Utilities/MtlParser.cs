@@ -22,11 +22,9 @@ public class MtlParser
     public MtlFile Parse(string[] lines)
     {
         foreach (string line in lines)
-        {
             _pc.Process(line);
-        }
-        _pc.EndOfFileReached();
 
+        _pc.EndOfFileReached();
         return _pc.FinalizeFile();
     }
 
@@ -39,24 +37,15 @@ public class MtlParser
     {
         string text;
         using (StreamReader sr = new(s))
-        {
             text = sr.ReadToEnd();
-        }
 
         int lineStart = 0;
         int lineEnd;
         while ((lineEnd = text.IndexOf('\n', lineStart)) != -1)
         {
-            string line;
-
-            if (lineEnd != 0 && text[lineEnd - 1] == '\r')
-            {
-                line = text.Substring(lineStart, lineEnd - lineStart - 1);
-            }
-            else
-            {
-                line = text[lineStart..lineEnd];
-            }
+            string line = lineEnd != 0 && text[lineEnd - 1] == '\r'
+                ? text.Substring(lineStart, lineEnd - lineStart - 1)
+                : text[lineStart..lineEnd];
 
             _pc.Process(line);
             lineStart = lineEnd + 1;
@@ -82,7 +71,7 @@ public class MtlParser
             _currentLineText = line;
 
             string[] pieces = line.Split(s_whitespaceChars, StringSplitOptions.RemoveEmptyEntries);
-            if (pieces.Length == 0 || pieces[0].StartsWith("#"))
+            if (pieces.Length == 0 || pieces[0].StartsWith('#'))
             {
                 return;
             }
@@ -220,9 +209,8 @@ public class MtlParser
         MaterialDefinition GetCurrentDefinition()
         {
             if (_currentDefinition == null)
-            {
                 throw new InvalidDataException();
-            }
+
             return _currentDefinition;
         }
 
@@ -235,15 +223,8 @@ public class MtlParser
             }
         }
 
-        public void EndOfFileReached()
-        {
-            FinalizeCurrentMaterial();
-        }
-
-        public MtlFile FinalizeFile()
-        {
-            return new(_definitions);
-        }
+        public void EndOfFileReached() => FinalizeCurrentMaterial();
+        public MtlFile FinalizeFile() => new(_definitions);
 
         Vector3 ParseVector3(string xStr, string yStr, string zStr, string location)
         {

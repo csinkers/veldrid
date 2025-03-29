@@ -10,15 +10,8 @@ public struct BoundingSphere(Vector3 center, float radius)
     public Vector3 Center = center;
     public readonly float Radius = radius;
 
-    public readonly override string ToString()
-    {
-        return string.Format("Center:{0}, Radius:{1}", Center, Radius);
-    }
-
-    public readonly bool Contains(Vector3 point)
-    {
-        return (Center - point).LengthSquared() <= Radius * Radius;
-    }
+    public readonly override string ToString() => $"Center:{Center}, Radius:{Radius}";
+    public readonly bool Contains(Vector3 point) => (Center - point).LengthSquared() <= Radius * Radius;
 
     public static float GetMaxDistanceSquared(
         Vector3 center,
@@ -82,8 +75,7 @@ public struct BoundingSphere(Vector3 center, float radius)
     public static BoundingSphere CreateFromPoints(
         Vector3 center,
         ReadOnlySpan<byte> pointBytes,
-        int pointStride
-    )
+        int pointStride)
     {
         float maxDistanceSquared = GetMaxDistanceSquared(center, pointBytes, pointStride);
         return new(center, MathF.Sqrt(maxDistanceSquared));

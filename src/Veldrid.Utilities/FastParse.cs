@@ -127,6 +127,7 @@ internal static class FastParse
             }
             tmp = 10 * tmp + (c - '0');
         }
+
         length = i - length;
 
         double fraction = tmp * GetInversedBaseTen(length);
@@ -179,9 +180,7 @@ internal static class FastParse
         double[] exps = new double[309];
 
         for (int i = 0; i < exps.Length; i++)
-        {
             exps[i] = Math.Pow(10, -i);
-        }
 
         return exps;
     }

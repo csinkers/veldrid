@@ -115,7 +115,7 @@ internal sealed unsafe class OpenGLShader : Shader, IOpenGLDeferredResource
                 CheckLastError();
             }
 
-            string message = Util.UTF8.GetString(infoLog.Slice(0, (int)returnedInfoLength));
+            string message = Util.UTF8.GetString(infoLog[..(int)returnedInfoLength]);
             throw new VeldridException(
                 $"Unable to compile shader code for shader [{_name}] of type {_shaderType}: {message}"
             );

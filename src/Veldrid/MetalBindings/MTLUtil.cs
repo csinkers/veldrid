@@ -24,7 +24,7 @@ internal static class MTLUtil
         if (status == OperationStatus.Done && bytesWritten < buffer.Length)
         {
             buffer[bytesWritten] = 0;
-            return buffer.Slice(0, bytesWritten + 1);
+            return buffer[..(bytesWritten + 1)];
         }
         return UTF8.GetBytes($"{value}\0");
     }

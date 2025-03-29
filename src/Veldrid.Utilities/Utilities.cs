@@ -23,9 +23,8 @@ public static class VdUtilities
         float d = Vector3.Dot(v0, v1);
         // If dot == 1, vectors are the same
         if (d >= 1.0f)
-        {
             return Quaternion.Identity;
-        }
+
         if (d < (1e-6f - 1.0f))
         {
             if (fallbackAxis != Vector3.Zero)
@@ -59,6 +58,7 @@ public static class VdUtilities
             q.W = s * 0.5f;
             q = Quaternion.Normalize(q);
         }
+
         return q;
     }
 }

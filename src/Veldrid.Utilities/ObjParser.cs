@@ -13,9 +13,8 @@ namespace Veldrid.Utilities;
 public class ObjParser
 {
     const int InitialReadBufferSize = 1024 * 8;
-
-    static readonly char[] _whitespaceChar = [' '];
-    static readonly char _slashChar = '/';
+    const char SlashChar = '/';
+    static readonly char[] WhitespaceChar = [' '];
 
     readonly ParseContext _pc = new();
     char[]? _readBuffer;
@@ -66,8 +65,7 @@ public class ObjParser
     /// <returns>A new <see cref="ObjFile"/>.</returns>
     public ObjFile Parse(TextReader reader)
     {
-        if (_readBuffer == null)
-            _readBuffer = new char[InitialReadBufferSize];
+        _readBuffer ??= new char[InitialReadBufferSize];
 
         int readIndex = 0;
 
@@ -96,9 +94,7 @@ public class ObjParser
 
         TryRead:
         int read;
-        while (
-            (read = reader.ReadBlock(_readBuffer, readIndex, _readBuffer.Length - readIndex)) > 0
-        )
+        while ((read = reader.ReadBlock(_readBuffer, readIndex, _readBuffer.Length - readIndex)) > 0)
         {
             readIndex += read;
             TryProcessLines();
@@ -145,7 +141,7 @@ public class ObjParser
 
             ReadOnlySpanSplitter<char> splitter = new(
                 line,
-                _whitespaceChar,
+                WhitespaceChar,
                 StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
             );
 
@@ -156,7 +152,7 @@ public class ObjParser
             if (piece0.StartsWith("#"))
                 return;
 
-            if (piece0.SequenceEqual("v"))
+            if (piece0 is "v")
             {
                 ExpectPieces(
                     ref splitter,
@@ -168,7 +164,7 @@ public class ObjParser
                 );
                 DiscoverPosition(ParseVector3(piece1, piece2, piece3, "position data"));
             }
-            else if (piece0.SequenceEqual("vn"))
+            else if (piece0 is "vn")
             {
                 ExpectPieces(
                     ref splitter,
@@ -180,7 +176,7 @@ public class ObjParser
                 );
                 DiscoverNormal(ParseVector3(piece1, piece2, piece3, "normal data"));
             }
-            else if (piece0.SequenceEqual("vt"))
+            else if (piece0 is "vt")
             {
                 const string pieceName = "texture coordinate data";
 
@@ -199,13 +195,13 @@ public class ObjParser
                 texCoord.Y = 1f - texCoord.Y;
                 DiscoverTexCoord(texCoord);
             }
-            else if (piece0.SequenceEqual("g"))
+            else if (piece0 is "g")
             {
                 ExpectPieces(ref splitter, "g", false, out ReadOnlySpan<char> piece1);
                 FinalizeGroup();
                 _currentGroupName = piece1.ToString();
             }
-            else if (piece0.SequenceEqual("usemtl"))
+            else if (piece0 is "usemtl")
             {
                 ExpectPieces(ref splitter, "usematl", true, out ReadOnlySpan<char> piece1);
                 if (_currentMaterial != null)
@@ -216,15 +212,15 @@ public class ObjParser
                 }
                 _currentMaterial = piece1.ToString();
             }
-            else if (piece0.SequenceEqual("s"))
+            else if (piece0 is "s")
             {
                 ExpectPieces(ref splitter, "s", true, out ReadOnlySpan<char> piece1);
-                if (piece1.SequenceEqual("off"))
+                if (piece1 is "off")
                     _currentSmoothingGroup = 0;
                 else
                     _currentSmoothingGroup = ParseInt(piece1, "smoothing group");
             }
-            else if (piece0.SequenceEqual("f"))
+            else if (piece0 is "f")
             {
                 ExpectPieces(
                     ref splitter,
@@ -235,7 +231,7 @@ public class ObjParser
                 );
                 ProcessFaceLine(ref splitter, piece1, piece2);
             }
-            else if (piece0.SequenceEqual("mtllib"))
+            else if (piece0 is "mtllib")
             {
                 ExpectPieces(ref splitter, "mtllib", true, out ReadOnlySpan<char> piece1);
                 DiscoverMaterialLib(piece1);
@@ -288,17 +284,17 @@ public class ObjParser
             if (faceComponents.IsEmpty)
                 ThrowExceptionForWrongFaceCount("There must be at least one face component");
 
-            int firstSlash = faceComponents.IndexOf(_slashChar);
+            int firstSlash = faceComponents.IndexOf(SlashChar);
             ReadOnlySpan<char> firstSlice =
                 firstSlash == -1 ? faceComponents : faceComponents[..firstSlash];
 
             ReadOnlySpan<char> afterFirstSlash = faceComponents[(firstSlash + 1)..];
-            int secondSlash = afterFirstSlash.IndexOf(_slashChar);
+            int secondSlash = afterFirstSlash.IndexOf(SlashChar);
             ReadOnlySpan<char> secondSlice =
                 secondSlash == -1 ? afterFirstSlash : afterFirstSlash[..secondSlash];
 
             ReadOnlySpan<char> afterSecondSlash = afterFirstSlash[(secondSlash + 1)..];
-            int thirdSlash = afterSecondSlash.IndexOf(_slashChar);
+            int thirdSlash = afterSecondSlash.IndexOf(SlashChar);
             if (thirdSlash != -1)
                 ThrowExceptionForWrongFaceCount("No more than three face components are allowed");
             ReadOnlySpan<char> thirdSlice = afterSecondSlash;
@@ -316,29 +312,12 @@ public class ObjParser
 
         [DoesNotReturn]
         void ThrowExceptionForWrongFaceCount(string message)
-        {
-            throw new ObjParseException($"{message}, on line {_currentLine}.");
-        }
+            => throw new ObjParseException($"{message}, on line {_currentLine}.");
 
-        public void DiscoverPosition(Vector3 position)
-        {
-            _positions.Add(position);
-        }
-
-        public void DiscoverNormal(Vector3 normal)
-        {
-            _normals.Add(normal);
-        }
-
-        public void DiscoverTexCoord(Vector2 texCoord)
-        {
-            _texCoords.Add(texCoord);
-        }
-
-        public void DiscoverFace(ObjFile.Face face)
-        {
-            _currentGroupFaces.Add(face);
-        }
+        public void DiscoverPosition(Vector3 position) => _positions.Add(position);
+        public void DiscoverNormal(Vector3 normal) => _normals.Add(normal);
+        public void DiscoverTexCoord(Vector2 texCoord) => _texCoords.Add(texCoord);
+        public void DiscoverFace(ObjFile.Face face) => _currentGroupFaces.Add(face);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void FinalizeFaceVertex(
@@ -360,43 +339,43 @@ public class ObjParser
 
         public void FinalizeGroup()
         {
-            if (_currentGroupName != null)
+            if (_currentGroupName == null)
+                return;
+
+            int positionOffset = _positions.Count + 1;
+            int normalOffset = _normals.Count + 1;
+            int texCoordOffset = _texCoords.Count + 1;
+
+            ObjFile.Face[] faces = _currentGroupFaces.ToArray();
+            for (int i = 0; i < faces.Length; i++)
             {
-                int positionOffset = _positions.Count + 1;
-                int normalOffset = _normals.Count + 1;
-                int texCoordOffset = _texCoords.Count + 1;
-
-                ObjFile.Face[] faces = _currentGroupFaces.ToArray();
-                for (int i = 0; i < faces.Length; i++)
-                {
-                    ref ObjFile.Face face = ref faces[i];
-                    FinalizeFaceVertex(
-                        positionOffset,
-                        normalOffset,
-                        texCoordOffset,
-                        ref face.Vertex0
-                    );
-                    FinalizeFaceVertex(
-                        positionOffset,
-                        normalOffset,
-                        texCoordOffset,
-                        ref face.Vertex1
-                    );
-                    FinalizeFaceVertex(
-                        positionOffset,
-                        normalOffset,
-                        texCoordOffset,
-                        ref face.Vertex2
-                    );
-                }
-
-                _groups.Add(new(_currentGroupName, _currentMaterial, faces));
-
-                _currentGroupName = null;
-                _currentMaterial = null;
-                _currentSmoothingGroup = -1;
-                _currentGroupFaces.Clear();
+                ref ObjFile.Face face = ref faces[i];
+                FinalizeFaceVertex(
+                    positionOffset,
+                    normalOffset,
+                    texCoordOffset,
+                    ref face.Vertex0
+                );
+                FinalizeFaceVertex(
+                    positionOffset,
+                    normalOffset,
+                    texCoordOffset,
+                    ref face.Vertex1
+                );
+                FinalizeFaceVertex(
+                    positionOffset,
+                    normalOffset,
+                    texCoordOffset,
+                    ref face.Vertex2
+                );
             }
+
+            _groups.Add(new(_currentGroupName, _currentMaterial, faces));
+
+            _currentGroupName = null;
+            _currentMaterial = null;
+            _currentSmoothingGroup = -1;
+            _currentGroupFaces.Clear();
         }
 
         public void EndOfFileReached()
@@ -405,16 +384,14 @@ public class ObjParser
             FinalizeGroup();
         }
 
-        public ObjFile FinalizeFile()
-        {
-            return new(
+        public ObjFile FinalizeFile() =>
+            new(
                 _positions.ToArray(),
                 _normals.ToArray(),
                 _texCoords.ToArray(),
                 _groups.ToArray(),
                 _materialLibName
             );
-        }
 
         Vector3 ParseVector3(
             ReadOnlySpan<char> xStr,
@@ -431,6 +408,7 @@ public class ObjParser
             {
                 return new((float)x, (float)y, (float)z);
             }
+
             ThrowParseException(location);
             return default;
         }
@@ -444,6 +422,7 @@ public class ObjParser
             {
                 return new((float)x, (float)y);
             }
+
             ThrowParseException(location);
             return default;
         }
@@ -454,8 +433,9 @@ public class ObjParser
             {
                 return result;
             }
+
             ThrowParseException(location);
-            return default;
+            return 0;
         }
 
         void ExpectPieces(
@@ -550,10 +530,11 @@ public class ObjParser
         void ThrowParseException(string location)
         {
             string message = string.Format(
-                "An error ocurred while parsing {0} on line {1}.",
+                "An error occurred while parsing {0} on line {1}.",
                 location,
                 _currentLine
             );
+
             throw new ObjParseException(message, new FormatException());
         }
     }

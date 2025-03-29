@@ -55,7 +55,7 @@ internal static class Util
         {
             length = span.Length;
         }
-        return Encoding.UTF8.GetString(span.Slice(0, length));
+        return Encoding.UTF8.GetString(span[..length]);
     }
 
     internal static string GetString(ReadOnlySpan<sbyte> span)

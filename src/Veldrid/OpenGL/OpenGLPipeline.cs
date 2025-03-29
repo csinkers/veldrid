@@ -480,7 +480,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, IOpenGLDeferredResource
                 break;
             }
 
-            string name = Encoding.UTF8.GetString(byteBuffer.Slice(0, (int)actualLength));
+            string name = Encoding.UTF8.GetString(byteBuffer[..(int)actualLength]);
             names.Add(name);
             uniformBufferIndex++;
         }
@@ -522,7 +522,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, IOpenGLDeferredResource
                 break;
             }
 
-            string name = Encoding.UTF8.GetString(byteBuffer.Slice(0, (int)actualLength));
+            string name = Encoding.UTF8.GetString(byteBuffer[..(int)actualLength]);
             names.Add(name);
             uniformIndex++;
         }
@@ -581,7 +581,7 @@ internal sealed unsafe class OpenGLPipeline : Pipeline, IOpenGLDeferredResource
                 break;
             }
 
-            string name = Encoding.UTF8.GetString(byteBuffer.Slice(0, (int)actualLength));
+            string name = Encoding.UTF8.GetString(byteBuffer[..(int)actualLength]);
             names.Add(name);
         }
 

@@ -33,133 +33,11 @@ public class DisposeCollector
         _disposables.Add(fourth);
     }
 
-    public void Add(
-        IDisposable first,
-        IDisposable second,
-        IDisposable third,
-        IDisposable fourth,
-        IDisposable fifth
-    )
-    {
-        _disposables.Add(first);
-        _disposables.Add(second);
-        _disposables.Add(third);
-        _disposables.Add(fourth);
-        _disposables.Add(fifth);
-    }
-
-    public void Add(
-        IDisposable first,
-        IDisposable second,
-        IDisposable third,
-        IDisposable fourth,
-        IDisposable fifth,
-        IDisposable sixth
-    )
-    {
-        _disposables.Add(first);
-        _disposables.Add(second);
-        _disposables.Add(third);
-        _disposables.Add(fourth);
-        _disposables.Add(fifth);
-        _disposables.Add(sixth);
-    }
-
-    public void Add(
-        IDisposable first,
-        IDisposable second,
-        IDisposable third,
-        IDisposable fourth,
-        IDisposable fifth,
-        IDisposable sixth,
-        IDisposable seventh
-    )
-    {
-        _disposables.Add(first);
-        _disposables.Add(second);
-        _disposables.Add(third);
-        _disposables.Add(fourth);
-        _disposables.Add(fifth);
-        _disposables.Add(sixth);
-        _disposables.Add(seventh);
-    }
-
-    public void Add(
-        IDisposable first,
-        IDisposable second,
-        IDisposable third,
-        IDisposable fourth,
-        IDisposable fifth,
-        IDisposable sixth,
-        IDisposable seventh,
-        IDisposable eighth
-    )
-    {
-        _disposables.Add(first);
-        _disposables.Add(second);
-        _disposables.Add(third);
-        _disposables.Add(fourth);
-        _disposables.Add(fifth);
-        _disposables.Add(sixth);
-        _disposables.Add(seventh);
-        _disposables.Add(eighth);
-    }
-
-    public void Add(
-        IDisposable first,
-        IDisposable second,
-        IDisposable third,
-        IDisposable fourth,
-        IDisposable fifth,
-        IDisposable sixth,
-        IDisposable seventh,
-        IDisposable eighth,
-        IDisposable ninth
-    )
-    {
-        _disposables.Add(first);
-        _disposables.Add(second);
-        _disposables.Add(third);
-        _disposables.Add(fourth);
-        _disposables.Add(fifth);
-        _disposables.Add(sixth);
-        _disposables.Add(seventh);
-        _disposables.Add(eighth);
-        _disposables.Add(ninth);
-    }
-
-    public void Add(
-        IDisposable first,
-        IDisposable second,
-        IDisposable third,
-        IDisposable fourth,
-        IDisposable fifth,
-        IDisposable sixth,
-        IDisposable seventh,
-        IDisposable eighth,
-        IDisposable ninth,
-        IDisposable tenth
-    )
-    {
-        _disposables.Add(first);
-        _disposables.Add(second);
-        _disposables.Add(third);
-        _disposables.Add(fourth);
-        _disposables.Add(fifth);
-        _disposables.Add(sixth);
-        _disposables.Add(seventh);
-        _disposables.Add(eighth);
-        _disposables.Add(ninth);
-        _disposables.Add(tenth);
-    }
-
-    public void Add<T>(T[] array)
+    public void Add<T>(params IEnumerable<T> array)
         where T : IDisposable
     {
         foreach (T item in array)
-        {
             _disposables.Add(item);
-        }
     }
 
     public void Remove(IDisposable disposable)
@@ -175,9 +53,7 @@ public class DisposeCollector
     public void DisposeAll()
     {
         foreach (IDisposable disposable in _disposables)
-        {
             disposable.Dispose();
-        }
 
         _disposables.Clear();
     }

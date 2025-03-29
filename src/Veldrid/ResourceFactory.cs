@@ -587,7 +587,7 @@ public abstract class ResourceFactory
         SpirvCompilationResult glslCompileResult = SpirvCompilation.CompileGlslToSpirv(
             description.ShaderBytes,
             null,
-            GetShadercKind(description.Stage),
+            description.Stage,
             new GlslCompileOptions(description.Debug, []));
 
         return glslCompileResult.SpirvBytes;
@@ -609,17 +609,5 @@ public abstract class ResourceFactory
             GraphicsBackend.Metal => CrossCompileTarget.MSL,
             GraphicsBackend.OpenGLES => CrossCompileTarget.ESSL,
             _ => throw new SpirvCompilationException($"Invalid GraphicsBackend: {backend}"),
-        };
-
-    static ShadercShaderKind GetShadercKind(ShaderStages stage) =>
-        stage switch
-        {
-            ShaderStages.Vertex => ShadercShaderKind.Vertex,
-            ShaderStages.Geometry => ShadercShaderKind.Geometry,
-            ShaderStages.TessellationControl => ShadercShaderKind.TessellationControl,
-            ShaderStages.TessellationEvaluation => ShadercShaderKind.TessellationEvaluation,
-            ShaderStages.Fragment => ShadercShaderKind.Fragment,
-            ShaderStages.Compute => ShadercShaderKind.Compute,
-            _ => throw new SpirvCompilationException($"Invalid shader stage: {stage}")
         };
 }

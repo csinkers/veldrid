@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Project>
-  <Target Name="ApplyGitHubRunNumberToVersion" AfterTargets="MinVer">
-    <PropertyGroup>
-      <GITHUB_RUN_NUMBER Condition="'$(GITHUB_RUN_NUMBER)' == ''">0</GITHUB_RUN_NUMBER>
-      <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(GITHUB_RUN_NUMBER)</FileVersion>
-    </PropertyGroup>
-  </Target>
-</Project>

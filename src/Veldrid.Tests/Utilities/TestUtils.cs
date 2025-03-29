@@ -41,10 +41,7 @@ public static class TestUtils
         Skip.IfNot(InitializedSdl2, $"Failed to initialize SDL2: {InitializationFailedMessage}");
     }
 
-    public static GraphicsDevice CreateVulkanDevice()
-    {
-        return GraphicsDevice.CreateVulkan(new(true));
-    }
+    public static GraphicsDevice CreateVulkanDevice() => GraphicsDevice.CreateVulkan(new(true));
 
     public static void CreateVulkanDeviceWithSwapchain(
         out IDisposable? window,
@@ -89,10 +86,7 @@ public static class TestUtils
 #endif
     }
 
-    public static GraphicsDevice CreateD3D11Device()
-    {
-        return GraphicsDevice.CreateD3D11(new(true));
-    }
+    public static GraphicsDevice CreateD3D11Device() => GraphicsDevice.CreateD3D11(new(true));
 
     public static void CreateD3D11DeviceWithSwapchain(
         out Sdl2Window? window,
@@ -198,6 +192,7 @@ public static class TestUtils
             Console.WriteLine("Metal is not supported on this system.");
             return null;
         }
+
         return GraphicsDevice.CreateMetal(new(true, null, false, ResourceBindingModel.Improved));
     }
 
@@ -240,9 +235,7 @@ public static class TestUtils
     {
         int characters = 0;
         while (stringStart[characters] != 0)
-        {
             characters++;
-        }
 
         return Encoding.UTF8.GetString(stringStart, characters);
     }
@@ -250,11 +243,7 @@ public static class TestUtils
     class WindowClosable(Sdl2Window window) : IDisposable
     {
         public Sdl2Window Window { get; } = window;
-
-        public void Dispose()
-        {
-            Window.Close();
-        }
+        public void Dispose() => Window.Close();
     }
 }
 
@@ -280,35 +269,27 @@ public abstract class GraphicsDeviceTestBase<T> : IDisposable
             _renderDoc.APIValidation = true;
             _renderDoc.DebugOutputMute = false;
         }
+
         _deviceCreator = Activator.CreateInstance<T>();
         _deviceCreator.CreateGraphicsDevice(out GraphicsDevice? gd);
-        if (gd == null)
-        {
-            throw new PlatformNotSupportedException();
-        }
-        _gd = gd;
+        _gd = gd ?? throw new PlatformNotSupportedException();
         _factory = new(_gd.ResourceFactory);
     }
 
     protected DeviceBuffer GetReadback(DeviceBuffer buffer)
     {
-        DeviceBuffer readback;
         if ((buffer.Usage & BufferUsage.StagingRead) != 0)
-        {
-            readback = buffer;
-        }
-        else
-        {
-            readback = RF.CreateBuffer(new(buffer.SizeInBytes, BufferUsage.StagingReadWrite));
-            readback.Name = $"Readback for ({buffer.Name})";
+            return buffer;
 
-            CommandList cl = RF.CreateCommandList();
-            cl.Begin();
-            cl.CopyBuffer(buffer, 0, readback, 0, buffer.SizeInBytes);
-            cl.End();
-            GD.SubmitCommands(cl);
-            GD.WaitForIdle();
-        }
+        DeviceBuffer readback = RF.CreateBuffer(new(buffer.SizeInBytes, BufferUsage.StagingReadWrite));
+        readback.Name = $"Readback for ({buffer.Name})";
+
+        CommandList cl = RF.CreateCommandList();
+        cl.Begin();
+        cl.CopyBuffer(buffer, 0, readback, 0, buffer.SizeInBytes);
+        cl.End();
+        GD.SubmitCommands(cl);
+        GD.WaitForIdle();
 
         return readback;
     }
@@ -316,41 +297,34 @@ public abstract class GraphicsDeviceTestBase<T> : IDisposable
     protected Texture GetReadback(Texture texture)
     {
         if ((texture.Usage & TextureUsage.Staging) != 0)
-        {
             return texture;
-        }
-        else
-        {
-            uint layers = texture.ArrayLayers;
-            if ((texture.Usage & TextureUsage.Cubemap) != 0)
-            {
-                layers *= 6;
-            }
-            TextureDescription desc = new(
-                texture.Width,
-                texture.Height,
-                texture.Depth,
-                texture.MipLevels,
-                layers,
-                texture.Format,
-                TextureUsage.Staging,
-                texture.Type
-            );
-            Texture readback = RF.CreateTexture(desc);
-            CommandList cl = RF.CreateCommandList();
-            cl.Begin();
-            cl.CopyTexture(texture, readback);
-            cl.End();
-            GD.SubmitCommands(cl);
-            GD.WaitForIdle();
-            return readback;
-        }
+
+        uint layers = texture.ArrayLayers;
+        if ((texture.Usage & TextureUsage.Cubemap) != 0)
+            layers *= 6;
+
+        TextureDescription desc = new(
+            texture.Width,
+            texture.Height,
+            texture.Depth,
+            texture.MipLevels,
+            layers,
+            texture.Format,
+            TextureUsage.Staging,
+            texture.Type
+        );
+
+        Texture readback = RF.CreateTexture(desc);
+        CommandList cl = RF.CreateCommandList();
+        cl.Begin();
+        cl.CopyTexture(texture, readback);
+        cl.End();
+        GD.SubmitCommands(cl);
+        GD.WaitForIdle();
+        return readback;
     }
 
-    public void SkipIfNotComputeShader()
-    {
-        Skip.IfNot(GD.Features.ComputeShader, "Missing GPU feature: ComputeShader");
-    }
+    public void SkipIfNotComputeShader() => Skip.IfNot(GD.Features.ComputeShader, "Missing GPU feature: ComputeShader");
 
     public void Dispose()
     {
@@ -395,9 +369,7 @@ public class VulkanDeviceCreatorWithMainSwapchain : IGraphicsDeviceCreator, IDis
     IDisposable? window;
 
     public void CreateGraphicsDevice(out GraphicsDevice? gd)
-    {
-        TestUtils.CreateVulkanDeviceWithSwapchain(out window, out gd);
-    }
+        => TestUtils.CreateVulkanDeviceWithSwapchain(out window, out gd);
 
     public void Dispose()
     {
@@ -411,59 +383,42 @@ public class VulkanDeviceCreatorWithMainSwapchain : IGraphicsDeviceCreator, IDis
 
 public class D3D11DeviceCreator : IGraphicsDeviceCreator
 {
-    public void CreateGraphicsDevice(out GraphicsDevice? gd)
-    {
-        gd = TestUtils.CreateD3D11Device();
-    }
+    public void CreateGraphicsDevice(out GraphicsDevice? gd) => gd = TestUtils.CreateD3D11Device();
 }
 
 public class D3D11DeviceCreatorWithMainSwapchain : WindowedDeviceCreator
 {
-    public override void CreateGraphicsDevice(out GraphicsDevice? gd)
-    {
-        TestUtils.CreateD3D11DeviceWithSwapchain(out window, out gd);
-    }
+    public override void CreateGraphicsDevice(out GraphicsDevice? gd) => TestUtils.CreateD3D11DeviceWithSwapchain(out window, out gd);
 }
 
 public class OpenGLDeviceCreator : WindowedDeviceCreator
 {
-    public override void CreateGraphicsDevice(out GraphicsDevice? gd)
-    {
-        TestUtils.CreateOpenGLDevice(out window, out gd);
-    }
+    public override void CreateGraphicsDevice(out GraphicsDevice? gd) => TestUtils.CreateOpenGLDevice(out window, out gd);
 }
 
 public class OpenGLESDeviceCreator : IGraphicsDeviceCreator, IDisposable
 {
-    IDisposable? window;
+    IDisposable? _window;
 
-    public void CreateGraphicsDevice(out GraphicsDevice? gd)
-    {
-        TestUtils.CreateOpenGLESDevice(out window, out gd);
-    }
+    public void CreateGraphicsDevice(out GraphicsDevice? gd) => TestUtils.CreateOpenGLESDevice(out _window, out gd);
 
     public void Dispose()
     {
-        if (window != null)
+        if (_window != null)
         {
-            window.Dispose();
-            window = null;
+            _window.Dispose();
+            _window = null;
         }
     }
 }
 
 public class MetalDeviceCreator : IGraphicsDeviceCreator
 {
-    public void CreateGraphicsDevice(out GraphicsDevice? gd)
-    {
-        gd = TestUtils.CreateMetalDevice();
-    }
+    public void CreateGraphicsDevice(out GraphicsDevice? gd) => gd = TestUtils.CreateMetalDevice();
 }
 
 public class MetalDeviceCreatorWithMainSwapchain : WindowedDeviceCreator
 {
     public override void CreateGraphicsDevice(out GraphicsDevice? gd)
-    {
-        TestUtils.CreateMetalDeviceWithSwapchain(out window, out gd);
-    }
+        => TestUtils.CreateMetalDeviceWithSwapchain(out window, out gd);
 }

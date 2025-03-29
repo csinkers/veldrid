@@ -15,10 +15,29 @@ public class ObjFile(
     string? materialLibName
 )
 {
+    /// <summary>
+    /// The positions of the vertices in the OBJ file.
+    /// </summary>
     public Vector3[] Positions { get; } = positions ?? throw new ArgumentNullException(nameof(positions));
+
+    /// <summary>
+    /// The normals of the vertices in the OBJ file.
+    /// </summary>
     public Vector3[] Normals { get; } = normals ?? throw new ArgumentNullException(nameof(normals));
+
+    /// <summary>
+    /// The texture coordinates of the vertices in the OBJ file.
+    /// </summary>
     public Vector2[] TexCoords { get; } = texCoords ?? throw new ArgumentNullException(nameof(texCoords));
+
+    /// <summary>
+    /// The mesh groups in the OBJ file.
+    /// </summary>
     public MeshGroup[] MeshGroups { get; } = meshGroups ?? throw new ArgumentNullException(nameof(meshGroups));
+
+    /// <summary>
+    /// The name of the associated MTL file.
+    /// </summary>
     public string? MaterialLibName { get; } = materialLibName;
 
     /// <summary>
@@ -264,14 +283,17 @@ public class ObjFile(
         /// </summary>
         public int TexCoordIndex = texCoordIndex;
 
+        /// <inheritdoc />
         public readonly bool Equals(FaceVertex other) =>
             PositionIndex == other.PositionIndex
             && NormalIndex == other.NormalIndex
             && TexCoordIndex == other.TexCoordIndex;
 
+        /// <inheritdoc />
         public readonly override bool Equals(object? obj) => obj is FaceVertex value && Equals(value);
 
 #pragma warning disable IDE0070 // Use 'System.HashCode'
+        /// <inheritdoc />
         public readonly override int GetHashCode()
 #pragma warning restore IDE0070 // Use 'System.HashCode'
         {
@@ -285,13 +307,8 @@ public class ObjFile(
             }
         }
 
-        public readonly override string ToString() =>
-            string.Format(
-                "Pos:{0}, Normal:{1}, TexCoord:{2}",
-                PositionIndex,
-                NormalIndex,
-                TexCoordIndex
-            );
+        /// <inheritdoc />
+        public readonly override string ToString() => $"Pos:{PositionIndex}, Normal:{NormalIndex}, TexCoord:{TexCoordIndex}";
     }
 
     /// <summary>

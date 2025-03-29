@@ -2,7 +2,6 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Veldrid.Sdl2;
-using Veldrid.SPIRV;
 using Veldrid.Utilities;
 
 namespace Veldrid.NeoDemo.Objects;
@@ -201,7 +200,6 @@ public class ShadowmapDrawer : Renderable
     }
 
     static readonly float[] s_quadVerts = [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1];
-
     static readonly ushort[] s_quadIndices = [0, 1, 2, 0, 2, 3];
 
     public struct SizeInfo

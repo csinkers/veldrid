@@ -326,11 +326,20 @@ public class MtlParser
     }
 }
 
+/// <summary>
+/// A parsing error for Wavefront MTL files.
+/// </summary>
 public class MtlParseException : Exception
 {
+    /// <summary>
+    /// Creates a new <see cref="MtlParseException"/>.
+    /// </summary>
     public MtlParseException(string message)
         : base(message) { }
 
+    /// <summary>
+    /// Creates a new <see cref="MtlParseException"/>.
+    /// </summary>
     public MtlParseException(string message, Exception innerException)
         : base(message, innerException) { }
 }
@@ -360,31 +369,88 @@ public class MtlFile
 /// </summary>
 public class MaterialDefinition
 {
-    internal MaterialDefinition(string name)
-    {
-        Name = name;
-    }
+    internal MaterialDefinition(string name) => Name = name;
 
+    /// <summary>
+    /// The name of the material.
+    /// </summary>
     public string Name { get; }
 
+    /// <summary>
+    /// The ambient reflectivity of the material.
+    /// </summary>
     public Vector3 AmbientReflectivity { get; internal set; }
+    /// <summary>
+    /// The diffuse reflectivity of the material.
+    /// </summary>
     public Vector3 DiffuseReflectivity { get; internal set; }
+    /// <summary>
+    /// The specular reflectivity of the material.
+    /// </summary>
     public Vector3 SpecularReflectivity { get; internal set; }
+    /// <summary>
+    /// The emissive coefficient of the material.
+    /// </summary>
     public Vector3 EmissiveCoefficient { get; internal set; }
+    /// <summary>
+    /// The transmission filter of the material.
+    /// </summary>
     public Vector3 TransmissionFilter { get; internal set; }
+    /// <summary>
+    /// The illumination model of the material.
+    /// </summary>
     public int IlluminationModel { get; internal set; }
+    /// <summary>
+    /// The opacity of the material.
+    /// </summary>
     public float Opacity { get; internal set; }
+    /// <summary>
+    /// The transparency of the material.
+    /// </summary>
     public float Transparency => 1 - Opacity;
+    /// <summary>
+    /// The specular exponent of the material.
+    /// </summary>
     public float SpecularExponent { get; internal set; }
+    /// <summary>
+    /// The sharpness of the material.
+    /// </summary>
     public float Sharpness { get; internal set; }
+    /// <summary>
+    /// The optical density of the material.
+    /// </summary>
     public float OpticalDensity { get; internal set; }
 
+    /// <summary>
+    /// The path to the ambient texture of the material.
+    /// </summary>
     public string? AmbientTexture { get; internal set; }
+    /// <summary>
+    /// The path to the diffuse texture of the material.
+    /// </summary>
     public string? DiffuseTexture { get; internal set; }
+    /// <summary>
+    /// The path to the specular color texture of the material.
+    /// </summary>
     public string? SpecularColorTexture { get; internal set; }
+    /// <summary>
+    /// The path to the specular highlight texture of the material.
+    /// </summary>
     public string? SpecularHighlightTexture { get; internal set; }
+    /// <summary>
+    /// The path to the alpha map of the material.
+    /// </summary>
     public string? AlphaMap { get; internal set; }
+    /// <summary>
+    /// The path to the bump map of the material.
+    /// </summary>
     public string? BumpMap { get; internal set; }
+    /// <summary>
+    /// The path to the displacement map of the material.
+    /// </summary>
     public string? DisplacementMap { get; internal set; }
+    /// <summary>
+    /// The path to the stencil decal texture of the material.
+    /// </summary>
     public string? StencilDecalTexture { get; internal set; }
 }

@@ -1,4 +1,5 @@
 namespace Veldrid.Utilities;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public class DisposeCollectorResourceFactory(
     ResourceFactory factory,

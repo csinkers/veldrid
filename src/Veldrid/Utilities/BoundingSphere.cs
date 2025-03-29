@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Veldrid.Utilities;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public struct BoundingSphere(Vector3 center, float radius)
 {

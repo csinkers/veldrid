@@ -3,12 +3,31 @@ using System.Numerics;
 
 namespace Veldrid.Utilities;
 
+/// <summary>
+/// Represents a ray in 3D space.
+/// </summary>
+/// <param name="origin">The position where the ray starts</param>
+/// <param name="direction">The direction of the ray</param>
 public struct Ray(Vector3 origin, Vector3 direction)
 {
+    /// <summary>
+    /// The position where the ray starts.
+    /// </summary>
     public Vector3 Origin = origin;
+
+    /// <summary>
+    /// The direction of the ray.
+    /// </summary>
     public Vector3 Direction = direction;
 
+    /// <summary>
+    /// Gets the point at a given distance along the ray.
+    /// </summary>
     public Vector3 GetPoint(float distance) => Origin + Direction * distance;
+
+    /// <summary>
+    /// Determines whether the ray intersects a <see cref="BoundingBox"/>.
+    /// </summary>
     public bool Intersects(BoundingBox box, out float distance)
     {
         Vector3 dirFactor = new Vector3(1f) / Direction;
@@ -34,8 +53,14 @@ public struct Ray(Vector3 origin, Vector3 direction)
         return true;
     }
 
+    /// <summary>
+    /// Determines whether the ray intersects a <see cref="BoundingBox"/>.
+    /// </summary>
     public bool Intersects(BoundingBox box) => Intersects(box, out _);
 
+    /// <summary>
+    /// Applies a matrix transformation to the ray.
+    /// </summary>
     public static Ray Transform(Ray ray, Matrix4x4 mat) =>
         new(
             Vector3.Transform(ray.Origin, mat),
@@ -52,24 +77,16 @@ public struct Ray(Vector3 origin, Vector3 direction)
     {
         const float EPSILON = 1E-6f;
 
-        Vector3 e1,
-            e2; // Edge1, Edge2
-        Vector3 P,
-            Q,
-            T;
-        float det,
-            inv_det,
-            u,
-            v;
-        float t;
-
         // Find vectors for two edges sharing V1
-        e1 = V2 - V1;
-        e2 = V3 - V1;
+        Vector3 e1 = V2 - V1;
+        Vector3 e2 = V3 - V1;
+
         // Begin calculating determinant - also used to calculate u parameter
-        P = Vector3.Cross(Direction, e2);
+        Vector3 p = Vector3.Cross(Direction, e2);
+
         // if determinant is near zero, ray lies in plane of triangle or ray is parallel to plane of triangle
-        det = Vector3.Dot(e1, P);
+        float det = Vector3.Dot(e1, p);
+
         // NOT CULLIN
         if (det is > -EPSILON and < EPSILON)
         {
@@ -77,25 +94,25 @@ public struct Ray(Vector3 origin, Vector3 direction)
             return false;
         }
 
-        inv_det = 1.0f / det;
+        float invDet = 1.0f / det;
 
         // calculate distance from V1 to ray origin
-        T = Origin - V1;
+        Vector3 T = Origin - V1;
 
         // Calculate u parameter and test bound
-        u = Vector3.Dot(T, P) * inv_det;
+        float u = Vector3.Dot(T, p) * invDet;
         // The intersection lies outside the triangle
-        if (u < 0.0f || u > 1.0f)
+        if (u is < 0.0f or > 1.0f)
         {
             distance = 0f;
             return false;
         }
 
         // Prepare to test v parameter
-        Q = Vector3.Cross(T, e1);
+        Vector3 q = Vector3.Cross(T, e1);
 
         // Calculate V parameter and test bound
-        v = Vector3.Dot(Direction, Q) * inv_det;
+        float v = Vector3.Dot(Direction, q) * invDet;
         // The intersection lies outside the triangle
         if (v < 0.0f || u + v > 1.0f)
         {
@@ -103,7 +120,7 @@ public struct Ray(Vector3 origin, Vector3 direction)
             return false;
         }
 
-        t = Vector3.Dot(e2, Q) * inv_det;
+        float t = Vector3.Dot(e2, q) * invDet;
 
         if (t > EPSILON)
         {

@@ -15,8 +15,14 @@ public class ConstructedMesh32 : ConstructedMesh
     /// </summary>
     public uint[] Indices { get; }
 
+    /// <summary>
+    /// The number of indices in the mesh.
+    /// </summary>
     public override int IndexCount => Indices.Length;
 
+    /// <summary>
+    /// The format of the indices in the mesh.
+    /// </summary>
     public override IndexFormat IndexFormat => IndexFormat.UInt32;
 
     /// <summary>
@@ -35,6 +41,7 @@ public class ConstructedMesh32 : ConstructedMesh
         Indices = indices ?? throw new ArgumentNullException(nameof(indices));
     }
 
+    /// <inheritdoc />
     public override DeviceBuffer CreateIndexBuffer(ResourceFactory factory, CommandList cl)
     {
         DeviceBuffer ib = factory.CreateBuffer(
@@ -45,6 +52,7 @@ public class ConstructedMesh32 : ConstructedMesh
         return ib;
     }
 
+    /// <inheritdoc />
     public override bool RayCast(Ray ray, bool any, out float distance)
     {
         VertexPositionNormalTexture[] vertices = Vertices;
@@ -75,19 +83,38 @@ public class ConstructedMesh32 : ConstructedMesh
         return result;
     }
 
+    /// <summary>
+    /// Casts a ray against the mesh.
+    /// </summary>
     public RayEnumerator RayCast(Ray ray) => new(this, ray);
 
+    /// <summary>
+    /// An enumerator for ray casting against a mesh.
+    /// </summary>
     public struct RayEnumerator(ConstructedMesh32 mesh, Ray ray) : IEnumerator<float>
     {
         int _indexOffset = 0;
 
-        public ConstructedMesh32 Mesh { get; } =
-            mesh ?? throw new ArgumentNullException(nameof(mesh));
+        /// <summary>
+        /// The mesh to ray cast against.
+        /// </summary>
+        public ConstructedMesh32 Mesh { get; } = mesh ?? throw new ArgumentNullException(nameof(mesh));
+
+        /// <summary>
+        /// The ray to cast.
+        /// </summary>
         public Ray Ray { get; } = ray;
 
+        /// <summary>
+        /// The current hit's distance from the ray origin.
+        /// </summary>
         public float Current { get; private set; } = 0;
-        object? IEnumerator.Current => Current;
 
+        object IEnumerator.Current => Current;
+
+        /// <summary>
+        /// Advances the enumerator to the next hit.
+        /// </summary>
         public bool MoveNext()
         {
             VertexPositionNormalTexture[] vertices = Mesh.Vertices;
@@ -110,13 +137,23 @@ public class ConstructedMesh32 : ConstructedMesh
             return false;
         }
 
+        /// <summary>
+        /// Resets the enumerator.
+        /// </summary>
         public void Reset()
         {
             Current = 0;
             _indexOffset = 0;
         }
 
+        /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
         public RayEnumerator GetEnumerator() => this;
+
+        /// <summary>
+        /// Disposes the enumerator.
+        /// </summary>
         public void Dispose() { }
     }
 }

@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Veldrid\Veldrid.csproj" />
-    <ProjectReference Include="..\Veldrid.Utilities\Veldrid.Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>

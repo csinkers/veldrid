@@ -6,7 +6,11 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Veldrid.Utilities;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+/// <summary>
+/// A delegate which filters ray cast hits.
+/// </summary>
 public delegate int RayCastFilter<T>(Ray ray, T item, List<RayCastHit<T>> hits);
 
 /// <summary>

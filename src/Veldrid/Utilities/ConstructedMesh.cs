@@ -22,8 +22,14 @@ public abstract class ConstructedMesh(VertexPositionNormalTexture[] vertices, st
     /// </summary>
     public string? MaterialName { get; } = materialName;
 
+    /// <summary>
+    /// The number of indices in the mesh.
+    /// </summary>
     public abstract int IndexCount { get; }
 
+    /// <summary>
+    /// The format of the indices in the mesh.
+    /// </summary>
     public abstract IndexFormat IndexFormat { get; }
 
     /// <summary>

@@ -15,8 +15,10 @@ public class ConstructedMesh16 : ConstructedMesh
     /// </summary>
     public ushort[] Indices { get; }
 
+    /// <inheritdoc />
     public override int IndexCount => Indices.Length;
 
+    /// <inheritdoc />
     public override IndexFormat IndexFormat => IndexFormat.UInt16;
 
     /// <summary>
@@ -35,6 +37,7 @@ public class ConstructedMesh16 : ConstructedMesh
         Indices = indices ?? throw new ArgumentNullException(nameof(indices));
     }
 
+    /// <inheritdoc />
     public override DeviceBuffer CreateIndexBuffer(ResourceFactory factory, CommandList cl)
     {
         DeviceBuffer ib = factory.CreateBuffer(
@@ -45,6 +48,7 @@ public class ConstructedMesh16 : ConstructedMesh
         return ib;
     }
 
+    /// <inheritdoc />
     public override bool RayCast(Ray ray, bool any, out float distance)
     {
         distance = float.MaxValue;
@@ -71,18 +75,37 @@ public class ConstructedMesh16 : ConstructedMesh
         return result;
     }
 
+    /// <summary>
+    /// Casts a ray against the mesh.
+    /// </summary>
     public RayEnumerator RayCast(Ray ray) => new(this, ray);
 
+    /// <summary>
+    /// An enumerator for ray casting against a mesh.
+    /// </summary>
     public struct RayEnumerator(ConstructedMesh16 mesh, Ray ray) : IEnumerator<float>
     {
         int _indexOffset = 0;
 
+        /// <summary>
+        /// The mesh to ray cast against.
+        /// </summary>
         public ConstructedMesh16 Mesh { get; } = mesh ?? throw new ArgumentNullException(nameof(mesh));
+
+        /// <summary>
+        /// The ray to cast.
+        /// </summary>
         public Ray Ray { get; } = ray;
 
+        /// <summary>
+        /// The current hit's distance from the ray origin.
+        /// </summary>
         public float Current { get; private set; } = 0;
-        object? IEnumerator.Current => Current;
+        object IEnumerator.Current => Current;
 
+        /// <summary>
+        /// Advances the enumerator to the next hit.
+        /// </summary>
         public bool MoveNext()
         {
             VertexPositionNormalTexture[] vertices = Mesh.Vertices;
@@ -105,17 +128,23 @@ public class ConstructedMesh16 : ConstructedMesh
             return false;
         }
 
+        /// <summary>
+        /// Resets the enumerator.
+        /// </summary>
         public void Reset()
         {
             Current = 0;
             _indexOffset = 0;
         }
 
-        public RayEnumerator GetEnumerator()
-        {
-            return this;
-        }
+        /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
+        public RayEnumerator GetEnumerator() => this;
 
+        /// <summary>
+        /// Disposes the enumerator.
+        /// </summary>
         public void Dispose() { }
     }
 }

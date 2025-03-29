@@ -1,7 +1,11 @@
 ﻿using System.Numerics;
 
 namespace Veldrid.Utilities;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+/// <summary>
+/// A vertex type containing a position, normal, and texture coordinates.
+/// </summary>
 public struct VertexPositionNormalTexture(Vector3 position, Vector3 normal, Vector2 texCoords)
 {
     public const byte SizeInBytes = 32;

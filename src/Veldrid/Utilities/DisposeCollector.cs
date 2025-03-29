@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace Veldrid.Utilities;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public class DisposeCollector
 {
@@ -33,10 +34,9 @@ public class DisposeCollector
         _disposables.Add(fourth);
     }
 
-    public void Add<T>(params IEnumerable<T> array)
-        where T : IDisposable
+    public void Add(params IEnumerable<IDisposable> array)
     {
-        foreach (T item in array)
+        foreach (IDisposable item in array)
             _disposables.Add(item);
     }
 

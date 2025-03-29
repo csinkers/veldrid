@@ -31,6 +31,6 @@ public class MainActivity : RunnerActivity
 
         TestShaders.ShaderProvider = new AssetsShaderProvider(Assets);
 
-        Window.AddFlags(WindowManagerFlags.KeepScreenOn);
+        Window?.AddFlags(WindowManagerFlags.KeepScreenOn);
     }
 }

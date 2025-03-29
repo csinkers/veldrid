@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Veldrid.SDL2;
+using Veldrid.Sdl2;
 using Veldrid.SPIRV;
 using Veldrid.Utilities;
 

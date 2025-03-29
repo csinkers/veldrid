@@ -8,7 +8,7 @@ using System.Numerics;
 using ImGuiNET;
 using Veldrid.ImageSharp;
 using Veldrid.NeoDemo.Objects;
-using Veldrid.SDL2;
+using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using Veldrid.Utilities;
 

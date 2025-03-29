@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
-using Veldrid.SDL2;
+using Veldrid.Sdl2;
 
 namespace Veldrid.NeoDemo;
 

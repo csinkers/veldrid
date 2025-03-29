@@ -6,7 +6,7 @@ using ImGuiNET;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid.NeoDemo;
-using Veldrid.SDL2;
+using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 
 namespace Veldrid.VirtualReality.Sample;

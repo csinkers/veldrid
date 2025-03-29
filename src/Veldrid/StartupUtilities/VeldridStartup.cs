@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Veldrid.SDL2;
+using Veldrid.Sdl2;
 
 namespace Veldrid.StartupUtilities;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member

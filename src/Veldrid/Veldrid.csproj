@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="ImGui.NET" Version="1.91.6.1" />
-    <PackageReference Include="Sinkers.Veldrid.SPIRV" Version="2.0.1" />
+    <PackageReference Include="Sinkers.Veldrid.SPIRV" Version="2.0.4" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
     <PackageReference Include="TerraFX.Interop.Vulkan" Version="1.3.268" Condition="'$(ExcludeVulkan)' != 'true'" />
     <PackageReference Include="Ultz.Native.SDL" Version="2.30.1" />

@@ -6,8 +6,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Text;
 using ImGuiNET;
-using Veldrid.SDL2;
-using Veldrid.SPIRV;
+using Veldrid.Sdl2;
 
 namespace Veldrid;
 

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Veldrid.Sdl2;
+namespace Veldrid;
 
 /// <summary>
 /// Represents a rectangle for SDL2.
 /// </summary>
-public struct Rectangle(int x, int y, int width, int height) : IEquatable<Rectangle>
+public readonly struct Rectangle(int x, int y, int width, int height) : IEquatable<Rectangle>
 {
     /// <summary>
     /// The X coordinate of the rectangle.
@@ -34,43 +34,47 @@ public struct Rectangle(int x, int y, int width, int height) : IEquatable<Rectan
     /// <summary>
     /// The left edge of the rectangle.
     /// </summary>
-    public readonly int Left => X;
+    public int Left => X;
+
     /// <summary>
     /// The right edge of the rectangle.
     /// </summary>
-    public readonly int Right => X + Width;
+    public int Right => X + Width;
+
     /// <summary>
     /// The top edge of the rectangle.
     /// </summary>
-    public readonly int Top => Y;
+    public int Top => Y;
+
     /// <summary>
     /// The bottom edge of the rectangle.
     /// </summary>
-    public readonly int Bottom => Y + Height;
+    public int Bottom => Y + Height;
 
     /// <summary>
     /// The position of the rectangle.
     /// </summary>
-    public readonly Vector2 Position => new(X, Y);
+    public Vector2 Position => new(X, Y);
+
     /// <summary>
     /// The size of the rectangle.
     /// </summary>
-    public readonly Vector2 Size => new(Width, Height);
+    public Vector2 Size => new(Width, Height);
 
     /// <summary>
     /// Check if the rectangle contains the specified point.
     /// </summary>
-    public readonly bool Contains(Point p) => Contains(p.X, p.Y);
+    public bool Contains(Point p) => Contains(p.X, p.Y);
 
     /// <summary>
     /// Check if the rectangle contains the specified point.
     /// </summary>
-    public readonly bool Contains(int x, int y) => X <= x && X + Width > x && Y <= y && Y + Height > y;
+    public bool Contains(int x, int y) => X <= x && X + Width > x && Y <= y && Y + Height > y;
 
     /// <summary>
     /// Compare two <see cref="Rectangle"/>s for equality.
     /// </summary>
-    public readonly bool Equals(Rectangle other) =>
+    public bool Equals(Rectangle other) =>
         X.Equals(other.X)
         && Y.Equals(other.Y)
         && Width.Equals(other.Width)
@@ -81,13 +85,13 @@ public struct Rectangle(int x, int y, int width, int height) : IEquatable<Rectan
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public readonly override bool Equals(object? obj) => obj is Rectangle r && Equals(r);
+    public override bool Equals(object? obj) => obj is Rectangle r && Equals(r);
 
     /// <summary>
     /// Get the hash code for the <see cref="Rectangle"/>.
     /// </summary>
     /// <returns></returns>
-    public readonly override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
+    public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
 
     /// <summary>
     /// Compare two <see cref="Rectangle"/>s for equality.

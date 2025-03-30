@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Veldrid.Sdl2;
+namespace Veldrid;
 
 /// <summary>
 /// Represents a 2D point for SDL2.

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Veldrid.SPIRV;
 using Vortice;
 using Vortice.Direct3D11;
 using Vortice.Mathematics;
@@ -26,8 +25,8 @@ internal sealed class D3D11CommandList : CommandList
 
     uint _numVertexBindings;
     ID3D11Buffer[] _vertexBindings = new ID3D11Buffer[1];
-    int[]? _vertexStrides;
-    int[] _vertexOffsets = new int[1];
+    uint[]? _vertexStrides;
+    uint[] _vertexOffsets = new uint[1];
 
     // Cached pipeline State
     DeviceBuffer? _ib;
@@ -61,8 +60,8 @@ internal sealed class D3D11CommandList : CommandList
     string? _name;
     bool _vertexBindingsChanged;
     readonly ID3D11Buffer[] _cbOut = new ID3D11Buffer[1];
-    readonly int[] _firstConstRef = new int[1];
-    readonly int[] _numConstsRef = new int[1];
+    readonly uint[] _firstConstRef = new uint[1];
+    readonly uint[] _numConstsRef = new uint[1];
 
     // Cached resources
     const int MaxCachedUniformBuffers = 15;
@@ -88,8 +87,8 @@ internal sealed class D3D11CommandList : CommandList
     readonly List<List<BoundTextureInfo>> _boundTextureInfoPool = new(20);
 
     const int MaxUAVs = 8;
-    readonly List<(DeviceBuffer, int)> _boundComputeUAVBuffers = new(MaxUAVs);
-    readonly List<(DeviceBuffer, int)> _boundOMUAVBuffers = new(MaxUAVs);
+    readonly List<(DeviceBuffer, uint)> _boundComputeUAVBuffers = new(MaxUAVs);
+    readonly List<(DeviceBuffer, uint)> _boundOMUAVBuffers = new(MaxUAVs);
 
     readonly List<D3D11Buffer> _availableStagingBuffers = [];
     readonly List<D3D11Buffer> _submittedStagingBuffers = [];
@@ -245,7 +244,7 @@ internal sealed class D3D11CommandList : CommandList
             _context.IASetIndexBuffer(
                 d3d11Buffer.Buffer,
                 D3D11Formats.ToDxgiFormat(format),
-                (int)offset
+                offset
             );
         }
     }
@@ -278,7 +277,7 @@ internal sealed class D3D11CommandList : CommandList
             {
                 _depthStencilState = depthStencilState;
                 _stencilReference = stencilReference;
-                _context.OMSetDepthStencilState(depthStencilState!, (int)stencilReference);
+                _context.OMSetDepthStencilState(depthStencilState!, stencilReference);
             }
 
             ID3D11RasterizerState? rasterizerState = d3dPipeline.RasterizerState;
@@ -415,10 +414,10 @@ internal sealed class D3D11CommandList : CommandList
             0,
             (int)slot
         );
-        int cbBase = 0;
-        int uaBase = 0;
-        int textureBase = 0;
-        int samplerBase = 0;
+        uint cbBase = 0;
+        uint uaBase = 0;
+        uint textureBase = 0;
+        uint samplerBase = 0;
 
         foreach (D3D11ResourceLayout pLayout in pipelinelayouts)
         {
@@ -587,8 +586,8 @@ internal sealed class D3D11CommandList : CommandList
         _vertexBindingsChanged = true;
         UnbindUAVBuffer(buffer);
         _vertexBindings[index] = d3d11Buffer.Buffer;
-        _vertexOffsets[index] = (int)offset;
-        _numVertexBindings = Math.Max((index + 1), _numVertexBindings);
+        _vertexOffsets[index] = offset;
+        _numVertexBindings = Math.Max(index + 1, _numVertexBindings);
     }
 
     private protected override void DrawCore(
@@ -602,15 +601,15 @@ internal sealed class D3D11CommandList : CommandList
 
         if (instanceCount == 1 && instanceStart == 0)
         {
-            _context.Draw((int)vertexCount, (int)vertexStart);
+            _context.Draw(vertexCount, vertexStart);
         }
         else
         {
             _context.DrawInstanced(
-                (int)vertexCount,
-                (int)instanceCount,
-                (int)vertexStart,
-                (int)instanceStart
+                vertexCount,
+                instanceCount,
+                vertexStart,
+                instanceStart
             );
         }
     }
@@ -628,16 +627,16 @@ internal sealed class D3D11CommandList : CommandList
         Debug.Assert(_ib != null);
         if (instanceCount == 1 && instanceStart == 0)
         {
-            _context.DrawIndexed((int)indexCount, (int)indexStart, vertexOffset);
+            _context.DrawIndexed(indexCount, indexStart, vertexOffset);
         }
         else
         {
             _context.DrawIndexedInstanced(
-                (int)indexCount,
-                (int)instanceCount,
-                (int)indexStart,
+                indexCount,
+                instanceCount,
+                indexStart,
                 vertexOffset,
-                (int)instanceStart
+                instanceStart
             );
         }
     }
@@ -652,11 +651,11 @@ internal sealed class D3D11CommandList : CommandList
         PreDrawCommand();
 
         D3D11Buffer d3d11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(indirectBuffer);
-        int currentOffset = (int)offset;
+        uint currentOffset = offset;
         for (uint i = 0; i < drawCount; i++)
         {
             _context.DrawInstancedIndirect(d3d11Buffer.Buffer, currentOffset);
-            currentOffset += (int)stride;
+            currentOffset += stride;
         }
     }
 
@@ -670,11 +669,11 @@ internal sealed class D3D11CommandList : CommandList
         PreDrawCommand();
 
         D3D11Buffer d3d11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(indirectBuffer);
-        int currentOffset = (int)offset;
+        uint currentOffset = offset;
         for (uint i = 0; i < drawCount; i++)
         {
             _context.DrawIndexedInstancedIndirect(d3d11Buffer.Buffer, currentOffset);
-            currentOffset += (int)stride;
+            currentOffset += stride;
         }
     }
 
@@ -718,14 +717,14 @@ internal sealed class D3D11CommandList : CommandList
     public override void Dispatch(uint groupCountX, uint groupCountY, uint groupCountZ)
     {
         PreDispatchCommand();
-        _context.Dispatch((int)groupCountX, (int)groupCountY, (int)groupCountZ);
+        _context.Dispatch(groupCountX, groupCountY, groupCountZ);
     }
 
     private protected override void DispatchIndirectCore(DeviceBuffer indirectBuffer, uint offset)
     {
         PreDispatchCommand();
         D3D11Buffer d3d11Buffer = Util.AssertSubtype<DeviceBuffer, D3D11Buffer>(indirectBuffer);
-        _context.DispatchIndirect(d3d11Buffer.Buffer, (int)offset);
+        _context.DispatchIndirect(d3d11Buffer.Buffer, offset);
     }
 
     void PreDispatchCommand()
@@ -775,8 +774,8 @@ internal sealed class D3D11CommandList : CommandList
     void FlushVertexBindings()
     {
         _context.IASetVertexBuffers(
-            0,
-            (int)_numVertexBindings,
+            (uint)0,
+            _numVertexBindings,
             _vertexBindings,
             _vertexStrides!,
             _vertexOffsets
@@ -795,7 +794,7 @@ internal sealed class D3D11CommandList : CommandList
         _viewports[index] = viewport;
     }
 
-    void BindTextureView(D3D11TextureView? texView, int slot, ShaderStages stages, uint resourceSet)
+    void BindTextureView(D3D11TextureView? texView, uint slot, ShaderStages stages, uint resourceSet)
     {
         ID3D11ShaderResourceView? srv = texView?.ShaderResourceView ?? null;
         if (srv != null)
@@ -880,7 +879,7 @@ internal sealed class D3D11CommandList : CommandList
         return ret;
     }
 
-    void BindStorageBufferView(D3D11BufferRange range, int slot, ShaderStages stages)
+    void BindStorageBufferView(D3D11BufferRange range, uint slot, ShaderStages stages)
     {
         bool compute = (stages & ShaderStages.Compute) != 0;
         UnbindUAVBuffer(range.Buffer);
@@ -906,7 +905,7 @@ internal sealed class D3D11CommandList : CommandList
             _context.CSSetShaderResource(slot, srv);
     }
 
-    void BindUniformBuffer(D3D11BufferRange range, int slot, ShaderStages stages)
+    void BindUniformBuffer(D3D11BufferRange range, uint slot, ShaderStages stages)
     {
         bool fullRange = range.IsFullRange;
         ID3D11DeviceContext1? context1 = _context1;
@@ -1052,22 +1051,22 @@ internal sealed class D3D11CommandList : CommandList
     void PackRangeParams(D3D11BufferRange range)
     {
         _cbOut[0] = range.Buffer.Buffer;
-        _firstConstRef[0] = (int)(range.Offset / 16);
+        _firstConstRef[0] = range.Offset / 16;
         uint roundedSize = range.Size < 256 ? 256u : range.Size;
-        _numConstsRef[0] = (int)(roundedSize / 16);
+        _numConstsRef[0] = roundedSize / 16;
     }
 
     void BindUnorderedAccessView(
         Texture? texture,
         DeviceBuffer? buffer,
         ID3D11UnorderedAccessView? uav,
-        int slot,
+        uint slot,
         ShaderStages stages,
         uint resourceSet
     )
     {
         bool compute = stages == ShaderStages.Compute;
-        Debug.Assert(compute || ((stages & ShaderStages.Compute) == 0));
+        Debug.Assert(compute || (stages & ShaderStages.Compute) == 0);
         Debug.Assert(texture == null || buffer == null);
 
         if (texture != null && uav != null)
@@ -1087,11 +1086,11 @@ internal sealed class D3D11CommandList : CommandList
             );
         }
 
-        int baseSlot = 0;
+        uint baseSlot = 0;
         if (!compute)
-            baseSlot = Framebuffer!.ColorTargets.Length;
+            baseSlot = (uint)Framebuffer!.ColorTargets.Length;
 
-        int actualSlot = baseSlot + slot;
+        uint actualSlot = baseSlot + slot;
 
         if (buffer != null)
             TrackBoundUAVBuffer(buffer, actualSlot, compute);
@@ -1102,9 +1101,9 @@ internal sealed class D3D11CommandList : CommandList
             _context.OMSetUnorderedAccessView(actualSlot, uav!);
     }
 
-    void TrackBoundUAVBuffer(DeviceBuffer buffer, int slot, bool compute)
+    void TrackBoundUAVBuffer(DeviceBuffer buffer, uint slot, bool compute)
     {
-        List<(DeviceBuffer, int)> list = compute ? _boundComputeUAVBuffers : _boundOMUAVBuffers;
+        List<(DeviceBuffer, uint)> list = compute ? _boundComputeUAVBuffers : _boundOMUAVBuffers;
         list.Add((buffer, slot));
     }
 
@@ -1116,12 +1115,12 @@ internal sealed class D3D11CommandList : CommandList
 
     void UnbindUAVBufferIndividual(DeviceBuffer buffer, bool compute)
     {
-        List<(DeviceBuffer, int)> list = compute ? _boundComputeUAVBuffers : _boundOMUAVBuffers;
+        List<(DeviceBuffer, uint)> list = compute ? _boundComputeUAVBuffers : _boundOMUAVBuffers;
         for (int i = 0; i < list.Count; i++)
         {
             if (list[i].Item1 == buffer)
             {
-                int slot = list[i].Item2;
+                uint slot = list[i].Item2;
                 if (compute)
                     _context.CSUnsetUnorderedAccessView(slot);
                 else
@@ -1133,7 +1132,7 @@ internal sealed class D3D11CommandList : CommandList
         }
     }
 
-    void BindSampler(D3D11Sampler sampler, int slot, ShaderStages stages)
+    void BindSampler(D3D11Sampler sampler, uint slot, ShaderStages stages)
     {
         if ((stages & ShaderStages.Vertex) == ShaderStages.Vertex)
         {
@@ -1243,7 +1242,7 @@ internal sealed class D3D11CommandList : CommandList
         bool isFullBuffer = bufferOffsetInBytes == 0 && sizeInBytes == buffer.SizeInBytes;
 
         bool useUpdateSubresource =
-            (!isDynamic && !isStaging) && (!isUniformBuffer || isFullBuffer);
+            !isDynamic && !isStaging && (!isUniformBuffer || isFullBuffer);
 
         bool useMap =
             ((usage & BufferUsage.DynamicWrite) != 0 && isFullBuffer)
@@ -1291,7 +1290,7 @@ internal sealed class D3D11CommandList : CommandList
 
     unsafe void UpdateSubresource_Workaround(
         ID3D11Resource resource,
-        int subresource,
+        uint subresource,
         Box region,
         IntPtr data
     )
@@ -1353,7 +1352,7 @@ internal sealed class D3D11CommandList : CommandList
             _context.CopySubresourceRegion(
                 dstD3D11Buffer.Buffer,
                 0,
-                (int)command.WriteOffset,
+                (uint)command.WriteOffset,
                 0,
                 0,
                 srcD3D11Buffer.Buffer,
@@ -1411,12 +1410,13 @@ internal sealed class D3D11CommandList : CommandList
 
         for (uint i = 0; i < layerCount; i++)
         {
-            int srcSubresource = D3D11Util.ComputeSubresource(
+            uint srcSubresource = D3D11Util.ComputeSubresource(
                 srcMipLevel,
                 source.MipLevels,
                 srcBaseArrayLayer + i
             );
-            int dstSubresource = D3D11Util.ComputeSubresource(
+
+            uint dstSubresource = D3D11Util.ComputeSubresource(
                 dstMipLevel,
                 destination.MipLevels,
                 dstBaseArrayLayer + i
@@ -1425,9 +1425,9 @@ internal sealed class D3D11CommandList : CommandList
             _context.CopySubresourceRegion(
                 dstD3D11Texture.DeviceTexture,
                 dstSubresource,
-                (int)dstX,
-                (int)dstY,
-                (int)dstZ,
+                dstX,
+                dstY,
+                dstZ,
                 srcD3D11Texture.DeviceTexture,
                 srcSubresource,
                 region
@@ -1501,7 +1501,7 @@ internal sealed class D3D11CommandList : CommandList
 
     struct BoundTextureInfo
     {
-        public int Slot;
+        public uint Slot;
         public ShaderStages Stages;
         public uint ResourceSet;
     }

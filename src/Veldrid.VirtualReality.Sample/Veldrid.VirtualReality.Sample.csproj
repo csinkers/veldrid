@@ -5,6 +5,7 @@
 
   <ItemGroup>
     <Compile Include="..\NeoDemo\InputTracker.cs" Link="InputTracker.cs" />
+    <ProjectReference Include="..\Veldrid.ImageMagick\Veldrid.ImageMagick.csproj" />
 
     <ProjectReference Include="..\Veldrid\Veldrid.csproj" />
     <ProjectReference Include="..\Veldrid.VirtualReality\Veldrid.VirtualReality.csproj" />

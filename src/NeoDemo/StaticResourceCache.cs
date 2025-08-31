@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Veldrid.ImageSharp;
-using Veldrid.SPIRV;
+using Veldrid.ImageMagick;
 
 namespace Veldrid.NeoDemo;
 
@@ -11,7 +10,7 @@ internal static class StaticResourceCache
     static readonly Dictionary<GraphicsPipelineDescription, Pipeline> s_pipelines = new();
     static readonly Dictionary<ResourceLayoutDescription, ResourceLayout> s_layouts = new();
     static readonly Dictionary<ShaderSetCacheKey, (Shader, Shader)> s_shaderSets = new();
-    static readonly Dictionary<ImageSharpTexture, Texture> s_textures = new();
+    static readonly Dictionary<ImageMagickTexture, Texture> s_textures = new();
     static readonly Dictionary<Texture, TextureView> s_textureViews = new();
     static readonly Dictionary<ResourceSetDescription, ResourceSet> s_resourceSets = new();
 
@@ -96,7 +95,7 @@ internal static class StaticResourceCache
         }
         s_shaderSets.Clear();
 
-        foreach (KeyValuePair<ImageSharpTexture, Texture> kvp in s_textures)
+        foreach (KeyValuePair<ImageMagickTexture, Texture> kvp in s_textures)
         {
             kvp.Value.Dispose();
         }
@@ -121,7 +120,7 @@ internal static class StaticResourceCache
     internal static Texture GetTexture2D(
         GraphicsDevice gd,
         ResourceFactory factory,
-        ImageSharpTexture textureData
+        ImageMagickTexture textureData
     )
     {
         if (!s_textures.TryGetValue(textureData, out Texture? tex))

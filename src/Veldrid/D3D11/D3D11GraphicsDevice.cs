@@ -15,25 +15,23 @@ namespace Veldrid.D3D11;
 internal sealed class D3D11GraphicsDevice : GraphicsDevice
 {
     readonly IDXGIAdapter _dxgiAdapter;
-    readonly ID3D11Device _device;
-    readonly int _deviceId;
     readonly ID3D11DeviceContext _immediateContext;
     readonly bool _supportsConcurrentResources;
     readonly bool _supportsCommandLists;
-    readonly object _immediateContextLock = new();
+    readonly Lock _immediateContextLock = new();
     readonly BackendInfoD3D11 _d3d11Info;
 
-    readonly object _mappedResourceLock = new();
+    readonly Lock _mappedResourceLock = new();
     readonly Dictionary<MappedResourceCacheKey, MappedResource> _mappedResources = new();
 
-    readonly object _stagingResourcesLock = new();
+    readonly Lock _stagingResourcesLock = new();
     readonly List<D3D11Buffer> _availableStagingBuffers = [];
 
-    public ID3D11Device Device => _device;
     public IDXGIAdapter Adapter => _dxgiAdapter;
     public bool SupportsConcurrentResources => _supportsConcurrentResources;
     public bool SupportsCommandLists => _supportsCommandLists;
-    public int DeviceId => _deviceId;
+    public uint DeviceId { get; }
+    public ID3D11Device Device { get; }
 
     public D3D11GraphicsDevice(
         GraphicsDeviceOptions options,
@@ -108,9 +106,9 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             CreateDevice(flags, IntPtr.Zero, out device);
         }
 
-        _device = device ?? throw new VeldridException("Failed to initialize D3D11Device.");
+        Device = device ?? throw new VeldridException("Failed to initialize D3D11Device.");
 
-        using (IDXGIDevice dxgiDevice = _device.QueryInterface<IDXGIDevice>())
+        using (IDXGIDevice dxgiDevice = Device.QueryInterface<IDXGIDevice>())
         {
             // Store a pointer to the DXGI adapter.
             // This is for the case of no preferred DXGI adapter, or fallback to WARP.
@@ -119,10 +117,10 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             AdapterDescription desc = _dxgiAdapter.Description;
             DeviceName = desc.Description;
             VendorName = "id:" + ((uint)desc.VendorId).ToString("x8");
-            _deviceId = desc.DeviceId;
+            DeviceId = desc.DeviceId;
         }
 
-        switch (_device.FeatureLevel)
+        switch (Device.FeatureLevel)
         {
             case Vortice.Direct3D.FeatureLevel.Level_10_0:
                 ApiVersion = new(10, 0, 0, 0);
@@ -158,8 +156,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             SwapchainDescription desc = swapchainDesc.Value;
             MainSwapchain = new D3D11Swapchain(this, desc);
         }
-        _immediateContext = _device.ImmediateContext;
-        _device.CheckThreadingSupport(out _supportsConcurrentResources, out _supportsCommandLists);
+        _immediateContext = Device.ImmediateContext;
+        Device.CheckThreadingSupport(out _supportsConcurrentResources, out _supportsCommandLists);
 
         IsDriverDebug = (flags & DeviceCreationFlags.Debug) != 0;
 
@@ -180,10 +178,10 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
             independentBlend: true,
             structuredBuffer: true,
             subsetTextureView: true,
-            commandListDebugMarkers: _device.FeatureLevel
+            commandListDebugMarkers: Device.FeatureLevel
                 >= Vortice.Direct3D.FeatureLevel.Level_11_1,
-            bufferRangeBinding: _device.FeatureLevel >= Vortice.Direct3D.FeatureLevel.Level_11_1,
-            shaderFloat64: _device
+            bufferRangeBinding: Device.FeatureLevel >= Vortice.Direct3D.FeatureLevel.Level_11_1,
+            shaderFloat64: Device
                 .CheckFeatureSupport<FeatureDataDoubles>(Vortice.Direct3D11.Feature.Doubles)
                 .DoublePrecisionFloatShaderOps
         );
@@ -263,8 +261,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         return TextureSampleCount.Count1;
     }
 
-    bool CheckFormatMultisample(Format format, int sampleCount) =>
-        _device.CheckMultisampleQualityLevels(format, sampleCount) != 0;
+    bool CheckFormatMultisample(Format format, uint sampleCount) =>
+        Device.CheckMultisampleQualityLevels(format, sampleCount) != 0;
 
     private protected override bool GetPixelFormatSupportCore(
         PixelFormat format,
@@ -280,7 +278,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         }
 
         Format dxgiFormat = D3D11Formats.ToDxgiFormat(format, usage);
-        FormatSupport fs = _device.CheckFormatSupport(dxgiFormat);
+        FormatSupport fs = Device.CheckFormatSupport(dxgiFormat);
 
         if (
             (usage & TextureUsage.RenderTarget) != 0 && (fs & FormatSupport.RenderTarget) == 0
@@ -387,13 +385,14 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                         out uint mipLevel,
                         out uint arrayLayer
                     );
+
                     _immediateContext.Map(
                         texture.DeviceTexture,
-                        (int)mipLevel,
-                        (int)arrayLayer,
+                        mipLevel,
+                        arrayLayer,
                         D3D11Formats.VdToD3D11MapMode(false, mode),
                         Vortice.Direct3D11.MapFlags.None,
-                        out int _,
+                        out uint _,
                         out MappedSubresource msr
                     );
 
@@ -437,7 +436,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                     D3D11Texture texture = Util.AssertSubtype<MappableResource, D3D11Texture>(
                         resource
                     );
-                    _immediateContext.Unmap(texture.DeviceTexture, (int)subresource);
+                    _immediateContext.Unmap(texture.DeviceTexture, subresource);
                 }
             }
         }
@@ -502,7 +501,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                 _immediateContext.CopySubresourceRegion(
                     d3dBuffer.Buffer,
                     0,
-                    (int)bufferOffsetInBytes,
+                    bufferOffsetInBytes,
                     0,
                     0,
                     staging.Buffer,
@@ -592,7 +591,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         }
         else
         {
-            int subresource = D3D11Util.ComputeSubresource(mipLevel, texture.MipLevels, arrayLayer);
+            uint subresource = D3D11Util.ComputeSubresource(mipLevel, texture.MipLevels, arrayLayer);
             Box resourceRegion = new(
                 left: (int)x,
                 right: (int)(x + width),
@@ -611,8 +610,8 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
                     subresource,
                     resourceRegion,
                     source,
-                    (int)srcRowPitch,
-                    (int)srcDepthPitch
+                    srcRowPitch,
+                    srcDepthPitch
                 );
             }
         }
@@ -706,10 +705,10 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
 
         if (IsDriverDebug)
         {
-            uint refCount = _device.Release();
+            uint refCount = Device.Release();
             if (refCount > 0)
             {
-                ID3D11Debug? deviceDebug = _device.QueryInterfaceOrNull<ID3D11Debug>();
+                ID3D11Debug? deviceDebug = Device.QueryInterfaceOrNull<ID3D11Debug>();
                 if (deviceDebug != null)
                 {
                     deviceDebug.ReportLiveDeviceObjects(
@@ -738,7 +737,7 @@ internal sealed class D3D11GraphicsDevice : GraphicsDevice
         }
         else
         {
-            _device.Dispose();
+            Device.Dispose();
             _dxgiAdapter.Dispose();
         }
     }

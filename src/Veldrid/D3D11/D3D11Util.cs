@@ -4,8 +4,8 @@ namespace Veldrid.D3D11;
 
 internal static class D3D11Util
 {
-    public static int ComputeSubresource(uint mipLevel, uint mipLevelCount, uint arrayLayer) =>
-        (int)(arrayLayer * mipLevelCount + mipLevel);
+    public static uint ComputeSubresource(uint mipLevel, uint mipLevelCount, uint arrayLayer) =>
+        arrayLayer * mipLevelCount + mipLevel;
 
     internal static ShaderResourceViewDescription GetSrvDesc(
         D3D11Texture tex,
@@ -26,8 +26,8 @@ internal static class D3D11Util
             if (tex.ArrayLayers == 1)
             {
                 srvDesc.ViewDimension = Vortice.Direct3D.ShaderResourceViewDimension.TextureCube;
-                srvDesc.TextureCube.MostDetailedMip = (int)baseMipLevel;
-                srvDesc.TextureCube.MipLevels = (int)levelCount;
+                srvDesc.TextureCube.MostDetailedMip = baseMipLevel;
+                srvDesc.TextureCube.MipLevels = levelCount;
             }
             else
             {
@@ -36,10 +36,10 @@ internal static class D3D11Util
                     .ShaderResourceViewDimension
                     .TextureCubeArray;
 
-                srvDesc.TextureCubeArray.MostDetailedMip = (int)baseMipLevel;
-                srvDesc.TextureCubeArray.MipLevels = (int)levelCount;
-                srvDesc.TextureCubeArray.First2DArrayFace = (int)baseArrayLayer;
-                srvDesc.TextureCubeArray.NumCubes = (int)tex.ArrayLayers;
+                srvDesc.TextureCubeArray.MostDetailedMip = baseMipLevel;
+                srvDesc.TextureCubeArray.MipLevels = levelCount;
+                srvDesc.TextureCubeArray.First2DArrayFace = baseArrayLayer;
+                srvDesc.TextureCubeArray.NumCubes = tex.ArrayLayers;
             }
         }
         else if (tex.Depth == 1)
@@ -49,8 +49,8 @@ internal static class D3D11Util
                 if (tex.Type == TextureType.Texture1D)
                 {
                     srvDesc.ViewDimension = Vortice.Direct3D.ShaderResourceViewDimension.Texture1D;
-                    srvDesc.Texture1D.MostDetailedMip = (int)baseMipLevel;
-                    srvDesc.Texture1D.MipLevels = (int)levelCount;
+                    srvDesc.Texture1D.MostDetailedMip = baseMipLevel;
+                    srvDesc.Texture1D.MipLevels = levelCount;
                 }
                 else
                 {
@@ -65,8 +65,8 @@ internal static class D3D11Util
                             .ShaderResourceViewDimension
                             .Texture2DMultisampled;
 
-                    srvDesc.Texture2D.MostDetailedMip = (int)baseMipLevel;
-                    srvDesc.Texture2D.MipLevels = (int)levelCount;
+                    srvDesc.Texture2D.MostDetailedMip = baseMipLevel;
+                    srvDesc.Texture2D.MipLevels = levelCount;
                 }
             }
             else
@@ -78,10 +78,10 @@ internal static class D3D11Util
                         .ShaderResourceViewDimension
                         .Texture1DArray;
 
-                    srvDesc.Texture1DArray.MostDetailedMip = (int)baseMipLevel;
-                    srvDesc.Texture1DArray.MipLevels = (int)levelCount;
-                    srvDesc.Texture1DArray.FirstArraySlice = (int)baseArrayLayer;
-                    srvDesc.Texture1DArray.ArraySize = (int)layerCount;
+                    srvDesc.Texture1DArray.MostDetailedMip = baseMipLevel;
+                    srvDesc.Texture1DArray.MipLevels = levelCount;
+                    srvDesc.Texture1DArray.FirstArraySlice = baseArrayLayer;
+                    srvDesc.Texture1DArray.ArraySize = layerCount;
                 }
                 else
                 {
@@ -90,22 +90,22 @@ internal static class D3D11Util
                         .ShaderResourceViewDimension
                         .Texture2DArray;
 
-                    srvDesc.Texture2DArray.MostDetailedMip = (int)baseMipLevel;
-                    srvDesc.Texture2DArray.MipLevels = (int)levelCount;
-                    srvDesc.Texture2DArray.FirstArraySlice = (int)baseArrayLayer;
-                    srvDesc.Texture2DArray.ArraySize = (int)layerCount;
+                    srvDesc.Texture2DArray.MostDetailedMip = baseMipLevel;
+                    srvDesc.Texture2DArray.MipLevels = levelCount;
+                    srvDesc.Texture2DArray.FirstArraySlice = baseArrayLayer;
+                    srvDesc.Texture2DArray.ArraySize = layerCount;
                 }
             }
         }
         else
         {
             srvDesc.ViewDimension = Vortice.Direct3D.ShaderResourceViewDimension.Texture3D;
-            srvDesc.Texture3D.MostDetailedMip = (int)baseMipLevel;
-            srvDesc.Texture3D.MipLevels = (int)levelCount;
+            srvDesc.Texture3D.MostDetailedMip = baseMipLevel;
+            srvDesc.Texture3D.MipLevels = levelCount;
         }
 
         return srvDesc;
     }
 
-    internal static int GetSyncInterval(bool syncToVBlank) => syncToVBlank ? 1 : 0;
+    internal static uint GetSyncInterval(bool syncToVBlank) => syncToVBlank ? 1u : 0u;
 }

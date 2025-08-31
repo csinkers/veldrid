@@ -1,19 +1,17 @@
 ﻿using System.Numerics;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using Veldrid.ImageSharp;
-using Veldrid.SPIRV;
+using ImageMagick;
+using Veldrid.ImageMagick;
 using Veldrid.Utilities;
 
 namespace Veldrid.NeoDemo.Objects;
 
 public class Skybox(
-    Image<Rgba32> front,
-    Image<Rgba32> back,
-    Image<Rgba32> left,
-    Image<Rgba32> right,
-    Image<Rgba32> top,
-    Image<Rgba32> bottom
+    MagickImage front,
+    MagickImage back,
+    MagickImage left,
+    MagickImage right,
+    MagickImage top,
+    MagickImage bottom
 ) : Renderable
 {
     // Context objects
@@ -35,7 +33,7 @@ public class Skybox(
         _ib = factory.CreateBuffer(new(s_indices.SizeInBytes(), BufferUsage.IndexBuffer));
         cl.UpdateBuffer(_ib, 0, s_indices);
 
-        ImageSharpCubemapTexture imageSharpCubemapTexture = new(
+        ImageMagickCubemapTexture imageSharpCubemapTexture = new(
             right,
             left,
             top,
@@ -137,12 +135,12 @@ public class Skybox(
     public static Skybox LoadDefaultSkybox()
     {
         return new(
-            Image.Load<Rgba32>(AssetHelper.GetPath("Textures/cloudtop/cloudtop_ft.png")),
-            Image.Load<Rgba32>(AssetHelper.GetPath("Textures/cloudtop/cloudtop_bk.png")),
-            Image.Load<Rgba32>(AssetHelper.GetPath("Textures/cloudtop/cloudtop_lf.png")),
-            Image.Load<Rgba32>(AssetHelper.GetPath("Textures/cloudtop/cloudtop_rt.png")),
-            Image.Load<Rgba32>(AssetHelper.GetPath("Textures/cloudtop/cloudtop_up.png")),
-            Image.Load<Rgba32>(AssetHelper.GetPath("Textures/cloudtop/cloudtop_dn.png"))
+            new MagickImage(AssetHelper.GetPath("Textures/cloudtop/cloudtop_ft.png")),
+            new MagickImage(AssetHelper.GetPath("Textures/cloudtop/cloudtop_bk.png")),
+            new MagickImage(AssetHelper.GetPath("Textures/cloudtop/cloudtop_lf.png")),
+            new MagickImage(AssetHelper.GetPath("Textures/cloudtop/cloudtop_rt.png")),
+            new MagickImage(AssetHelper.GetPath("Textures/cloudtop/cloudtop_up.png")),
+            new MagickImage(AssetHelper.GetPath("Textures/cloudtop/cloudtop_dn.png"))
         );
     }
 
@@ -187,26 +185,31 @@ public class Skybox(
         new(new(20.0f, 20.0f, -20.0f)),
         new(new(20.0f, 20.0f, 20.0f)),
         new(new(-20.0f, 20.0f, 20.0f)),
+
         // Bottom
         new(new(-20.0f, -20.0f, 20.0f)),
         new(new(20.0f, -20.0f, 20.0f)),
         new(new(20.0f, -20.0f, -20.0f)),
         new(new(-20.0f, -20.0f, -20.0f)),
+
         // Left
         new(new(-20.0f, 20.0f, -20.0f)),
         new(new(-20.0f, 20.0f, 20.0f)),
         new(new(-20.0f, -20.0f, 20.0f)),
         new(new(-20.0f, -20.0f, -20.0f)),
+
         // Right
         new(new(20.0f, 20.0f, 20.0f)),
         new(new(20.0f, 20.0f, -20.0f)),
         new(new(20.0f, -20.0f, -20.0f)),
         new(new(20.0f, -20.0f, 20.0f)),
+
         // Back
         new(new(20.0f, 20.0f, -20.0f)),
         new(new(-20.0f, 20.0f, -20.0f)),
         new(new(-20.0f, -20.0f, -20.0f)),
         new(new(20.0f, -20.0f, -20.0f)),
+
         // Front
         new(new(-20.0f, 20.0f, 20.0f)),
         new(new(20.0f, 20.0f, 20.0f)),
@@ -216,41 +219,11 @@ public class Skybox(
 
     static readonly ushort[] s_indices =
     [
-        0,
-        1,
-        2,
-        0,
-        2,
-        3,
-        4,
-        5,
-        6,
-        4,
-        6,
-        7,
-        8,
-        9,
-        10,
-        8,
-        10,
-        11,
-        12,
-        13,
-        14,
-        12,
-        14,
-        15,
-        16,
-        17,
-        18,
-        16,
-        18,
-        19,
-        20,
-        21,
-        22,
-        20,
-        22,
-        23,
+        0, 1, 2, 0, 2, 3,
+        4, 5, 6, 4, 6, 7,
+        8, 9, 10, 8, 10, 11,
+        12, 13, 14, 12, 14, 15,
+        16, 17, 18, 16, 18, 19,
+        20, 21, 22, 20, 22, 23,
     ];
 }

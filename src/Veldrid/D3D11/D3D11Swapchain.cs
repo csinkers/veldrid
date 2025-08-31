@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using SharpGen.Runtime;
 using Vortice;
 using Vortice.Direct3D11;
@@ -10,18 +11,17 @@ namespace Veldrid.D3D11;
 
 internal sealed class D3D11Swapchain : Swapchain
 {
+    readonly Lock _referencedCLsLock = new();
+    readonly HashSet<D3D11CommandList> _referencedCLs = [];
     readonly D3D11GraphicsDevice _gd;
     readonly PixelFormat? _depthFormat;
     readonly IDXGISwapChain _dxgiSwapChain;
+    readonly float _pixelScale = 1f;
     bool _vsync;
-    int _syncInterval;
+    uint _syncInterval;
     D3D11Framebuffer? _framebuffer;
     D3D11Texture? _depthTexture;
-    readonly float _pixelScale = 1f;
     bool _disposed;
-
-    readonly object _referencedCLsLock = new();
-    readonly HashSet<D3D11CommandList> _referencedCLs = [];
 
     public override Framebuffer Framebuffer => _framebuffer!;
 
@@ -32,7 +32,7 @@ internal sealed class D3D11Swapchain : Swapchain
             unsafe
             {
                 byte* pname = stackalloc byte[1024];
-                int size = 1024 - 1;
+                uint size = 1024 - 1;
                 _dxgiSwapChain.GetPrivateData(CommonGuid.DebugObjectName, ref size, new(pname));
                 pname[size] = 0;
                 return Marshal.PtrToStringAnsi(new(pname));
@@ -47,7 +47,7 @@ internal sealed class D3D11Swapchain : Swapchain
             else
             {
                 IntPtr namePtr = Marshal.StringToHGlobalAnsi(value);
-                _dxgiSwapChain.SetPrivateData(CommonGuid.DebugObjectName, value.Length, namePtr);
+                _dxgiSwapChain.SetPrivateData(CommonGuid.DebugObjectName, (uint)value.Length, namePtr);
                 Marshal.FreeHGlobal(namePtr);
             }
         }
@@ -67,7 +67,7 @@ internal sealed class D3D11Swapchain : Swapchain
 
     public IDXGISwapChain DxgiSwapChain => _dxgiSwapChain;
 
-    public int SyncInterval => _syncInterval;
+    public uint SyncInterval => _syncInterval;
 
     public D3D11Swapchain(D3D11GraphicsDevice gd, in SwapchainDescription description)
     {
@@ -84,8 +84,8 @@ internal sealed class D3D11Swapchain : Swapchain
                 BufferCount = 2,
                 Windowed = true,
                 BufferDescription = new(
-                    (int)description.Width,
-                    (int)description.Height,
+                    description.Width,
+                    description.Height,
                     _colorFormat
                 ),
                 OutputWindow = win32Source.Hwnd,
@@ -111,8 +111,8 @@ internal sealed class D3D11Swapchain : Swapchain
                 AlphaMode = AlphaMode.Ignore,
                 BufferCount = 2,
                 Format = _colorFormat,
-                Height = (int)(description.Height * _pixelScale),
-                Width = (int)(description.Width * _pixelScale),
+                Height = (uint)(description.Height * _pixelScale),
+                Width = (uint)(description.Width * _pixelScale),
                 SampleDescription = new(1, 0),
                 SwapEffect = SwapEffect.FlipSequential,
                 BufferUsage = Usage.RenderTargetOutput,
@@ -184,8 +184,8 @@ internal sealed class D3D11Swapchain : Swapchain
             _dxgiSwapChain
                 .ResizeBuffers(
                     2,
-                    (int)actualWidth,
-                    (int)actualHeight,
+                    actualWidth,
+                    actualHeight,
                     _colorFormat,
                     SwapChainFlags.None
                 )

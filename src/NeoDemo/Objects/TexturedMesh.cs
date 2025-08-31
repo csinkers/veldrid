@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Veldrid.ImageSharp;
-using Veldrid.SPIRV;
+using Veldrid.ImageMagick;
 using Veldrid.Utilities;
 
 namespace Veldrid.NeoDemo.Objects;
@@ -15,8 +14,8 @@ public class TexturedMesh : CullRenderable
 
     readonly string _name;
     readonly ConstructedMesh _meshData;
-    readonly ImageSharpTexture? _textureData;
-    readonly ImageSharpTexture? _alphaTextureData;
+    readonly ImageMagickTexture? _textureData;
+    readonly ImageMagickTexture? _alphaTextureData;
     readonly Transform _transform = new();
 
     readonly BoundingBox _centeredBounds;
@@ -56,8 +55,8 @@ public class TexturedMesh : CullRenderable
     public TexturedMesh(
         string name,
         ConstructedMesh meshData,
-        ImageSharpTexture? textureData,
-        ImageSharpTexture? alphaTexture,
+        ImageMagickTexture? textureData,
+        ImageMagickTexture? alphaTexture,
         MaterialPropsAndBuffer materialProps
     )
     {

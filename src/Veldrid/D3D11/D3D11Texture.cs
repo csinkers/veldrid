@@ -57,15 +57,15 @@ internal sealed class D3D11Texture : Texture
             optionFlags |= ResourceOptionFlags.GenerateMips;
         }
 
-        int arraySize = (int)description.ArrayLayers;
+        uint arraySize = description.ArrayLayers;
         if ((description.Usage & TextureUsage.Cubemap) == TextureUsage.Cubemap)
         {
             optionFlags |= ResourceOptionFlags.TextureCube;
             arraySize *= 6;
         }
 
-        int roundedWidth = (int)description.Width;
-        int roundedHeight = (int)description.Height;
+        uint roundedWidth = description.Width;
+        uint roundedHeight = description.Height;
         if (FormatHelpers.IsCompressedFormat(description.Format))
         {
             roundedWidth = ((roundedWidth + 3) / 4) * 4;
@@ -77,7 +77,7 @@ internal sealed class D3D11Texture : Texture
             Texture1DDescription desc1D = new()
             {
                 Width = roundedWidth,
-                MipLevels = (int)description.MipLevels,
+                MipLevels = description.MipLevels,
                 ArraySize = arraySize,
                 Format = TypelessDxgiFormat,
                 BindFlags = bindFlags,
@@ -94,13 +94,13 @@ internal sealed class D3D11Texture : Texture
             {
                 Width = roundedWidth,
                 Height = roundedHeight,
-                MipLevels = (int)description.MipLevels,
+                MipLevels = description.MipLevels,
                 ArraySize = arraySize,
                 Format = TypelessDxgiFormat,
                 BindFlags = bindFlags,
                 CPUAccessFlags = cpuFlags,
                 Usage = resourceUsage,
-                SampleDescription = new((int)FormatHelpers.GetSampleCountUInt32(SampleCount), 0),
+                SampleDescription = new(FormatHelpers.GetSampleCountUInt32(SampleCount), 0),
                 MiscFlags = optionFlags,
             };
 
@@ -113,8 +113,8 @@ internal sealed class D3D11Texture : Texture
             {
                 Width = roundedWidth,
                 Height = roundedHeight,
-                Depth = (int)description.Depth,
-                MipLevels = (int)description.MipLevels,
+                Depth = description.Depth,
+                MipLevels = description.MipLevels,
                 Format = TypelessDxgiFormat,
                 BindFlags = bindFlags,
                 CPUAccessFlags = cpuFlags,

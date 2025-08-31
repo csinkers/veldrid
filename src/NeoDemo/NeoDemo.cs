@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Numerics;
 using ImGuiNET;
-using Veldrid.ImageSharp;
+using Veldrid.ImageMagick;
 using Veldrid.NeoDemo.Objects;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
@@ -39,7 +39,7 @@ public class NeoDemo
     TextureSampleCount? _newSampleCount;
     ColorWriteMask? _newMask;
 
-    readonly Dictionary<string, ImageSharpTexture> _textures = new();
+    readonly Dictionary<string, ImageMagickTexture> _textures = new();
     Sdl2ControllerTracker? _controllerTracker;
     bool _colorSrgb = true;
     readonly FullScreenQuad _fsq;
@@ -177,8 +177,8 @@ public class NeoDemo
             ConstructedMesh mesh = atriumFile.GetMesh16(group);
             MaterialDefinition? materialDef =
                 mesh.MaterialName != null ? atriumMtls.Definitions[mesh.MaterialName] : null;
-            ImageSharpTexture? overrideTextureData = null;
-            ImageSharpTexture? alphaTexture = null;
+            ImageMagickTexture? overrideTextureData = null;
+            ImageMagickTexture? alphaTexture = null;
             MaterialPropsAndBuffer materialProps = CommonMaterials.Brick;
 
             if (materialDef != null)
@@ -241,9 +241,9 @@ public class NeoDemo
         Console.WriteLine($"Loaded {loadedAlphaMaps} alpha map textures");
     }
 
-    ImageSharpTexture LoadTexture(string texturePath, bool mipmap) // Plz don't call this with the same texturePath and different mipmap values.
+    ImageMagickTexture LoadTexture(string texturePath, bool mipmap) // Plz don't call this with the same texturePath and different mipmap values.
     {
-        if (!_textures.TryGetValue(texturePath, out ImageSharpTexture? tex))
+        if (!_textures.TryGetValue(texturePath, out ImageMagickTexture? tex))
         {
             tex = new(texturePath, mipmap, true);
             _textures.Add(texturePath, tex);
@@ -254,8 +254,8 @@ public class NeoDemo
 
     void AddTexturedMesh(
         ConstructedMesh meshData,
-        ImageSharpTexture? texData,
-        ImageSharpTexture? alphaTexData,
+        ImageMagickTexture? texData,
+        ImageMagickTexture? alphaTexData,
         MaterialPropsAndBuffer materialProps,
         Vector3 position,
         Quaternion rotation,

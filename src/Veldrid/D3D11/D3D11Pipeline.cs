@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Veldrid.SPIRV;
 using Vortice.Direct3D11;
 
 namespace Veldrid.D3D11;
@@ -22,7 +21,7 @@ internal sealed class D3D11Pipeline : Pipeline
     public ID3D11PixelShader? PixelShader { get; }
     public ID3D11ComputeShader? ComputeShader { get; }
     public new D3D11ResourceLayout[] ResourceLayouts { get; }
-    public int[]? VertexStrides { get; }
+    public uint[]? VertexStrides { get; }
 
     public override bool IsComputePipeline { get; }
 
@@ -97,10 +96,10 @@ internal sealed class D3D11Pipeline : Pipeline
         {
             InputLayout = inputLayout;
             int numVertexBuffers = vertexLayouts.Length;
-            VertexStrides = new int[numVertexBuffers];
+            VertexStrides = new uint[numVertexBuffers];
             for (int i = 0; i < numVertexBuffers; i++)
             {
-                VertexStrides[i] = (int)vertexLayouts[i].Stride;
+                VertexStrides[i] = vertexLayouts[i].Stride;
             }
         }
         else

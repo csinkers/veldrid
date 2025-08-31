@@ -45,12 +45,12 @@ internal sealed class D3D11TextureView : TextureView
                 if (d3dTex.Type == TextureType.Texture1D)
                 {
                     uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture1D;
-                    uavDesc.Texture1D.MipSlice = (int)description.BaseMipLevel;
+                    uavDesc.Texture1D.MipSlice = description.BaseMipLevel;
                 }
                 else
                 {
                     uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture2D;
-                    uavDesc.Texture2D.MipSlice = (int)description.BaseMipLevel;
+                    uavDesc.Texture2D.MipSlice = description.BaseMipLevel;
                 }
             }
             else
@@ -58,27 +58,27 @@ internal sealed class D3D11TextureView : TextureView
                 if (d3dTex.Type == TextureType.Texture1D)
                 {
                     uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture1DArray;
-                    uavDesc.Texture1DArray.MipSlice = (int)description.BaseMipLevel;
-                    uavDesc.Texture1DArray.FirstArraySlice = (int)description.BaseArrayLayer;
-                    uavDesc.Texture1DArray.ArraySize = (int)description.ArrayLayers;
+                    uavDesc.Texture1DArray.MipSlice = description.BaseMipLevel;
+                    uavDesc.Texture1DArray.FirstArraySlice = description.BaseArrayLayer;
+                    uavDesc.Texture1DArray.ArraySize = description.ArrayLayers;
                 }
                 else
                 {
                     uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture2DArray;
-                    uavDesc.Texture2DArray.MipSlice = (int)description.BaseMipLevel;
-                    uavDesc.Texture2DArray.FirstArraySlice = (int)description.BaseArrayLayer;
-                    uavDesc.Texture2DArray.ArraySize = (int)description.ArrayLayers;
+                    uavDesc.Texture2DArray.MipSlice = description.BaseMipLevel;
+                    uavDesc.Texture2DArray.FirstArraySlice = description.BaseArrayLayer;
+                    uavDesc.Texture2DArray.ArraySize = description.ArrayLayers;
                 }
             }
         }
         else
         {
             uavDesc.ViewDimension = UnorderedAccessViewDimension.Texture3D;
-            uavDesc.Texture3D.MipSlice = (int)description.BaseMipLevel;
+            uavDesc.Texture3D.MipSlice = description.BaseMipLevel;
 
             // Map the entire range of the 3D texture.
             uavDesc.Texture3D.FirstWSlice = 0;
-            uavDesc.Texture3D.WSize = (int)d3dTex.Depth;
+            uavDesc.Texture3D.WSize = d3dTex.Depth;
         }
 
         UnorderedAccessView = device.CreateUnorderedAccessView(d3dTex.DeviceTexture, uavDesc);

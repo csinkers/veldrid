@@ -5,8 +5,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Assimp;
-using Veldrid.ImageSharp;
-using Veldrid.SPIRV;
+using Veldrid.ImageMagick;
 using Matrix4x4 = System.Numerics.Matrix4x4;
 
 namespace Veldrid.VirtualReality.Sample;
@@ -88,7 +87,7 @@ internal class AssimpMesh : IDisposable
         );
         _disposables.Add(_wvpBuffer);
 
-        Texture texture = new ImageSharpTexture(texturePath, true, true).CreateDeviceTexture(
+        Texture texture = new ImageMagickTexture(texturePath, true, true).CreateDeviceTexture(
             gd,
             factory
         );

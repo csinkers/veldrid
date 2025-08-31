@@ -1,5 +1,5 @@
-﻿namespace Veldrid;
-
+﻿/*
+namespace Veldrid;
 internal static class HashHelper
 {
     public static int Combine(int value1, int value2)
@@ -132,3 +132,4 @@ internal static class HashHelper
         return hash;
     }
 }
+*/

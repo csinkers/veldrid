@@ -7,10 +7,10 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
     readonly ResourceBindingInfo[] _bindingInfosByVdIndex;
     bool _disposed;
 
-    public int UniformBufferCount { get; }
-    public int StorageBufferCount { get; }
-    public int TextureCount { get; }
-    public int SamplerCount { get; }
+    public uint UniformBufferCount { get; }
+    public uint StorageBufferCount { get; }
+    public uint TextureCount { get; }
+    public uint SamplerCount { get; }
 
     public D3D11ResourceLayout(in ResourceLayoutDescription description)
         : base(description)
@@ -18,14 +18,14 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
         ResourceLayoutElementDescription[] elements = description.Elements;
         _bindingInfosByVdIndex = new ResourceBindingInfo[elements.Length];
 
-        int cbIndex = 0;
-        int texIndex = 0;
-        int samplerIndex = 0;
-        int unorderedAccessIndex = 0;
+        uint cbIndex = 0;
+        uint texIndex = 0;
+        uint samplerIndex = 0;
+        uint unorderedAccessIndex = 0;
 
         for (int i = 0; i < _bindingInfosByVdIndex.Length; i++)
         {
-            int slot = elements[i].Kind switch
+            uint slot = elements[i].Kind switch
             {
                 ResourceKind.UniformBuffer => cbIndex++,
                 ResourceKind.StructuredBufferReadOnly => texIndex++,
@@ -33,7 +33,7 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
                 ResourceKind.TextureReadOnly => texIndex++,
                 ResourceKind.TextureReadWrite => unorderedAccessIndex++,
                 ResourceKind.Sampler => samplerIndex++,
-                _ => Illegal.Value<ResourceKind, int>(),
+                _ => Illegal.Value<ResourceKind, uint>(),
             };
 
             _bindingInfosByVdIndex[i] = new(
@@ -68,13 +68,13 @@ internal sealed class D3D11ResourceLayout : ResourceLayout
     public override void Dispose() => _disposed = true;
 
     internal readonly struct ResourceBindingInfo(
-        int slot,
+        uint slot,
         ShaderStages stages,
         ResourceKind kind,
         bool dynamicBuffer
     )
     {
-        public readonly int Slot = slot;
+        public readonly uint Slot = slot;
         public readonly ShaderStages Stages = stages;
         public readonly ResourceKind Kind = kind;
         public readonly bool DynamicBuffer = dynamicBuffer;

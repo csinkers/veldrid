@@ -38,7 +38,7 @@ internal sealed class D3D11Framebuffer : Framebuffer
                 if (d3dDepthTarget.SampleCount == TextureSampleCount.Count1)
                 {
                     dsvDesc.ViewDimension = DepthStencilViewDimension.Texture2D;
-                    dsvDesc.Texture2D.MipSlice = (int)depthTarget.MipLevel;
+                    dsvDesc.Texture2D.MipSlice = depthTarget.MipLevel;
                 }
                 else
                 {
@@ -50,14 +50,14 @@ internal sealed class D3D11Framebuffer : Framebuffer
                 if (d3dDepthTarget.SampleCount == TextureSampleCount.Count1)
                 {
                     dsvDesc.ViewDimension = DepthStencilViewDimension.Texture2DArray;
-                    dsvDesc.Texture2DArray.FirstArraySlice = (int)depthTarget.ArrayLayer;
+                    dsvDesc.Texture2DArray.FirstArraySlice = depthTarget.ArrayLayer;
                     dsvDesc.Texture2DArray.ArraySize = 1;
-                    dsvDesc.Texture2DArray.MipSlice = (int)depthTarget.MipLevel;
+                    dsvDesc.Texture2DArray.MipSlice = depthTarget.MipLevel;
                 }
                 else
                 {
                     dsvDesc.ViewDimension = DepthStencilViewDimension.Texture2DMultisampledArray;
-                    dsvDesc.Texture2DMSArray.FirstArraySlice = (int)depthTarget.ArrayLayer;
+                    dsvDesc.Texture2DMSArray.FirstArraySlice = depthTarget.ArrayLayer;
                     dsvDesc.Texture2DMSArray.ArraySize = 1;
                 }
             }
@@ -95,8 +95,8 @@ internal sealed class D3D11Framebuffer : Framebuffer
                     rtvDesc.Texture2DArray = new()
                     {
                         ArraySize = 1,
-                        FirstArraySlice = (int)colorTargets[i].ArrayLayer,
-                        MipSlice = (int)colorTargets[i].MipLevel,
+                        FirstArraySlice = colorTargets[i].ArrayLayer,
+                        MipSlice = colorTargets[i].MipLevel,
                     };
                 }
                 else
@@ -105,7 +105,7 @@ internal sealed class D3D11Framebuffer : Framebuffer
                     rtvDesc.Texture2DMSArray = new()
                     {
                         ArraySize = 1,
-                        FirstArraySlice = (int)colorTargets[i].ArrayLayer,
+                        FirstArraySlice = colorTargets[i].ArrayLayer,
                     };
                 }
             }
@@ -114,7 +114,7 @@ internal sealed class D3D11Framebuffer : Framebuffer
                 if (d3dColorTarget.SampleCount == TextureSampleCount.Count1)
                 {
                     rtvDesc.ViewDimension = RenderTargetViewDimension.Texture2D;
-                    rtvDesc.Texture2D.MipSlice = (int)colorTargets[i].MipLevel;
+                    rtvDesc.Texture2D.MipSlice = colorTargets[i].MipLevel;
                 }
                 else
                 {

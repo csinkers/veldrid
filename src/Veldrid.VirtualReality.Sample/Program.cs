@@ -2,9 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using ImageMagick;
 using ImGuiNET;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using Veldrid.NeoDemo;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
@@ -106,13 +105,14 @@ internal static class Program
         );
 
         Skybox skybox = new(
-            Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
-            Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_bk.png")),
-            Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_lf.png")),
-            Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_rt.png")),
-            Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_up.png")),
-            Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_dn.png"))
+            new MagickImage(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_ft.png")),
+            new MagickImage(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_bk.png")),
+            new MagickImage(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_lf.png")),
+            new MagickImage(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_rt.png")),
+            new MagickImage(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_up.png")),
+            new MagickImage(Path.Combine(AppContext.BaseDirectory, "skybox", "miramar_dn.png"))
         );
+
         skybox.CreateDeviceObjects(gd, vrContext.LeftEyeFramebuffer.OutputDescription);
 
         CommandList windowCL = gd.ResourceFactory.CreateCommandList();

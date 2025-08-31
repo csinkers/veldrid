@@ -84,79 +84,6 @@ public class ImageSharpTexture
     /// </summary>
     public Texture CreateDeviceTexture(GraphicsDevice gd, ResourceFactory factory) => CreateTextureViaUpdate(gd, factory);
 
-    /*
-    unsafe Texture CreateTextureViaStaging(GraphicsDevice gd, ResourceFactory factory)
-    {
-        Texture staging = factory.CreateTexture(
-            TextureDescription.Texture2D(Width, Height, MipLevels, 1, Format, TextureUsage.Staging)
-        );
-
-        Texture ret = factory.CreateTexture(
-            TextureDescription.Texture2D(Width, Height, MipLevels, 1, Format, TextureUsage.Sampled)
-        );
-
-        CommandList cl = gd.ResourceFactory.CreateCommandList();
-        cl.Begin();
-        for (uint level = 0; level < MipLevels; level++)
-        {
-            Image<Rgba32> image = Images[level];
-            if (!image.DangerousTryGetSinglePixelMemory(out Memory<Rgba32> pixels))
-            {
-                throw new VeldridException("Unable to get image pixelspan.");
-            }
-            fixed (void* pixelPtr = pixels.Span)
-            {
-                MappedResource map = gd.Map(staging, MapMode.Write, level);
-                uint rowWidth = (uint)(image.Width * 4);
-                if (rowWidth == map.RowPitch)
-                {
-                    Unsafe.CopyBlock(
-                        map.Data.ToPointer(),
-                        pixelPtr,
-                        (uint)(image.Width * image.Height * 4)
-                    );
-                }
-                else
-                {
-                    for (uint y = 0; y < image.Height; y++)
-                    {
-                        byte* dstStart = (byte*)map.Data.ToPointer() + y * map.RowPitch;
-                        byte* srcStart = (byte*)pixelPtr + y * rowWidth;
-                        Unsafe.CopyBlock(dstStart, srcStart, rowWidth);
-                    }
-                }
-                gd.Unmap(staging, level);
-
-                cl.CopyTexture(
-                    staging,
-                    0,
-                    0,
-                    0,
-                    level,
-                    0,
-                    ret,
-                    0,
-                    0,
-                    0,
-                    level,
-                    0,
-                    (uint)image.Width,
-                    (uint)image.Height,
-                    1,
-                    1
-                );
-            }
-        }
-        cl.End();
-
-        gd.SubmitCommands(cl);
-        staging.Dispose();
-        cl.Dispose();
-
-        return ret;
-    }
-    */
-
     unsafe Texture CreateTextureViaUpdate(GraphicsDevice gd, ResourceFactory factory)
     {
         Texture tex = factory.CreateTexture(
@@ -175,9 +102,7 @@ public class ImageSharpTexture
                         tex,
                         (IntPtr)pixelPtr,
                         (uint)(sizeof(Rgba32) * image.Width * image.Height),
-                        0,
-                        0,
-                        0,
+                        0, 0, 0,
                         (uint)image.Width,
                         (uint)image.Height,
                         1,

@@ -196,11 +196,11 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
         int element = 0; // Total element index across slots.
         InputElementDescription[] elements = new InputElementDescription[totalCount];
         SemanticIndices si = new();
-        for (int slot = 0; slot < vertexLayouts.Length; slot++)
+        for (uint slot = 0; slot < vertexLayouts.Length; slot++)
         {
             VertexElementDescription[] elementDescs = vertexLayouts[slot].Elements;
             uint stepRate = vertexLayouts[slot].InstanceStepRate;
-            int currentOffset = 0;
+            uint currentOffset = 0;
             for (int i = 0; i < elementDescs.Length; i++)
             {
                 VertexElementDescription desc = elementDescs[i];
@@ -208,15 +208,15 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
                     GetSemanticString(desc.Semantic),
                     SemanticIndices.GetAndIncrement(ref si, desc.Semantic),
                     D3D11Formats.ToDxgiFormat(desc.Format),
-                    desc.Offset != 0 ? (int)desc.Offset : currentOffset,
+                    desc.Offset != 0 ? desc.Offset : currentOffset,
                     slot,
                     stepRate == 0
                         ? InputClassification.PerVertexData
                         : InputClassification.PerInstanceData,
-                    (int)stepRate
+                    stepRate
                 );
 
-                currentOffset += (int)FormatSizeHelpers.GetSizeInBytes(desc.Format);
+                currentOffset += FormatSizeHelpers.GetSizeInBytes(desc.Format);
                 element += 1;
             }
         }
@@ -268,12 +268,12 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
 
     struct SemanticIndices
     {
-        int _position;
-        int _texCoord;
-        int _normal;
-        int _color;
+        uint _position;
+        uint _texCoord;
+        uint _normal;
+        uint _color;
 
-        public static int GetAndIncrement(ref SemanticIndices si, VertexElementSemantic type)
+        public static uint GetAndIncrement(ref SemanticIndices si, VertexElementSemantic type)
         {
             return type switch
             {
@@ -281,7 +281,7 @@ internal sealed class D3D11ResourceCache(ID3D11Device device) : IDisposable
                 VertexElementSemantic.TextureCoordinate => si._texCoord++,
                 VertexElementSemantic.Normal => si._normal++,
                 VertexElementSemantic.Color => si._color++,
-                _ => Illegal.Value<VertexElementSemantic, int>(),
+                _ => Illegal.Value<VertexElementSemantic, uint>(),
             };
         }
     }

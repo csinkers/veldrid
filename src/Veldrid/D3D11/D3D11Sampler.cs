@@ -28,7 +28,7 @@ internal sealed class D3D11Sampler : Sampler
             ),
             MinLOD = description.MinimumLod,
             MaxLOD = description.MaximumLod,
-            MaxAnisotropy = (int)description.MaximumAnisotropy,
+            MaxAnisotropy = description.MaximumAnisotropy,
             ComparisonFunc = comparision,
             MipLODBias = description.LodBias,
             BorderColor = ToRawColor4(description.BorderColor),

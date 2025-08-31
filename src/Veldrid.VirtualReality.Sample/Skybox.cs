@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Text;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using Veldrid.ImageSharp;
-using Veldrid.SPIRV;
+using ImageMagick;
+using Veldrid.ImageMagick;
 
 namespace Veldrid.VirtualReality.Sample;
 
 internal class Skybox(
-    Image<Rgba32> front,
-    Image<Rgba32> back,
-    Image<Rgba32> left,
-    Image<Rgba32> right,
-    Image<Rgba32> top,
-    Image<Rgba32> bottom
+    MagickImage front,
+    MagickImage back,
+    MagickImage left,
+    MagickImage right,
+    MagickImage top,
+    MagickImage bottom
 )
 {
     // Context objects
@@ -46,7 +44,7 @@ internal class Skybox(
         _ib = factory.CreateBuffer(new((uint)(s_indices.Length * 2), BufferUsage.IndexBuffer));
         gd.UpdateBuffer(_ib, 0, s_indices);
 
-        ImageSharpCubemapTexture imageSharpCubemapTexture = new(
+        ImageMagickCubemapTexture imageMagickCubemapTexture = new(
             front,
             back,
             top,
@@ -55,7 +53,7 @@ internal class Skybox(
             left
         );
 
-        Texture textureCube = imageSharpCubemapTexture.CreateDeviceTexture(gd, factory);
+        Texture textureCube = imageMagickCubemapTexture.CreateDeviceTexture(gd, factory);
         TextureView textureView = factory.CreateTextureView(
             new TextureViewDescription(textureCube)
         );
@@ -171,45 +169,15 @@ internal class Skybox(
 
     static readonly ushort[] s_indices =
     [
-        0,
-        1,
-        2,
-        0,
-        2,
-        3,
-        4,
-        5,
-        6,
-        4,
-        6,
-        7,
-        8,
-        9,
-        10,
-        8,
-        10,
-        11,
-        12,
-        13,
-        14,
-        12,
-        14,
-        15,
-        16,
-        17,
-        18,
-        16,
-        18,
-        19,
-        20,
-        21,
-        22,
-        20,
-        22,
-        23,
+        0, 1, 2, 0, 2, 3,
+        4, 5, 6, 4, 6, 7,
+        8, 9, 10, 8, 10, 11,
+        12, 13, 14, 12, 14, 15,
+        16, 17, 18, 16, 18, 19,
+        20, 21, 22, 20, 22, 23,
     ];
 
-    internal const string VertexShader =
+    const string VertexShader =
         @"
 #version 450
 
@@ -236,7 +204,7 @@ void main()
 }
 ";
 
-    internal const string FragmentShader =
+    const string FragmentShader =
         @"
 #version 450
 

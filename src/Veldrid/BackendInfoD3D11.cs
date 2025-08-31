@@ -31,7 +31,7 @@ public class BackendInfoD3D11
     /// <summary>
     /// Gets the PCI ID of the hardware device.
     /// </summary>
-    public int DeviceId => _gd.DeviceId;
+    public uint DeviceId => _gd.DeviceId;
 
     /// <summary>
     /// Gets a pointer to the native texture wrapped by the given Veldrid Texture. Depending on the instance's TextureType,
